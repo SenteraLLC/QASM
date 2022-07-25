@@ -8,23 +8,23 @@ class Grid extends Component {
     GRID_WIDTH = 2;
     grid_image_names = [];
     image_src = "";
-    classes = [];
-
-    
+    classes = [];    
 
     constructor(props) {
         super(props);
         
         // Initialize props
-        this.GRID_WIDTH = props.grid_width || 2;
-        this.image_src  = props.src        || "../data/images"; 
-        this.classes    = props.classes    || ["plant", "rogue"];
+        this.GRID_WIDTH   = props.grid_width   || 2;
+        this.image_src    = props.src          || "../data/images"; 
+        this.classes      = props.classes      || ["plant", "rogue"];
+        this.css_by_class = props.css_by_class 
 
+        // console.log(IMAGE_SRC_PATH);
         // new webpack.DefinePlugin({ IMAGE_SRC: JSON.stringify(this.image_src) });
 
         // Organize images
         // console.log(IMAGE_SRC);
-        this.importAll(require.context("../data/images", false, /\.JPG$/)); // TODO: generalize image types
+        this.images = this.importAll(require.context("../data/images", false, /\.(png|jpe?g|svg|JPG)$/));
         this.image_names = Object.keys(this.images);
         this.gridSetup();
     }
@@ -32,7 +32,9 @@ class Grid extends Component {
     
     importAll(r) {
         // Get all images in a folder
-        r.keys().forEach((key) => (this.images[key.slice(2)] = r(key)));
+        let ret = {}
+        r.keys().forEach((key) => (ret[key.slice(2)] = r(key)));
+        return ret;
     }
 
     gridSetup() {
@@ -68,6 +70,8 @@ class Grid extends Component {
                                             image={this.images[image_name]} 
                                             image_name={image_name} 
                                             classes={this.classes}
+                                            css_by_class={this.css_by_class}
+                                            // default_class={this.classes[0]}
                                         />
                                     </td>
                                 ))}
