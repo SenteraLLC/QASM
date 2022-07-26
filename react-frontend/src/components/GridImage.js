@@ -1,7 +1,7 @@
 import { Component } from 'react';
-import "../css/Image.css";
+import "../css/GridImage.css";
  
-class Image extends Component {
+class GridImage extends Component {
     image = "";
     image_name = "";
     classes = [];
@@ -48,7 +48,7 @@ class Image extends Component {
     render() {
         return (
             <div 
-                className="Image" 
+                className="GridImage" 
                 onClick={this.changeClass}
                 style={this.css_by_class[this.state.class]}
             >
@@ -60,4 +60,4 @@ class Image extends Component {
     }
 }
 
-export default Image;
+export default GridImage;

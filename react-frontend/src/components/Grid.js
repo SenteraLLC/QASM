@@ -1,5 +1,5 @@
 import { Component } from 'react';
-import Image from "./Image.js";
+import GridImage from "./GridImage.js";
 // const webpack = require("webpack");
 
 class Grid extends Component {
@@ -66,7 +66,7 @@ class Grid extends Component {
                             <tr key={this.grid_image_names.indexOf(row_image_names)}>
                                 {row_image_names.map(image_name => (
                                     <td key={image_name}>
-                                        <Image 
+                                        <GridImage 
                                             image={this.images[image_name]} 
                                             image_name={image_name} 
                                             classes={this.classes}
