@@ -65,7 +65,7 @@ class Grid extends Component {
         let labels = {};
         for (let i=0; i < this.image_names.length; i++) {
             let image_name = this.image_names[i];
-            let class_name = document.getElementById(image_name).classList[0];
+            let class_name = document.getElementById(image_name).classList[1];
             labels[image_name] = {
                 "class": class_name
             }

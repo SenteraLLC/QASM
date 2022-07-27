@@ -56,7 +56,7 @@ class GridImage extends Component {
                 id={this.image_name}
             >
                 <div>
-                    <img src={x_overlay} class="x-overlay"></img>
+                    <img src={x_overlay} className="x-overlay"></img>
                     <img src={this.image} alt={this.image_name}></img>
                 </div>
                 {/* <div style={this.css_by_class[this.state.class]}></div> */}
