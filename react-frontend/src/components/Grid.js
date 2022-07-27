@@ -27,6 +27,9 @@ class Grid extends Component {
         this.images = this.importAll(require.context("../data/images", false, /\.(png|jpe?g|svg|JPG)$/));
         this.image_names = Object.keys(this.images);
         this.gridSetup();
+
+        // Bind functions
+        this.saveLabels = this.saveLabels.bind(this);
     }
 
     
@@ -57,9 +60,24 @@ class Grid extends Component {
         this.grid_image_names.push(row_imgs);
     }
 
+    async saveLabels() {
+        // Get state of each GridImage
+        let labels = {};
+        for (let i=0; i < this.image_names.length; i++) {
+            let image_name = this.image_names[i];
+            let class_name = document.getElementById(image_name).classList[0];
+            labels[image_name] = {
+                "class": class_name
+            }
+        }
+        console.log(labels);
+        console.log(await window.electron.invoke("saveLabels", labels));
+    }
+
     render() {
         return (
             <div className="Grid">
+                <button onClick={this.saveLabels}>Save Labels</button>
                 <table id="Grid-table">
                     <tbody>
                         {this.grid_image_names.map(row_image_names => (

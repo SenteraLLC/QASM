@@ -51,6 +51,7 @@ class GridImage extends Component {
                 className="GridImage" 
                 onClick={this.changeClass}
                 style={this.css_by_class[this.state.class]}
+                id={this.image_name}
             >
                 <img src={this.image} alt={this.image_name}></img>
                 {/* <div style={this.css_by_class[this.state.class]}></div> */}

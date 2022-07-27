@@ -1,11 +1,11 @@
 // Electron desktop application
 // import { QASM } from "../src/QASM/QASM.js";
 const path = require("path");
-// const fs = require("fs");
+const fs = require("fs");
 const { app, BrowserWindow, ipcMain, dialog } = require("electron");
 const isDev = require("electron-is-dev");
-// const QASM = require("../src/QASM/QASM.js");
-// var QASM_test = new QASM();
+const QASM = require("../src/QASM/QASM.js");
+var QASM_test = new QASM();
 
 function createWindow() {
   // Create the browser window.
@@ -36,19 +36,35 @@ function createWindow() {
 async function handleFileOpen() {
     const { canceled, filePaths } = await dialog.showOpenDialog();
     if (canceled) {
-        console.log("canceled.")
         return;
     } else {
-        console.log("neat");
         return filePaths[0];
     }
-  }
+}
+
+async function handleLoadLabels() {
+    // return QASM_test.readConfig();
+    let file_path = await handleFileOpen();
+    return JSON.parse(fs.readFileSync(file_path));
+    // return JSON.parse(fs.readFileSync("./config.json"));
+    // return __dirname;
+}
+
+async function handleSaveLabels(labels) {
+  let file_path = await handleFileOpen();
+  fs.writeFileSync(file_path, JSON.stringify(labels));
+  return "Saved";
+}
 
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
 app.whenReady().then(() => {
     ipcMain.handle('dialog:openFile', handleFileOpen);
+    ipcMain.handle("loadLabels", handleLoadLabels);
+    ipcMain.handle("saveLabels", (event, labels) => {
+      return handleSaveLabels(labels);
+    });
     createWindow();    
 });
 
@@ -66,9 +82,4 @@ app.on("activate", () => {
     createWindow();
   }
 });
-
-// ipcMain.on("load-config", (event, arg) => {
-//     // gets triggered by the async button defined in the App component
-//     console.log("Potatoe",arg) // prints "async ping"
-// })
 
