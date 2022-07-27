@@ -19,7 +19,6 @@ function App() {
                 overflow: "hidden",
                 position: "relative",
                 // content: "",
-                background: `url(${x_overlay})`,
                 backgroundSize: "cover",
                 // display: "block",
                 // width: "80%",

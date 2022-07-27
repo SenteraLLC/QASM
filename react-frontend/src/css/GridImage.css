@@ -1,3 +1,22 @@
-.Image {
+.GridImage {
     position: relative; 
+}
+
+img {
+    max-width: 45vw;
+}
+
+img.x-overlay {
+    position: absolute;
+    left: 0;
+    right: 0;
+    margin-left: auto;
+    margin-right: auto;
+    max-height: 83.5%; /* Works for normal images, but not vertically orientated images. Fix this later */
+    filter: opacity(0);
+    z-index: 1;
+}
+
+div.rogue > * > img.x-overlay {
+    filter: opacity(1);
 }

@@ -24,7 +24,7 @@ class Grid extends Component {
 
         // Organize images
         // console.log(IMAGE_SRC);
-        this.images = this.importAll(require.context("../data/images", false, /\.(png|jpe?g|svg|JPG)$/));
+        this.images = this.importAll(require.context("../data/images", false, /\.(png|jpe?g|svg|JPG|PNG)$/));
         this.image_names = Object.keys(this.images);
         this.gridSetup();
 

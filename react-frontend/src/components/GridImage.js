@@ -1,5 +1,6 @@
 import { Component } from 'react';
 import "../css/GridImage.css";
+import x_overlay from "../icons/x.svg";
  
 class GridImage extends Component {
     image = "";
@@ -35,6 +36,7 @@ class GridImage extends Component {
                 this.setState({
                     class: class_name
                 });
+                
                 // console.log("Changed " + this.image_name + " to " + this.state.class);
                 break;
             } else if (idx+1 === this.classes.length) {
@@ -48,12 +50,15 @@ class GridImage extends Component {
     render() {
         return (
             <div 
-                className="GridImage" 
+                className={"GridImage " + this.state.class}
                 onClick={this.changeClass}
                 style={this.css_by_class[this.state.class]}
                 id={this.image_name}
             >
-                <img src={this.image} alt={this.image_name}></img>
+                <div>
+                    <img src={x_overlay} class="x-overlay"></img>
+                    <img src={this.image} alt={this.image_name}></img>
+                </div>
                 {/* <div style={this.css_by_class[this.state.class]}></div> */}
                 <p>{this.image_name}</p>
             </div>        
