@@ -104,6 +104,7 @@ class Grid extends Component {
         return (
             <div className="Grid">
                 <button onClick={this.loadLabels}>Load Labels</button>
+                &nbsp;&nbsp;&nbsp;
                 <button onClick={this.saveLabels}>Save Labels</button>
                 <table id="Grid-table">
                     <tbody key={this.component_updater}>

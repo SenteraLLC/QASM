@@ -33,7 +33,13 @@ exports.init_ipc_handlers = () => {
  * @returns file path on sucess, nothing on cancel
  */
 async function handleOpenFile(event, data) {
-    const { canceled, filePaths } = await dialog.showOpenDialog();
+    const dialogOptions = {
+        filters: [
+            { name: "json (required)", extensions: ["json"] },
+            { name: "Any type", extensions: ["*"]},
+        ],
+    }
+    const { canceled, filePaths } = await dialog.showOpenDialog(dialogOptions);
     if (canceled) {
         return;
     } else {
