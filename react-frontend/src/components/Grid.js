@@ -1,6 +1,6 @@
 import { Component } from 'react';
 import GridImage from "./GridImage.js";
-// const webpack = require("webpack");
+const { function_names } = require("../../public/electron_constants.js");
 
 class Grid extends Component {
     images = {};
@@ -71,7 +71,7 @@ class Grid extends Component {
             }
         }
         console.log(labels);
-        console.log(await window.electron.invoke("saveLabels", labels));
+        console.log(await window.electron.invoke(function_names.SAVE_LABELS, labels));
     }
 
     render() {
