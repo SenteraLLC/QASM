@@ -1,5 +1,6 @@
 import { Component } from 'react';
 import GridImage from "./GridImage.js";
+import { call_backend } from '../QASM/utils.js';
 const { function_names } = require("../../public/electron_constants.js");
 
 class Grid extends Component {
@@ -71,7 +72,7 @@ class Grid extends Component {
             }
         }
         console.log(labels);
-        console.log(await window.electron.invoke(function_names.SAVE_LABELS, labels));
+        await call_backend(window, function_names.SAVE_LABELS, labels);
     }
 
     render() {
