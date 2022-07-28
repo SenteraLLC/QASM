@@ -24,6 +24,9 @@ class GridImage extends Component {
 
         // Bind functions
         this.changeClass = this.changeClass.bind(this);
+
+        // Update the overlays whenever the page size is changed
+        window.addEventListener("resize", this.update_overlay);
     }
 
     changeClass() {
@@ -55,7 +58,7 @@ class GridImage extends Component {
     update_overlay() {
         let all_overlays = document.getElementsByClassName("x-overlay")
 
-        if (all_overlays.length == 0) {
+        if (all_overlays.length === 0) {
             return
         }
 
