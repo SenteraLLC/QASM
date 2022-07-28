@@ -38,6 +38,7 @@ class Grid extends Component {
         // Bind functions
         this.saveLabels = this.saveLabels.bind(this);
         this.loadLabels = this.loadLabels.bind(this);
+        this.clearAll   = this.clearAll.bind(this);
     }
 
     
@@ -90,7 +91,7 @@ class Grid extends Component {
         if (Object.keys(this.labels).length > 0) {
             // Update state to rerender page
             this.setState({
-                class: this.labels
+                labels: this.labels
             });
 
             // Update key to force rebuild of grid
@@ -100,12 +101,23 @@ class Grid extends Component {
         }
     }
 
+    clearAll() {
+        // Set all classes to the default
+        this.labels = {};
+        this.setState({
+            labels: this.labels
+        });
+        this.component_updater++;
+    }
+
     render() {
         return (
             <div className="Grid">
                 <button onClick={this.loadLabels}>Load Labels</button>
                 &nbsp;&nbsp;&nbsp;
                 <button onClick={this.saveLabels}>Save Labels</button>
+                &nbsp;&nbsp;&nbsp;
+                <button onClick={this.clearAll}>Clear All</button>
                 <table id="Grid-table">
                     <tbody key={this.component_updater}>
                         {this.grid_image_names.map(row_image_names => (
