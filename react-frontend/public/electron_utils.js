@@ -7,6 +7,7 @@ const fs = require("fs");
 exports.function_handlers = {
     [function_names.SAVE_LABELS]:  handleSaveLabels,
     [function_names.OPEN_FILE]:    handleOpenFile,
+    [function_names.LOAD_LABELS]:  handleLoadLabels,
 }
 
 /**
@@ -59,4 +60,22 @@ async function handleSaveLabels(event, data) {
         return "Error when saving labels.";
     }
     
+}
+
+/**
+ * Prompt the user to select a file,
+ * and then load and return the labels.
+ * 
+ * @param {*} event event
+ * @param {Object} data data
+ * @returns {Object} labels
+ */
+async function handleLoadLabels(event, data) {
+    try {
+        let file_path = await handleOpenFile();
+        let labels = JSON.parse(fs.readFileSync(file_path));
+        return labels;
+    } catch {
+        return {};
+    }
 }
