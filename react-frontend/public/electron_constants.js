@@ -4,5 +4,6 @@
 // List of valid function name keys
 exports.function_names = {
     SAVE_LABELS: "saveLabels",
-    OPEN_FILE: "openFile"
+    OPEN_FILE: "openFile",
+    LOAD_LABELS: "loadLabels",
 }

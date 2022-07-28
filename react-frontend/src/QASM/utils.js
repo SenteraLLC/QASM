@@ -8,5 +8,5 @@
  * @param {*} data data to be sent to the backend
  */
 exports.call_backend = async (window, function_name, data) => {
-    console.log(await window.electron.invoke(function_name, data));
+    return await window.electron.invoke(function_name, data);
 }

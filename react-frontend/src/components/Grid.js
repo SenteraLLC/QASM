@@ -9,7 +9,9 @@ class Grid extends Component {
     GRID_WIDTH = 2;
     grid_image_names = [];
     image_src = "";
-    classes = [];    
+    classes = [];
+    labels = {};   
+    component_updater = 0; 
 
     constructor(props) {
         super(props);
@@ -19,6 +21,10 @@ class Grid extends Component {
         this.image_src    = props.src          || "../data/images"; 
         this.classes      = props.classes      || ["plant", "rogue"];
         this.css_by_class = props.css_by_class 
+
+        this.state = {
+            labels: this.labels
+        };
 
         // console.log(IMAGE_SRC_PATH);
         // new webpack.DefinePlugin({ IMAGE_SRC: JSON.stringify(this.image_src) });
@@ -31,6 +37,7 @@ class Grid extends Component {
 
         // Bind functions
         this.saveLabels = this.saveLabels.bind(this);
+        this.loadLabels = this.loadLabels.bind(this);
     }
 
     
@@ -72,25 +79,48 @@ class Grid extends Component {
             }
         }
         console.log(labels);
-        await call_backend(window, function_names.SAVE_LABELS, labels);
+        console.log(await call_backend(window, function_names.SAVE_LABELS, labels));
+    }
+
+    async loadLabels() {
+        // Load in previous labels
+        this.labels = await call_backend(window, function_names.LOAD_LABELS);
+        console.log(this.labels);
+        
+        if (Object.keys(this.labels).length > 0) {
+            // Update state to rerender page
+            this.setState({
+                class: this.labels
+            });
+
+            // Update key to force rebuild of grid
+            this.component_updater++;
+        } else {
+            console.log("Prevented loading empty labels.");
+        }
     }
 
     render() {
         return (
             <div className="Grid">
+                <button onClick={this.loadLabels}>Load Labels</button>
                 <button onClick={this.saveLabels}>Save Labels</button>
                 <table id="Grid-table">
-                    <tbody>
+                    <tbody key={this.component_updater}>
                         {this.grid_image_names.map(row_image_names => (
-                            <tr key={this.grid_image_names.indexOf(row_image_names)}>
+                            <tr key={"row_" + this.grid_image_names.indexOf(row_image_names)}>
                                 {row_image_names.map(image_name => (
                                     <td key={image_name}>
-                                        <GridImage 
+                                        <GridImage
                                             image={this.images[image_name]} 
                                             image_name={image_name} 
                                             classes={this.classes}
                                             css_by_class={this.css_by_class}
-                                            // default_class={this.classes[0]}
+                                            default_class={
+                                                image_name in this.labels 
+                                                    ? this.labels[image_name]["class"] 
+                                                    : this.classes[0]
+                                            }
                                         />
                                     </td>
                                 ))}
