@@ -1,4 +1,6 @@
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+# Electron app builds
+/react-frontend-win32-x64*
 
 # dependencies
 /node_modules

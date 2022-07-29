@@ -2,6 +2,8 @@
   "name": "react-frontend",
   "version": "0.1.0",
   "private": true,
+  "proxy": "http://localhost:3000",
+  "homepage": "./",
   "dependencies": {
     "@testing-library/jest-dom": "^5.16.4",
     "@testing-library/react": "^13.3.0",
@@ -11,6 +13,7 @@
     "customize-cra": "^1.0.0",
     "electron": "^19.0.9",
     "electron-is-dev": "^2.0.0",
+    "electron-packager": "^15.5.1",
     "react": "^18.2.0",
     "react-app-rewired": "^2.2.1",
     "react-dom": "^18.2.0",
@@ -27,7 +30,8 @@
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "dev": "concurrently -k \"cross-env BROWSER=none npm start\" \"npm:electron\"",
-    "electron": "wait-on tcp:3000 && electron ."
+    "electron": "wait-on tcp:3000 && electron .",
+    "build-exe": "npm run build && electron-packager ./ --platform=win32 --arch=x64 --overwrite"
   },
   "eslintConfig": {
     "extends": [

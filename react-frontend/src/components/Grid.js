@@ -1,6 +1,6 @@
 import { Component } from 'react';
 import GridImage from "./GridImage.js";
-import { call_backend } from '../QASM/utils.js';
+const { call_backend } =  require("../QASM/utils.js");
 const { function_names } = require("../../public/electron_constants.js");
 
 class Grid extends Component {
@@ -18,24 +18,19 @@ class Grid extends Component {
         
         // Initialize props
         this.GRID_WIDTH   = props.grid_width   || 2;
-        this.image_src    = props.src          || "../data/images"; 
         this.classes      = props.classes      || ["plant", "rogue"];
+        this.image_src    = props.src
         this.css_by_class = props.css_by_class 
 
         this.state = {
             labels: this.labels
         };
-
-        // console.log(IMAGE_SRC_PATH);
-        // new webpack.DefinePlugin({ IMAGE_SRC: JSON.stringify(this.image_src) });
-
-        // Organize images
-        // console.log(IMAGE_SRC);
-        this.images = this.importAll(require.context("../data/images", false, /\.(png|jpe?g|svg|JPG|PNG)$/));
-        this.image_names = Object.keys(this.images);
-        this.gridSetup();
+        
+        // Initial setup
+        this.loadImages();
 
         // Bind functions
+        this.loadImages = this.loadImages.bind(this);
         this.saveLabels = this.saveLabels.bind(this);
         this.loadLabels = this.loadLabels.bind(this);
         this.clearAll   = this.clearAll.bind(this);
@@ -47,6 +42,15 @@ class Grid extends Component {
         let ret = {}
         r.keys().forEach((key) => (ret[key.slice(2)] = r(key)));
         return ret;
+    }
+
+    async loadImages() {
+        console.log(this.image_src);
+        this.images = await call_backend(window, function_names.LOAD_IMAGES, this.image_src);
+        console.log(this.images);
+        this.image_names = Object.keys(this.images);
+        this.gridSetup();
+        this.clearAll();
     }
 
     gridSetup() {
