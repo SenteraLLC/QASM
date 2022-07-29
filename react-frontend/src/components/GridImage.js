@@ -1,5 +1,5 @@
 import { Component } from 'react';
-import { file_name_to_valid_id, update_overlay_by_id } from '../QASM/utils.js';
+import { update_overlay_by_id } from '../QASM/utils.js';
 import "../css/GridImage.css";
 import x_overlay from "../icons/x.svg";
  
@@ -53,19 +53,19 @@ class GridImage extends Component {
                 className={"GridImage " + this.state.class}
                 onClick={this.changeClass}
                 style={this.css_by_class[this.state.class]}
-                id={file_name_to_valid_id(this.image_name)}
+                id={this.image_name}
             >
                 <div>
                     <img 
                         src={x_overlay} 
                         className="x-overlay" 
                         alt={this.image_name + " overlay"}
-                        id={file_name_to_valid_id(this.image_name) + "-overlay"}>
+                        id={this.image_name + "-overlay"}>
                     </img>
                     <img 
                         src={this.image} 
                         alt={this.image_name}
-                        id={file_name_to_valid_id(this.image_name) + "-image"}>
+                        id={this.image_name + "-image"}>
                     </img>
                 </div>
                 {/* <div style={this.css_by_class[this.state.class]}></div> */}
@@ -76,7 +76,7 @@ class GridImage extends Component {
 
     componentDidUpdate(prevProps, prevState, snapshot) {
         // Update this particular overlay
-        update_overlay_by_id(file_name_to_valid_id(this.image_name) + "-overlay");
+        update_overlay_by_id(this.image_name + "-overlay");
     }
 }
 

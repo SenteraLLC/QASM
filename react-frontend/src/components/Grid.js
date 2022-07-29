@@ -11,7 +11,8 @@ class Grid extends Component {
     src = "";
     classes = [];
     labels = {};   
-    component_updater = 0; 
+    component_updater = 0;
+    image_stack = []; 
 
     constructor(props) {
         super(props);
@@ -26,9 +27,6 @@ class Grid extends Component {
             labels: this.labels,
             src: this.src,
         };
-        
-        // Initial setup
-        this.loadImages();
 
         // Update the overlays whenever the page size is changed
         window.addEventListener("resize", update_all_overlays);
@@ -56,7 +54,17 @@ class Grid extends Component {
     async loadImages() {
         console.log("Src: " + this.src);
         this.images = await call_backend(window, function_names.LOAD_IMAGES, this.src);
-        this.image_names = Object.keys(this.images);
+        this.image_names = [];
+        let images = {};
+        let image_name;
+        // Remove extension, leaving only image name
+        Object.keys(this.images).forEach((name, idx, arr) => {
+            image_name = file_name_to_valid_id(name);
+            this.image_names.push(image_name);
+            // Rebuild images array using extensionless names
+            images[image_name] = this.images[name];
+        });
+        this.images = images;
         this.gridSetup();
         this.clearAll();
     }
@@ -87,7 +95,7 @@ class Grid extends Component {
         this.labels = {};
         for (let i=0; i < this.image_names.length; i++) {
             let image_name = this.image_names[i];
-            let class_name = document.getElementById(file_name_to_valid_id(image_name)).classList[1];
+            let class_name = document.getElementById(image_name).classList[1];
             this.labels[image_name] = {
                 "class": class_name
             }
@@ -125,6 +133,14 @@ class Grid extends Component {
         await this.loadImages();
         this.updateState();
     }
+
+    async addImageLayer() {
+        // let dir_path = await call_backend(window, function_names.OPEN_DIR);
+        // let images = await call_backend(window, function_names.LOAD_IMAGES, dir_path);
+        // let image_layer = {};
+        // this.updateState();
+        console.log("Not yet implemented");
+    }
     
     changeGridWidth(e) {
         // Get current grid width
@@ -144,9 +160,13 @@ class Grid extends Component {
         return (
             <div className="Grid" key={this.component_updater}>
                 <button 
-                    onClick={this.selectImageDir} 
-                    style={{"marginBottom":"16px"}}>
+                    onClick={this.selectImageDir}>
                     Select Directory
+                </button>
+                &nbsp;&nbsp;&nbsp;
+                <button 
+                    onClick={this.addImageLayer}>
+                    Add Image Layer
                 </button>
                 &nbsp;&nbsp;&nbsp;
                 <p style={{"display": "inline-block"}}>Grid Width:</p>
