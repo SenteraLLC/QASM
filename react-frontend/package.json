@@ -54,5 +54,13 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
-  }
+  },
+
+  "build": {
+    "productName": "QASM App",
+    "win": {
+        "target": "NSIS",
+        "icon": "public/icon.png"
+      }
+    }
 }
