@@ -38,6 +38,7 @@ exports.init_ipc_handlers = () => {
  */
 async function handleOpenFile(event, data) {
     const dialogOptions = {
+        title: "Select File",
         filters: [
             { name: "json (required)", extensions: ["json"] },
             { name: "Any type", extensions: ["*"]},
@@ -58,6 +59,7 @@ async function handleOpenFile(event, data) {
  */
  async function handleSaveFile(event, data) {
     const dialogOptions = {
+        title: "Select Where to Save Labels",
         filters: [
             { name: "json (required)", extensions: ["json"] },
         ],
@@ -82,10 +84,8 @@ async function handleOpenFile(event, data) {
  */
  async function handleOpenDir(event, data) {
     const dialogOptions = {
-        filters: [
-            { name: "Select Image Directory", extensions: ["*"]},
-        ],
-        properties: ['openDirectory']
+        title: "Select Image Directory",
+        properties: ["openDirectory"]
     }
     const { canceled, filePaths } = await dialog.showOpenDialog(dialogOptions);
     if (canceled) {
