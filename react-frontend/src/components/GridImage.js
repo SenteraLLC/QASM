@@ -60,14 +60,15 @@ class GridImage extends Component {
                 <div>
                     <img 
                         src={x_overlay} 
-                        className="x-overlay" 
+                        className="x-overlay hover-target" 
                         alt={this.image_name + " overlay"}
                         id={this.image_name + "-overlay"}>
                     </img>
                     <img 
                         src={this.image} 
                         alt={this.image_name}
-                        id={this.image_name + "-image"}>
+                        id={this.image_name + "-image"}
+                        className={"hover-target"}>
                     </img>
                     {this.image_stack.map(image => (
                         <img

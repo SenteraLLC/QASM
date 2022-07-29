@@ -13,6 +13,7 @@ class Grid extends Component {
     labels = {};   
     component_updater = 0;
     image_stack = []; 
+    hover_image_id = null;
 
     constructor(props) {
         super(props);
@@ -30,6 +31,18 @@ class Grid extends Component {
 
         // Update the overlays whenever the page size is changed
         window.addEventListener("resize", update_all_overlays);
+
+        // Update which image is currently being hovered
+        document.addEventListener("mousemove", (e) => {
+            if (e.target.className.includes("hover-target")) {
+                // Every single hover-target will be inside of a div that's 
+                // inside of a div, that has the id that we're trying to select.
+                this.hover_image_id = e.target.parentNode.parentNode.id
+            } 
+            else {
+                this.hover_image_id = null
+            }
+        })
 
         // Bind functions
         this.loadImages          = this.loadImages.bind(this);
