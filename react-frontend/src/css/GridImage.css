@@ -14,8 +14,8 @@ img.x-overlay {
     margin: auto;
     filter: opacity(0);
     z-index: 1;
-    top: 10%;
-    height: 70%;
+    /* top: 10%;
+    height: 70%; */
 }
 
 div.rogue > * > img.x-overlay {

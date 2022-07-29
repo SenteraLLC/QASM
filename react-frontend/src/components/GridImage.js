@@ -44,6 +44,7 @@ class GridImage extends Component {
                 idx = -1;
             }
         }
+        this.update_overlay();
     }
 
     /** 
@@ -73,6 +74,7 @@ class GridImage extends Component {
     }
     
     render() {
+        // this.update_overlay();
         return (
             <div 
                 className={"GridImage " + this.state.class}
