@@ -110,12 +110,11 @@ async function handleLoadLabels(event, data) {
 }
 
 /**
- * Prompt the user to select a file,
- * and then load and return the labels.
+ * Load images from a folder as base64 strings
  * 
  * @param {*} event event
- * @param {Object} data data
- * @returns {Object} labels
+ * @param {string} data file path
+ * @returns {Object} image base64 strings indexed by image name
  */
  async function handleLoadImages(event, data) {
     try {
@@ -129,9 +128,6 @@ async function handleLoadLabels(event, data) {
             }
         })
         return images;
-        // let ret = {}
-        // r.keys().forEach((key) => (ret[key.slice(2)] = r(key)));
-        // return ret;
     } catch {
         return {};
     }
