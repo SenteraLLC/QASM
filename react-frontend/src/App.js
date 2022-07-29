@@ -1,9 +1,6 @@
 import { Component } from 'react';
 import './css/App.css';
 import Grid from "./components/Grid.js";
-// import { call_backend } from "./QASM/utils.js";
-const { call_backend } =  require("./QASM/utils.js");
-const { function_names } = require("./../public/electron_constants.js");
 
 class App extends Component {
   src = "";
