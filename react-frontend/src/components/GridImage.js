@@ -44,37 +44,9 @@ class GridImage extends Component {
                 idx = -1;
             }
         }
-        this.update_overlay();
-    }
-
-    /** 
-     * This method loop through all of the x-overlays and updates them to
-     * be the same size as the image they overlay.
-     * 
-     * TODO: this method should support multiple diffrent overlays, not 
-     * just the x-overlay.
-    */
-    update_overlay() {
-        let all_overlays = document.getElementsByClassName("x-overlay")
-
-        if (all_overlays.length === 0) {
-            return
-        }
-
-        // Loop through every overlay and resize them to fit on their image
-        for (let current_overlay of all_overlays) {
-
-            // Grab the current overlay's sibling image
-            const image = current_overlay.nextElementSibling;
-
-            // Set the overlay's width and height to the image's displayed width and height
-            current_overlay.width  = image.clientWidth;
-            current_overlay.height = image.clientHeight;
-        }
     }
     
     render() {
-        // this.update_overlay();
         return (
             <div 
                 className={"GridImage " + this.state.class}
