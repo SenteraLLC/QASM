@@ -69,6 +69,13 @@ class GridImage extends Component {
                         alt={this.image_name}
                         id={this.image_name + "-image"}>
                     </img>
+                    {this.image_stack.map(image => (
+                        <img
+                            src={image}
+                            alt={this.image_name + this.image_stack.indexOf(image)}
+                            id={this.image_name + this.image_stack.indexOf(image)}>
+                        </img>
+                    ))}
                 </div>
                 {/* <div style={this.css_by_class[this.state.class]}></div> */}
                 <p className="image-name">{this.image_name}</p>
