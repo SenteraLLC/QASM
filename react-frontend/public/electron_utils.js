@@ -11,6 +11,7 @@ exports.function_handlers = {
     [function_names.LOAD_LABELS]:  handleLoadLabels,
     [function_names.OPEN_DIR]:     handleOpenDir,
     [function_names.LOAD_IMAGES]:  handleLoadImages,
+    [function_names.SAVE_FILE]:    handleSaveFile,
 }
 
 /**
@@ -47,6 +48,30 @@ async function handleOpenFile(event, data) {
         return;
     } else {
         return filePaths[0];
+    }
+}
+
+/**
+ * Open a save file dialog
+ * 
+ * @returns file path on sucess, nothing on cancel
+ */
+ async function handleSaveFile(event, data) {
+    const dialogOptions = {
+        filters: [
+            { name: "json (required)", extensions: ["json"] },
+        ],
+    }
+    const { canceled, filePath } = await dialog.showSaveDialog(dialogOptions);
+    if (canceled) {
+        return "Canceled saving labels.";
+    } else {
+        try {
+            fs.writeFileSync(filePath, JSON.stringify(data));
+            return "Saved labels at " + filePath;
+        } catch {
+            return "Error when saving labels.";
+        }
     }
 }
 

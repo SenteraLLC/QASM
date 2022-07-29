@@ -8,6 +8,7 @@ exports.function_names = {
     LOAD_LABELS: "loadLabels",
     OPEN_DIR: "openDir",
     LOAD_IMAGES: "loadImages",
+    SAVE_FILE: "saveFile",
 }
 
 exports.image_types = {

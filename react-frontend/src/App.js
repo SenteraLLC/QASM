@@ -14,28 +14,11 @@ class App extends Component {
     this.state = {
       src: this.src
     };
-
-    // Bind functions
-    this.selectImageDir = this.selectImageDir.bind(this);
 }
-
-  async selectImageDir() {
-    let dir_path = await call_backend(window, function_names.OPEN_DIR);
-    this.src = dir_path;
-    this.setState({
-      src: this.src
-    });
-    this.component_updater++;
-  }
   
   render() {
     return (
       <div className="App" key={this.component_updater}>
-        <button 
-          onClick={this.selectImageDir} 
-          style={{"marginBottom":"16px"}}>
-          Select Directory
-        </button>
         <Grid 
           src={this.src} 
           grid_width={2} 
