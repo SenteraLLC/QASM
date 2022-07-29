@@ -32,14 +32,17 @@ class Grid extends Component {
         window.addEventListener("resize", update_all_overlays);
 
         // Bind functions
-        this.loadImages        = this.loadImages.bind(this);
-        this.saveLabels        = this.saveLabels.bind(this);
-        this.loadLabels        = this.loadLabels.bind(this);
-        this.clearAll          = this.clearAll.bind(this);
-        this.selectImageDir    = this.selectImageDir.bind(this);
-        this.changeGridWidth   = this.changeGridWidth.bind(this);
-        this.updateState       = this.updateState.bind(this);
-        this.updateLocalLabels = this.updateLocalLabels.bind(this);
+        this.loadImages          = this.loadImages.bind(this);
+        this.saveLabels          = this.saveLabels.bind(this);
+        this.loadLabels          = this.loadLabels.bind(this);
+        this.clearAll            = this.clearAll.bind(this);
+        this.selectImageDir      = this.selectImageDir.bind(this);
+        this.changeGridWidth     = this.changeGridWidth.bind(this);
+        this.updateState         = this.updateState.bind(this);
+        this.updateLocalLabels   = this.updateLocalLabels.bind(this);
+        this.loadAndFormatImages = this.loadAndFormatImages.bind(this);
+        this.addImageLayer       = this.addImageLayer.bind(this);
+        this.getImageStackByName = this.getImageStackByName.bind(this);
     }
 
     
@@ -53,20 +56,23 @@ class Grid extends Component {
 
     async loadImages() {
         console.log("Src: " + this.src);
-        this.images = await call_backend(window, function_names.LOAD_IMAGES, this.src);
-        this.image_names = [];
+        this.images = await this.loadAndFormatImages(this.src);
+        this.image_names = Object.keys(this.images);
+        this.gridSetup();
+        this.clearAll();
+    }
+
+    async loadAndFormatImages(dir_path) {
+        let raw_images = await call_backend(window, function_names.LOAD_IMAGES, dir_path);
         let images = {};
         let image_name;
         // Remove extension, leaving only image name
-        Object.keys(this.images).forEach((name, idx, arr) => {
+        Object.keys(raw_images).forEach((name) => {
             image_name = file_name_to_valid_id(name);
-            this.image_names.push(image_name);
             // Rebuild images array using extensionless names
-            images[image_name] = this.images[name];
+            images[image_name] = raw_images[name];
         });
-        this.images = images;
-        this.gridSetup();
-        this.clearAll();
+        return images;
     }
 
     gridSetup() {
@@ -135,11 +141,15 @@ class Grid extends Component {
     }
 
     async addImageLayer() {
-        // let dir_path = await call_backend(window, function_names.OPEN_DIR);
-        // let images = await call_backend(window, function_names.LOAD_IMAGES, dir_path);
-        // let image_layer = {};
-        // this.updateState();
-        console.log("Not yet implemented");
+        // Prompt user to select directory
+        let dir_path = await call_backend(window, function_names.OPEN_DIR);
+
+        // Load images and add them to the image stack
+        let image_layer = await this.loadAndFormatImages(dir_path);
+        this.image_stack.push(image_layer);
+        console.log(this.image_stack);
+        this.getImageStackByName(this.image_names[0]);
+        this.updateState();
     }
     
     changeGridWidth(e) {
@@ -154,6 +164,16 @@ class Grid extends Component {
 
         // Update page
         this.updateState();
+    }
+
+    getImageStackByName(image_name) {
+        let image_stack = [];
+        for (let image_layer of this.image_stack) {
+            if (image_name in image_layer) {
+                image_stack.push(image_layer[image_name]);
+            }
+        }
+        return(image_stack);
     }
 
     render() {
@@ -200,6 +220,9 @@ class Grid extends Component {
                                                 image_name in this.labels 
                                                     ? this.labels[image_name]["class"] 
                                                     : this.classes[0]
+                                            }
+                                            image_stack={
+                                                this.getImageStackByName(image_name)
                                             }
                                         />
                                     </td>
