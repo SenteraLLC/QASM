@@ -138,6 +138,9 @@ class Grid extends Component {
 
         // Update page
         this.updateState();
+
+        // Update overlays
+        this.update_overlay();
     }
 
     /** 
@@ -148,6 +151,7 @@ class Grid extends Component {
      * just the x-overlay.
     */
      update_overlay() {
+        console.log("Update overlays")
         let all_overlays = document.getElementsByClassName("x-overlay")
 
         if (all_overlays.length === 0) {

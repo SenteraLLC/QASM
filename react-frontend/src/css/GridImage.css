@@ -21,3 +21,7 @@ img.x-overlay {
 div.rogue > * > img.x-overlay {
     filter: opacity(1);
 }
+
+p.image-name {
+    word-break: break-all;
+}
