@@ -58,14 +58,15 @@ class GridImage extends Component {
                 <div>
                     <img 
                         src={x_overlay} 
-                        className="x-overlay" 
+                        className="x-overlay hover-target" 
                         alt={this.image_name + " overlay"}
                         id={file_name_to_valid_id(this.image_name) + "-overlay"}>
                     </img>
                     <img 
                         src={this.image} 
                         alt={this.image_name}
-                        id={file_name_to_valid_id(this.image_name) + "-image"}>
+                        id={file_name_to_valid_id(this.image_name) + "-image"}
+                        className={"hover-target"}>
                     </img>
                 </div>
                 {/* <div style={this.css_by_class[this.state.class]}></div> */}
