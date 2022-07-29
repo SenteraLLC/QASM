@@ -1,7 +1,6 @@
 import { Component } from 'react';
-import { update_all_overlays } from '../QASM/utils.js';
 import GridImage from "./GridImage.js";
-const { call_backend } =  require("../QASM/utils.js");
+const { call_backend, file_name_to_valid_id, update_all_overlays } =  require("../QASM/utils.js");
 const { function_names } = require("../../public/electron_constants.js");
 
 class Grid extends Component {
@@ -88,7 +87,7 @@ class Grid extends Component {
         this.labels = {};
         for (let i=0; i < this.image_names.length; i++) {
             let image_name = this.image_names[i];
-            let class_name = document.getElementById(image_name).classList[1];
+            let class_name = document.getElementById(file_name_to_valid_id(image_name)).classList[1];
             this.labels[image_name] = {
                 "class": class_name
             }
