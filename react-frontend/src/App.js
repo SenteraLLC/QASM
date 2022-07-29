@@ -28,7 +28,6 @@ class App extends Component {
               rogue: {
                 overflow: "hidden",
                 position: "relative",
-                // content: "",
                 backgroundSize: "cover",
                 // display: "block",
                 // width: "80%",
