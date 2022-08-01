@@ -149,7 +149,7 @@ async function handleLoadLabels(event, data) {
         files.forEach(file => {
             let ext = path.extname(file).slice(1);
             if (ext in image_types) {
-                images[file] = "data:image/" + ext + ";base64," + fs.readFileSync(path.join(file_path, file), "base64");;
+                images[file] = "file://" + path.join(file_path, file).replaceAll("\\","/");
             }
         })
         return images;

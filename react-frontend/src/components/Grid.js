@@ -88,6 +88,7 @@ class Grid extends Component {
     async loadImages() {
         console.log("Src: " + this.src);
         this.images = await this.loadAndFormatImages(this.src);
+        console.log(this.images);
         this.image_names = Object.keys(this.images);
         this.gridSetup();
         this.clearAll();
@@ -166,9 +167,13 @@ class Grid extends Component {
 
     async selectImageDir() {
         let dir_path = await call_backend(window, function_names.OPEN_DIR);
-        this.src = dir_path;
-        await this.loadImages();
-        this.updateState();
+        if (dir_path !== undefined) {
+            this.src = dir_path;
+            await this.loadImages();
+            this.updateState();
+        } else {
+            console.log("Prevented loading invalid directory.");
+        }
     }
 
     async addImageLayer() {
