@@ -1,5 +1,6 @@
 import { Component } from 'react';
 import GridImage from "./GridImage.js";
+import x_overlay from "../icons/x.svg";
 import $ from "jquery";
 const { call_backend, file_name_to_valid_id, update_all_overlays } =  require("../QASM/utils.js");
 const { function_names } = require("../../public/electron_constants.js");
@@ -23,9 +24,12 @@ class Grid extends Component {
         
         // Initialize props
         this.grid_width   = props.grid_width   || 2;
-        this.classes      = props.classes      || ["plant", "rogue"];
+        this.classes      = props.classes || [
+            {"class_name": "plant", "svg_overlay": null}, 
+            {"class_name": "rouge", "svg_overlay": x_overlay},
+            {"class_name": "Trevor_plant", "svg_overlay": x_overlay, "opacity": 0.2}
+        ];
         this.src          = props.src
-        this.css_by_class = props.css_by_class 
 
         this.state = {
             labels: this.labels,
@@ -84,6 +88,39 @@ class Grid extends Component {
         this.getImageStackByName = this.getImageStackByName.bind(this);
         this.changeImage         = this.changeImage.bind(this);
         this.autoScroll          = this.autoScroll.bind(this);
+
+
+        // Grab the document's head tag and create a style tag
+        let document_head = document.getElementsByTagName('head')[0];
+        let style = document.createElement('style');
+
+        // Loop through all classes and append each classes' overlay opacity to it
+        for (let each_class of this.classes) {
+            if (each_class.svg_overlay == null) {
+                // If the overlay doesn't exist don't show it
+                style.textContent += `div.${each_class.class_name} > * > img.overlay {
+                    filter: opacity(0)
+                }
+                `;
+            }
+            else if (each_class.opacity !== undefined) {
+                // Use the custom overlay opacity
+                style.textContent += `div.${each_class.class_name} > * > img.overlay {
+                    filter: opacity(${each_class.opacity})
+                }
+                `;
+            }
+            else {
+                // Use the default opacity
+                style.textContent += `div.${each_class.class_name} > * > img.overlay {
+                    filter: opacity(1)
+                }
+                `;
+            }
+        }
+
+        // Append the newly created style tag to the documet head
+        document_head.appendChild(style);
     }
 
     
@@ -302,7 +339,6 @@ class Grid extends Component {
                                             image={this.images[image_name]} 
                                             image_name={image_name} 
                                             classes={this.classes}
-                                            css_by_class={this.css_by_class}
                                             default_class={
                                                 image_name in this.labels 
                                                     ? this.labels[image_name]["class"] 
