@@ -342,7 +342,7 @@ class Grid extends Component {
                                             default_class={
                                                 image_name in this.labels 
                                                     ? this.labels[image_name]["class"] 
-                                                    : this.classes[0]
+                                                    : this.classes[0].class_name
                                             }
                                             image_stack={
                                                 this.getImageStackByName(image_name)

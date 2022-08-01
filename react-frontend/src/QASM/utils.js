@@ -32,7 +32,7 @@ export async function call_backend (window, function_name, data) {
  * Updates all of the overlays to be the same size as their image.
  */
 export function update_all_overlays() {
-    let all_overlays = document.getElementsByClassName("x-overlay")
+    let all_overlays = document.getElementsByClassName("overlay")
 
     // Just in case this runs before the overlays are added to the dom
     if (all_overlays.length === 0) {

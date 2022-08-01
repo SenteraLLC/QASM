@@ -18,7 +18,7 @@ class GridImage extends Component {
         this.image_stack  = props.image_stack;
 
         // Use state to store current class
-        let default_class = props.default_class.class_name || this.classes[0].class_name // Default to first class
+        let default_class = props.default_class || this.classes[0].class_name // Default to first class
         this.state = {
             class: default_class
         };
