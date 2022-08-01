@@ -78,6 +78,39 @@ class Grid extends Component {
         this.addImageLayer       = this.addImageLayer.bind(this);
         this.getImageStackByName = this.getImageStackByName.bind(this);
         this.changeImage         = this.changeImage.bind(this);
+
+
+        // Grab the document's head tag and create a style tag
+        let document_head = document.getElementsByTagName('head')[0];
+        let style = document.createElement('style');
+
+        // Loop through all classes and append each classes' overlay opacity to it
+        for (let each_class of this.classes) {
+            if (each_class.svg_overlay == null) {
+                // If the overlay doesn't exist don't show it
+                style.textContent += `div.${each_class.class_name} > * > img.overlay {
+                    filter: opacity(0)
+                }
+                `;
+            }
+            else if (each_class.opacity !== undefined) {
+                // Use the custom overlay opacity
+                style.textContent += `div.${each_class.class_name} > * > img.overlay {
+                    filter: opacity(${each_class.opacity})
+                }
+                `;
+            }
+            else {
+                // Use the default opacity
+                style.textContent += `div.${each_class.class_name} > * > img.overlay {
+                    filter: opacity(1)
+                }
+                `;
+            }
+        }
+
+        // Append the newly created style tag to the documet head
+        document_head.appendChild(style);
     }
 
     

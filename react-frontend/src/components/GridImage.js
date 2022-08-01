@@ -25,31 +25,6 @@ class GridImage extends Component {
 
         // Bind functions
         this.changeClass = this.changeClass.bind(this);
-
-        // Grab the document's head tag and create a style tag
-        let document_head = document.getElementsByTagName('head')[0]
-        let style = document.createElement('style');
-
-        // Loop through all classes and append each classes' overlay opacity to it
-        for (let each_class of this.classes) {
-            if (each_class.opacity !== undefined) {
-
-                // Update the style tag
-                style.textContent += `div.${each_class.class_name} > * > img.overlay {
-                    filter: opacity(${each_class.opacity})
-                }
-                `
-            }
-            else {
-                // Update the style tag
-                style.textContent += `div.${each_class.class_name} > * > img.overlay {
-                    filter: opacity(1)
-                }
-                `
-            }
-        }
-
-        document_head.appendChild(style);
     }
 
     changeClass() {
