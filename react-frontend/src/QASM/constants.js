@@ -1,7 +1,7 @@
 // Constants for QASM
 
 exports.local_paths = {
-    CONFIG_PATH: "../config.json",
+    CONFIG_PATH: "../../config.json",
 }
 
 exports.local_env = {
