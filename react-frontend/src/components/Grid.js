@@ -1,7 +1,9 @@
 import { Component } from 'react';
 import GridImage from "./GridImage.js";
+import $ from "jquery";
 const { call_backend, file_name_to_valid_id, update_all_overlays } =  require("../QASM/utils.js");
 const { function_names } = require("../../public/electron_constants.js");
+
 
 class Grid extends Component {
     images = {};
@@ -14,6 +16,7 @@ class Grid extends Component {
     component_updater = 0;
     image_stack = []; 
     hover_image_id = null;
+    hover_row_id = null;
 
     constructor(props) {
         super(props);
@@ -37,10 +40,12 @@ class Grid extends Component {
             if (e.target.className.includes("hover-target")) {
                 // Every single hover-target will be inside of a div that's 
                 // inside of a div, that has the id that we're trying to select.
-                this.hover_image_id = e.target.parentNode.parentNode.id
+                this.hover_image_id = e.target.parentNode.parentNode.id;
+                this.hover_row_id = e.target.parentNode.parentNode.parentNode.parentNode.id;
             } 
             else {
-                this.hover_image_id = null
+                this.hover_image_id = null;
+                this.hover_row_id = null;
             }
         });
 
@@ -59,6 +64,10 @@ class Grid extends Component {
             if (this.hover_image_id !== null && e.key === "b") {
                 this.changeImage(this.hover_image_id);
             }
+
+            if (this.hover_row_id !== null && e.key === "n") {
+                this.autoScroll(this.hover_row_id);
+            }
         });
 
         // Bind functions
@@ -74,6 +83,7 @@ class Grid extends Component {
         this.addImageLayer       = this.addImageLayer.bind(this);
         this.getImageStackByName = this.getImageStackByName.bind(this);
         this.changeImage         = this.changeImage.bind(this);
+        this.autoScroll          = this.autoScroll.bind(this);
     }
 
     
@@ -88,7 +98,6 @@ class Grid extends Component {
     async loadImages() {
         console.log("Src: " + this.src);
         this.images = await this.loadAndFormatImages(this.src);
-        console.log(this.images);
         this.image_names = Object.keys(this.images);
         this.gridSetup();
         this.clearAll();
@@ -244,6 +253,13 @@ class Grid extends Component {
         }
     }
 
+    autoScroll(hover_row_id) {
+        // scroll to next row
+        $(document).scrollTop($("#"+hover_row_id).next().offset().top);
+        // set next row as hovered for consecutive navigation
+        this.hover_row_id = $("#"+hover_row_id).next()[0].id;
+    }
+
     render() {
         return (
             <div className="Grid" key={this.component_updater}>
@@ -276,7 +292,10 @@ class Grid extends Component {
                 <table id="Grid-table">
                     <tbody>
                         {this.grid_image_names.map(row_image_names => (
-                            <tr key={"row_" + this.grid_image_names.indexOf(row_image_names)}>
+                            <tr 
+                                key={"row_" + this.grid_image_names.indexOf(row_image_names)}
+                                id={"row_" + this.grid_image_names.indexOf(row_image_names)}
+                            >
                                 {row_image_names.map(image_name => (
                                     <td key={image_name}>
                                         <GridImage
