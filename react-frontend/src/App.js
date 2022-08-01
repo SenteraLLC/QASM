@@ -1,4 +1,5 @@
 import { Component } from 'react';
+import x_overlay from "./icons/x.svg";
 import './css/App.css';
 import Grid from "./components/Grid.js";
 
@@ -19,21 +20,11 @@ class App extends Component {
         <Grid 
           src={this.src} 
           grid_width={2} 
-          classes={["plant", "rogue"]}
-          css_by_class={
-            {
-              plant: {
-                padding: "10px",
-              },
-              rogue: {
-                overflow: "hidden",
-                position: "relative",
-                backgroundSize: "cover",
-                padding: "10px",
-                zIndex: 1,
-              }
-            }
-          }
+          classes={[
+            {"class_name": "plant", "svg_overlay": null}, 
+            {"class_name": "rouge", "svg_overlay": x_overlay},
+            {"class_name": "Trevor_plant", "svg_overlay": x_overlay, "opacity": 0.2}
+          ]}
         />
       </div>
     );

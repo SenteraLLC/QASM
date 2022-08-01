@@ -1,5 +1,6 @@
 import { Component } from 'react';
 import GridImage from "./GridImage.js";
+import x_overlay from "../icons/x.svg";
 const { call_backend, file_name_to_valid_id, update_all_overlays } =  require("../QASM/utils.js");
 const { function_names } = require("../../public/electron_constants.js");
 
@@ -20,9 +21,12 @@ class Grid extends Component {
         
         // Initialize props
         this.grid_width   = props.grid_width   || 2;
-        this.classes      = props.classes      || ["plant", "rogue"];
+        this.classes      = props.classes || [
+            {"class_name": "plant", "svg_overlay": null}, 
+            {"class_name": "rouge", "svg_overlay": x_overlay},
+            {"class_name": "Trevor_plant", "svg_overlay": x_overlay, "opacity": 0.2}
+        ];
         this.src          = props.src
-        this.css_by_class = props.css_by_class 
 
         this.state = {
             labels: this.labels,
@@ -278,7 +282,6 @@ class Grid extends Component {
                                             image={this.images[image_name]} 
                                             image_name={image_name} 
                                             classes={this.classes}
-                                            css_by_class={this.css_by_class}
                                             default_class={
                                                 image_name in this.labels 
                                                     ? this.labels[image_name]["class"] 
