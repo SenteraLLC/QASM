@@ -182,7 +182,7 @@ class Grid extends Component {
 
         // Load images and add them to the image stack
         let image_layer = await this.loadAndFormatImages(dir_path);
-        if (image_layer.length === 0) {
+        if (Object.keys(image_layer).length === 0) {
             console.log("Prevent adding empty layer.");
         } else {
             this.image_stack.push(image_layer);
