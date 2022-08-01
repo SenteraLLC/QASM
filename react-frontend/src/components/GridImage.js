@@ -47,7 +47,15 @@ class GridImage extends Component {
                 idx = -1;
             }
         }
-        console.log(class_name)
+
+
+        let current_class_object = this.classes.find(x => x.class_name === class_name)
+        if (current_class_object.opacity != undefined) {
+            document.documentElement.style.setProperty('--overlay-opacity', current_class_object.opacity);
+        }
+        else {
+            document.documentElement.style.setProperty('--overlay-opacity', 1);
+        }
     }
     
     render() {

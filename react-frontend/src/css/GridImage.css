@@ -1,3 +1,7 @@
+:root {
+    --overlay-opacity: 1;
+}
+
 .GridImage {
     position: relative;
     padding: 0.5em;
@@ -18,7 +22,7 @@ img.overlay {
 }
 
 div.show_overlay > * > img.overlay {
-    filter: opacity(1);
+    filter: opacity(var(--overlay-opacity, 1));
 }
 
 p.image-name {
