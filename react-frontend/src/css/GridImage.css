@@ -23,3 +23,7 @@ div.rogue > * > img.x-overlay {
 p.image-name {
     word-break: break-all;
 }
+
+.hidden {
+    display: none;
+}

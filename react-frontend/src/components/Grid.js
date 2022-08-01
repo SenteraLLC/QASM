@@ -42,7 +42,24 @@ class Grid extends Component {
             else {
                 this.hover_image_id = null
             }
-        })
+        });
+
+        // Prevent weird behavior when scrolling
+        window.addEventListener("scroll", () => {
+            this.hover_image_id = null;
+        }); 
+
+        // Keybinds
+        window.addEventListener("keydown", (e) => {
+            if (e.ctrlKey && e.key === "s") {
+                e.preventDefault();
+                this.saveLabels();
+            }
+
+            if (this.hover_image_id !== null && e.key === "b") {
+                this.changeImage(this.hover_image_id);
+            }
+        });
 
         // Bind functions
         this.loadImages          = this.loadImages.bind(this);
@@ -56,6 +73,7 @@ class Grid extends Component {
         this.loadAndFormatImages = this.loadAndFormatImages.bind(this);
         this.addImageLayer       = this.addImageLayer.bind(this);
         this.getImageStackByName = this.getImageStackByName.bind(this);
+        this.changeImage         = this.changeImage.bind(this);
     }
 
     
@@ -159,7 +177,11 @@ class Grid extends Component {
 
         // Load images and add them to the image stack
         let image_layer = await this.loadAndFormatImages(dir_path);
-        this.image_stack.push(image_layer);
+        if (image_layer.length === 0) {
+            console.log("Prevent adding empty layer.");
+        } else {
+            this.image_stack.push(image_layer);
+        }   
         console.log(this.image_stack);
         this.getImageStackByName(this.image_names[0]);
         this.updateState();
@@ -187,6 +209,34 @@ class Grid extends Component {
             }
         }
         return(image_stack);
+    }
+
+    changeImage(hover_image_id) {
+        // firstChild = image holder div
+        // childNodes of image holder div = image layers
+
+        let layers = document.getElementById(hover_image_id).firstChild.childNodes;
+        for (let idx = 0; idx < layers.length; idx++) {
+            let layer = layers[idx];
+            // Skip overlays and hidden images
+            if (layer.id.includes("overlay") || layer.classList.contains("hidden")) {
+                continue;
+            }
+            
+            // Change currently shown image to hidden
+            layer.classList.add("hidden");
+
+            // Change next hidden image to shown
+            if (idx+1 === layers.length) {
+                // If we're at the last layer, turn on the og image
+                layers[1].classList.remove("hidden");
+            } else {
+                // Un-hide next image
+                layers[idx+1].classList.remove("hidden");
+            }
+            // Done
+            break;
+        }
     }
 
     render() {

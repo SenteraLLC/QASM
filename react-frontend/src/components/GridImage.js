@@ -52,7 +52,7 @@ class GridImage extends Component {
     render() {
         return (
             <div 
-                className={"GridImage " + this.state.class}
+                className={"GridImage " + this.state.class }
                 onClick={this.changeClass}
                 style={this.css_by_class[this.state.class]}
                 id={this.image_name}
@@ -73,8 +73,10 @@ class GridImage extends Component {
                     {this.image_stack.map(image => (
                         <img
                             src={image}
-                            alt={this.image_name + this.image_stack.indexOf(image)}
-                            id={this.image_name + this.image_stack.indexOf(image)}>
+                            alt={this.image_name + "_layer" + this.image_stack.indexOf(image)}
+                            id={this.image_name + "_layer" + this.image_stack.indexOf(image)}
+                            key={this.image_name + "_layer" + this.image_stack.indexOf(image)}
+                            className="hidden hover-target">
                         </img>
                     ))}
                 </div>
