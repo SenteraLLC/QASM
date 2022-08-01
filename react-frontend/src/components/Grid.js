@@ -28,7 +28,7 @@ class Grid extends Component {
         this.classes      = props.classes || [
             {"class_name": "plant", "svg_overlay": null}, 
             {"class_name": "rouge", "svg_overlay": x_overlay},
-            {"class_name": "Trevor_plant", "svg_overlay": x_overlay, "opacity": 0.2}
+            {"class_name": "Trevor_plant", "svg_overlay": x_overlay, "opacity": 0.4}
         ];
         this.src          = props.src
 
