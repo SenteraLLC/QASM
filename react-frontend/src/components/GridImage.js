@@ -71,27 +71,6 @@ class GridImage extends Component {
         }
 
         let current_class_object = this.classes.find(x => x.class_name === class_name)
-        this.update_overlay_opacity(current_class_object)
-    }
-
-    /**
-     * Upadates the overlay opacity based on the current class object.
-     * If the current class object contains an opacity property it will use that value.
-     * Otherwise it resets it back to 1.
-     * 
-     * The reason that we're updating a css root variable is because we want this style to
-     * have less priority than the img.overlay style.
-     * 
-     * @param current_class_object 
-     */
-    update_overlay_opacity(current_class_object) {
-        // Check to see if this class overlay has custom opacity. If not, reset the opacity
-        if (current_class_object.opacity !== undefined) {
-            document.documentElement.style.setProperty('--overlay-opacity', current_class_object.opacity);
-        }
-        else {
-            document.documentElement.style.setProperty('--overlay-opacity', 1);
-        }
     }
     
     render() {
