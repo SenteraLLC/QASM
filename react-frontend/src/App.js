@@ -9,6 +9,7 @@ class App extends Component {
 
   constructor(props) {
     super(props);
+    this.QASM = props.QASM; // QASM object
     this.state = {
       src: this.src
     };
@@ -18,6 +19,7 @@ class App extends Component {
     return (
       <div className="App" key={this.component_updater}>
         <Grid 
+          QASM={this.QASM}
           src={this.src} 
           grid_width={2} 
           classes={[

@@ -24,10 +24,6 @@ export function file_name_to_valid_id(file_name) {
     return valid_name
 }
 
-export async function call_backend (window, function_name, data) {
-    return await window.electron.invoke(function_name, data);
-}
-
 /**
  * Updates all of the overlays to be the same size as their image.
  */

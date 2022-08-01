@@ -2,7 +2,7 @@ import { Component } from 'react';
 import GridImage from "./GridImage.js";
 import x_overlay from "../icons/x.svg";
 import $ from "jquery";
-const { call_backend, file_name_to_valid_id, update_all_overlays } =  require("../QASM/utils.js");
+const { file_name_to_valid_id, update_all_overlays } =  require("../QASM/utils.js");
 const { function_names } = require("../../public/electron_constants.js");
 
 
@@ -23,6 +23,7 @@ class Grid extends Component {
         super(props);
         
         // Initialize props
+        this.QASM         = props.QASM
         this.grid_width   = props.grid_width   || 2;
         this.classes      = props.classes || [
             {"class_name": "plant", "svg_overlay": null}, 
@@ -141,7 +142,7 @@ class Grid extends Component {
     }
 
     async loadAndFormatImages(dir_path) {
-        let raw_images = await call_backend(window, function_names.LOAD_IMAGES, dir_path);
+        let raw_images = await this.QASM.call_backend(window, function_names.LOAD_IMAGES, dir_path);
         let images = {};
         let image_name;
         // Remove extension, leaving only image name
@@ -189,12 +190,12 @@ class Grid extends Component {
     async saveLabels() {
         this.updateLocalLabels();
         console.log(this.labels);
-        console.log(await call_backend(window, function_names.SAVE_FILE, this.labels));
+        console.log(await this.QASM.call_backend(window, function_names.SAVE_FILE, this.labels));
     }
 
     async loadLabels() {
         // Load in previous labels
-        this.labels = await call_backend(window, function_names.LOAD_LABELS);
+        this.labels = await this.QASM.call_backend(window, function_names.LOAD_LABELS);
         console.log(this.labels);
         
         if (Object.keys(this.labels).length > 0) {
@@ -212,7 +213,7 @@ class Grid extends Component {
     }
 
     async selectImageDir() {
-        let dir_path = await call_backend(window, function_names.OPEN_DIR);
+        let dir_path = await this.QASM.call_backend(window, function_names.OPEN_DIR);
         if (dir_path !== undefined) {
             this.src = dir_path;
             await this.loadImages();
@@ -224,7 +225,7 @@ class Grid extends Component {
 
     async addImageLayer() {
         // Prompt user to select directory
-        let dir_path = await call_backend(window, function_names.OPEN_DIR);
+        let dir_path = await this.QASM.call_backend(window, function_names.OPEN_DIR);
 
         // Load images and add them to the image stack
         let image_layer = await this.loadAndFormatImages(dir_path);
