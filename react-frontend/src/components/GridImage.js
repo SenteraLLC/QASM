@@ -44,8 +44,6 @@ class GridImage extends Component {
                 idx = -1;
             }
         }
-
-        let current_class_object = this.classes.find(x => x.class_name === class_name)
     }
     
     render() {
