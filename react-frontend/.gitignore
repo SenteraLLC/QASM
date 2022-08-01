@@ -4,6 +4,9 @@
 /react-frontend-win32-x64*
 /dist
 
+# data
+/src/data/
+
 # dependencies
 /node_modules
 /.pnp
