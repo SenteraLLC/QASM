@@ -1,7 +1,6 @@
 import { Component } from 'react';
 import { update_overlay_by_id } from '../QASM/utils.js';
 import "../css/GridImage.css";
-import x_overlay from "../icons/x.svg";
  
 class GridImage extends Component {
     image = "";
@@ -27,7 +26,30 @@ class GridImage extends Component {
         // Bind functions
         this.changeClass = this.changeClass.bind(this);
 
-        console.log(this.classes, this.state)
+        // Grab the document's head tag and create a style tag
+        let document_head = document.getElementsByTagName('head')[0]
+        let style = document.createElement('style');
+
+        // Loop through all classes and append each classes' overlay opacity to it
+        for (let each_class of this.classes) {
+            if (each_class.opacity !== undefined) {
+
+                // Update the style tag
+                style.textContent += `div.${each_class.class_name} > * > img.overlay {
+                    filter: opacity(${each_class.opacity})
+                }
+                `
+            }
+            else {
+                // Update the style tag
+                style.textContent += `div.${each_class.class_name} > * > img.overlay {
+                    filter: opacity(1)
+                }
+                `
+            }
+        }
+
+        document_head.appendChild(style);
     }
 
     changeClass() {
@@ -48,9 +70,23 @@ class GridImage extends Component {
             }
         }
 
-
         let current_class_object = this.classes.find(x => x.class_name === class_name)
-        if (current_class_object.opacity != undefined) {
+        this.update_overlay_opacity(current_class_object)
+    }
+
+    /**
+     * Upadates the overlay opacity based on the current class object.
+     * If the current class object contains an opacity property it will use that value.
+     * Otherwise it resets it back to 1.
+     * 
+     * The reason that we're updating a css root variable is because we want this style to
+     * have less priority than the img.overlay style.
+     * 
+     * @param current_class_object 
+     */
+    update_overlay_opacity(current_class_object) {
+        // Check to see if this class overlay has custom opacity. If not, reset the opacity
+        if (current_class_object.opacity !== undefined) {
             document.documentElement.style.setProperty('--overlay-opacity', current_class_object.opacity);
         }
         else {
