@@ -1,9 +1,27 @@
 // Definitions for base QASM class.
 const constants = require("./constants.js");
-const fs = require("fs");
 
-module.exports = class QASM {
-    readConfig() {
-        return JSON.parse(fs.readFileSync(constants.local_paths.CONFIG_PATH));
+export class QASM {
+    static create() {
+        return new this.subClasses[constants.local_env.QASM_MODE]()
+    } 
+}
+
+export class QASM_s3 extends QASM {
+    constructor() {
+        super();
+        this.mode = "s3";
     }
+}
+
+export class QASM_Local extends QASM {
+    constructor() {
+        super();
+        this.mode = "local";
+    }
+}
+
+QASM.subClasses = {
+    "local": QASM_Local,
+    "s3": QASM_s3,
 }

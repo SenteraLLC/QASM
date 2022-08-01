@@ -11,7 +11,7 @@ class App extends Component {
     this.state = {
       src: this.src
     };
-}
+  }
   
   render() {
     return (
