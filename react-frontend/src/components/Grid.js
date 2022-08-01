@@ -1,10 +1,7 @@
 import { Component } from 'react';
 import GridImage from "./GridImage.js";
-<<<<<<< HEAD
 import x_overlay from "../icons/x.svg";
-=======
 import $ from "jquery";
->>>>>>> feature/image-stack
 const { call_backend, file_name_to_valid_id, update_all_overlays } =  require("../QASM/utils.js");
 const { function_names } = require("../../public/electron_constants.js");
 
