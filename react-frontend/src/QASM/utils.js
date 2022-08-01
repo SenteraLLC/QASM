@@ -53,7 +53,6 @@ export function update_all_overlays() {
  * @param {string} overlay_id id of the overlay you want to update
  */
  export function update_overlay_by_id(overlay_id) {
-    console.log("update overlays by id")
     // Get the overlay by its id
     let overlay = document.getElementById(overlay_id)
 
@@ -67,7 +66,6 @@ export function update_all_overlays() {
 
     // Loop through all of the sibling elements until you find the sibling that is currently displayed.
     for (let sibling of overlay_siblings) {
-        console.log(sibling.className)
 
         // If the sibling is an overlay or hidden, then its not the sibling we want
         if (sibling.className.includes("hidden") || sibling.className.includes("overlay")) {

@@ -29,10 +29,9 @@
   },
   "main": "public/electron.js",
   "scripts": {
+    "QASM": "python QASM.py",
     "start": "react-app-rewired start",
     "build": "react-app-rewired build",
-    "test": "react-scripts test",
-    "eject": "react-scripts eject",
     "dev": "concurrently -k \"cross-env BROWSER=none npm start\" \"npm:electron\"",
     "electron": "wait-on tcp:3000 && electron .",
     "build-package": "npm run build && electron-packager ./ --platform=win32 --arch=x64 --overwrite",
