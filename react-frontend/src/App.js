@@ -1,33 +1,45 @@
 import { Component } from 'react';
-import x_overlay from "./icons/x.svg";
 import './css/App.css';
 import Grid from "./components/Grid.js";
+
+// Link keys to components
+const COMPONENT_KEYS = {
+  "grid": (props) => {return <Grid {...props}/>}
+}
+
 
 class App extends Component {
   src = "";
   component_updater = 0;
+  componentList = [];
 
   constructor(props) {
     super(props);
-    this.QASM = props.QASM; // QASM object
-    this.state = {
-      src: this.src
-    };
+
+    
+    // Initialize props
+    this.QASM       = props.QASM; // QASM object
+    this.config     = props.config;
+    this.components = this.config.components;
+    
+    
+    for (let component_key in this.components) {
+      // Add QASM object & key to all component props
+      let props = this.components[component_key]
+      props.QASM = this.QASM;
+      props.key = component_key;
+
+      // Build component list
+      this.componentList.push(
+        COMPONENT_KEYS[component_key](props)
+      )
+    }
   }
   
   render() {
     return (
       <div className="App" key={this.component_updater}>
-        <Grid 
-          QASM={this.QASM}
-          src={this.src} 
-          grid_width={2} 
-          classes={[
-            {"class_name": "plant", "svg_overlay": null}, 
-            {"class_name": "rouge", "svg_overlay": x_overlay},
-            {"class_name": "Trevor_plant", "svg_overlay": x_overlay, "opacity": 0.4}
-          ]}
-        />
+        {this.componentList}
       </div>
     );
   }  

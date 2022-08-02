@@ -4,8 +4,9 @@ import subprocess
 
 ENV_KEY = "REACT_APP_QASM_MODE"
 REQUIRED_QASM_KEYS = ["app", "components"]
+QASM_COMPONENTS = ["grid"]
 QASM_MODES = ["local", "s3"]
-RUN_MODES = ["dev", "prod"]
+RUN_MODES = ["dev"]
 
 def main():
     """Start QASM app based off config.json."""
@@ -22,7 +23,7 @@ def main():
             print(f"Error loading {args.config_path}, aborting...")
             print(e)
             return
-    else:
+    else: # TODO: this format is currently not supported in the react app
         try: # Load from json string
             config = json.loads(args.config)
         except Exception as e:
@@ -35,6 +36,10 @@ def main():
 
     if any(key not in config for key in REQUIRED_QASM_KEYS): # If missing a required key
         print(f"Missing one or more required keys in config: {REQUIRED_QASM_KEYS}")
+        return
+
+    if any(key not in QASM_COMPONENTS for key in config["components"].keys()): # Unrecognized component
+        print(f"One or more unrecognized components. Use only the following: {QASM_COMPONENTS}")
         return
 
     app = config["app"]

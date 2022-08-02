@@ -5,6 +5,9 @@ import $ from "jquery";
 const { file_name_to_valid_id, update_all_overlays } =  require("../QASM/utils.js");
 const { function_names } = require("../../public/electron_constants.js");
 
+const OVERLAYS = {
+    "x_overlay": x_overlay
+}
 
 class Grid extends Component {
     images = {};
@@ -18,24 +21,35 @@ class Grid extends Component {
     image_stack = []; 
     hover_image_id = null;
     hover_row_id = null;
+    default_classes = [
+        {"class_name": "plant", "svg_overlay": null}, 
+        {"class_name": "rouge", "svg_overlay": "x_overlay"},
+    ];
 
     constructor(props) {
         super(props);
         
         // Initialize props
         this.QASM         = props.QASM
-        this.grid_width   = props.grid_width   || 2;
-        this.classes      = props.classes || [
-            {"class_name": "plant", "svg_overlay": null}, 
-            {"class_name": "rouge", "svg_overlay": x_overlay},
-            {"class_name": "Trevor_plant", "svg_overlay": x_overlay, "opacity": 0.4}
-        ];
+        this.grid_width   = props.grid_width || 2;
+        this.classes      = props.classes    || this.default_classes
         this.src          = props.src
 
         this.state = {
             labels: this.labels,
             src: this.src,
         };
+
+        // Render stock overlays
+        for (let [idx, class_props] of this.classes.entries()) {
+            if (
+                "svg_overlay" in class_props && 
+                class_props["svg_overlay"] in OVERLAYS
+            ) {
+                class_props["svg_overlay"] = OVERLAYS[class_props["svg_overlay"]];
+                this.classes[idx] = class_props;
+            }
+        }
 
         // Update the overlays whenever the page size is changed
         window.addEventListener("resize", update_all_overlays);
