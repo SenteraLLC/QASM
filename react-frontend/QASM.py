@@ -4,7 +4,7 @@ import subprocess
 
 ENV_KEY = "REACT_APP_QASM_MODE"
 REQUIRED_QASM_KEYS = ["app", "components"]
-QASM_COMPONENTS = ["grid"]
+QASM_COMPONENTS = ["home", "grid"]
 QASM_MODES = ["local", "s3"]
 RUN_MODES = ["dev"]
 

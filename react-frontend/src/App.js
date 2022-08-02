@@ -1,16 +1,17 @@
 import { Component } from 'react';
 import './css/App.css';
 import Grid from "./components/Grid.js";
+import Home from "./components/Home.js";
+import {HashRouter, Link, Route, Routes} from "react-router-dom";
 
 // Link keys to components
 const COMPONENT_KEYS = {
-  "grid": (props) => {return <Grid {...props}/>}
+  "grid": (props) => {return <Grid {...props}/>},
+  "home": (props) => {return <Home {...props}/>},
 }
-
 
 class App extends Component {
   src = "";
-  component_updater = 0;
   componentList = [];
 
   constructor(props) {
@@ -18,9 +19,15 @@ class App extends Component {
 
     
     // Initialize props
-    this.QASM       = props.QASM; // QASM object
-    this.config     = props.config;
-    this.components = this.config.components;
+    this.QASM           = props.QASM; // QASM object
+    this.config         = props.config;
+    this.components     = this.config.components;
+    this.component_keys = Object.keys(this.components);
+
+    // Use just "/" for homepage
+    // if (this.component_keys.includes("home")) {
+    //   this.component_keys[this.component_keys.indexOf("home")] = "/";
+    // }
     
     
     for (let component_key in this.components) {
@@ -38,9 +45,28 @@ class App extends Component {
   
   render() {
     return (
-      <div className="App" key={this.component_updater}>
-        {this.componentList}
+      <HashRouter>
+      <div className="App">
+        <div className="menu">
+          {this.component_keys.map(component_key => (
+            <Link 
+              className="Link"
+              to={component_key === "home" ? "/" : component_key}
+              key={component_key}>
+              <h2>{component_key}</h2>
+            </Link>
+          ))}
+        </div>
+        <Routes>
+          {this.componentList.map((component, idx) => (
+            <Route 
+              path={this.component_keys[idx] === "home" ? "/" : this.component_keys[idx]} 
+              element={component}
+              key={idx}/>
+          ))}
+        </Routes>
       </div>
+      </HashRouter>
     );
   }  
 }

@@ -1,6 +1,7 @@
 {
     "app": "local",
     "components": {
+        "home": {},
         "grid": {
             "grid_width": 2,
             "classes": [
