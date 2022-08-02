@@ -19,6 +19,7 @@ class Grid extends Component {
     image_stack = []; 
     hover_image_id = null;
     hover_row_id = null;
+    images_shown = false;
 
     constructor(props) {
         super(props);
@@ -219,6 +220,7 @@ class Grid extends Component {
         if (dir_path !== undefined) {
             this.src = dir_path;
             await this.loadImages();
+            this.images_shown = true;
             this.updateState();
         } else {
             console.log("Prevented loading invalid directory.");
@@ -246,6 +248,7 @@ class Grid extends Component {
         this.images = {};
         this.image_names = [];
         this.grid_image_names = [];
+        this.images_shown = false;
         this.updateState();
     }
     
@@ -309,17 +312,19 @@ class Grid extends Component {
     }
 
     render() {
+        // Render the add layers button only if images are already shown. 
+        // Otherwise render the select directory button
+        let select_images_button;
+        if (this.images_shown) {
+            select_images_button = <button onClick={this.addImageLayer}>Add Image Layer</button>;
+        }
+        else {
+            select_images_button = <button onClick={this.selectImageDir}>Select Directory</button>;
+        }
+
         return (
             <div className="Grid" key={this.component_updater}>
-                <button 
-                    onClick={this.selectImageDir}>
-                    Select Directory
-                </button>
-                &nbsp;&nbsp;&nbsp;
-                <button 
-                    onClick={this.addImageLayer}>
-                    Add Image Layer
-                </button>
+                {select_images_button}
                 &nbsp;&nbsp;&nbsp;
                 <button
                     onClick={this.resetImages}>
