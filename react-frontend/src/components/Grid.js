@@ -90,6 +90,7 @@ class Grid extends Component {
         this.getImageStackByName = this.getImageStackByName.bind(this);
         this.changeImage         = this.changeImage.bind(this);
         this.autoScroll          = this.autoScroll.bind(this);
+        this.resetImages         = this.resetImages.bind(this);
 
 
         // Grab the document's head tag and create a style tag
@@ -239,6 +240,14 @@ class Grid extends Component {
         this.getImageStackByName(this.image_names[0]);
         this.updateState();
     }
+
+    async resetImages() {
+        this.labels = {}
+        this.images = {};
+        this.image_names = [];
+        this.grid_image_names = [];
+        this.updateState();
+    }
     
     changeGridWidth(e) {
         // Get current grid width
@@ -310,6 +319,11 @@ class Grid extends Component {
                 <button 
                     onClick={this.addImageLayer}>
                     Add Image Layer
+                </button>
+                &nbsp;&nbsp;&nbsp;
+                <button
+                    onClick={this.resetImages}>
+                    Reset Images
                 </button>
                 &nbsp;&nbsp;&nbsp;
                 <p style={{"display": "inline-block"}}>Grid Width:</p>
