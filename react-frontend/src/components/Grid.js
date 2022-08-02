@@ -220,6 +220,8 @@ class Grid extends Component {
         if (dir_path !== undefined) {
             this.src = dir_path;
             await this.loadImages();
+            
+            // Set the images shown to true now that the images are shown
             this.images_shown = true;
             this.updateState();
         } else {
@@ -243,6 +245,10 @@ class Grid extends Component {
         this.updateState();
     }
 
+    /**
+     * Resets all of the labels and images in the grid. Since no images are 
+     * shown anymore, set this.images_show to false.
+     */
     async resetImages() {
         this.labels = {}
         this.images = {};
