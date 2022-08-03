@@ -105,7 +105,6 @@ class Grid extends Component {
         this.getImageStackByName = this.getImageStackByName.bind(this);
         this.changeImage         = this.changeImage.bind(this);
         this.autoScroll          = this.autoScroll.bind(this);
-        this.resetImages         = this.resetImages.bind(this);
 
 
         // Grab the document's head tag and create a style tag
@@ -234,6 +233,7 @@ class Grid extends Component {
     }
 
     async addImageLayer() {
+        console.log("Add image layer called")
         // Prompt user to select directory
         let dir_path = await this.QASM.call_backend(window, function_names.OPEN_DIR);
 
@@ -246,19 +246,6 @@ class Grid extends Component {
         }   
         console.log(this.image_stack);
         this.getImageStackByName(this.image_names[0]);
-        this.updateState();
-    }
-
-    /**
-     * Resets all of the labels and images in the grid. Since no images are 
-     * shown anymore, set this.images_show to false.
-     */
-    async resetImages() {
-        this.labels = {}
-        this.images = {};
-        this.image_names = [];
-        this.grid_image_names = [];
-        this.images_shown = false;
         this.updateState();
     }
     
@@ -324,21 +311,25 @@ class Grid extends Component {
     render() {
         // Render the add layers button only if images are already shown. 
         // Otherwise render the select directory button
-        let select_images_button;
-        if (this.images_shown) {
-            select_images_button = <button onClick={this.addImageLayer}>Add Image Layer</button>;
-        }
-        else {
-            select_images_button = <button onClick={this.selectImageDir}>Select Directory</button>;
-        }
+        // let select_images_button;
+        // if (this.images_shown) {
+        //     select_images_button = <button onClick={this.addImageLayer}>Add Image Layer</button>;
+        // }
+        // else {
+        //     select_images_button = <button onClick={this.selectImageDir}>Select Directory</button>;
+        // }
 
         return (
             <div className="Grid" key={this.component_updater}>
-                {select_images_button}
+                <button 
+                    onClick={this.selectImageDir}>
+                    Select Directory
+                </button>
                 &nbsp;&nbsp;&nbsp;
-                <button
-                    onClick={this.resetImages}>
-                    Reset Images
+                <button 
+                    onClick={this.addImageLayer}
+                    className={this.images_shown ? "" : "hidden"}>
+                    Add Image Layer
                 </button>
                 &nbsp;&nbsp;&nbsp;
                 <p style={{"display": "inline-block"}}>Grid Width:</p>
