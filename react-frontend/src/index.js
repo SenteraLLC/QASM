@@ -3,7 +3,8 @@ import ReactDOM from 'react-dom/client';
 import './css/index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
-import { QASM } from "./QASM/QASM.js"
+import { QASM } from "./QASM/QASM.js";
+import config from "../config.json";
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
@@ -12,7 +13,8 @@ root.render(
   // </React.StrictMode>
   <>
     <App 
-      QASM={QASM.create()}
+      QASM={QASM.create(config)}
+      config={config} // TODO: also use cli config 
     />
   </>
 );

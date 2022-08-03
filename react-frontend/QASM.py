@@ -4,8 +4,9 @@ import subprocess
 
 ENV_KEY = "REACT_APP_QASM_MODE"
 REQUIRED_QASM_KEYS = ["app", "components"]
+QASM_COMPONENTS = ["home", "grid"]
 QASM_MODES = ["local", "s3"]
-RUN_MODES = ["dev", "prod"]
+RUN_MODES = ["dev", "build-exe"]
 
 def main():
     """Start QASM app based off config.json."""
@@ -22,7 +23,7 @@ def main():
             print(f"Error loading {args.config_path}, aborting...")
             print(e)
             return
-    else:
+    else: # TODO: this format is currently not supported in the react app
         try: # Load from json string
             config = json.loads(args.config)
         except Exception as e:
@@ -32,19 +33,24 @@ def main():
 
     if args.mode not in RUN_MODES:
         print(f"Enter a valid run mode: {RUN_MODES}")
+        return
 
     if any(key not in config for key in REQUIRED_QASM_KEYS): # If missing a required key
         print(f"Missing one or more required keys in config: {REQUIRED_QASM_KEYS}")
         return
 
-    app = config["app"]
-    try: # Store mode in .env for React
-        with open(".env", "w") as f:
-            f.write(f"{ENV_KEY} = {app}")
-    except Exception as e:
-        print("Failed to setup .env file, aborting...")
-        print(e)
+    if any(key not in QASM_COMPONENTS for key in config["components"].keys()): # Unrecognized component
+        print(f"One or more unrecognized components. Use only the following: {QASM_COMPONENTS}")
         return
+
+    app = config["app"]
+    # try: # Store mode in .env for React
+    #     with open(".env", "w") as f:
+    #         f.write(f"{ENV_KEY} = {app}")
+    # except Exception as e:
+    #     print("Failed to setup .env file, aborting...")
+    #     print(e)
+    #     return
 
     print("Setup successful, starting app...")
 

@@ -1,4 +1,19 @@
 {
     "app": "local",
-    "components": ["grid"]
+    "components": {
+        "home": {},
+        "grid": {
+            "grid_width": 2,
+            "classes": [
+                {
+                    "class_name": "plant", 
+                    "svg_overlay": null
+                }, 
+                {
+                    "class_name": "rouge", 
+                    "svg_overlay": "x_overlay"
+                }
+            ]
+        }
+    }
 }

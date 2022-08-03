@@ -148,8 +148,9 @@ async function handleLoadLabels(event, data) {
         let images = {};
         files.forEach(file => {
             let ext = path.extname(file).slice(1);
+            let file_key = file.substring(0, file.indexOf('.')); // remove ext from name
             if (ext in image_types) {
-                images[file] = "file://" + path.join(file_path, file).replaceAll("\\","/");
+                images[file_key] = "file://" + path.join(file_path, file).replaceAll("\\","/");
             }
         })
         return images;
