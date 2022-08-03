@@ -2,7 +2,7 @@ import { Component } from 'react';
 import GridImage from "./GridImage.js";
 import x_overlay from "../icons/x.svg";
 import $ from "jquery";
-const { file_name_to_valid_id, update_all_overlays } =  require("../QASM/utils.js");
+const { update_all_overlays } =  require("../QASM/utils.js");
 const { function_names } = require("../../public/electron_constants.js");
 
 const OVERLAYS = {
