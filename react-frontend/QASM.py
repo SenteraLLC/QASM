@@ -6,7 +6,7 @@ ENV_KEY = "REACT_APP_QASM_MODE"
 REQUIRED_QASM_KEYS = ["app", "components"]
 QASM_COMPONENTS = ["home", "grid"]
 QASM_MODES = ["local", "s3"]
-RUN_MODES = ["dev"]
+RUN_MODES = ["dev", "build-exe"]
 
 def main():
     """Start QASM app based off config.json."""

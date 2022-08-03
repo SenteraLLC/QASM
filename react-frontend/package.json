@@ -31,6 +31,7 @@
   "main": "public/electron.js",
   "scripts": {
     "QASM": "python QASM.py",
+    "QASM-build": "python QASM.py --mode build-exe",
     "start": "react-app-rewired start",
     "build": "react-app-rewired build",
     "dev": "concurrently -k \"cross-env BROWSER=none npm start\" \"npm:electron\"",
