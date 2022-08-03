@@ -21,6 +21,7 @@ class Grid extends Component {
     image_stack = []; 
     hover_image_id = null;
     hover_row_id = null;
+    update_success = false;
     default_classes = [
         {"class_name": "plant", "svg_overlay": null}, 
         {"class_name": "rouge", "svg_overlay": "x_overlay"},
@@ -358,13 +359,21 @@ class Grid extends Component {
                         ))}
                     </tbody>
                 </table>
-            </div>        
+            </div>       
         )
+    }
+
+    componentDidMount() {
+        setInterval(() => {
+            if (!this.update_success) {
+                this.update_success = update_all_overlays();
+            }
+        }, 1000)
     }
 
     componentDidUpdate() {
         // Update overlays
-        update_all_overlays();
+        this.update_success = update_all_overlays();
     }
 }
 

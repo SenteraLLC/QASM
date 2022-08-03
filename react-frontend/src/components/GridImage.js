@@ -91,7 +91,7 @@ class GridImage extends Component {
         )
     }
 
-    componentDidUpdate(prevProps, prevState, snapshot) {
+    componentDidUpdate() {
         // Update this particular overlay
         update_overlay_by_id(this.image_name + "-overlay");
     }
