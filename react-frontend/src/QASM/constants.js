@@ -5,5 +5,5 @@ exports.local_paths = {
 }
 
 exports.local_env = {
-    QASM_MODE: process.env.REACT_APP_QASM_MODE,
+    API_URL: process.env.REACT_APP_API_URL,
 }

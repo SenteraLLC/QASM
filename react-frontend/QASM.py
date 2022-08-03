@@ -44,13 +44,13 @@ def main():
         return
 
     app = config["app"]
-    try: # Store mode in .env for React
-        with open(".env", "w") as f:
-            f.write(f"{ENV_KEY} = {app}")
-    except Exception as e:
-        print("Failed to setup .env file, aborting...")
-        print(e)
-        return
+    # try: # Store mode in .env for React
+    #     with open(".env", "w") as f:
+    #         f.write(f"{ENV_KEY} = {app}")
+    # except Exception as e:
+    #     print("Failed to setup .env file, aborting...")
+    #     print(e)
+    #     return
 
     print("Setup successful, starting app...")
 

@@ -2,15 +2,16 @@
 const constants = require("./constants.js");
 
 export class QASM {
-    static create() {
-        return new this.subClasses[constants.local_env.QASM_MODE]()
+    static create(config) {
+        return new this.subClasses[config.app](config)
     } 
 }
 
 export class QASM_s3 extends QASM {
-    constructor() {
-        super();
+    constructor(config) {
+        super(config);
         this.mode = "s3";
+        this.config = config;
     }
 
     /* TODO:
@@ -20,9 +21,10 @@ export class QASM_s3 extends QASM {
 }
 
 export class QASM_Local extends QASM {
-    constructor() {
-        super();
+    constructor(config) {
+        super(config);
         this.mode = "local";
+        this.config = config;
     }
 
     async call_backend (window, function_name, data) {
