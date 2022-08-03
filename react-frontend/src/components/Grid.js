@@ -229,6 +229,9 @@ class Grid extends Component {
     async selectImageDir() {
         let dir_path = await this.QASM.call_backend(window, function_names.OPEN_DIR);
         if (dir_path !== undefined) {
+            if (this.src !== dir_path) {
+                this.image_stack = []; // Clear image stack on new directory load
+            }
             this.src = dir_path;
             await this.loadImages();
             this.updateState();

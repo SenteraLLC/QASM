@@ -1,11 +1,13 @@
 import { Component } from 'react';
+import icon from "../../public/icon.png";
 
 class Home extends Component {
 
     render() {
         return (
             <div className="Home">
-                <p>QASM Home</p>
+                <h2>QASM Home</h2>
+                <img src={icon} alt="icon"/>
             </div>
         )
     }

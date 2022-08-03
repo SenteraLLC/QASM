@@ -33,6 +33,7 @@ def main():
 
     if args.mode not in RUN_MODES:
         print(f"Enter a valid run mode: {RUN_MODES}")
+        return
 
     if any(key not in config for key in REQUIRED_QASM_KEYS): # If missing a required key
         print(f"Missing one or more required keys in config: {REQUIRED_QASM_KEYS}")

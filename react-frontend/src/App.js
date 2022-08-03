@@ -23,18 +23,11 @@ class App extends Component {
     this.config         = props.config;
     this.components     = this.config.components;
     this.component_keys = Object.keys(this.components);
-
-    // Use just "/" for homepage
-    // if (this.component_keys.includes("home")) {
-    //   this.component_keys[this.component_keys.indexOf("home")] = "/";
-    // }
-    
     
     for (let component_key in this.components) {
-      // Add QASM object & key to all component props
+      // Add QASM object to all component props
       let props = this.components[component_key]
       props.QASM = this.QASM;
-      props.key = component_key;
 
       // Build component list
       this.componentList.push(
