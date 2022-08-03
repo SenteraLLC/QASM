@@ -140,7 +140,6 @@ class Grid extends Component {
         document_head.appendChild(style);
     }
 
-    
     updateState() {
         this.setState({
             labels: this.labels,
@@ -308,16 +307,6 @@ class Grid extends Component {
     }
 
     render() {
-        // Render the add layers button only if images are already shown. 
-        // Otherwise render the select directory button
-        // let select_images_button;
-        // if (this.images_shown) {
-        //     select_images_button = <button onClick={this.addImageLayer}>Add Image Layer</button>;
-        // }
-        // else {
-        //     select_images_button = <button onClick={this.selectImageDir}>Select Directory</button>;
-        // }
-
         return (
             <div className="Grid" key={this.component_updater}>
                 <button 
