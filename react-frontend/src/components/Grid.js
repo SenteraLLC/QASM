@@ -342,11 +342,23 @@ class Grid extends Component {
                     max={99}
                     onChange={this.changeGridWidth}>
                 </input><br/>
-                <button onClick={this.loadLabels}>Load Labels</button>
+                <button 
+                    onClick={this.loadLabels} 
+                    className={this.images_shown ? "" : "hidden"}>
+                    Load Labels
+                </button>
                 &nbsp;&nbsp;&nbsp;
-                <button onClick={this.saveLabels}>Save Labels</button>
+                <button 
+                    onClick={this.saveLabels} 
+                    className={this.images_shown ? "" : "hidden"}>
+                    Save Labels
+                </button>
                 &nbsp;&nbsp;&nbsp;
-                <button onClick={this.clearAll}>Clear All</button>
+                <button 
+                    onClick={this.clearAll} 
+                    className={this.images_shown ? "" : "hidden"}>
+                    Clear All
+                </button>
                 <table id="Grid-table">
                     <tbody>
                         {this.grid_image_names.map(row_image_names => (
