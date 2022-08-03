@@ -29,22 +29,25 @@ export function file_name_to_valid_id(file_name) {
  */
 export function update_all_overlays() {
     let all_overlays = document.getElementsByClassName("overlay")
-
     // Just in case this runs before the overlays are added to the dom
     if (all_overlays.length === 0) {
-        return
+        return true
     }
 
     // Loop through every overlay and resize them to fit on their image
     for (let current_overlay of all_overlays) {
-
-        // Grab the current overlay's sibling image
-        const image = current_overlay.nextElementSibling;
-
+        
+        // Grab the current overlay's sibling image until image loads
+        let image = current_overlay.nextElementSibling;
+        
+        if (image.clientHeight === 0) {
+            return false
+        }
         // Set the overlay's width and height to the image's displayed width and height
         current_overlay.width  = image.clientWidth;
         current_overlay.height = image.clientHeight;
     }
+    return true;
 }
 
 /**
