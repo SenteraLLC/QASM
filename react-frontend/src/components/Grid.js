@@ -98,7 +98,6 @@ class Grid extends Component {
         this.changeGridWidth     = this.changeGridWidth.bind(this);
         this.updateState         = this.updateState.bind(this);
         this.updateLocalLabels   = this.updateLocalLabels.bind(this);
-        this.loadAndFormatImages = this.loadAndFormatImages.bind(this);
         this.addImageLayer       = this.addImageLayer.bind(this);
         this.getImageStackByName = this.getImageStackByName.bind(this);
         this.changeImage         = this.changeImage.bind(this);
@@ -149,23 +148,10 @@ class Grid extends Component {
 
     async loadImages() {
         console.log("Src: " + this.src);
-        this.images = await this.loadAndFormatImages(this.src);
+        this.images = await this.QASM.call_backend(window, function_names.LOAD_IMAGES, this.src);
         this.image_names = Object.keys(this.images);
         this.gridSetup();
         this.clearAll();
-    }
-
-    async loadAndFormatImages(dir_path) {
-        let raw_images = await this.QASM.call_backend(window, function_names.LOAD_IMAGES, dir_path);
-        let images = {};
-        let image_name;
-        // Remove extension, leaving only image name
-        Object.keys(raw_images).forEach((name) => {
-            image_name = file_name_to_valid_id(name);
-            // Rebuild images array using extensionless names
-            images[image_name] = raw_images[name];
-        });
-        return images;
     }
 
     gridSetup() {
@@ -245,7 +231,7 @@ class Grid extends Component {
         let dir_path = await this.QASM.call_backend(window, function_names.OPEN_DIR);
 
         // Load images and add them to the image stack
-        let image_layer = await this.loadAndFormatImages(dir_path);
+        let image_layer = await this.QASM.call_backend(window, function_names.LOAD_IMAGES, dir_path);
         if (Object.keys(image_layer).length === 0) {
             console.log("Prevent adding empty layer.");
         } else {
