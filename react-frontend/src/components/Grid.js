@@ -233,7 +233,6 @@ class Grid extends Component {
     }
 
     async addImageLayer() {
-        console.log("Add image layer called")
         // Prompt user to select directory
         let dir_path = await this.QASM.call_backend(window, function_names.OPEN_DIR);
 
@@ -323,7 +322,7 @@ class Grid extends Component {
             <div className="Grid" key={this.component_updater}>
                 <button 
                     onClick={this.selectImageDir}>
-                    Select Directory
+                    Select{this.images_shown ? " New " : " "}Directory
                 </button>
                 &nbsp;&nbsp;&nbsp;
                 <button 
