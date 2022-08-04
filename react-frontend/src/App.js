@@ -2,6 +2,7 @@ import { Component } from 'react';
 import './css/App.css';
 import Grid from "./components/Grid.js";
 import Home from "./components/Home.js";
+import icon from "../public/icon.png";
 import {HashRouter, Link, Route, Routes} from "react-router-dom";
 
 // Link keys to components
@@ -41,6 +42,9 @@ class App extends Component {
       <HashRouter>
       <div className="App">
         <div className="menu">
+          <a href='/' id="menu-logo">
+            <img src={icon} alt="Logo" />
+          </a>
           {this.component_keys.map(component_key => (
             <Link 
               className="Link"
