@@ -2,6 +2,7 @@ import { Component } from 'react';
 import GridImage from "./GridImage.js";
 import x_overlay from "../icons/x.svg";
 import $ from "jquery";
+import "../css/Grid.css";
 const { update_all_overlays } =  require("../QASM/utils.js");
 const { function_names } = require("../../public/electron_constants.js");
 
@@ -21,6 +22,7 @@ class Grid extends Component {
     image_stack = []; 
     hover_image_id = null;
     hover_row_id = null;
+    images_shown = false;
     update_success = false;
     default_classes = [
         {"class_name": "plant", "svg_overlay": null}, 
@@ -138,7 +140,6 @@ class Grid extends Component {
         document_head.appendChild(style);
     }
 
-    
     updateState() {
         this.setState({
             labels: this.labels,
@@ -221,6 +222,9 @@ class Grid extends Component {
             }
             this.src = dir_path;
             await this.loadImages();
+            
+            // Set the images shown to true now that the images are shown
+            this.images_shown = true;
             this.updateState();
         } else {
             console.log("Prevented loading invalid directory.");
@@ -309,11 +313,12 @@ class Grid extends Component {
             <div className="Grid" key={this.component_updater}>
                 <button 
                     onClick={this.selectImageDir}>
-                    Select Directory
+                    Select{this.images_shown ? " New " : " "}Directory
                 </button>
                 &nbsp;&nbsp;&nbsp;
                 <button 
-                    onClick={this.addImageLayer}>
+                    onClick={this.addImageLayer}
+                    className={this.images_shown ? "" : "hidden"}>
                     Add Image Layer
                 </button>
                 &nbsp;&nbsp;&nbsp;
@@ -328,11 +333,23 @@ class Grid extends Component {
                     max={99}
                     onChange={this.changeGridWidth}>
                 </input><br/>
-                <button onClick={this.loadLabels}>Load Labels</button>
+                <button 
+                    onClick={this.loadLabels} 
+                    className={this.images_shown ? "" : "hidden"}>
+                    Load Labels
+                </button>
                 &nbsp;&nbsp;&nbsp;
-                <button onClick={this.saveLabels}>Save Labels</button>
+                <button 
+                    onClick={this.saveLabels} 
+                    className={this.images_shown ? "" : "hidden"}>
+                    Save Labels
+                </button>
                 &nbsp;&nbsp;&nbsp;
-                <button onClick={this.clearAll}>Clear All</button>
+                <button 
+                    onClick={this.clearAll} 
+                    className={this.images_shown ? "" : "hidden"}>
+                    Clear All
+                </button>
                 <table id="Grid-table">
                     <tbody>
                         {this.grid_image_names.map(row_image_names => (
