@@ -1,8 +1,8 @@
 locals {
     lambda_defs = [
         { 
-            base_name = "lambda-test"
-            handler = "test.test"
+            base_name = "open-dir"
+            handler = "s3_browser.open_dir"
         },
     ]
 }
