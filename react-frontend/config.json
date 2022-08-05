@@ -1,5 +1,6 @@
 {
-    "app": "local",
+    "app": "s3",
+    "bucket": "stand-qa-data",
     "components": {
         "home": {},
         "grid": {

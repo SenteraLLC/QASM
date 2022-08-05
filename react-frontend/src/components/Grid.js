@@ -229,18 +229,20 @@ class Grid extends Component {
 
     async addImageLayer() {
         // Prompt user to select directory
+        console.log(this.QASM.s3_bucket)
         let dir_path = await this.QASM.call_backend(window, function_names.OPEN_DIR);
+        console.log(dir_path);
 
-        // Load images and add them to the image stack
-        let image_layer = await this.QASM.call_backend(window, function_names.LOAD_IMAGES, dir_path);
-        if (Object.keys(image_layer).length === 0) {
-            console.log("Prevent adding empty layer.");
-        } else {
-            this.image_stack.push(image_layer);
-        }   
-        console.log(this.image_stack);
-        this.getImageStackByName(this.image_names[0]);
-        this.updateState();
+        // // Load images and add them to the image stack
+        // let image_layer = await this.QASM.call_backend(window, function_names.LOAD_IMAGES, dir_path);
+        // if (Object.keys(image_layer).length === 0) {
+        //     console.log("Prevent adding empty layer.");
+        // } else {
+        //     this.image_stack.push(image_layer);
+        // }   
+        // console.log(this.image_stack);
+        // this.getImageStackByName(this.image_names[0]);
+        // this.updateState();
     }
     
     changeGridWidth(e) {

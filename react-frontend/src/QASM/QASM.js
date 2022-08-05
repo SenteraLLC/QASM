@@ -1,5 +1,6 @@
 // Definitions for base QASM class.
 const constants = require("./constants.js");
+const { function_handlers } = require("./lambda_handlers.js");
 
 export class QASM {
     static create(config) {
@@ -12,12 +13,12 @@ export class QASM_s3 extends QASM {
         super(config);
         this.mode = "s3";
         this.config = config;
+        this.s3_bucket = this.config.bucket;
     }
-
-    /* TODO:
-        call_backend
-    */
     
+    async call_backend (window, function_name, data) {
+        return await function_handlers[function_name](this, data);
+    }    
 }
 
 export class QASM_Local extends QASM {
