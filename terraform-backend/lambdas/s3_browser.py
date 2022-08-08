@@ -2,6 +2,7 @@ from multiprocessing.connection import Client
 import boto3
 import json
 from utils.lambda_utils import get_return_block_with_cors
+from utils.s3_utils import get_all_signed_urls_in_folder
 
 def open_dir(event, context):
     """Get info to construct a custom s3 browser."""
@@ -37,3 +38,11 @@ def open_dir(event, context):
         "folders": folders
     }
     return get_return_block_with_cors(ret)
+
+def get_signed_urls_in_folder(event, context):
+    """Get all signed urls in a folder."""
+    body = json.loads(event["body"])
+    bucket_name = body["bucket_name"]
+    folder_name = body["folder_name"]
+    urls = get_all_signed_urls_in_folder(bucket_name, folder_name)
+    return get_return_block_with_cors({"urls": urls})

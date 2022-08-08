@@ -37,8 +37,13 @@ async function handleOpenDir(QASM, data, window) {
     });
 }
 
-function handleLoadImages(QASM, data, window) {
-    
+async function handleLoadImages(QASM, data, window) {
+    let params = {
+        "bucket_name": QASM.s3_bucket,
+        "folder_name": data
+    }
+    let res = await api_consolidator_error_handler(params, "get_signed_urls_in_folder");
+    return res.urls;
 }
 
 function handleSaveFile(QASM, data, window) {
