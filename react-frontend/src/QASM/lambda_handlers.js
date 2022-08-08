@@ -7,30 +7,56 @@ exports.function_handlers = {
     [function_names.OPEN_DIR]:     handleOpenDir,
     [function_names.LOAD_IMAGES]:  handleLoadImages,
     [function_names.SAVE_FILE]:    handleSaveFile,
+    "openS3Folder":                handleOpenS3Folder,
 }
 
-function handleSaveLabels(QASM, data) {
+function handleSaveLabels(QASM, data, window) {
 
 }
 
-function handleLoadLabels(QASM, data) {
+function handleLoadLabels(QASM, data, window) {
     
 }
 
 /**
  * Open a directory selection dialog
- * 
+ * @param QASM QASM object
+ * @param data s3 prefix
  * @returns dir path on sucess, nothing on cancel
  */
-async function handleOpenDir(QASM, data) {
-    console.log(QASM);
-    return await api_consolidator_error_handler(QASM.s3_bucket, "open_dir")
+async function handleOpenDir(QASM, data, window) {
+    let url = window.location.origin + "/#/s3Browser";
+    window.open(url, "S3 Browser");
+
+    return new Promise(resolve => window.onmessage = (e) => {
+        try {
+            if (e.data.success) {
+                resolve(e.data.path);
+            }
+        } catch {}
+    });
 }
 
-function handleLoadImages(QASM, data) {
+function handleLoadImages(QASM, data, window) {
     
 }
 
-function handleSaveFile(QASM, data) {
+function handleSaveFile(QASM, data, window) {
     
+}
+
+
+/**
+ * Get file and folder names from an s3 folder path
+ * @param QASM QASM object
+ * @param data s3 prefix
+ * @returns {object} { folders: [], files: [] }
+ */
+async function handleOpenS3Folder(QASM, data, window) {
+    // Setup S3 Browser
+    let params = {
+        "bucket": QASM.s3_bucket,
+        "prefix": data
+    }
+    return await api_consolidator_error_handler(params, "open_dir");
 }

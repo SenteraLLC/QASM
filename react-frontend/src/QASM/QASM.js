@@ -14,11 +14,20 @@ export class QASM_s3 extends QASM {
         this.mode = "s3";
         this.config = config;
         this.s3_bucket = this.config.bucket;
+        this.folders = [];
+        this.files = [];
     }
     
-    async call_backend (window, function_name, data) {
-        return await function_handlers[function_name](this, data);
+    async call_backend (window, function_name, data=null) {
+        return await function_handlers[function_name](this, data, window);
     }    
+
+    async init() {
+        let response = await this.call_backend(window, "openS3Folder", null);
+        this.folders = response.folders;
+        this.files = response.files;
+        return this;
+    }
 }
 
 export class QASM_Local extends QASM {
@@ -30,6 +39,11 @@ export class QASM_Local extends QASM {
 
     async call_backend (window, function_name, data) {
         return await window.electron.invoke(function_name, data);
+    }
+
+    async init() {
+        // Nothing
+        return this;
     }
 }
 
