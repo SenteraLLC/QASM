@@ -4,6 +4,10 @@ locals {
             base_name = "open-dir"
             handler = "s3_browser.open_dir"
         },
+        { 
+            base_name = "get-signed-urls-in-folder"
+            handler = "s3_browser.get_signed_urls_in_folder"
+        },
     ]
 }
 
