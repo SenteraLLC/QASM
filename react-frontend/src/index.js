@@ -13,7 +13,7 @@ root.render(
   // </React.StrictMode>
   <>
     <App 
-      QASM={QASM.create(config)}
+      QASM={await QASM.create(config).init()}
       config={config} // TODO: also use cli config 
     />
   </>
