@@ -64,3 +64,16 @@ def save_labels(event, context):
         return get_return_block_with_cors("Labels saved.", False)
     except Exception:
         return get_return_block_with_cors("Error saving labels.", False)
+
+
+def load_labels(event, context):
+    """Load json data from an s3 path."""
+    body = json.loads(event["body"])
+    bucket_name = body["bucket_name"]
+    file_name = body["file_name"]
+    
+    s3 = boto3.resource('s3')
+    content_object = s3.Object(bucket_name, file_name)
+    file_content = content_object.get()['Body'].read().decode('utf-8')
+    labels = json.loads(file_content)
+    return get_return_block_with_cors({"labels": labels})
