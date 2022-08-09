@@ -1,5 +1,6 @@
 const { api_consolidator_error_handler } = require("./api_utils.js");
 const { function_names } = require("../../public/electron_constants.js");
+const { s3_browser_modes } = require("./constants.js");
 
 exports.function_handlers = {
     [function_names.SAVE_LABELS]:  handleSaveLabels,
@@ -10,8 +11,34 @@ exports.function_handlers = {
     "openS3Folder":                handleOpenS3Folder,
 }
 
-function handleSaveLabels(QASM, data, window) {
+/**
+ * Prompt the user to select a save destination,
+ * and then save the labels.
+ * 
+ * @param {Object} QASM QASM object
+ * @param {Object} data object with all the labels
+ * @param {*} window window
+ * @returns {string} result
+ */
+async function handleSaveFile(QASM, data, window) {
+    let url = window.location.origin + "/#/s3Browser";
+    let popup = window.open(url, "S3 Browser");
+    popup.S3_BROWSER_MODE = s3_browser_modes.SELECT_JSON;
 
+    return new Promise(resolve => window.onmessage = async (e) => {
+        try {
+            if (e.data.success) {
+                let params = {
+                    bucket_name: QASM.s3_bucket,
+                    file_name: e.data.path,
+                    labels: data,
+                }
+                resolve(await api_consolidator_error_handler(params, "save_labels"));
+            }
+        } catch {
+            resolve("Error when saving labels.");
+        }
+    });
 }
 
 function handleLoadLabels(QASM, data, window) {
@@ -20,13 +47,13 @@ function handleLoadLabels(QASM, data, window) {
 
 /**
  * Open a directory selection dialog
- * @param QASM QASM object
- * @param data s3 prefix
- * @returns dir path on sucess, nothing on cancel
+ *
+ * @returns s3 path on sucess, nothing on cancel
  */
 async function handleOpenDir(QASM, data, window) {
     let url = window.location.origin + "/#/s3Browser";
-    window.open(url, "S3 Browser");
+    let popup = window.open(url, "S3 Browser");
+    popup.S3_BROWSER_MODE = s3_browser_modes.SELECT_DIRECTORY;
 
     return new Promise(resolve => window.onmessage = (e) => {
         try {
@@ -46,7 +73,7 @@ async function handleLoadImages(QASM, data, window) {
     return res.urls;
 }
 
-function handleSaveFile(QASM, data, window) {
+function handleSaveLabels(QASM, data, window) {
     
 }
 

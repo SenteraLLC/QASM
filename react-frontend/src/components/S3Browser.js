@@ -2,6 +2,7 @@ import { Component } from 'react';
 import S3Folder from "./S3Folder.js";
 import S3File from "./S3File.js";
 const { image_types } = require("../../public/electron_constants.js");
+const { s3_browser_modes } = require("../QASM/constants.js");
 
 class S3Browser extends Component {
 
@@ -9,6 +10,7 @@ class S3Browser extends Component {
         super(props);
         
         this.QASM    = props.QASM
+        this.mode    = window.S3_BROWSER_MODE 
         this.parents = props.parents || [] // Stack of parent folders
         this.path    = props.path    || ""
         this.folders = props.folders || this.QASM.folders
@@ -18,10 +20,14 @@ class S3Browser extends Component {
             path: this.path
         };
 
+        console.log(this.mode);
+
         // Bind functions
         this.selectFolder = this.selectFolder.bind(this);
         this.changePath   = this.changePath.bind(this);
         this.goBack       = this.goBack.bind(this);
+        this.selectFile   = this.selectFile.bind(this);
+        this.createFile   = this.createFile.bind(this);
     }
 
     selectFolder() {
@@ -48,9 +54,30 @@ class S3Browser extends Component {
         } else {
             alert("No images found in folder " + this.path);
         }
-
-        
     }
+    
+    selectFile(file) {
+        if (this.mode === s3_browser_modes.SELECT_JSON) {
+            let ext = file.split('\\').pop().split('/').pop().split('.').pop()
+            if (ext === "json" || ext === "JSON") {
+                let data = {
+                    success: true,
+                    path: file,
+                }
+                // Send data back to parent window
+                window.opener.postMessage(data, '*');
+                window.close();
+            } else {
+                alert("Selected file not of type json.");
+            }
+        }
+    }
+
+    createFile() {
+        // TODO: Open file creation text submit
+        console.log("Not yet implemented.");
+    }
+
 
     async changePath(folder) {
         try {
@@ -69,7 +96,6 @@ class S3Browser extends Component {
     }
 
     async goBack() {
-        // TODO: Back icon? keep at top of list
         let folder = this.parents.pop();
         try {
             let response = await this.QASM.call_backend(window, "openS3Folder", folder);
@@ -90,11 +116,19 @@ class S3Browser extends Component {
         return (
             <div>
                 <h2>S3 Browser: {this.QASM.s3_bucket}</h2>
-                <button 
-                    onClick={this.selectFolder}>
-                    Select Directory: {this.path}
-                </button><br/>
-                { this.parents.length !== 0 &&
+                {this.mode === s3_browser_modes.SELECT_DIRECTORY &&
+                    <button 
+                        onClick={this.selectFolder}>
+                        Select Directory: {this.path}
+                    </button>
+                }<br/>
+                {this.mode === s3_browser_modes.SELECT_JSON &&
+                    <button 
+                        onClick={this.createFile}>
+                        Save to New File Here
+                    </button>
+                }<br/>
+                {this.parents.length !== 0 &&
                     <button 
                         onClick={this.goBack}>
                         Back
@@ -107,9 +141,11 @@ class S3Browser extends Component {
                     </div>
                 ))}
                 {this.files.map(file_name => (
-                    <S3File
-                        key={file_name}
-                        path={file_name}/>  
+                    <div onClick={e => this.selectFile(e.target.id)} key={file_name}>
+                        <S3File
+                            key={file_name}
+                            path={file_name}/> 
+                    </div> 
                 ))}
             </div>
         )

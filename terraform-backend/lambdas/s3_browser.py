@@ -39,6 +39,7 @@ def open_dir(event, context):
     }
     return get_return_block_with_cors(ret)
 
+
 def get_signed_urls_in_folder(event, context):
     """Get all signed urls in a folder."""
     body = json.loads(event["body"])
@@ -46,3 +47,20 @@ def get_signed_urls_in_folder(event, context):
     folder_name = body["folder_name"]
     urls = get_all_signed_urls_in_folder(bucket_name, folder_name)
     return get_return_block_with_cors({"urls": urls})
+
+
+def save_labels(event, context):
+    """Save json data to s3 path."""
+    body = json.loads(event["body"])
+    labels = body["labels"]
+    bucket_name = body["bucket_name"]
+    file_name = body["file_name"]
+    try:
+        s3 = boto3.resource('s3')
+        s3object = s3.Object(bucket_name, file_name)
+        s3object.put(
+            Body=(bytes(json.dumps(labels).encode('UTF-8')))
+        )
+        return get_return_block_with_cors("Labels saved.", False)
+    except Exception:
+        return get_return_block_with_cors("Error saving labels.", False)

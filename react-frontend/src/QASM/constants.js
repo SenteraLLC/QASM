@@ -7,3 +7,8 @@ exports.local_paths = {
 exports.local_env = {
     API_URL: process.env.REACT_APP_API_URL,
 }
+
+exports.s3_browser_modes = {
+    SELECT_DIRECTORY: "select_directory",
+    SELECT_JSON: "select_json",
+}
