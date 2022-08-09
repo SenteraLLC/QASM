@@ -41,8 +41,36 @@ async function handleSaveFile(QASM, data, window) {
     });
 }
 
-function handleLoadLabels(QASM, data, window) {
-    
+/**
+ * Prompt the user to select a file,
+ * and then load and return the labels.
+ * 
+ * @param {Object} QASM QASM object
+ * @param {*} data data
+ * @param {*} window window
+ * @returns {Object} labels
+ */
+async function handleLoadLabels(QASM, data, window) {
+    let url = window.location.origin + "/#/s3Browser";
+    let popup = window.open(url, "S3 Browser");
+    // TODO: different mode for loading/saving?
+    popup.S3_BROWSER_MODE = s3_browser_modes.SELECT_JSON; 
+
+    return new Promise(resolve => window.onmessage = async (e) => {
+        try {
+            if (e.data.success) {
+                let params = {
+                    bucket_name: QASM.s3_bucket,
+                    file_name: e.data.path,
+                }
+                let res = await api_consolidator_error_handler(params, "load_labels");
+                resolve(res.labels);
+            }
+        } catch {
+            console.log("Error when loading labels.")
+            resolve({});
+        }
+    });
 }
 
 /**

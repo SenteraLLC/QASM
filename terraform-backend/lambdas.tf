@@ -12,6 +12,10 @@ locals {
             base_name = "save-labels"
             handler = "s3_browser.save_labels"
         },
+        { 
+            base_name = "load-labels"
+            handler = "s3_browser.load_labels"
+        },
     ]
 }
 
