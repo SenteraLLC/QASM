@@ -42,7 +42,7 @@ def get_all_signed_urls_in_folder(bucket_name, folder_path, s3_client=None):
         folder_path += "/"
     result = client.list_objects(Bucket=bucket_name, Prefix=folder_path, Delimiter="/")
     return {
-        str(o.get("Key")).split("/")[-1]:
+        str(Path(str(o.get("Key")).split("/")[-1]).with_suffix("")): # Filename w/o ext
         get_signed_url(
             bucket_name, folder_path, str(o.get("Key")).split("/")[-1], s3_client
         )

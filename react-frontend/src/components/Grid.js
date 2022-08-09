@@ -152,6 +152,7 @@ class Grid extends Component {
         console.log("Src: " + this.src);
         this.images = await this.QASM.call_backend(window, function_names.LOAD_IMAGES, this.src);
         this.image_names = Object.keys(this.images);
+        console.log(this.images);
         this.gridSetup();
         this.clearAll();
     }
@@ -245,7 +246,6 @@ class Grid extends Component {
             this.image_stack.push(image_layer);
         }   
         console.log(this.image_stack);
-        this.getImageStackByName(this.image_names[0]);
         this.updateState();
     }
     
