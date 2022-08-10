@@ -26,7 +26,7 @@ class Grid extends Component {
     update_success = false;
     default_classes = [
         {"class_name": "plant", "svg_overlay": null}, 
-        {"class_name": "rouge", "svg_overlay": "x_overlay"},
+        {"class_name": "rogue", "svg_overlay": "x_overlay"},
     ];
 
     constructor(props) {
