@@ -1,4 +1,4 @@
-import { Component } from 'react';
+import { Component, useRef } from 'react';
 import S3Folder from "./S3Folder.js";
 import S3File from "./S3File.js";
 const { image_types } = require("../../public/electron_constants.js");
@@ -10,7 +10,7 @@ class S3Browser extends Component {
         super(props);
         
         this.QASM    = props.QASM
-        this.mode    = window.S3_BROWSER_MODE 
+        this.mode    = window.S3_BROWSER_MODE // Set by window opener
         this.parents = props.parents || [] // Stack of parent folders
         this.path    = props.path    || ""
         this.folders = props.folders || this.QASM.folders
@@ -31,7 +31,6 @@ class S3Browser extends Component {
     }
 
     selectFolder() {
-        // TODO: Check if folder contains images and warn user if it dont
         
         let images_present = false;
         for (let file of this.files) {
@@ -74,8 +73,19 @@ class S3Browser extends Component {
     }
 
     createFile() {
-        // TODO: Open file creation text submit
-        console.log("Not yet implemented.");
+        let new_filename = document.getElementById("new-filename").value;
+        // Space -> underscore, remove extension
+        new_filename = new_filename.replace(" ", "_").split('.')[0];
+        // Save as json
+        new_filename = new_filename + ".json";
+        // Add full path
+        new_filename = this.path + new_filename;
+        
+        /* eslint-disable */
+        // Prompt user to confirm, then save
+        if (confirm("Save to new file " + new_filename + "?")) {
+            this.selectFile(new_filename);
+        }
     }
 
 
@@ -123,10 +133,16 @@ class S3Browser extends Component {
                     </button>
                 }<br/>
                 {this.mode === s3_browser_modes.SELECT_JSON &&
-                    <button 
-                        onClick={this.createFile}>
-                        Save to New File Here
-                    </button>
+                    <div>
+                        <button 
+                            onClick={this.createFile}>
+                            Save Here to New File:
+                        </button>
+                        <input
+                            id="new-filename"
+                            type="text"
+                        />
+                    </div>
                 }<br/>
                 {this.parents.length !== 0 &&
                     <button 
