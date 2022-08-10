@@ -1,13 +1,14 @@
-const { removeModuleScopePlugin } = require('customize-cra')
+const { override, removeModuleScopePlugin } = require('customize-cra')
 
-// Allow importing outside of /src
-module.exports = removeModuleScopePlugin(); 
+module.exports = override(
+    // Allow importing outside of /src
+    removeModuleScopePlugin(), 
 
-// module.exports = function override (config) {
-    
-//     // Allow use of await when building the app
-//     config.experiments = {
-//         topLevelAwait: true
-//     }
-//     // return config
-// }
+    // Allow use of await when building the app
+    function (config) {
+        config.experiments = {
+            topLevelAwait: true
+        }
+        return config
+    }
+);    

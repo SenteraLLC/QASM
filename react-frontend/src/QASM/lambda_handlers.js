@@ -2,7 +2,8 @@ const { api_consolidator_error_handler } = require("./api_utils.js");
 const { function_names } = require("../../public/electron_constants.js");
 const { s3_browser_modes } = require("./constants.js");
 
-exports.function_handlers = {
+// Export like this so static site works idk why
+const function_handlers = {
     [function_names.SAVE_LABELS]:  handleSaveLabels,
     [function_names.LOAD_LABELS]:  handleLoadLabels,
     [function_names.OPEN_DIR]:     handleOpenDir,
@@ -10,6 +11,7 @@ exports.function_handlers = {
     [function_names.SAVE_FILE]:    handleSaveFile,
     "openS3Folder":                handleOpenS3Folder,
 }
+export { function_handlers }
 
 /**
  * Prompt the user to select a save destination,

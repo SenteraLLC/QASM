@@ -1,4 +1,4 @@
-import { Component, useRef } from 'react';
+import { Component } from 'react';
 import S3Folder from "./S3Folder.js";
 import S3File from "./S3File.js";
 const { image_types } = require("../../public/electron_constants.js");
