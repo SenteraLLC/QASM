@@ -9,6 +9,28 @@
     background: #eeff00;
 } */
 
+:root {
+    --icon-size: 8em;
+}
+
 div.S3Folder fieldset {
     display: inline-block;
+}
+
+div.S3Folder div.grid {
+    width: 90vw;
+    margin: 0 auto;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    gap: 5em 4em;
+}
+
+div.S3Folder div.grid > * {
+    max-width: var(--icon-size);
+    max-height: var(--icon-size);
+}
+
+div.S3Folder div.grid p {
+    word-break: break-all;
 }
