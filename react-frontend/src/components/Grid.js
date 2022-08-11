@@ -1,7 +1,14 @@
 import { Component } from 'react';
 import GridImage from "./GridImage.js";
-const { call_backend, file_name_to_valid_id, update_all_overlays } =  require("../QASM/utils.js");
+import x_overlay from "../icons/x.svg";
+import $ from "jquery";
+import "../css/Grid.css";
+const { update_all_overlays } =  require("../QASM/utils.js");
 const { function_names } = require("../../public/electron_constants.js");
+
+const OVERLAYS = {
+    "x_overlay": x_overlay
+}
 
 class Grid extends Component {
     images = {};
@@ -11,40 +18,128 @@ class Grid extends Component {
     src = "";
     classes = [];
     labels = {};   
-    component_updater = 0; 
+    component_updater = 0;
+    image_stack = []; 
+    hover_image_id = null;
+    hover_row_id = null;
+    images_shown = false;
+    update_success = false;
+    default_classes = [
+        {"class_name": "plant", "svg_overlay": null}, 
+        {"class_name": "rogue", "svg_overlay": "x_overlay"},
+    ];
 
     constructor(props) {
         super(props);
         
         // Initialize props
-        this.grid_width   = props.grid_width   || 2;
-        this.classes      = props.classes      || ["plant", "rogue"];
+        this.QASM         = props.QASM
+        this.grid_width   = props.grid_width || 2;
+        this.classes      = props.classes    || this.default_classes
         this.src          = props.src
-        this.css_by_class = props.css_by_class 
 
         this.state = {
             labels: this.labels,
             src: this.src,
         };
-        
-        // Initial setup
-        this.loadImages();
+
+        // Render stock overlays
+        for (let [idx, class_props] of this.classes.entries()) {
+            if (
+                "svg_overlay" in class_props && 
+                class_props["svg_overlay"] in OVERLAYS
+            ) {
+                class_props["svg_overlay"] = OVERLAYS[class_props["svg_overlay"]];
+                this.classes[idx] = class_props;
+            }
+        }
 
         // Update the overlays whenever the page size is changed
         window.addEventListener("resize", update_all_overlays);
 
+        // Update which image is currently being hovered
+        document.addEventListener("mousemove", (e) => {
+            if (e.target.className.includes("hover-target")) {
+                // Every single hover-target will be inside of a div that's 
+                // inside of a div, that has the id that we're trying to select.
+                this.hover_image_id = e.target.parentNode.parentNode.id;
+                this.hover_row_id = e.target.parentNode.parentNode.parentNode.parentNode.id;
+            } 
+            else {
+                this.hover_image_id = null;
+                this.hover_row_id = null;
+            }
+        });
+
+        // Prevent weird behavior when scrolling
+        window.addEventListener("scroll", () => {
+            this.hover_image_id = null;
+        }); 
+
+        // Keybinds
+        window.addEventListener("keydown", (e) => {
+            if (e.ctrlKey && e.key === "s") {
+                e.preventDefault();
+                this.saveLabels();
+            }
+
+            if (this.hover_image_id !== null && e.key === "b") {
+                this.changeImage(this.hover_image_id);
+            }
+
+            if (this.hover_row_id !== null && e.key === "n") {
+                this.autoScroll(this.hover_row_id);
+            }
+        });
+
         // Bind functions
-        this.loadImages        = this.loadImages.bind(this);
-        this.saveLabels        = this.saveLabels.bind(this);
-        this.loadLabels        = this.loadLabels.bind(this);
-        this.clearAll          = this.clearAll.bind(this);
-        this.selectImageDir    = this.selectImageDir.bind(this);
-        this.changeGridWidth   = this.changeGridWidth.bind(this);
-        this.updateState       = this.updateState.bind(this);
-        this.updateLocalLabels = this.updateLocalLabels.bind(this);
+        this.loadImages          = this.loadImages.bind(this);
+        this.saveLabels          = this.saveLabels.bind(this);
+        this.loadLabels          = this.loadLabels.bind(this);
+        this.clearAll            = this.clearAll.bind(this);
+        this.selectImageDir      = this.selectImageDir.bind(this);
+        this.changeGridWidth     = this.changeGridWidth.bind(this);
+        this.updateState         = this.updateState.bind(this);
+        this.updateLocalLabels   = this.updateLocalLabels.bind(this);
+        this.addImageLayer       = this.addImageLayer.bind(this);
+        this.getImageStackByName = this.getImageStackByName.bind(this);
+        this.changeImage         = this.changeImage.bind(this);
+        this.autoScroll          = this.autoScroll.bind(this);
+
+
+        // Grab the document's head tag and create a style tag
+        let document_head = document.getElementsByTagName('head')[0];
+        let style = document.createElement('style');
+
+        // Loop through all classes and append each classes' overlay opacity to it
+        for (let each_class of this.classes) {
+            if (each_class.svg_overlay == null) {
+                // If the overlay doesn't exist don't show it
+                style.textContent += `div.${each_class.class_name} > * > img.overlay {
+                    filter: opacity(0)
+                }
+                `;
+            }
+            else if (each_class.opacity !== undefined) {
+                // Use the custom overlay opacity
+                style.textContent += `div.${each_class.class_name} > * > img.overlay {
+                    filter: opacity(${each_class.opacity})
+                }
+                `;
+            }
+            else {
+                // Use the default opacity
+                style.textContent += `div.${each_class.class_name} > * > img.overlay {
+                    filter: opacity(1)
+                }
+                `;
+            }
+        }
+
+        // Append the newly created style tag to the documet head
+        document_head.appendChild(style);
     }
 
-    
     updateState() {
         this.setState({
             labels: this.labels,
@@ -55,8 +150,9 @@ class Grid extends Component {
 
     async loadImages() {
         console.log("Src: " + this.src);
-        this.images = await call_backend(window, function_names.LOAD_IMAGES, this.src);
+        this.images = await this.QASM.call_backend(window, function_names.LOAD_IMAGES, this.src);
         this.image_names = Object.keys(this.images);
+        console.log(this.images);
         this.gridSetup();
         this.clearAll();
     }
@@ -87,7 +183,7 @@ class Grid extends Component {
         this.labels = {};
         for (let i=0; i < this.image_names.length; i++) {
             let image_name = this.image_names[i];
-            let class_name = document.getElementById(file_name_to_valid_id(image_name)).classList[1];
+            let class_name = document.getElementById(image_name).classList[1];
             this.labels[image_name] = {
                 "class": class_name
             }
@@ -97,12 +193,12 @@ class Grid extends Component {
     async saveLabels() {
         this.updateLocalLabels();
         console.log(this.labels);
-        console.log(await call_backend(window, function_names.SAVE_FILE, this.labels));
+        console.log(await this.QASM.call_backend(window, function_names.SAVE_FILE, this.labels));
     }
 
     async loadLabels() {
         // Load in previous labels
-        this.labels = await call_backend(window, function_names.LOAD_LABELS);
+        this.labels = await this.QASM.call_backend(window, function_names.LOAD_LABELS);
         console.log(this.labels);
         
         if (Object.keys(this.labels).length > 0) {
@@ -120,9 +216,36 @@ class Grid extends Component {
     }
 
     async selectImageDir() {
-        let dir_path = await call_backend(window, function_names.OPEN_DIR);
-        this.src = dir_path;
-        await this.loadImages();
+        let dir_path = await this.QASM.call_backend(window, function_names.OPEN_DIR);
+        if (dir_path !== undefined) {
+            if (this.src !== dir_path) {
+                this.image_stack = []; // Clear image stack on new directory load
+            }
+            this.src = dir_path;
+            await this.loadImages();
+            
+            // Set the images shown to true now that the images are shown
+            this.images_shown = true;
+            this.updateState();
+        } else {
+            console.log("Prevented loading invalid directory.");
+        }
+    }
+
+    async addImageLayer() {
+        // Prompt user to select directory
+        console.log(this.QASM.s3_bucket)
+        let dir_path = await this.QASM.call_backend(window, function_names.OPEN_DIR);
+        console.log(dir_path);
+
+        // Load images and add them to the image stack
+        let image_layer = await this.QASM.call_backend(window, function_names.LOAD_IMAGES, dir_path);
+        if (Object.keys(image_layer).length === 0) {
+            console.log("Prevent adding empty layer.");
+        } else {
+            this.image_stack.push(image_layer);
+        }   
+        console.log(this.image_stack);
         this.updateState();
     }
     
@@ -140,13 +263,63 @@ class Grid extends Component {
         this.updateState();
     }
 
+    getImageStackByName(image_name) {
+        let image_stack = [];
+        for (let image_layer of this.image_stack) {
+            if (image_name in image_layer) {
+                image_stack.push(image_layer[image_name]);
+            }
+        }
+        return(image_stack);
+    }
+
+    changeImage(hover_image_id) {
+        // firstChild = image holder div
+        // childNodes of image holder div = image layers
+
+        let layers = document.getElementById(hover_image_id).firstChild.childNodes;
+        for (let idx = 0; idx < layers.length; idx++) {
+            let layer = layers[idx];
+            // Skip overlays and hidden images
+            if (layer.id.includes("overlay") || layer.classList.contains("hidden")) {
+                continue;
+            }
+            
+            // Change currently shown image to hidden
+            layer.classList.add("hidden");
+
+            // Change next hidden image to shown
+            if (idx+1 === layers.length) {
+                // If we're at the last layer, turn on the og image
+                layers[1].classList.remove("hidden");
+            } else {
+                // Un-hide next image
+                layers[idx+1].classList.remove("hidden");
+            }
+            // Done
+            break;
+        }
+    }
+
+    autoScroll(hover_row_id) {
+        // scroll to next row
+        $(document).scrollTop($("#"+hover_row_id).next().offset().top);
+        // set next row as hovered for consecutive navigation
+        this.hover_row_id = $("#"+hover_row_id).next()[0].id;
+    }
+
     render() {
         return (
             <div className="Grid" key={this.component_updater}>
                 <button 
-                    onClick={this.selectImageDir} 
-                    style={{"marginBottom":"16px"}}>
-                    Select Directory
+                    onClick={this.selectImageDir}>
+                    Select{this.images_shown ? " New " : " "}Directory
+                </button>
+                &nbsp;&nbsp;&nbsp;
+                <button 
+                    onClick={this.addImageLayer}
+                    className={this.images_shown ? "" : "hidden"}>
+                    Add Image Layer
                 </button>
                 &nbsp;&nbsp;&nbsp;
                 <p style={{"display": "inline-block"}}>Grid Width:</p>
@@ -160,26 +333,43 @@ class Grid extends Component {
                     max={99}
                     onChange={this.changeGridWidth}>
                 </input><br/>
-                <button onClick={this.loadLabels}>Load Labels</button>
+                <button 
+                    onClick={this.loadLabels} 
+                    className={this.images_shown ? "" : "hidden"}>
+                    Load Labels
+                </button>
                 &nbsp;&nbsp;&nbsp;
-                <button onClick={this.saveLabels}>Save Labels</button>
+                <button 
+                    onClick={this.saveLabels} 
+                    className={this.images_shown ? "" : "hidden"}>
+                    Save Labels
+                </button>
                 &nbsp;&nbsp;&nbsp;
-                <button onClick={this.clearAll}>Clear All</button>
+                <button 
+                    onClick={this.clearAll} 
+                    className={this.images_shown ? "" : "hidden"}>
+                    Clear All
+                </button>
                 <table id="Grid-table">
                     <tbody>
                         {this.grid_image_names.map(row_image_names => (
-                            <tr key={"row_" + this.grid_image_names.indexOf(row_image_names)}>
+                            <tr 
+                                key={"row_" + this.grid_image_names.indexOf(row_image_names)}
+                                id={"row_" + this.grid_image_names.indexOf(row_image_names)}
+                            >
                                 {row_image_names.map(image_name => (
                                     <td key={image_name}>
                                         <GridImage
                                             image={this.images[image_name]} 
                                             image_name={image_name} 
                                             classes={this.classes}
-                                            css_by_class={this.css_by_class}
                                             default_class={
                                                 image_name in this.labels 
                                                     ? this.labels[image_name]["class"] 
-                                                    : this.classes[0]
+                                                    : this.classes[0].class_name
+                                            }
+                                            image_stack={
+                                                this.getImageStackByName(image_name)
                                             }
                                         />
                                     </td>
@@ -188,13 +378,21 @@ class Grid extends Component {
                         ))}
                     </tbody>
                 </table>
-            </div>        
+            </div>       
         )
+    }
+
+    componentDidMount() {
+        setInterval(() => {
+            if (!this.update_success) {
+                this.update_success = update_all_overlays();
+            }
+        }, 1000)
     }
 
     componentDidUpdate() {
         // Update overlays
-        update_all_overlays();
+        this.update_success = update_all_overlays();
     }
 }
 
