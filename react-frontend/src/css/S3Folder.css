@@ -8,3 +8,7 @@
 /* .S3Folder:hover {
     background: #eeff00;
 } */
+
+div.S3Folder fieldset {
+    display: inline-block;
+}

@@ -124,8 +124,19 @@ class S3Browser extends Component {
 
     render() {
         return (
-            <div>
+            <div className="S3Folder">
                 <h2>S3 Browser: {this.QASM.s3_bucket}</h2>
+                <fieldset className="directory-display-mode">
+                    <legend>Display Mode</legend>
+                    <div>
+                        <input type="radio" id="grid-display" name="display" value="grid" checked />
+                        <label for="grid-display">Grid</label>
+                    </div>
+                    <div>
+                        <input type="radio" id="list-display" name="display" value="list" />
+                        <label for="list-display">List</label>
+                    </div>
+                </fieldset>
                 {this.mode === s3_browser_modes.SELECT_DIRECTORY &&
                     <button 
                         onClick={this.selectFolder}>
