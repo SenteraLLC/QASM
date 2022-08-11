@@ -1,6 +1,6 @@
 {
   "name": "react-frontend",
-  "version": "0.1.0",
+  "version": "0.4.0",
   "private": true,
   "proxy": "http://localhost:3000",
   "homepage": "./",
@@ -13,9 +13,11 @@
     "customize-cra": "^1.0.0",
     "electron-is-dev": "^2.0.0",
     "electron-packager": "^15.5.1",
+    "jquery": "^3.6.0",
     "react": "^18.2.0",
     "react-app-rewired": "^2.2.1",
     "react-dom": "^18.2.0",
+    "react-router-dom": "^6.3.0",
     "react-scripts": "5.0.1",
     "util": "^0.12.4",
     "wait-on": "^6.0.1",
@@ -28,10 +30,10 @@
   },
   "main": "public/electron.js",
   "scripts": {
+    "QASM": "python QASM.py",
+    "QASM-build": "python QASM.py --mode build-exe",
     "start": "react-app-rewired start",
     "build": "react-app-rewired build",
-    "test": "react-scripts test",
-    "eject": "react-scripts eject",
     "dev": "concurrently -k \"cross-env BROWSER=none npm start\" \"npm:electron\"",
     "electron": "wait-on tcp:3000 && electron .",
     "build-package": "npm run build && electron-packager ./ --platform=win32 --arch=x64 --overwrite",
@@ -55,12 +57,11 @@
       "last 1 safari version"
     ]
   },
-
   "build": {
     "productName": "QASM App",
     "win": {
-        "target": "NSIS",
-        "icon": "public/icon.png"
-      }
+      "target": "NSIS",
+      "icon": "public/icon.png"
     }
+  }
 }

@@ -1,3 +1,47 @@
+body {
+  margin: 0;
+}
+
 .App {
   text-align: center;
+}
+
+div.menu {
+  background-color: lightgray;
+  color: #888;  /*Colors box shadow */
+  box-shadow: 0 0 0.3em 0.05em;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+}
+
+div.menu #menu-logo {
+  position: absolute;
+  left: 1em;
+  max-height: 50px;
+}
+
+div.menu #menu-logo img {
+  max-height: 50px;
+}
+
+div.menu a.Link {
+  color: #636363;
+  align-content: center;
+  display: inline-block;
+  margin: 0;
+  padding: 0 1em;
+  text-decoration: none;
+  text-align: center;
+}
+
+div.menu a.Link:hover {
+  background-color: #636363;
+  color: #D4D4D4;
+  transition: 200ms;
+}
+
+h2::first-letter {
+  text-transform: capitalize;
 }

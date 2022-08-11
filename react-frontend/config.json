@@ -1,0 +1,20 @@
+{
+    "app": "s3",
+    "bucket": "stand-qa-data",
+    "components": {
+        "home": {},
+        "grid": {
+            "grid_width": 2,
+            "classes": [
+                {
+                    "class_name": "plant", 
+                    "svg_overlay": null
+                }, 
+                {
+                    "class_name": "rogue", 
+                    "svg_overlay": "x_overlay"
+                }
+            ]
+        }
+    }
+}

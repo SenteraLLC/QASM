@@ -24,31 +24,30 @@ export function file_name_to_valid_id(file_name) {
     return valid_name
 }
 
-export async function call_backend (window, function_name, data) {
-    return await window.electron.invoke(function_name, data);
-}
-
 /**
  * Updates all of the overlays to be the same size as their image.
  */
 export function update_all_overlays() {
-    let all_overlays = document.getElementsByClassName("x-overlay")
-
+    let all_overlays = document.getElementsByClassName("overlay")
     // Just in case this runs before the overlays are added to the dom
     if (all_overlays.length === 0) {
-        return
+        return true
     }
 
     // Loop through every overlay and resize them to fit on their image
     for (let current_overlay of all_overlays) {
-
-        // Grab the current overlay's sibling image
-        const image = current_overlay.nextElementSibling;
-
+        
+        // Grab the current overlay's sibling image until image loads
+        let image = current_overlay.nextElementSibling;
+        
+        if (image.clientHeight === 0) {
+            return false
+        }
         // Set the overlay's width and height to the image's displayed width and height
         current_overlay.width  = image.clientWidth;
         current_overlay.height = image.clientHeight;
     }
+    return true;
 }
 
 /**
@@ -56,12 +55,29 @@ export function update_all_overlays() {
  * 
  * @param {string} overlay_id id of the overlay you want to update
  */
-export function update_overlay_by_id(overlay_id) {
+ export function update_overlay_by_id(overlay_id) {
     // Get the overlay by its id
     let overlay = document.getElementById(overlay_id)
 
-    // Grab the current overlay's sibling image
-    const image = overlay.nextElementSibling;
+    // Grab the element's parent
+    let overlay_parent = overlay.parentElement;
+
+    // Use the element's parent to get its siblings
+    let overlay_siblings = overlay_parent.children;
+
+    let image;
+
+    // Loop through all of the sibling elements until you find the sibling that is currently displayed.
+    for (let sibling of overlay_siblings) {
+
+        // If the sibling is an overlay or hidden, then its not the sibling we want
+        if (sibling.className.includes("hidden") || sibling.className.includes("overlay")) {
+            continue
+        } 
+
+        // The current sibling is the image we're looking for
+        image = sibling;
+    }
 
     // Set the overlay's width and height to the image's displayed width and height
     overlay.width  = image.clientWidth;

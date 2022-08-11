@@ -1,5 +1,6 @@
 .GridImage {
-    position: relative; 
+    position: relative;
+    padding: 0.5em;
 }
 
 img {
@@ -7,7 +8,7 @@ img {
     max-height: 100%;
 }
 
-img.x-overlay {
+img.overlay {
     position: absolute;
     left: 0;
     right: 0;
@@ -16,10 +17,10 @@ img.x-overlay {
     z-index: 1;
 }
 
-div.rogue > * > img.x-overlay {
-    filter: opacity(1);
-}
-
 p.image-name {
     word-break: break-all;
+}
+
+.hidden {
+    display: none;
 }
