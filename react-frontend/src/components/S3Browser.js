@@ -187,13 +187,13 @@ class S3Browser extends Component {
                 }
                 <div className={this.getDisplayMode()} id="s3-folder-holder">
                     {this.folders.map(folder_name => (
-                        <div onClick={e => this.changePath(e.target.id)} key={folder_name}>
+                        <div onClick={e => this.changePath(e.target.id)} key={folder_name} className="clickable">
                             <S3Folder
                                 path={folder_name}/>  
                         </div>
                     ))}
                     {this.files.map(file_name => (
-                        <div onClick={e => this.selectFile(e.target.id)} key={file_name}>
+                        <div onClick={e => this.selectFile(e.target.id)} key={file_name} className="clickable">
                             <S3File
                                 key={file_name}
                                 path={file_name}/> 
