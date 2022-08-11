@@ -5,6 +5,7 @@ const { image_types } = require("../../public/electron_constants.js");
 const { s3_browser_modes } = require("../QASM/constants.js");
 
 class S3Browser extends Component {
+    component_updater = 0;
 
     constructor(props) {
         super(props);
@@ -23,11 +24,13 @@ class S3Browser extends Component {
         console.log(this.mode);
 
         // Bind functions
-        this.selectFolder = this.selectFolder.bind(this);
-        this.changePath   = this.changePath.bind(this);
-        this.goBack       = this.goBack.bind(this);
-        this.selectFile   = this.selectFile.bind(this);
-        this.createFile   = this.createFile.bind(this);
+        this.selectFolder      = this.selectFolder.bind(this);
+        this.changePath        = this.changePath.bind(this);
+        this.goBack            = this.goBack.bind(this);
+        this.selectFile        = this.selectFile.bind(this);
+        this.createFile        = this.createFile.bind(this);
+        this.getDisplayMode    = this.getDisplayMode.bind(this);
+        this.updateDisplayMode = this.updateDisplayMode.bind(this);
     }
 
     selectFolder() {
@@ -88,7 +91,6 @@ class S3Browser extends Component {
         }
     }
 
-
     async changePath(folder) {
         try {
             let response = await this.QASM.call_backend(window, "openS3Folder", folder);
@@ -122,6 +124,28 @@ class S3Browser extends Component {
         }
     }
 
+    /**
+     * Checks which mode is selected and returns that value. If the mode select
+     * buttons haven't loaded in yet, then it returns the default of grid.
+     * 
+     * @returns Display mode as string
+     */
+    getDisplayMode() {
+        if (document.querySelector("input[name='display']:checked") === null) {
+            return "grid";
+        }
+        else {
+            return document.querySelector("input[name='display']:checked").value
+        }
+    }
+
+    /**
+     * Updates the class on the div that holds all of the s3 stuff.
+     */
+    updateDisplayMode() {
+        document.getElementById("s3-folder-holder").className = this.getDisplayMode();
+    }
+
     render() {
         return (
             <div className="S3Folder">
@@ -129,11 +153,11 @@ class S3Browser extends Component {
                 <fieldset className="directory-display-mode">
                     <legend>Display Mode</legend>
                     <div>
-                        <input type="radio" id="grid-display" name="display" value="grid" checked />
+                        <input type="radio" id="grid-display" name="display" value="grid" onChange={this.updateDisplayMode} defaultChecked />
                         <label for="grid-display">Grid</label>
                     </div>
                     <div>
-                        <input type="radio" id="list-display" name="display" value="list" />
+                        <input type="radio" id="list-display" name="display" value="list" onChange={this.updateDisplayMode} />
                         <label for="list-display">List</label>
                     </div>
                 </fieldset>
@@ -161,22 +185,40 @@ class S3Browser extends Component {
                         Back
                     </button>
                 }
-                {this.folders.map(folder_name => (
-                    <div onClick={e => this.changePath(e.target.id)} key={folder_name}>
-                        <S3Folder
-                            path={folder_name}/>  
-                    </div>
-                ))}
-                {this.files.map(file_name => (
-                    <div onClick={e => this.selectFile(e.target.id)} key={file_name}>
-                        <S3File
-                            key={file_name}
-                            path={file_name}/> 
-                    </div> 
-                ))}
+                <div className={this.getDisplayMode()} id="s3-folder-holder">
+                    {this.folders.map(folder_name => (
+                        <div onClick={e => this.changePath(e.target.id)} key={folder_name}>
+                            <S3Folder
+                                path={folder_name}/>  
+                        </div>
+                    ))}
+                    {this.files.map(file_name => (
+                        <div onClick={e => this.selectFile(e.target.id)} key={file_name}>
+                            <S3File
+                                key={file_name}
+                                path={file_name}/> 
+                        </div> 
+                    ))}
+                </div>
             </div>
         )
     }
+
+    // componentDidUpdate() {
+    //     console.log("update")
+    // }
+
+    // componentDidMount() {
+    //     let radio_buttons = document.querySelectorAll("input[type='radio']");
+    //     console.log(radio_buttons);
+    //     radio_buttons.forEach((element) => {
+    //         element.addEventListener("change", function(event) {
+    //             let item = event.target.value;
+    //             console.log(item);
+    //             this.render();
+    //         })
+    //     })
+    // }
 }
 
 export default S3Browser;
