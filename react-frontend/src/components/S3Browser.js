@@ -34,8 +34,7 @@ class S3Browser extends Component {
         
         let images_present = false;
         for (let file of this.files) {
-            let ext = file.split('\\').pop().split('/').pop().split('.').pop()
-            console.log(ext);
+            let ext = file.split('.').pop()
             if (ext in image_types) {
                 images_present = true;
                 break;
@@ -57,8 +56,8 @@ class S3Browser extends Component {
     
     selectFile(file) {
         if (this.mode === s3_browser_modes.SELECT_JSON) {
-            let ext = file.split('\\').pop().split('/').pop().split('.').pop()
-            if (ext === "json" || ext === "JSON") {
+            let ext = file.split('.').pop()
+            if (ext.toLowerCase() === "json") {
                 let data = {
                     success: true,
                     path: file,

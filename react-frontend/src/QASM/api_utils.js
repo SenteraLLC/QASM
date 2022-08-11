@@ -35,7 +35,6 @@ export async function hit_terraform_api(params, endpoint) {
     } else {
         return response.data[data_key];
     }
-    
 }
 
 /**
