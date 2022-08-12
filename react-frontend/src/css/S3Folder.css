@@ -8,3 +8,84 @@
 /* .S3Folder:hover {
     background: #eeff00;
 } */
+
+:root {
+    --grid-icon-size: 8em;
+    --list-icon-size: 2em;
+}
+
+div.S3Folder fieldset {
+    display: inline-block;
+    margin-right: 1em;
+    text-align: left;
+}
+
+div.S3Folder input[type="radio"] {
+    cursor: pointer;
+}
+
+div.S3Folder label {
+    cursor: pointer;
+}
+
+div.S3Folder div.clickable {
+    cursor: pointer;
+    margin: 0.1em 0;
+    padding: 0.5em;
+    padding-bottom: 0;
+    height: max-content;
+}
+
+/* CSS for grid display */
+
+div.S3Folder div.grid {
+    width: 90vw;
+    margin: 0 auto;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    gap: 2.5em 2.7em;
+}
+
+div.S3Folder div.grid img {
+    max-width: var(--grid-icon-size);
+    max-height: var(--grid-icon-size);
+}
+
+div.S3Folder div.grid p {
+    word-break: break-all;
+}
+
+/* CSS for list display */
+
+div.S3Folder div.list {
+    width: 90vw;
+    margin: 0 auto;
+    text-align: left;
+}
+
+div.S3Folder div.clickable:hover {
+    background-color: rgba(0, 100, 255, 0.1);
+}
+
+div.S3Folder div.grid div.clickable {
+    max-width: var(--grid-icon-size);
+}
+
+div.S3Folder div.list div.clickable {
+    padding-top: 0.1em;
+}
+
+div.S3Folder div.list img {
+    display: inline-block;
+    max-width: var(--list-icon-size);
+    max-height: var(--list-icon-size);
+}
+
+div.S3Folder div.list p {
+    display: inline-block;
+    position: relative;
+    top: -0.6em;
+    margin: 0;
+    margin-left: 1em;
+}

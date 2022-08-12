@@ -1,5 +1,5 @@
 // Definitions for base QASM class.
-const constants = require("./constants.js");
+// const constants = require("./constants.js");
 const { function_handlers } = require("./lambda_handlers.js");
 
 export class QASM {
