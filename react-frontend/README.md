@@ -1,70 +1,74 @@
-# Getting Started with Create React App
+# Getting Started with QASM
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+Welcome to the Quality Assurance State Machine (QASM)! QASM is a single-serve web application that runs
+using React, with the ability to run customizable QA jobs locally or via a statically hosted S3 website.  
 
-## Available Scripts
+### Installation 
 
-In the project directory, you can run:
+1) Navigate to the frontend, install necessary packages, and run
 
-### `npm start`
+        >> cd react-frontend
+        >> npm install 
+        >> npm run QASM
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+This will build an app based on the specifications found in ``react-frontend/config.json``.
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+### Configuration
 
-### `npm test`
+``react-frontend/config.json`` expects the following fields:
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+``"app"``: <string>
+- ``"s3"`` for an app that pulls files from the specified s3 bucket (see below)
+- ``"local"`` for an app that runs using local files
 
-### `npm run build`
+``"bucket"``: <string>
+- Name of the s3 bucket from which to pull data (only required for ``"app": "s3"``)
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+``"components"``: <Object> Object keys are the names of desired app components
+    Valid components:
+    - ``"home"``: <Object> ``{}`` (Currently there are no props for the home screen)
+    - ``"grid"``: <Object>
+        - ``"grid_width"``: <Number> Default number of images to show per row
+        - ``"classes"``: <Array>
+            - <Object> with class details
+                - ``"class_name"``: <string> (Required) Custom name for a class
+                - ``"svg_overlay"``: <string> (Optional) Name of the class overlay
+                    - ``"x_overlay"`` for a big red 'X'
+                    - ``null`` for nothing
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+### Terraform
+Terraform automatically takes our lambda code and deploys it to all the necessary AWS services (Lambda, API Gateway, IAM, etc) to allow our serverless applications to run.
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+Install Terraform (https://learn.hashicorp.com/tutorials/terraform/install-cli)
 
-### `npm run eject`
+Connect to an existing Terraform project
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+        >> cd terraform-backend
+        >> terraform init
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+To prevent developer testing from interfering with active users, we utilize terraform 'workspaces' to keep development and production environments seperate.
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+To work in the development workspace, use
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+        >> terraform workspace select dev
 
-## Learn More
+And for production,
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+        >> terraform workspace select prod
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+Both workspaces use the same source code, but the prefix "${terraform.workspace}-" is added to every unique resource, so that the two workspaces deploy to seperate 'dev' and 'prod' AWS resources. When creating new resouces, be sure to add this prefix so as to avoid hidden dependencies.
 
-### Code Splitting
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+To deploy changes to a Terraform project, use
 
-### Analyzing the Bundle Size
+        >> terraform apply
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+You will be shown a summary of the changes that terraform will be applying, so be sure to double check that (a) you are on the desired workspace and (b) that you aren't accidentily destroying unexpected resources. To check what workspace you are in, you can use 
 
-### Making a Progressive Web App
+        >> terraform workspace list
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
 
-### Advanced Configuration
+Once changes have been tested in development and are ready to be applied to the production resources, these changes are applied by simply switching workspaces and running the apply command. 
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+        >> terraform workspace select prod
+        >> terraform apply
