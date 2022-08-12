@@ -92,6 +92,7 @@ class S3Browser extends Component {
     }
 
     async changePath(folder) {
+        console.log("I was clicked")
         try {
             let response = await this.QASM.call_backend(window, "openS3Folder", folder);
             this.folders = response.folders;
@@ -187,13 +188,13 @@ class S3Browser extends Component {
                 }
                 <div className={this.getDisplayMode()} id="s3-folder-holder">
                     {this.folders.map(folder_name => (
-                        <div onClick={e => this.changePath(e.target.id)} key={folder_name} className="clickable">
+                        <div onClick={e => this.changePath(folder_name)} key={folder_name} className="clickable">
                             <S3Folder
                                 path={folder_name}/>  
                         </div>
                     ))}
                     {this.files.map(file_name => (
-                        <div onClick={e => this.selectFile(e.target.id)} key={file_name} className="clickable">
+                        <div onClick={e => this.selectFile(file_name)} key={file_name} className="clickable">
                             <S3File
                                 key={file_name}
                                 path={file_name}/> 
