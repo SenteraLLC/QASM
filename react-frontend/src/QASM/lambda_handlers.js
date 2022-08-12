@@ -4,7 +4,6 @@ const { s3_browser_modes } = require("./constants.js");
 
 // Export like this so static site works idk why
 const function_handlers = {
-    [function_names.SAVE_LABELS]:  handleSaveLabels,
     [function_names.LOAD_LABELS]:  handleLoadLabels,
     [function_names.OPEN_DIR]:     handleOpenDir,
     [function_names.LOAD_IMAGES]:  handleLoadImages,
@@ -12,6 +11,7 @@ const function_handlers = {
     "openS3Folder":                handleOpenS3Folder,
 }
 export { function_handlers }
+
 
 /**
  * Prompt the user to select a save destination,
@@ -101,10 +101,6 @@ async function handleLoadImages(QASM, data, window) {
     }
     let res = await api_consolidator_error_handler(params, "get_signed_urls_in_folder");
     return res.urls;
-}
-
-function handleSaveLabels(QASM, data, window) {
-    
 }
 
 
