@@ -53,6 +53,8 @@ async function handleOpenFile(event, data) {
 /**
  * Open a save file dialog
  * 
+ * @param event event
+ * @param {object} data data to be saved
  * @returns file path on sucess, nothing on cancel
  */
  async function handleSaveFile(event, data) {
@@ -78,6 +80,8 @@ async function handleOpenFile(event, data) {
 /**
  * Open a directory selection dialog
  * 
+ * @param {*} event event
+ * @param {Object} data data
  * @returns dir path on sucess, nothing on cancel
  */
  async function handleOpenDir(event, data) {
