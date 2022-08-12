@@ -17,14 +17,14 @@ This will build an app based on the specifications found in ``react-frontend/con
 
 ``react-frontend/config.json`` expects the following fields:
 
--``"app": <string>``
+- ``"app": <string>``
     - ``"s3"`` for an app that pulls files from the specified s3 bucket (see below)
     - ``"local"`` for an app that runs using local files
 
--``"bucket": <string>``
+- ``"bucket": <string>``
     - Name of the s3 bucket from which to pull data (only required for ``"app": "s3"``)
 
--``"components": <Object>`` Object keys are the names of desired app components
+- ``"components": <Object>`` Object keys are the names of desired app components
     - ``"home": <Object>`` ``{}`` (Currently there are no props for the home screen)
     - ``"grid": <Object>``
         - ``"grid_width": <Number>`` Default number of images to show per row
