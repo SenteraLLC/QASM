@@ -196,6 +196,7 @@ class Grid extends Component {
         console.log(await this.QASM.call_backend(window, function_names.SAVE_FILE, this.labels));
     }
 
+
     async loadLabels() {
         // Load in previous labels
         this.labels = await this.QASM.call_backend(window, function_names.LOAD_LABELS);
@@ -209,12 +210,21 @@ class Grid extends Component {
         }
     }
 
+    
+    /**
+     * Clear all the current labels
+     */
     clearAll() {
         // Set all classes to the default
         this.labels = {};
         this.updateState();
     }
 
+
+    /**
+     * Open a directory selection dialog and 
+     * load in all the images.
+     */
     async selectImageDir() {
         let dir_path = await this.QASM.call_backend(window, function_names.OPEN_DIR);
         if (dir_path !== undefined) {
@@ -232,9 +242,12 @@ class Grid extends Component {
         }
     }
 
+    /**
+     * Prompt user to select a directory
+     * and push all the images onto the image stack
+     */
     async addImageLayer() {
         // Prompt user to select directory
-        console.log(this.QASM.s3_bucket)
         let dir_path = await this.QASM.call_backend(window, function_names.OPEN_DIR);
         console.log(dir_path);
 
@@ -249,6 +262,11 @@ class Grid extends Component {
         this.updateState();
     }
     
+    /**
+     * Change the grid width
+     * 
+     * @param {*} e event 
+     */
     changeGridWidth(e) {
         // Get current grid width
         this.grid_width = e.target.value;
@@ -263,6 +281,12 @@ class Grid extends Component {
         this.updateState();
     }
 
+    /**
+     * Get an array of image layers for an image
+     * 
+     * @param {string} image_name image name
+     * @returns {Array} image stack; array of images
+     */
     getImageStackByName(image_name) {
         let image_stack = [];
         for (let image_layer of this.image_stack) {
@@ -273,6 +297,11 @@ class Grid extends Component {
         return(image_stack);
     }
 
+    /**
+     * Cycle through the image layers for an image
+     * 
+     * @param {string} hover_image_id id of the current image
+     */
     changeImage(hover_image_id) {
         // firstChild = image holder div
         // childNodes of image holder div = image layers
@@ -301,6 +330,11 @@ class Grid extends Component {
         }
     }
 
+    /**
+     * Scroll page to the next row 
+     * 
+     * @param {string} hover_row_id id of the current row
+     */
     autoScroll(hover_row_id) {
         // scroll to next row
         $(document).scrollTop($("#"+hover_row_id).next().offset().top);
@@ -383,6 +417,7 @@ class Grid extends Component {
     }
 
     componentDidMount() {
+        // Ensure update runs once the page is fully loaded
         setInterval(() => {
             if (!this.update_success) {
                 this.update_success = update_all_overlays();
