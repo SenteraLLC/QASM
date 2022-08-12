@@ -92,7 +92,6 @@ class S3Browser extends Component {
     }
 
     async changePath(folder) {
-        console.log("I was clicked")
         try {
             let response = await this.QASM.call_backend(window, "openS3Folder", folder);
             this.folders = response.folders;
@@ -204,22 +203,6 @@ class S3Browser extends Component {
             </div>
         )
     }
-
-    // componentDidUpdate() {
-    //     console.log("update")
-    // }
-
-    // componentDidMount() {
-    //     let radio_buttons = document.querySelectorAll("input[type='radio']");
-    //     console.log(radio_buttons);
-    //     radio_buttons.forEach((element) => {
-    //         element.addEventListener("change", function(event) {
-    //             let item = event.target.value;
-    //             console.log(item);
-    //             this.render();
-    //         })
-    //     })
-    // }
 }
 
 export default S3Browser;
