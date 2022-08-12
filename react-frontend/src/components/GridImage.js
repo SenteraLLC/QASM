@@ -48,7 +48,7 @@ class GridImage extends Component {
     
     render() {
 
-        let show_overlay
+        let show_overlay;
         if (this.classes.find(x => x.class_name === this.state.class).svg_overlay !== null) {
             show_overlay = " show_overlay";
         }

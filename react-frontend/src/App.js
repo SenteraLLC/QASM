@@ -49,6 +49,7 @@ class App extends Component {
   }
 
   rememberS3Display(display) {
+    console.log(display, "This is in the app component")
     this.display = display;
   }
   
