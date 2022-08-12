@@ -40,8 +40,7 @@ class S3Browser extends Component {
         
         let images_present = false;
         for (let file of this.files) {
-            let ext = file.split('\\').pop().split('/').pop().split('.').pop()
-            console.log(ext);
+            let ext = file.split('.').pop()
             if (ext in image_types) {
                 images_present = true;
                 break;
@@ -63,8 +62,8 @@ class S3Browser extends Component {
     
     selectFile(file) {
         if (this.mode === s3_browser_modes.SELECT_JSON) {
-            let ext = file.split('\\').pop().split('/').pop().split('.').pop()
-            if (ext === "json" || ext === "JSON") {
+            let ext = file.split('.').pop()
+            if (ext.toLowerCase() === "json") {
                 let data = {
                     success: true,
                     path: file,
@@ -95,7 +94,6 @@ class S3Browser extends Component {
     }
 
     async changePath(folder) {
-        console.log("I was clicked")
         try {
             let response = await this.QASM.call_backend(window, "openS3Folder", folder);
             this.folders = response.folders;
@@ -209,24 +207,8 @@ class S3Browser extends Component {
     }
 
     componentWillUnmount() {
-
+        
     }
-
-    // componentDidUpdate() {
-    //     console.log("update")
-    // }
-
-    // componentDidMount() {
-    //     let radio_buttons = document.querySelectorAll("input[type='radio']");
-    //     console.log(radio_buttons);
-    //     radio_buttons.forEach((element) => {
-    //         element.addEventListener("change", function(event) {
-    //             let item = event.target.value;
-    //             console.log(item);
-    //             this.render();
-    //         })
-    //     })
-    // }
 }
 
 export default S3Browser;
