@@ -16,6 +16,7 @@ const COMPONENT_KEYS = {
 class App extends Component {
   src = "";
   componentList = [];
+  display = "grid";
 
   constructor(props) {
     super(props);
@@ -42,11 +43,17 @@ class App extends Component {
     // Setup S3 browser
     this.s3props = {
       "QASM": this.QASM,
+      "display": this.display,
+      "rememberS3Display": this.rememberS3Display,
     }
+  }
 
+  rememberS3Display(display) {
+    this.display = display;
   }
   
   render() {
+    console.log(this.display, "display in the app render")
     return (
       <HashRouter>
       <div className="App">
