@@ -9,6 +9,7 @@ exports.function_names = {
     SAVE_FILE: "saveFile",
 }
 
+// List of accepted image types
 exports.image_types = {
     JPG: "JPG",
     PNG: "PNG",
