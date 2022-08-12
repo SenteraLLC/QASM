@@ -37,7 +37,7 @@ class Grid extends Component {
         this.grid_width   = props.grid_width || 2;
         this.classes      = props.classes    || this.default_classes
         this.src          = props.src
-
+        
         this.state = {
             labels: this.labels,
             src: this.src,
@@ -140,6 +140,11 @@ class Grid extends Component {
         document_head.appendChild(style);
     }
 
+
+    /**
+     * Update the state variables and force
+     * the page to update.
+     */
     updateState() {
         this.setState({
             labels: this.labels,
@@ -148,15 +153,23 @@ class Grid extends Component {
         this.component_updater++;
     }
 
+
+    /**
+     * Load images from the current source directory
+     */
     async loadImages() {
         console.log("Src: " + this.src);
         this.images = await this.QASM.call_backend(window, function_names.LOAD_IMAGES, this.src);
-        this.image_names = Object.keys(this.images);
+        this.image_names = Object.keys(this.images).sort();
         console.log(this.images);
         this.gridSetup();
         this.clearAll();
     }
+    
 
+    /**
+     * Organize the images into rows
+     */
     gridSetup() {
         // Divide grid based on the grid width prop
         let cur_im;
@@ -178,6 +191,10 @@ class Grid extends Component {
         this.grid_image_names.push(row_imgs);
     }
 
+
+    /**
+     * Scrape the page for all the current labels
+     */
     updateLocalLabels() {
         // Get state of each GridImage
         this.labels = {};
@@ -190,6 +207,11 @@ class Grid extends Component {
         }
     }
 
+
+    /**
+     * Scrape the page for the current labels
+     * and prompt the user to specify where to save them.
+     */
     async saveLabels() {
         this.updateLocalLabels();
         console.log(this.labels);
@@ -197,6 +219,10 @@ class Grid extends Component {
     }
 
 
+    /**
+     * Prompt user to select a file with labels
+     * and load them in.
+     */
     async loadLabels() {
         // Load in previous labels
         this.labels = await this.QASM.call_backend(window, function_names.LOAD_LABELS);
