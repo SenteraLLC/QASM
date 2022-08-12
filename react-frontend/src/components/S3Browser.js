@@ -16,12 +16,15 @@ class S3Browser extends Component {
         this.path    = props.path    || ""
         this.folders = props.folders || this.QASM.folders
         this.files   = props.files   || this.QASM.files
+        this.display = props.display
+        this.rememberS3Display = props.rememberS3Display
 
         this.state = {
             path: this.path
         };
 
         console.log(this.mode);
+        console.log(this.display, "This is the passed in display");
 
         // Bind functions
         this.selectFolder      = this.selectFolder.bind(this);
@@ -203,6 +206,10 @@ class S3Browser extends Component {
                 </div>
             </div>
         )
+    }
+
+    componentWillUnmount() {
+
     }
 
     // componentDidUpdate() {
