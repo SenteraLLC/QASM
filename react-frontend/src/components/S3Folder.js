@@ -10,7 +10,7 @@ class S3Folder extends Component {
         this.path = props.path
 
         // Get last folder in path
-        this.display_path = this.path.split("/")[this.path.split("/").length-2] 
+        this.display_path = this.path.split("/").slice(-2)
     }
 
     render() {
