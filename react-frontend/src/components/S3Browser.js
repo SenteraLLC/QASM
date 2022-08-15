@@ -21,8 +21,6 @@ class S3Browser extends Component {
             path: this.path
         };
 
-        console.log(this.mode);
-
         // Bind functions
         this.selectFolder      = this.selectFolder.bind(this);
         this.changePath        = this.changePath.bind(this);
@@ -33,8 +31,12 @@ class S3Browser extends Component {
         this.updateDisplayMode = this.updateDisplayMode.bind(this);
     }
 
+
+    /**
+     * Check that current folder has images,
+     * then send folder path to the main window.
+     */
     selectFolder() {
-        
         let images_present = false;
         for (let file of this.files) {
             let ext = file.split('.').pop()
@@ -57,6 +59,13 @@ class S3Browser extends Component {
         }
     }
     
+
+    /**
+     * Check if selected file is of the correct type,
+     * then send the filepath to the main window.
+     * 
+     * @param {string} file filename
+     */
     selectFile(file) {
         if (this.mode === s3_browser_modes.SELECT_JSON) {
             let ext = file.split('.').pop()
@@ -74,14 +83,16 @@ class S3Browser extends Component {
         }
     }
 
+
+    /**
+     * Scrape user filename from the input and
+     * ask the user to confirm before saving.
+     */
     createFile() {
         let new_filename = document.getElementById("new-filename").value;
-        // Space -> underscore, remove extension
-        new_filename = new_filename.replace(" ", "_").split('.')[0];
-        // Save as json
-        new_filename = new_filename + ".json";
-        // Add full path
-        new_filename = this.path + new_filename;
+        new_filename = new_filename.replace(" ", "_").split('.')[0]; // Space -> underscore, remove extension
+        new_filename = new_filename + ".json"; // Save as json
+        new_filename = this.path + new_filename; // Add full path
         
         /* eslint-disable */
         // Prompt user to confirm, then save
@@ -90,6 +101,13 @@ class S3Browser extends Component {
         }
     }
 
+
+    /**
+     * Change the active path to a new folder
+     * and populate its folders and files 
+     * 
+     * @param {string} folder folder name
+     */
     async changePath(folder) {
         try {
             let response = await this.QASM.call_backend(window, "openS3Folder", folder);
@@ -106,6 +124,11 @@ class S3Browser extends Component {
         }
     }
 
+
+    /**
+     * Go up one folder level and
+     * populate the folders and files
+     */
     async goBack() {
         let folder = this.parents.pop();
         try {
@@ -123,11 +146,12 @@ class S3Browser extends Component {
         }
     }
 
+
     /**
      * Checks which mode is selected and returns that value. If the mode select
      * buttons haven't loaded in yet, then it returns the default of grid.
      * 
-     * @returns Display mode as string
+     * @returns {string} Display mode as string
      */
     getDisplayMode() {
         if (document.querySelector("input[name='display']:checked") === null) {
@@ -138,6 +162,7 @@ class S3Browser extends Component {
         }
     }
 
+
     /**
      * Updates the class on the div that holds all of the s3 stuff.
      */
@@ -145,6 +170,7 @@ class S3Browser extends Component {
         document.getElementById("s3-folder-holder").className = this.getDisplayMode();
     }
 
+    
     render() {
         return (
             <div className="S3Folder">
@@ -153,11 +179,11 @@ class S3Browser extends Component {
                     <legend>Display Mode</legend>
                     <div>
                         <input type="radio" id="grid-display" name="display" value="grid" onChange={this.updateDisplayMode} defaultChecked />
-                        <label for="grid-display">Grid</label>
+                        <label htmlFor="grid-display">Grid</label>
                     </div>
                     <div>
                         <input type="radio" id="list-display" name="display" value="list" onChange={this.updateDisplayMode} />
-                        <label for="list-display">List</label>
+                        <label htmlFor="list-display">List</label>
                     </div>
                 </fieldset>
                 {this.mode === s3_browser_modes.SELECT_DIRECTORY &&

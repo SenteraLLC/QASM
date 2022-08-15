@@ -1,3 +1,4 @@
+// Expose backend functions to the frontend via the window
 const { contextBridge, ipcRenderer } = require("electron");
 const { function_names } = require("./electron_constants.js");
 
