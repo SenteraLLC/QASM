@@ -148,27 +148,72 @@ class S3Browser extends Component {
         document.getElementById("s3-folder-holder").className = this.getDisplayMode();
     }
 
+    updateDisplaySize() {
+        let current_size = document.querySelector("input[name='display-size']:checked").value;
+        console.log(current_size, "called")
+
+        switch(current_size){
+            case "small":
+                document.documentElement.style.setProperty("--grid-icon-size", "6em");
+                document.documentElement.style.setProperty("--list-icon-size", "1.4em");
+                break;
+
+            case "medium":
+                document.documentElement.style.setProperty("--grid-icon-size", "8em");
+                document.documentElement.style.setProperty("--list-icon-size", "2.5em");
+                break;
+            
+            case "large":
+                document.documentElement.style.setProperty("--grid-icon-size", "10em");
+                document.documentElement.style.setProperty("--list-icon-size", "4em");
+                break;
+
+            case "josh":
+                document.documentElement.style.setProperty("--grid-icon-size", "15em");
+                document.documentElement.style.setProperty("--list-icon-size", "6em");
+                break;
+        }
+    }
+
     render() {
         return (
             <div className="S3Folder">
                 <h2>S3 Browser: {this.QASM.s3_bucket}</h2>
-                <fieldset className="directory-display-mode">
-                    <legend>Display Mode</legend>
-                    <div>
-                        <input type="radio" id="grid-display" name="display" value="grid" onChange={this.updateDisplayMode} defaultChecked />
-                        <label for="grid-display">Grid</label>
-                    </div>
-                    <div>
-                        <input type="radio" id="list-display" name="display" value="list" onChange={this.updateDisplayMode} />
-                        <label for="list-display">List</label>
-                    </div>
-                </fieldset>
+                <div className="fieldset-container">
+                    <fieldset className="directory-display-mode">
+                        <legend>Display Mode</legend>
+                        <div>
+                            <input type="radio" id="grid-display" name="display" value="grid" onChange={this.updateDisplayMode} defaultChecked />
+                            <label for="grid-display">Grid</label>
+                        </div>
+                        <div>
+                            <input type="radio" id="list-display" name="display" value="list" onChange={this.updateDisplayMode} />
+                            <label for="list-display">List</label>
+                        </div>
+                    </fieldset>
+                    <fieldset className="directory-display-size">
+                        <legend>Size</legend>
+                        <div>
+                            <input type="radio" id="display-small" name="display-size" value="small" onChange={this.updateDisplaySize} />
+                            <label for="display-small">Small</label>
+                        </div>
+                        <div>
+                            <input type="radio" id="display-medium" name="display-size" value="medium" onChange={this.updateDisplaySize} defaultChecked />
+                            <label for="display-medium">Medium</label>
+                        </div>
+                        <div>
+                            <input type="radio" id="display-large" name="display-size" value="large" onChange={this.updateDisplaySize} />
+                            <label for="display-large">Large</label>
+                        </div>
+                    </fieldset>
+                
+                
                 {this.mode === s3_browser_modes.SELECT_DIRECTORY &&
                     <button 
                         onClick={this.selectFolder}>
                         Select Directory: {this.path}
                     </button>
-                }<br/>
+                }
                 {this.mode === s3_browser_modes.SELECT_JSON &&
                     <div>
                         <button 
@@ -180,7 +225,8 @@ class S3Browser extends Component {
                             type="text"
                         />
                     </div>
-                }<br/>
+                }
+                </div><br/>
                 {this.parents.length !== 0 &&
                     <button 
                         onClick={this.goBack}>
