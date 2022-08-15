@@ -64,6 +64,18 @@ div.S3Folder div.list {
     text-align: left;
 }
 
+div.S3Folder div.list.small {
+    --list-icon-size: 1.4em;
+}
+
+div.S3Folder div.list.medium {
+    --list-icon-size: 2.5em;
+}
+
+div.S3Folder div.list.large {
+    --list-icon-size: 4em;
+}
+
 div.S3Folder div.clickable:hover {
     background-color: rgba(0, 100, 255, 0.1);
 }
