@@ -15,9 +15,14 @@
 }
 
 div.S3Folder div.fieldset-container {
-    display: inline-grid;
+    display: grid;
     grid-template-columns: 133px 133px 2fr;
     gap: 1em;
+    margin: 0 2em;
+}
+
+div.S3Folder div.fieldset-container button {
+    margin-top: 0.6em;
 }
 
 div.S3Folder fieldset {
@@ -32,10 +37,6 @@ div.S3Folder input[type="radio"] {
 
 div.S3Folder label {
     cursor: pointer;
-}
-
-div.S3Folder button {
-        margin-top: 0.6em;
 }
 
 div.S3Folder div.clickable {
