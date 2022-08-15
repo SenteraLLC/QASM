@@ -24,6 +24,7 @@ class Grid extends Component {
     hover_row_id = null;
     images_shown = false;
     update_success = false;
+    allow_next_scroll = false;
     default_classes = [
         {"class_name": "plant", "svg_overlay": null}, 
         {"class_name": "rogue", "svg_overlay": "x_overlay"},
@@ -42,18 +43,35 @@ class Grid extends Component {
             labels: this.labels,
             src: this.src,
         };
+        
+        // Get overlay info
+        this.initOverlays();
 
-        // Render stock overlays
-        for (let [idx, class_props] of this.classes.entries()) {
-            if (
-                "svg_overlay" in class_props && 
-                class_props["svg_overlay"] in OVERLAYS
-            ) {
-                class_props["svg_overlay"] = OVERLAYS[class_props["svg_overlay"]];
-                this.classes[idx] = class_props;
-            }
-        }
+        // Attach event listeners
+        this.initEventListeners();
 
+        // Bind functions
+        this.loadImages          = this.loadImages.bind(this);
+        this.saveLabels          = this.saveLabels.bind(this);
+        this.loadLabels          = this.loadLabels.bind(this);
+        this.clearAll            = this.clearAll.bind(this);
+        this.selectImageDir      = this.selectImageDir.bind(this);
+        this.changeGridWidth     = this.changeGridWidth.bind(this);
+        this.updateState         = this.updateState.bind(this);
+        this.updateLocalLabels   = this.updateLocalLabels.bind(this);
+        this.addImageLayer       = this.addImageLayer.bind(this);
+        this.getImageStackByName = this.getImageStackByName.bind(this);
+        this.changeImage         = this.changeImage.bind(this);
+        this.autoScroll          = this.autoScroll.bind(this);
+        this.initOverlays        = this.initOverlays.bind(this);
+        this.initEventListeners  = this.initEventListeners.bind(this);
+    }
+
+
+    /**
+     * Attach event listeners to the page.
+     */
+    initEventListeners() {
         // Update the overlays whenever the page size is changed
         window.addEventListener("resize", update_all_overlays);
 
@@ -73,7 +91,11 @@ class Grid extends Component {
 
         // Prevent weird behavior when scrolling
         window.addEventListener("scroll", () => {
-            this.hover_image_id = null;
+            if (this.allow_next_scroll) {
+                this.allow_next_scroll = false;
+            } else {
+                this.hover_image_id = null;
+            }
         }); 
 
         // Keybinds
@@ -91,21 +113,24 @@ class Grid extends Component {
                 this.autoScroll(this.hover_row_id);
             }
         });
+    }
 
-        // Bind functions
-        this.loadImages          = this.loadImages.bind(this);
-        this.saveLabels          = this.saveLabels.bind(this);
-        this.loadLabels          = this.loadLabels.bind(this);
-        this.clearAll            = this.clearAll.bind(this);
-        this.selectImageDir      = this.selectImageDir.bind(this);
-        this.changeGridWidth     = this.changeGridWidth.bind(this);
-        this.updateState         = this.updateState.bind(this);
-        this.updateLocalLabels   = this.updateLocalLabels.bind(this);
-        this.addImageLayer       = this.addImageLayer.bind(this);
-        this.getImageStackByName = this.getImageStackByName.bind(this);
-        this.changeImage         = this.changeImage.bind(this);
-        this.autoScroll          = this.autoScroll.bind(this);
 
+    /**
+     * Run through the classes list and
+     * check for supported overlays
+     */
+    initOverlays() {
+        // Render stock overlays
+        for (let [idx, class_props] of this.classes.entries()) {
+            if (
+                "svg_overlay" in class_props && 
+                class_props["svg_overlay"] in OVERLAYS
+            ) {
+                class_props["svg_overlay"] = OVERLAYS[class_props["svg_overlay"]];
+                this.classes[idx] = class_props;
+            }
+        }
 
         // Grab the document's head tag and create a style tag
         let document_head = document.getElementsByTagName('head')[0];
@@ -268,6 +293,7 @@ class Grid extends Component {
         }
     }
 
+
     /**
      * Prompt user to select a directory
      * and push all the images onto the image stack
@@ -288,6 +314,7 @@ class Grid extends Component {
         this.updateState();
     }
     
+
     /**
      * Change the grid width
      * 
@@ -307,6 +334,7 @@ class Grid extends Component {
         this.updateState();
     }
 
+
     /**
      * Get an array of image layers for an image
      * 
@@ -322,6 +350,7 @@ class Grid extends Component {
         }
         return(image_stack);
     }
+
 
     /**
      * Cycle through the image layers for an image
@@ -356,17 +385,28 @@ class Grid extends Component {
         }
     }
 
+
     /**
      * Scroll page to the next row 
      * 
      * @param {string} hover_row_id id of the current row
      */
     autoScroll(hover_row_id) {
-        // scroll to next row
+        // Scroll to next row
         $(document).scrollTop($("#"+hover_row_id).next().offset().top);
-        // set next row as hovered for consecutive navigation
+        // Set next row as hovered for consecutive navigation
         this.hover_row_id = $("#"+hover_row_id).next()[0].id;
+        
+        // Set next image as hovered
+        if (this.hover_image_id != null) {
+            let row = parseInt(hover_row_id.slice(4)); // Row index
+            let col = this.grid_image_names[row].indexOf(this.hover_image_id) // Col
+            row = parseInt(this.hover_row_id.slice(4)); // New row index
+            this.hover_image_id = this.grid_image_names[row][col]; // Set new image as hovered
+            this.allow_next_scroll = true; // Override scroll protection
+        } 
     }
+
 
     render() {
         return (
