@@ -4,15 +4,15 @@ const { image_types, function_names } = require("./electron_constants.js");
 const fs = require("fs");
 const path = require('path');
 
+
 // Connect function names with their function handlers
 exports.function_handlers = {
-    [function_names.SAVE_LABELS]:  handleSaveLabels,
-    [function_names.OPEN_FILE]:    handleOpenFile,
     [function_names.LOAD_LABELS]:  handleLoadLabels,
     [function_names.OPEN_DIR]:     handleOpenDir,
     [function_names.LOAD_IMAGES]:  handleLoadImages,
     [function_names.SAVE_FILE]:    handleSaveFile,
 }
+
 
 /**
  * Initialize all ipc handlers listed in electron_utils.js
@@ -52,9 +52,12 @@ async function handleOpenFile(event, data) {
     }
 }
 
+
 /**
  * Open a save file dialog
  * 
+ * @param event event
+ * @param {object} data data to be saved
  * @returns file path on sucess, nothing on cancel
  */
  async function handleSaveFile(event, data) {
@@ -77,9 +80,12 @@ async function handleOpenFile(event, data) {
     }
 }
 
+
 /**
  * Open a directory selection dialog
  * 
+ * @param {*} event event
+ * @param {Object} data data
  * @returns dir path on sucess, nothing on cancel
  */
  async function handleOpenDir(event, data) {
@@ -95,26 +101,6 @@ async function handleOpenFile(event, data) {
     }
 }
 
-
-/**
- * Prompt the user to select a save destination,
- * and then save the labels.
- * 
- * @param {*} event event
- * @param {Object} data object with all the labels
- * @returns {string} result
- */
-async function handleSaveLabels(event, data) {
-    // data is our object with all the labels
-    try {
-        let file_path = await handleOpenFile();
-        fs.writeFileSync(file_path, JSON.stringify(data));
-        return "Saved labels at " + file_path;
-    } catch {
-        return "Error when saving labels.";
-    }
-    
-}
 
 /**
  * Prompt the user to select a file,
@@ -133,6 +119,7 @@ async function handleLoadLabels(event, data) {
         return {};
     }
 }
+
 
 /**
  * Load images from a folder as base64 strings
