@@ -79,7 +79,7 @@ async function handleLoadLabels(QASM, data, window) {
  * Open a directory selection dialog
  *
  * @param {Object} QASM QASM object
- * @param {*} data data
+ * @param {string} data starting folder
  * @param {*} window window
  * @returns s3 path on sucess, nothing on cancel
  */
@@ -87,6 +87,7 @@ async function handleOpenDir(QASM, data, window) {
     let url = window.location.origin + "/#/s3Browser";
     let popup = window.open(url, "S3 Browser");
     popup.S3_BROWSER_MODE = s3_browser_modes.SELECT_DIRECTORY;
+    popup.START_FOLDER = data
 
     return new Promise(resolve => window.onmessage = (e) => {
         try {

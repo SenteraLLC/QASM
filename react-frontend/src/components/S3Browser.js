@@ -12,12 +12,30 @@ class S3Browser extends Component {
         
         this.QASM    = props.QASM
         this.mode    = window.S3_BROWSER_MODE // Set by window opener
+        this.path    = window.START_FOLDER
         this.parents = props.parents || [] // Stack of parent folders
-        this.path    = props.path    || ""
-        this.folders = props.folders || this.QASM.folders
-        this.files   = props.files   || this.QASM.files
         this.display = props.display
         this.rememberS3Display = props.rememberS3Display
+        
+        if (this.path == null) {
+            this.path = "" 
+            this.folders = this.QASM.folders
+            this.files   = this.QASM.files
+        } else {
+            this.folders = []
+            this.files = []
+            
+            // Populate parent stack
+            this.parents = [""]
+            let folders = this.path.split("/").slice(0, -2);
+            for (let i=0; i < folders.length; i++) {
+                this.parents.push(this.parents[i] + folders[i] + "/");
+            }
+            
+            this.changePath(this.path).then(() => {
+                this.parents.pop(); // Remove starting path from parent stack
+            });
+        }
 
         this.state = {
             path: this.path
@@ -124,6 +142,7 @@ class S3Browser extends Component {
         } catch {
             console.log("Failed to load " + folder);
         }
+        console.log(this.parents);
     }
 
 
@@ -133,6 +152,10 @@ class S3Browser extends Component {
      */
     async goBack() {
         let folder = this.parents.pop();
+        if (this.parents.length > 0) {
+            folder += folder.endsWith("/") ? "" : "/" // Add trailing slash if not present
+        }
+        console.log(folder)
         try {
             let response = await this.QASM.call_backend(window, "openS3Folder", folder);
             this.folders = response.folders;
