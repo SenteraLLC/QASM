@@ -150,18 +150,32 @@ class S3Browser extends Component {
 
 
     /**
-     * Checks which mode is selected and returns that value. If the mode select
-     * buttons haven't loaded in yet, then it returns the default of grid.
+     * Checks which mode and size are currently selected. If the radio
+     * buttons haven't loaded in yet, then the querySelector will be null
+     * and we use the default of grid medium.
      * 
-     * @returns {string} Display mode as string
+     * @returns {string} Display mode and size as string
      */
     getDisplayMode() {
+        let style, size;
+
         if (document.querySelector("input[name='display']:checked") === null) {
-            return "grid";
+            style = "grid";  // Default
         }
         else {
-            return document.querySelector("input[name='display']:checked").value
+            // Currently checked display style radio button
+            style = document.querySelector("input[name='display']:checked").value;
         }
+
+        if (document.querySelector("input[name='display-size']:checked") === null) {
+            size = "medium"; // Default
+        }
+        else {
+            // Currently checked size radio button
+            size = document.querySelector("input[name='display-size']:checked").value;
+        }
+
+        return style + " " + size;
     }
 
 
@@ -206,29 +220,29 @@ class S3Browser extends Component {
                 <h2>S3 Browser: {this.QASM.s3_bucket}</h2>
 
                 <div className="fieldset-container">
-                    <fieldset className="directory-display-mode">
+                    <fieldset className="directory-display-mode" onChange={this.updateDisplayMode}>
                         <legend>Display Mode</legend>
                         <div>
-                            <input type="radio" id="grid-display" name="display" value="grid" onChange={this.updateDisplayMode} defaultChecked />
+                            <input type="radio" id="grid-display" name="display" value="grid" defaultChecked />
                             <label for="grid-display">Grid</label>
                         </div>
                         <div>
-                            <input type="radio" id="list-display" name="display" value="list" onChange={this.updateDisplayMode} />
+                            <input type="radio" id="list-display" name="display" value="list" />
                             <label for="list-display">List</label>
                         </div>
                     </fieldset>
-                    <fieldset className="directory-display-size">
+                    <fieldset className="directory-display-size" onChange={this.updateDisplayMode}>
                         <legend>Size</legend>
                         <div>
-                            <input type="radio" id="display-small" name="display-size" value="small" onChange={this.updateDisplaySize} />
+                            <input type="radio" id="display-small" name="display-size" value="small" />
                             <label for="display-small">Small</label>
                         </div>
                         <div>
-                            <input type="radio" id="display-medium" name="display-size" value="medium" onChange={this.updateDisplaySize} defaultChecked />
+                            <input type="radio" id="display-medium" name="display-size" value="medium" defaultChecked />
                             <label for="display-medium">Medium</label>
                         </div>
                         <div>
-                            <input type="radio" id="display-large" name="display-size" value="large" onChange={this.updateDisplaySize} />
+                            <input type="radio" id="display-large" name="display-size" value="large" />
                             <label for="display-large">Large</label>
                         </div>
                     </fieldset>
