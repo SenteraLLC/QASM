@@ -14,8 +14,6 @@ class S3Browser extends Component {
         this.mode    = window.S3_BROWSER_MODE // Set by window opener
         this.path    = window.START_FOLDER
         this.parents = props.parents || [] // Stack of parent folders
-        this.display = props.display
-        this.rememberS3Display = props.rememberS3Display
         
         if (this.path == null) {
             this.path = "" 
@@ -142,7 +140,6 @@ class S3Browser extends Component {
         } catch {
             console.log("Failed to load " + folder);
         }
-        console.log(this.parents);
     }
 
 
@@ -155,7 +152,6 @@ class S3Browser extends Component {
         if (this.parents.length > 0) {
             folder += folder.endsWith("/") ? "" : "/" // Add trailing slash if not present
         }
-        console.log(folder)
         try {
             let response = await this.QASM.call_backend(window, "openS3Folder", folder);
             this.folders = response.folders;
@@ -249,7 +245,7 @@ class S3Browser extends Component {
                         Select Directory: {this.path}
                     </button>
                 }
-                {this.mode === s3_browser_modes.SELECT_JSON && this.parents.length !== 0 &&
+                {this.mode === s3_browser_modes.SELECT_JSON &&
                     <div>
                         <button 
                             onClick={this.createFile}>
