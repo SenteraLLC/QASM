@@ -182,11 +182,11 @@ class S3Browser extends Component {
                     <legend>Display Mode</legend>
                     <div>
                         <input type="radio" id="grid-display" name="display" value="grid" onChange={this.updateDisplayMode} defaultChecked />
-                        <label for="grid-display">Grid</label>
+                        <label htmlFor="grid-display">Grid</label>
                     </div>
                     <div>
                         <input type="radio" id="list-display" name="display" value="list" onChange={this.updateDisplayMode} />
-                        <label for="list-display">List</label>
+                        <label htmlFor="list-display">List</label>
                     </div>
                 </fieldset>
                 {this.mode === s3_browser_modes.SELECT_DIRECTORY &&
