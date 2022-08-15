@@ -42,6 +42,7 @@ class App extends Component {
     // Setup S3 browser
     this.s3props = {
       "QASM": this.QASM,
+    }
   }
   
   render() {
