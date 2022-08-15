@@ -2,15 +2,17 @@ import { Component } from 'react';
 import './css/App.css';
 import Grid from "./components/Grid.js";
 import Home from "./components/Home.js";
+import BinaryEditor from './components/BinaryEditor';
 import S3Browser from "./components/S3Browser.js"
 import icon from "../public/icon.png";
 import {HashRouter, Link, Route, Routes} from "react-router-dom";
 
 // Link keys to components
 const COMPONENT_KEYS = {
-  "grid": (props) => {return <Grid {...props}/>},
-  "home": (props) => {return <Home {...props}/>},
-  "S3Browser": (props) => {return <S3Browser {...props}/>},
+  "grid":          (props) => {return <Grid {...props}/>},
+  "home":          (props) => {return <Home {...props}/>},
+  "binary editor": (props) => {return <BinaryEditor {...props}/>},
+  "S3Browser":     (props) => {return <S3Browser {...props}/>},
 }
 
 class App extends Component {
