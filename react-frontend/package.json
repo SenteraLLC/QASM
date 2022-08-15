@@ -1,6 +1,6 @@
 {
   "name": "react-frontend",
-  "version": "0.4.1",
+  "version": "0.4.2",
   "private": true,
   "proxy": "http://localhost:3000",
   "homepage": "./",
