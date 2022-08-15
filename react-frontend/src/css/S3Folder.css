@@ -48,6 +48,7 @@ div.S3Folder button.back-button {
 /* ----- CSS for grid display ----- */
 
 div.S3Folder div.grid {
+    margin: 0 2em;
     display: grid;
     grid-template-columns: repeat(5, 1fr);
     justify-items: center;
