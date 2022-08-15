@@ -43,7 +43,6 @@ class App extends Component {
     this.s3props = {
       "QASM": this.QASM,
     }
-
   }
   
   render() {
