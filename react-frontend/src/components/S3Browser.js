@@ -12,10 +12,28 @@ class S3Browser extends Component {
         
         this.QASM    = props.QASM
         this.mode    = window.S3_BROWSER_MODE // Set by window opener
+        this.path    = window.START_FOLDER
         this.parents = props.parents || [] // Stack of parent folders
-        this.path    = props.path    || ""
-        this.folders = props.folders || this.QASM.folders
-        this.files   = props.files   || this.QASM.files
+        
+        if (this.path == null) {
+            this.path = "" 
+            this.folders = this.QASM.folders
+            this.files   = this.QASM.files
+        } else {
+            this.folders = []
+            this.files = []
+            
+            // Populate parent stack
+            this.parents = [""]
+            let folders = this.path.split("/").slice(0, -2);
+            for (let i=0; i < folders.length; i++) {
+                this.parents.push(this.parents[i] + folders[i] + "/");
+            }
+            
+            this.changePath(this.path).then(() => {
+                this.parents.pop(); // Remove starting path from parent stack
+            });
+        }
 
         this.state = {
             path: this.path
@@ -131,6 +149,9 @@ class S3Browser extends Component {
      */
     async goBack() {
         let folder = this.parents.pop();
+        if (this.parents.length > 0) {
+            folder += folder.endsWith("/") ? "" : "/" // Add trailing slash if not present
+        }
         try {
             let response = await this.QASM.call_backend(window, "openS3Folder", folder);
             this.folders = response.folders;
@@ -148,18 +169,32 @@ class S3Browser extends Component {
 
 
     /**
-     * Checks which mode is selected and returns that value. If the mode select
-     * buttons haven't loaded in yet, then it returns the default of grid.
+     * Checks which mode and size are currently selected. If the radio
+     * buttons haven't loaded in yet, then the querySelector will be null
+     * and we use the default of grid medium.
      * 
-     * @returns {string} Display mode as string
+     * @returns {string} Display mode and size as string
      */
     getDisplayMode() {
+        let style, size;
+
         if (document.querySelector("input[name='display']:checked") === null) {
-            return "grid";
+            style = "grid";  // Default
         }
         else {
-            return document.querySelector("input[name='display']:checked").value
+            // Currently checked display style radio button
+            style = document.querySelector("input[name='display']:checked").value;
         }
+
+        if (document.querySelector("input[name='display-size']:checked") === null) {
+            size = "medium"; // Default
+        }
+        else {
+            // Currently checked size radio button
+            size = document.querySelector("input[name='display-size']:checked").value;
+        }
+
+        return style + " " + size;
     }
 
 
@@ -170,28 +205,46 @@ class S3Browser extends Component {
         document.getElementById("s3-folder-holder").className = this.getDisplayMode();
     }
 
-    
+
     render() {
         return (
             <div className="S3Folder">
                 <h2>S3 Browser: {this.QASM.s3_bucket}</h2>
-                <fieldset className="directory-display-mode">
-                    <legend>Display Mode</legend>
-                    <div>
-                        <input type="radio" id="grid-display" name="display" value="grid" onChange={this.updateDisplayMode} defaultChecked />
-                        <label htmlFor="grid-display">Grid</label>
-                    </div>
-                    <div>
-                        <input type="radio" id="list-display" name="display" value="list" onChange={this.updateDisplayMode} />
-                        <label htmlFor="list-display">List</label>
-                    </div>
-                </fieldset>
+
+                <div className="fieldset-container">
+                    <fieldset className="directory-display-mode" onChange={this.updateDisplayMode}>
+                        <legend>Display Mode</legend>
+                        <div>
+                            <input type="radio" id="grid-display" name="display" value="grid" defaultChecked />
+                            <label for="grid-display">Grid</label>
+                        </div>
+                        <div>
+                            <input type="radio" id="list-display" name="display" value="list" />
+                            <label for="list-display">List</label>
+                        </div>
+                    </fieldset>
+                    <fieldset className="directory-display-size" onChange={this.updateDisplayMode}>
+                        <legend>Size</legend>
+                        <div>
+                            <input type="radio" id="display-small" name="display-size" value="small" />
+                            <label for="display-small">Small</label>
+                        </div>
+                        <div>
+                            <input type="radio" id="display-medium" name="display-size" value="medium" defaultChecked />
+                            <label for="display-medium">Medium</label>
+                        </div>
+                        <div>
+                            <input type="radio" id="display-large" name="display-size" value="large" />
+                            <label for="display-large">Large</label>
+                        </div>
+                    </fieldset>
                 {this.mode === s3_browser_modes.SELECT_DIRECTORY &&
+
                     <button 
                         onClick={this.selectFolder}>
                         Select Directory: {this.path}
                     </button>
-                }<br/>
+                }
                 {this.mode === s3_browser_modes.SELECT_JSON &&
                     <div>
                         <button 
@@ -203,10 +256,13 @@ class S3Browser extends Component {
                             type="text"
                         />
                     </div>
-                }<br/>
+                }
+                </div>
+                <br/>
                 {this.parents.length !== 0 &&
                     <button 
-                        onClick={this.goBack}>
+                        onClick={this.goBack}
+                        className="back-button">
                         Back
                     </button>
                 }
