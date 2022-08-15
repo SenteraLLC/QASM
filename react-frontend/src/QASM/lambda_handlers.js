@@ -78,6 +78,9 @@ async function handleLoadLabels(QASM, data, window) {
 /**
  * Open a directory selection dialog
  *
+ * @param {Object} QASM QASM object
+ * @param {*} data data
+ * @param {*} window window
  * @returns s3 path on sucess, nothing on cancel
  */
 async function handleOpenDir(QASM, data, window) {
@@ -94,6 +97,14 @@ async function handleOpenDir(QASM, data, window) {
     });
 }
 
+/**
+ * Get signed urls for all images in an s3 folder
+ * 
+ * @param {Object} QASM QASM object
+ * @param {string} data full s3 path
+ * @param {*} window window
+ * @returns {Object} { image_name: signed_url } 
+ */
 async function handleLoadImages(QASM, data, window) {
     let params = {
         "bucket_name": QASM.s3_bucket,
@@ -106,9 +117,10 @@ async function handleLoadImages(QASM, data, window) {
 
 /**
  * Get file and folder names from an s3 folder path
- * @param QASM QASM object
- * @param data s3 prefix
- * @returns {object} { folders: [], files: [] }
+ * 
+ * @param {Object} QASM QASM object
+ * @param {string} data s3 prefix
+ * @returns {Object} { folders: [], files: [] }
  */
 async function handleOpenS3Folder(QASM, data, window) {
     // Setup S3 Browser

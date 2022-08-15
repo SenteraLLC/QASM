@@ -1,8 +1,14 @@
 // Definitions for base QASM class.
-// const constants = require("./constants.js");
 const { function_handlers } = require("./lambda_handlers.js");
 
 export class QASM {
+    /**
+     * Create a QASM object based on the
+     * app mode in the config
+     * 
+     * @param {Object} config QASM config object
+     * @returns {Object} QASM Object
+     */
     static create(config) {
         return new this.subClasses[config.app](config)
     } 
@@ -18,10 +24,23 @@ export class QASM_s3 extends QASM {
         this.files = [];
     }
     
+    /**
+     * Call a backend function and return the response
+     * 
+     * @param {*} window window
+     * @param {string} function_name function name
+     * @param {*} data data
+     * @returns {*} function response
+     */
     async call_backend (window, function_name, data=null) {
         return await function_handlers[function_name](this, data, window);
     }    
 
+    /**
+     * Initialize the first level of the s3 bucket
+     * 
+     * @returns {Object} Initialized QASM Object
+     */
     async init() {
         // Preload first level of s3 bucket
         let response = await this.call_backend(window, "openS3Folder", null);
@@ -38,10 +57,23 @@ export class QASM_Local extends QASM {
         this.config = config;
     }
 
+    /**
+     * Call a backend function and return the response
+     * 
+     * @param {*} window window
+     * @param {string} function_name function name
+     * @param {*} data data
+     * @returns {*} function response
+     */
     async call_backend (window, function_name, data) {
         return await window.electron.invoke(function_name, data);
     }
 
+    /**
+     * Initialize
+     * 
+     * @returns {Object} Initialized QASM Object
+     */
     async init() {
         // Nothing
         return this;
