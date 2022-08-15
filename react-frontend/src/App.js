@@ -26,7 +26,7 @@ class App extends Component {
     this.config         = props.config;
     this.components     = this.config.components;
     this.component_keys = Object.keys(this.components);
-    this.location       = window.location.href.split("/")[window.location.href.split("/").length-1]
+    this.location       = window.location.href.split("/").slice(-1)[0] // Just page name
     
     for (let component_key in this.components) {
       // Add QASM object to all component props
@@ -51,6 +51,7 @@ class App extends Component {
       <HashRouter>
       <div className="App">
         { this.location !== "s3Browser" &&
+          // Disable navbar when in the s3Browser
           <div className="menu">
             <a href='/' id="menu-logo">
               <img src={icon} alt="Logo" />
