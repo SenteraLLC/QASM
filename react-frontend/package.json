@@ -1,6 +1,6 @@
 {
   "name": "react-frontend",
-  "version": "0.4.1",
+  "version": "0.4.2",
   "private": true,
   "proxy": "http://localhost:3000",
   "homepage": "./",
@@ -36,7 +36,6 @@
     "build": "react-app-rewired build",
     "dev": "concurrently -k \"cross-env BROWSER=none npm start\" \"npm:electron\"",
     "electron": "wait-on tcp:3000 && electron .",
-    "build-package": "npm run build && electron-packager ./ --platform=win32 --arch=x64 --overwrite",
     "build-exe": "npm run build && electron-builder --win"
   },
   "eslintConfig": {
@@ -61,6 +60,10 @@
     "productName": "QASM App",
     "win": {
       "target": "NSIS",
+      "icon": "public/icon.png"
+    },
+    "mac": {
+      "target": "dmg",
       "icon": "public/icon.png"
     }
   }

@@ -27,6 +27,10 @@ class GridImage extends Component {
         this.changeClass = this.changeClass.bind(this);
     }
 
+
+    /**
+     * Change class to the next class in this.classes
+     */
     changeClass() {
         // Cycle through all classes
         let class_name;
@@ -37,8 +41,6 @@ class GridImage extends Component {
                 this.setState({
                     class: class_name
                 });
-                
-                // console.log("Changed " + this.image_name + " to " + this.state.class);
                 break;
             } else if (idx+1 === this.classes.length) {
                 idx = -1;
@@ -46,8 +48,10 @@ class GridImage extends Component {
         }
     }
     
+
     render() {
 
+        // Only show overlay if the active class has an overlay
         let show_overlay;
         if (this.classes.find(x => x.class_name === this.state.class).svg_overlay !== null) {
             show_overlay = " show_overlay";
@@ -60,7 +64,6 @@ class GridImage extends Component {
             <div 
                 className={"GridImage " + this.state.class + show_overlay}
                 onClick={this.changeClass}
-                // style={}
                 id={this.image_name}
             >
                 <div>
