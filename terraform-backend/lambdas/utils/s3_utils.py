@@ -46,5 +46,5 @@ def get_all_signed_urls_in_folder(bucket_name, folder_path, s3_client=None):
         get_signed_url(
             bucket_name, folder_path, str(o.get("Key")).split("/")[-1], s3_client
         )
-        for o in result.get("Contents")
+        for o in result.get("Contents") if str(o.get("Key")) != folder_path
     }
