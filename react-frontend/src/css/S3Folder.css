@@ -11,13 +11,19 @@
 
 :root {
     --grid-icon-size: 8em;
-    --list-icon-size: 1em;
+    --list-icon-size: 2em;
+}
+
+div.S3Folder div.fieldset-container {
+    display: inline-grid;
+    grid-template-columns: 133px 133px 2fr;
+    gap: 1em;
 }
 
 div.S3Folder fieldset {
     display: inline-block;
-    margin-right: 1em;
     text-align: left;
+    max-width: 129px;
 }
 
 div.S3Folder input[type="radio"] {
@@ -26,6 +32,10 @@ div.S3Folder input[type="radio"] {
 
 div.S3Folder label {
     cursor: pointer;
+}
+
+div.S3Folder button {
+        margin-top: 0.6em;
 }
 
 div.S3Folder div.clickable {
@@ -92,7 +102,7 @@ div.S3Folder div.list img {
 
 div.S3Folder div.list p {
     position: relative;
-    font-size: calc(var(--list-icon-size) * 0.67);
+    font-size: calc(var(--list-icon-size) / 2.5);
     margin: 0;
     margin-left: 16px;
 }

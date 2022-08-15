@@ -1,7 +1,7 @@
-button {
+div.Grid button {
     margin-bottom: 16px;
 }
 
-table {
+div.Grid table {
     margin: 0 auto;
 }
