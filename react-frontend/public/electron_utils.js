@@ -4,6 +4,7 @@ const { image_types, function_names } = require("./electron_constants.js");
 const fs = require("fs");
 const path = require('path');
 
+
 // Connect function names with their function handlers
 exports.function_handlers = {
     [function_names.LOAD_LABELS]:  handleLoadLabels,
@@ -11,6 +12,7 @@ exports.function_handlers = {
     [function_names.LOAD_IMAGES]:  handleLoadImages,
     [function_names.SAVE_FILE]:    handleSaveFile,
 }
+
 
 /**
  * Initialize all ipc handlers listed in electron_utils.js
@@ -50,6 +52,7 @@ async function handleOpenFile(event, data) {
     }
 }
 
+
 /**
  * Open a save file dialog
  * 
@@ -76,6 +79,7 @@ async function handleOpenFile(event, data) {
         }
     }
 }
+
 
 /**
  * Open a directory selection dialog
@@ -115,6 +119,7 @@ async function handleLoadLabels(event, data) {
         return {};
     }
 }
+
 
 /**
  * Load images from a folder as base64 strings

@@ -254,8 +254,7 @@ class Grid extends Component {
         console.log(this.labels);
         
         if (Object.keys(this.labels).length > 0) {
-            // Update state to rerender page
-            this.updateState();
+            this.updateState(); // Update state to rerender page
         } else {
             console.log("Prevented loading empty labels.");
         }
@@ -321,17 +320,10 @@ class Grid extends Component {
      * @param {*} e event 
      */
     changeGridWidth(e) {
-        // Get current grid width
-        this.grid_width = e.target.value;
-
-        // Store current labels
-        this.updateLocalLabels();
-
-        // Reformat grid
-        this.gridSetup(); 
-
-        // Update page
-        this.updateState();
+        this.grid_width = e.target.value; // Get current grid width
+        this.updateLocalLabels(); // Store current labels
+        this.gridSetup(); // Reformat grid
+        this.updateState(); // Update page
     }
 
 

@@ -41,8 +41,6 @@ class GridImage extends Component {
                 this.setState({
                     class: class_name
                 });
-                
-                // console.log("Changed " + this.image_name + " to " + this.state.class);
                 break;
             } else if (idx+1 === this.classes.length) {
                 idx = -1;
