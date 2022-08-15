@@ -90,12 +90,9 @@ class S3Browser extends Component {
      */
     createFile() {
         let new_filename = document.getElementById("new-filename").value;
-        // Space -> underscore, remove extension
-        new_filename = new_filename.replace(" ", "_").split('.')[0];
-        // Save as json
-        new_filename = new_filename + ".json";
-        // Add full path
-        new_filename = this.path + new_filename;
+        new_filename = new_filename.replace(" ", "_").split('.')[0]; // Space -> underscore, remove extension
+        new_filename = new_filename + ".json"; // Save as json
+        new_filename = this.path + new_filename; // Add full path
         
         /* eslint-disable */
         // Prompt user to confirm, then save

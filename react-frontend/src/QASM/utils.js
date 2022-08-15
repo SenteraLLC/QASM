@@ -1,21 +1,12 @@
 // Utils
 
 /**
- * Call a backend function and log the response
- * 
- * @param {*} window active window
- * @param {*} function_name function name listed in electron_constants.js
- * @param {*} data data to be sent to the backend
- */
-
-/**
  * Takes in a string and converts it into a valid html id/class.
  * Currently it works for our use case, but we should change it to
  * convert any character into a unique representation of valid 
  * html characters instead.
  * 
  * @param {string} file_name string to be converted into valid html id 
- * 
  * @returns {string} 
  */
 export function file_name_to_valid_id(file_name) {
