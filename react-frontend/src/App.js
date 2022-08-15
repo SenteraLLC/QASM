@@ -11,7 +11,7 @@ import {HashRouter, Link, Route, Routes} from "react-router-dom";
 const COMPONENT_KEYS = {
   "grid":          (props) => {return <Grid {...props}/>},
   "home":          (props) => {return <Home {...props}/>},
-  "binary editor": (props) => {return <BinaryEditor {...props}/>},
+  "binaryeditor": (props) => {return <BinaryEditor {...props}/>},
   "S3Browser":     (props) => {return <S3Browser {...props}/>},
 }
 
