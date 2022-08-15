@@ -186,33 +186,6 @@ class S3Browser extends Component {
         document.getElementById("s3-folder-holder").className = this.getDisplayMode();
     }
 
-    updateDisplaySize() {
-        let current_size = document.querySelector("input[name='display-size']:checked").value;
-        console.log(current_size, "called")
-
-        switch(current_size){
-            case "small":
-                document.documentElement.style.setProperty("--grid-icon-size", "6em");
-                document.documentElement.style.setProperty("--list-icon-size", "1.4em");
-                break;
-
-            case "medium":
-                document.documentElement.style.setProperty("--grid-icon-size", "8em");
-                document.documentElement.style.setProperty("--list-icon-size", "2.5em");
-                break;
-            
-            case "large":
-                document.documentElement.style.setProperty("--grid-icon-size", "10em");
-                document.documentElement.style.setProperty("--list-icon-size", "4em");
-                break;
-
-            case "josh":
-                document.documentElement.style.setProperty("--grid-icon-size", "15em");
-                document.documentElement.style.setProperty("--list-icon-size", "6em");
-                break;
-        }
-    }
-
 
     render() {
         return (
@@ -269,7 +242,8 @@ class S3Browser extends Component {
                 <br/>
                 {this.parents.length !== 0 &&
                     <button 
-                        onClick={this.goBack}>
+                        onClick={this.goBack}
+                        className="back-button">
                         Back
                     </button>
                 }
