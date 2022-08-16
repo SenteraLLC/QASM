@@ -1,3 +1,8 @@
 div.BinaryEditor {
     color: red;
 }
+
+div.BinaryEditor img {
+    max-width: 40vw;
+    margin: 1em;
+}
