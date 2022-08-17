@@ -58,17 +58,45 @@ class Binary extends Component {
         }
     }
 
+     /**
+     * Applies the dilate morphological operation on the output binary and replaces it in the dom.
+     */
     async dilate() {
         
         // Make sure we have a binary to work with.
         if (this.original_binary === undefined) return;
 
+        // Load the binary image we'll be working on.
         let binary_image = await Image.load(document.querySelector("#output-" + this.id).src);
 
+        // Convert it to a true binary
         binary_image.grey().mask();
 
+        // Apply dilate
         let new_binary_image = binary_image.dilate();
 
+        // Put the new binary in the dom
+        document.querySelector("#output-" + this.id).src = new_binary_image.toDataURL();
+    }
+
+    /**
+     * Applies the erode morphological operation on the output binary and replaces it in the dom.
+     */
+    async erode() {
+        
+        // Make sure we have a binary to work with.
+        if (this.original_binary === undefined) return;
+
+        // Load the binary image we'll be working on.
+        let binary_image = await Image.load(document.querySelector("#output-" + this.id).src);
+
+        // Convert it to a true binary
+        binary_image.grey().mask();
+
+        // Apply erode
+        let new_binary_image = binary_image.erode();
+
+        // Put the new binary in the dom
         document.querySelector("#output-" + this.id).src = new_binary_image.toDataURL();
     }
 
