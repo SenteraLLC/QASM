@@ -6,3 +6,7 @@ div.BinaryEditor img {
 
     margin: 1em;
 }
+
+div.BinaryEditor * {
+    border: 1px solid red;
+}

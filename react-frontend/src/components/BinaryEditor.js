@@ -1,9 +1,36 @@
 import { Component } from "react";
+import Binary from "./Binary";
 import "../css/BinaryEditor.css";
 
 const { Image } = require("image-js");
 
 class BinaryEditor extends Component {
+    component_updater = 0;
+
+    constructor(){
+        super();
+        this.updateOriginalBinary = this.updateOriginalBinary.bind(this);
+
+        this.state = {
+            original_binary_src: this.original_binary_src
+        }
+    }
+
+    updateOriginalBinary(event) {
+        console.log(event);
+
+        let input = document.querySelector("#image_input");
+
+        // Create a src for the image selected
+        this.original_binary_src = URL.createObjectURL(input.files[0])
+
+        this.setState({
+            original_binary_src: this.original_binary_src
+        });
+
+        this.component_updater++;
+    }
+
     async updateCanvas() {
         // Grab the input element
         let input = document.querySelector("#image_input");
@@ -48,18 +75,19 @@ class BinaryEditor extends Component {
 
     render() {
         return (
-            <div className="BinaryEditor">
+            <div className="BinaryEditor" key={this.component_updater}>
                 <button onClick={this.dilate}>
                     Dilate
                 </button>
                 <button onClick={this.erode}>
                     Erode
                 </button>
-                <input type="file" accept=".jpeg,.JPEG,.png,.PNG,.jpg,.JPG" id="image_input" onChange={this.updateCanvas} />
-                <div>
+                <input type="file" accept=".jpeg,.JPEG,.png,.PNG,.jpg,.JPG" id="image_input" onChange={this.updateOriginalBinary} />
+                {/* <div>
                     <img id="original-binary" alt="Original Binary" />
                     <img id="output-binary" alt="Output"/>
-                </div>
+                </div> */}
+                <Binary original_binary={this.original_binary_src}/>
             </div>
         )
     }
