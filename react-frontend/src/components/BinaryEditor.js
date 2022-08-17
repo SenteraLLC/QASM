@@ -22,12 +22,24 @@ class BinaryEditor extends Component {
         document.querySelector("#output-binary").src = binary.toDataURL();
     }
 
-    async close() {
+    async dilate() {
         let binary = await Image.load(document.querySelector("#output-binary").src);
 
         binary = binary.grey().mask();
 
-        let new_binary = binary.close([[1,1,1],[1,1,1],[1,1,1]]);
+        let new_binary = binary.dilate([[0,1,0],[1,1,1],[0,1,0]]);
+
+        console.log(binary)
+
+        document.querySelector("#output-binary").src = new_binary.toDataURL();
+    }
+
+    async erode() {
+        let binary = await Image.load(document.querySelector("#output-binary").src);
+
+        binary = binary.grey().mask();
+
+        let new_binary = binary.erode([[0,1,0],[1,1,1],[0,1,0]]);
 
         console.log(binary)
 
@@ -37,8 +49,11 @@ class BinaryEditor extends Component {
     render() {
         return (
             <div className="BinaryEditor">
-                <button onClick={this.close}>
-                    Close
+                <button onClick={this.dilate}>
+                    Dilate
+                </button>
+                <button onClick={this.erode}>
+                    Erode
                 </button>
                 <input type="file" accept=".jpeg,.JPEG,.png,.PNG,.jpg,.JPG" id="image_input" onChange={this.updateCanvas} />
                 <div>
