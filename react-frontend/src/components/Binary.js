@@ -1,5 +1,7 @@
 import { Component } from "react";
 
+const { Image } = require("image-js");
+
 class Binary extends Component {
     currently_hovered = false;
 
@@ -7,18 +9,37 @@ class Binary extends Component {
         super(props);
         this.original_binary = props.original_binary;
 
+        if (this.original_binary !== undefined) {
+            this.id = this.original_binary.split("/").pop()
+        }
+
+
+        // Bind this to each method
         this.handleMouseIn = this.handleMouseIn.bind(this);
         this.handleMouseOut = this.handleMouseOut.bind(this);
+        this.handleKeypress = this.handleKeypress.bind(this);
     }
 
-    handleMouseIn(event) {
+    /**
+     * Sets this.currently_hovered to true.
+     */
+    handleMouseIn() {
         this.currently_hovered = true;
     }
 
-    handleMouseOut(event) {
+    /**
+     * Sets this.currently_hovered to false.
+     */
+    handleMouseOut() {
         this.currently_hovered = false;
     }
 
+    /**
+     * Handles calling the correct morphological method on the output binary
+     * if the mouse is currently hovering over the binary.
+     * 
+     * @param {Event} event Javascript event triggered on keypress
+     */
     handleKeypress(event) {
 
         // Ignore all keypresses if the output binary is not being hovered
@@ -27,6 +48,7 @@ class Binary extends Component {
         switch(event.key) {
             case "=":
                 console.log("=")
+                this.dilate();
                 break;
             case "-":
                 console.log("-")
@@ -36,27 +58,36 @@ class Binary extends Component {
         }
     }
 
+    async dilate() {
+        
+        // Make sure we have a binary to work with.
+        if (this.original_binary === undefined) return;
+
+        let binary_image = await Image.load(document.querySelector("#output-" + this.id).src);
+
+        binary_image.grey().mask();
+
+        let new_binary_image = binary_image.dilate();
+
+        document.querySelector("#output-" + this.id).src = new_binary_image.toDataURL();
+    }
+
     render() {
-        console.log(this.original_binary)
-        let id;
-        if (this.original_binary !== undefined) {
-            id = this.original_binary.split("/").pop()
-        }
         return (
             <div className="Binary" >
                 <img 
                     src={this.original_binary} 
                     alt="Original Binary" 
-                    id={this.original_binary !== undefined ? "original-" + id : null} 
+                    id={this.original_binary !== undefined ? "original-" + this.id : null} 
                     className="input-binary"/>
                 <img 
                     alt="Output Binary" 
-                    id={this.original_binary !== undefined ? "output-" + id : null} 
+                    id={this.original_binary !== undefined ? "output-" + this.id : null} 
                     className="output-binary" 
                     onMouseEnter={this.handleMouseIn} 
                     onMouseOut={this.handleMouseOut}/>
             </div>
-        )
+        );
     }
 
     componentDidMount() {
