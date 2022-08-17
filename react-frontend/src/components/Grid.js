@@ -239,8 +239,12 @@ class Grid extends Component {
      */
     async saveLabels() {
         this.updateLocalLabels();
-        console.log(this.labels);
-        console.log(await this.QASM.call_backend(window, function_names.SAVE_FILE, this.labels));
+        let params = {
+            labels: this.labels,
+            path: this.src,
+        }
+        console.log(params);
+        console.log(await this.QASM.call_backend(window, function_names.SAVE_FILE, params));
     }
 
 
@@ -250,7 +254,7 @@ class Grid extends Component {
      */
     async loadLabels() {
         // Load in previous labels
-        this.labels = await this.QASM.call_backend(window, function_names.LOAD_LABELS);
+        this.labels = await this.QASM.call_backend(window, function_names.LOAD_LABELS, this.src);
         console.log(this.labels);
         
         if (Object.keys(this.labels).length > 0) {
