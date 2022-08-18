@@ -5,6 +5,7 @@ const { Image } = require("image-js");
 class Binary extends Component {
     currently_hovered = false;
 
+
     constructor(props) {
         super(props);
         this.original_binary_src = props.original_binary;
@@ -25,12 +26,9 @@ class Binary extends Component {
         // Set state
         this.state = {
             output_binary_src: this.original_binary_src
-        }
+        };
     }
 
-    // static getDerivedStateFromProps(props, state) {
-
-    // }
 
     /**
      * Sets this.currently_hovered to true.
@@ -39,12 +37,14 @@ class Binary extends Component {
         this.currently_hovered = true;
     }
 
+
     /**
      * Sets this.currently_hovered to false.
      */
     handleMouseOut() {
         this.currently_hovered = false;
     }
+
 
     /**
      * Handles calling the correct morphological method on the output binary
@@ -70,9 +70,10 @@ class Binary extends Component {
         }
     }
 
-     /**
-     * Applies the dilate morphological operation on the output binary and replaces it in the dom.
-     */
+
+    /**
+    * Applies the dilate morphological operation on the output binary and updates its src.
+    */
     async dilate() {
         
         // Make sure we have a binary to work with.
@@ -83,7 +84,6 @@ class Binary extends Component {
 
         // Convert it to a true binary
         binary_image = binary_image.grey().mask();
-        console.log(binary_image)
 
         // Apply dilate
         let new_binary_image = binary_image.dilate();
@@ -95,8 +95,9 @@ class Binary extends Component {
         });
     }
 
+
     /**
-     * Applies the erode morphological operation on the output binary and replaces it in the dom.
+     * Applies the erode morphological operation on the output binary and updates its src.
      */
     async erode() {
         
@@ -119,6 +120,7 @@ class Binary extends Component {
         });
     }
 
+
     render() {
         return (
             <div className="Binary" >
@@ -138,10 +140,12 @@ class Binary extends Component {
         );
     }
 
+
     componentDidMount() {
         // document.addEventListener("mousemove", this.handleMousemove(this));
         document.addEventListener("keydown", this.handleKeypress.bind(this));
     }
+
 
     componentWillUnmount() {
         // document.removeEventListener("mousemove", this.handleMousemove(this));

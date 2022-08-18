@@ -2,91 +2,52 @@ import { Component } from "react";
 import Binary from "./Binary";
 import "../css/BinaryEditor.css";
 
-// const { Image } = require("image-js");
 
 class BinaryEditor extends Component {
     component_updater = 0;
 
+
     constructor(){
         super();
+
+        // Bind function
         this.updateOriginalBinary = this.updateOriginalBinary.bind(this);
 
+        // Keep track of original binary src in state so that we can rerender the dom
+        // when original binary src changes
         this.state = {
             original_binary_src: this.original_binary_src
         }
     }
 
-    updateOriginalBinary(event) {
-        console.log(event);
-
+    /**
+     * Creates and updates the src for the original binary from the input element on the page.
+     */
+    updateOriginalBinary() {
+        // Grab the input
         let input = document.querySelector("#image_input");
 
         // Create a src for the image selected
         this.original_binary_src = URL.createObjectURL(input.files[0])
 
+        // Set state and increment component updater to rerender the dom
         this.setState({
             original_binary_src: this.original_binary_src
         });
-
         this.component_updater++;
     }
 
-    // async updateCanvas() {
-    //     // Grab the input element
-    //     let input = document.querySelector("#image_input");
-
-    //     // Create a src for the image selected
-    //     let original_binary_src = URL.createObjectURL(input.files[0])
-
-    //     // Update the original-binary img with the new src
-    //     document.querySelector("#original-binary").src = original_binary_src;
-
-    //     const image = await Image.load(original_binary_src);
-
-    //     const binary = image.grey().mask();
-
-
-    //     document.querySelector("#output-binary").src = binary.toDataURL();
-    // }
-
-    // async dilate() {
-    //     let binary = await Image.load(document.querySelector("#output-binary").src);
-
-    //     binary = binary.grey().mask();
-
-    //     let new_binary = binary.dilate([[0,1,0],[1,1,1],[0,1,0]]);
-
-    //     console.log(binary)
-
-    //     document.querySelector("#output-binary").src = new_binary.toDataURL();
-    // }
-
-    // async erode() {
-    //     let binary = await Image.load(document.querySelector("#output-binary").src);
-
-    //     binary = binary.grey().mask();
-
-    //     let new_binary = binary.erode([[0,1,0],[1,1,1],[0,1,0]]);
-
-    //     console.log(binary)
-
-    //     document.querySelector("#output-binary").src = new_binary.toDataURL();
-    // }
 
     render() {
         return (
             <div className="BinaryEditor" key={this.component_updater}>
-                <button onClick={this.dilate}>
+                {/* <button onClick={this.dilate}>
                     Dilate
                 </button>
                 <button onClick={this.erode}>
                     Erode
-                </button>
+                </button> */}
                 <input type="file" accept=".jpeg,.JPEG,.png,.PNG,.jpg,.JPG" id="image_input" onChange={this.updateOriginalBinary} />
-                {/* <div>
-                    <img id="original-binary" alt="Original Binary" />
-                    <img id="output-binary" alt="Output"/>
-                </div> */}
                 <Binary original_binary={this.original_binary_src}/>
             </div>
         )
