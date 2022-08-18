@@ -1,4 +1,5 @@
 import { Component } from "react";
+import "../css/Binary.css";
 
 const { Image } = require("image-js");
 
