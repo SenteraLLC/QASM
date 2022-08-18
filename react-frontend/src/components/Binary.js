@@ -66,14 +66,12 @@ class Binary extends Component {
 
         switch(event.key) {
             case this.dilate_keybind:
-                console.log("=")
                 this.dilate();
                 break;
             case this.erode_keybind:
                 this.erode();
                 break;
             default:
-                console.log("other")
         }
     }
 
