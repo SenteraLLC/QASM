@@ -137,6 +137,12 @@ class Binary extends Component {
                     className="output-binary" 
                     onMouseEnter={this.handleMouseIn} 
                     onMouseOut={this.handleMouseOut}/>
+                <p>
+                    {this.original_binary_src !== undefined ? "original-" + this.id : null}
+                </p>
+                <p>
+                    {this.original_binary_src !== undefined ? "output-" + this.id : null}
+                </p>
             </div>
         );
     }
