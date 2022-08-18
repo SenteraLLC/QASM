@@ -1,7 +1,7 @@
 div.BinaryEditor div.button-holder {
     padding: 1em;
     display: inline-grid;
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(4, 1fr);
     gap: 0.5em;
 }
 
@@ -15,9 +15,14 @@ div.BinaryEditor div.button-holder label, div.BinaryEditor div.button-holder but
 }
 
 div.BinaryEditor div.button-holder label:hover, div.BinaryEditor div.button-holder button:hover {
-    background-color: #DDD;
+    background-color: #E5E5E5;
+    box-shadow: 0 0 1em -0.7em;
 }
 
 div.BinaryEditor input[type="file"] {
     display: none;
+}
+
+div.BinaryEditor p.binary-operations {
+    grid-column: 1 / -1;
 }

@@ -1,6 +1,7 @@
 import { Component } from "react";
 import Binary from "./Binary";
 import "../css/BinaryEditor.css";
+const { function_names } = require("../../public/electron_constants.js");
 
 
 class BinaryEditor extends Component {
@@ -9,6 +10,8 @@ class BinaryEditor extends Component {
 
     constructor(props){
         super(props);
+
+        this.QASM = props.QASM;
 
         // Save these so we can pass them into the Binary
         this.dilate_keybind = props.dilate_keybind;
@@ -42,11 +45,21 @@ class BinaryEditor extends Component {
     }
 
 
+    async saveBinary() {
+        // TODO: save
+        // const output_binary = document.querySelector(".output-binary");
+
+
+
+        // console.log(await this.QASM.call_backend(window, function_names.SAVE_FILE, this.labels));
+    }
+
+
     /**
      * Runs the dilate method from the Binary component by clicking a hidden button
      * in the component that runs the dilate method on click.
      */
-    dilate_binary() {
+    dilateBinary() {
         let dilate_button_list = document.getElementsByClassName("binary-dilate");
 
         for(let button of dilate_button_list) {
@@ -54,12 +67,12 @@ class BinaryEditor extends Component {
         }
     }
 
-    
+
     /**
      * Runs the dilate method from the Binary component by clicking a hidden button
      * in the component that runs the dilate method on click.
      */
-    erode_binary() {
+    erodeBinary() {
         let erode_button_list = document.getElementsByClassName("binary-erode");
 
         for(let button of erode_button_list) {
@@ -75,10 +88,13 @@ class BinaryEditor extends Component {
                     <label for="image_input">
                         Upload Binary
                     </label>
-                    <button onClick={this.dilate_binary}>
+                    <button onClick={this.saveBinary}>
+                        Save New Binary
+                    </button>
+                    <button onClick={this.dilateBinary}>
                         Dilate
                     </button>
-                    <button onClick={this.erode_binary}>
+                    <button onClick={this.erodeBinary}>
                         Erode
                     </button>
                 </div>
