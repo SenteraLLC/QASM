@@ -42,6 +42,32 @@ class BinaryEditor extends Component {
     }
 
 
+    /**
+     * Runs the dilate method from the Binary component by clicking a hidden button
+     * in the component that runs the dilate method on click.
+     */
+    dilate_binary() {
+        let dilate_button_list = document.getElementsByClassName("binary-dilate");
+
+        for(let button of dilate_button_list) {
+            button.click();
+        }
+    }
+
+    
+    /**
+     * Runs the dilate method from the Binary component by clicking a hidden button
+     * in the component that runs the dilate method on click.
+     */
+    erode_binary() {
+        let erode_button_list = document.getElementsByClassName("binary-erode");
+
+        for(let button of erode_button_list) {
+            button.click();
+        }
+    }
+
+
     render() {
         return (
             <div className="BinaryEditor" key={this.component_updater}>
@@ -49,10 +75,10 @@ class BinaryEditor extends Component {
                     <label for="image_input">
                         Upload Binary
                     </label>
-                    <button onClick={this.dilate}>
+                    <button onClick={this.dilate_binary}>
                         Dilate
                     </button>
-                    <button onClick={this.erode}>
+                    <button onClick={this.erode_binary}>
                         Erode
                     </button>
                 </div>
