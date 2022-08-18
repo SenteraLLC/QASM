@@ -7,18 +7,30 @@ class Binary extends Component {
 
     constructor(props) {
         super(props);
-        this.original_binary = props.original_binary;
+        this.original_binary_src = props.original_binary;
 
-        if (this.original_binary !== undefined) {
-            this.id = this.original_binary.split("/").pop()
+        // The output binary is the same as the input binary until its modified
+        this.output_binary_src = props.original_binary;
+
+        // Only set the id if the original binary src isn't undefined
+        if (this.original_binary_src !== undefined) {
+            this.id = this.original_binary_src.split("/").pop()
         }
-
-
+        
         // Bind this to each method
         this.handleMouseIn = this.handleMouseIn.bind(this);
         this.handleMouseOut = this.handleMouseOut.bind(this);
         this.handleKeypress = this.handleKeypress.bind(this);
+
+        // Set state
+        this.state = {
+            output_binary_src: this.original_binary_src
+        }
     }
+
+    // static getDerivedStateFromProps(props, state) {
+
+    // }
 
     /**
      * Sets this.currently_hovered to true.
@@ -64,10 +76,10 @@ class Binary extends Component {
     async dilate() {
         
         // Make sure we have a binary to work with.
-        if (this.original_binary === undefined) return;
+        if (this.output_binary_src === undefined) return;
 
         // Load the binary image we'll be working on.
-        let binary_image = await Image.load(document.querySelector("#output-" + this.id).src);
+        let binary_image = await Image.load(this.output_binary_src);
 
         // Convert it to a true binary
         binary_image.grey().mask();
@@ -75,8 +87,11 @@ class Binary extends Component {
         // Apply dilate
         let new_binary_image = binary_image.dilate();
 
-        // Put the new binary in the dom
-        document.querySelector("#output-" + this.id).src = new_binary_image.toDataURL();
+        // Put the new binary in the dom and set the state
+        this.output_binary_src = new_binary_image.toDataURL();
+        this.setState({
+            output_binary_src: this.output_binary_src
+        });
     }
 
     /**
@@ -85,10 +100,10 @@ class Binary extends Component {
     async erode() {
         
         // Make sure we have a binary to work with.
-        if (this.original_binary === undefined) return;
+        if (this.output_binary_src === undefined) return;
 
         // Load the binary image we'll be working on.
-        let binary_image = await Image.load(document.querySelector("#output-" + this.id).src);
+        let binary_image = await Image.load(this.output_binary_src);
 
         // Convert it to a true binary
         binary_image.grey().mask();
@@ -96,21 +111,25 @@ class Binary extends Component {
         // Apply erode
         let new_binary_image = binary_image.erode();
 
-        // Put the new binary in the dom
-        document.querySelector("#output-" + this.id).src = new_binary_image.toDataURL();
+        // Put the new binary in the dom and set the state
+        this.output_binary_src = new_binary_image.toDataURL();
+        this.setState({
+            output_binary_src: this.output_binary_src
+        });
     }
 
     render() {
         return (
             <div className="Binary" >
                 <img 
-                    src={this.original_binary} 
+                    src={this.original_binary_src} 
                     alt="Original Binary" 
-                    id={this.original_binary !== undefined ? "original-" + this.id : null} 
+                    id={this.original_binary_src !== undefined ? "original-" + this.id : null} 
                     className="input-binary"/>
                 <img 
+                    src={this.output_binary_src}
                     alt="Output Binary" 
-                    id={this.original_binary !== undefined ? "output-" + this.id : null} 
+                    id={this.original_binary_src !== undefined ? "output-" + this.id : null} 
                     className="output-binary" 
                     onMouseEnter={this.handleMouseIn} 
                     onMouseOut={this.handleMouseOut}/>
