@@ -2,7 +2,7 @@ import { Component } from "react";
 import Binary from "./Binary";
 import "../css/BinaryEditor.css";
 
-const { Image } = require("image-js");
+// const { Image } = require("image-js");
 
 class BinaryEditor extends Component {
     component_updater = 0;
@@ -31,47 +31,47 @@ class BinaryEditor extends Component {
         this.component_updater++;
     }
 
-    async updateCanvas() {
-        // Grab the input element
-        let input = document.querySelector("#image_input");
+    // async updateCanvas() {
+    //     // Grab the input element
+    //     let input = document.querySelector("#image_input");
 
-        // Create a src for the image selected
-        let original_binary_src = URL.createObjectURL(input.files[0])
+    //     // Create a src for the image selected
+    //     let original_binary_src = URL.createObjectURL(input.files[0])
 
-        // Update the original-binary img with the new src
-        document.querySelector("#original-binary").src = original_binary_src;
+    //     // Update the original-binary img with the new src
+    //     document.querySelector("#original-binary").src = original_binary_src;
 
-        const image = await Image.load(original_binary_src);
+    //     const image = await Image.load(original_binary_src);
 
-        const binary = image.grey().mask();
+    //     const binary = image.grey().mask();
 
 
-        document.querySelector("#output-binary").src = binary.toDataURL();
-    }
+    //     document.querySelector("#output-binary").src = binary.toDataURL();
+    // }
 
-    async dilate() {
-        let binary = await Image.load(document.querySelector("#output-binary").src);
+    // async dilate() {
+    //     let binary = await Image.load(document.querySelector("#output-binary").src);
 
-        binary = binary.grey().mask();
+    //     binary = binary.grey().mask();
 
-        let new_binary = binary.dilate([[0,1,0],[1,1,1],[0,1,0]]);
+    //     let new_binary = binary.dilate([[0,1,0],[1,1,1],[0,1,0]]);
 
-        console.log(binary)
+    //     console.log(binary)
 
-        document.querySelector("#output-binary").src = new_binary.toDataURL();
-    }
+    //     document.querySelector("#output-binary").src = new_binary.toDataURL();
+    // }
 
-    async erode() {
-        let binary = await Image.load(document.querySelector("#output-binary").src);
+    // async erode() {
+    //     let binary = await Image.load(document.querySelector("#output-binary").src);
 
-        binary = binary.grey().mask();
+    //     binary = binary.grey().mask();
 
-        let new_binary = binary.erode([[0,1,0],[1,1,1],[0,1,0]]);
+    //     let new_binary = binary.erode([[0,1,0],[1,1,1],[0,1,0]]);
 
-        console.log(binary)
+    //     console.log(binary)
 
-        document.querySelector("#output-binary").src = new_binary.toDataURL();
-    }
+    //     document.querySelector("#output-binary").src = new_binary.toDataURL();
+    // }
 
     render() {
         return (
