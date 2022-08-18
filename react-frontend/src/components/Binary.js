@@ -126,12 +126,12 @@ class Binary extends Component {
         return (
             <div className="Binary" >
                 <img 
-                    src={this.original_binary_src} 
+                    src={this.original_binary_src !== undefined ? this.original_binary_src : " "} 
                     alt="Original Binary" 
                     id={this.original_binary_src !== undefined ? "original-" + this.id : null} 
                     className="input-binary"/>
                 <img 
-                    src={this.output_binary_src}
+                    src={this.output_binary_src !== undefined ? this.output_binary_src : " "}
                     alt="Output Binary" 
                     id={this.original_binary_src !== undefined ? "output-" + this.id : null} 
                     className="output-binary" 

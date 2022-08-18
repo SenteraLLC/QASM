@@ -4,3 +4,7 @@ div.Binary {
     grid-template-columns: 1fr 1fr;
     gap: 0 1em;
 }
+
+div.Binary img[src=" "] {
+    display: none;
+ }
