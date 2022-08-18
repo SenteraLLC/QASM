@@ -7,8 +7,12 @@ class BinaryEditor extends Component {
     component_updater = 0;
 
 
-    constructor(){
-        super();
+    constructor(props){
+        super(props);
+
+        // Save these so we can pass them into the Binary
+        this.dilate_keybind = props.dilate_keybind;
+        this.erode_keybind = props.erode_keybind;
 
         // Bind function
         this.updateOriginalBinary = this.updateOriginalBinary.bind(this);
@@ -52,7 +56,10 @@ class BinaryEditor extends Component {
                         Erode
                     </button>
                 </div>
-                <Binary original_binary={this.original_binary_src}/>
+                <Binary 
+                    original_binary={this.original_binary_src} 
+                    dilate_keybind={this.dilate_keybind} 
+                    erode_keybind={this.erode_keybind}/>
                 <input type="file" accept=".jpeg,.JPEG,.png,.PNG,.jpg,.JPG" id="image_input" onChange={this.updateOriginalBinary} />
             </div>
         )
