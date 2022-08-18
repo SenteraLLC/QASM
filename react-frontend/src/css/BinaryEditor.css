@@ -1,7 +1,28 @@
-div.BinaryEditor {
-
+div.BinaryEditor div.button-holder {
+    padding: 1em;
+    display: inline-grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.5em;
 }
 
-div.BinaryEditor * {
+div.BinaryEditor div.button-holder label, div.BinaryEditor div.button-holder button {
+    cursor: pointer;
+    padding: 1em;
+    border: 1px solid #333;
+    border-radius: 0.25em;
+    font-size: small;
+    background-color: #EEE;
+}
+
+div.BinaryEditor div.button-holder label:hover, div.BinaryEditor div.button-holder button:hover {
+    background-color: #DDD;
+}
+
+div.BinaryEditor input[type="file"] {
+    display: none;
+}
+
+
+/* div.BinaryEditor * {
     border: 1px solid red;
-}
+} */

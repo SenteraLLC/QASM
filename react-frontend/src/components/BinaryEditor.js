@@ -41,14 +41,19 @@ class BinaryEditor extends Component {
     render() {
         return (
             <div className="BinaryEditor" key={this.component_updater}>
-                {/* <button onClick={this.dilate}>
-                    Dilate
-                </button>
-                <button onClick={this.erode}>
-                    Erode
-                </button> */}
-                <input type="file" accept=".jpeg,.JPEG,.png,.PNG,.jpg,.JPG" id="image_input" onChange={this.updateOriginalBinary} />
+                <div className="button-holder">
+                    <label for="image_input">
+                        Upload Binary
+                    </label>
+                    <button onClick={this.dilate}>
+                        Dilate
+                    </button>
+                    <button onClick={this.erode}>
+                        Erode
+                    </button>
+                </div>
                 <Binary original_binary={this.original_binary_src}/>
+                <input type="file" accept=".jpeg,.JPEG,.png,.PNG,.jpg,.JPG" id="image_input" onChange={this.updateOriginalBinary} />
             </div>
         )
     }
