@@ -8,3 +8,7 @@ div.Binary {
 div.Binary img[src=" "] {
     display: none;
 }
+
+div.Binary p.binary-id-display {
+    margin-bottom: 0;
+}
