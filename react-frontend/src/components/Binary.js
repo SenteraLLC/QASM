@@ -24,9 +24,11 @@ class Binary extends Component {
         }
         
         // Bind this to each method
-        this.handleMouseIn = this.handleMouseIn.bind(this);
+        this.handleMouseIn  = this.handleMouseIn.bind(this);
         this.handleMouseOut = this.handleMouseOut.bind(this);
         this.handleKeypress = this.handleKeypress.bind(this);
+        this.erode          = this.erode.bind(this);
+        this.dilate         = this.dilate.bind(this);
 
         // Set state
         this.state = {
@@ -147,19 +149,29 @@ class Binary extends Component {
                 <p>
                     {this.original_binary_src !== undefined ? "output-" + this.id : null}
                 </p>
+                <button className="binary-dilate hidden" onClick={this.dilate}>
+                    This should be hidden by css.
+                    These button are here to allow you to call the dilate and erode 
+                    methods from outside of this component by selecting this component 
+                    and using Javascript to click it.
+                </button>
+                <button className="binary-erode hidden" onClick={this.erode}>
+                    This should be hidden by css.
+                    These button are here to allow you to call the dilate and erode 
+                    methods from outside of this component by selecting this component 
+                    and using Javascript to click it.
+                </button>
             </div>
         );
     }
 
 
     componentDidMount() {
-        // document.addEventListener("mousemove", this.handleMousemove(this));
         document.addEventListener("keydown", this.handleKeypress.bind(this));
     }
 
 
     componentWillUnmount() {
-        // document.removeEventListener("mousemove", this.handleMousemove(this));
         document.removeEventListener("keydown", this.handleKeypress.bind(this));
     }
 }
