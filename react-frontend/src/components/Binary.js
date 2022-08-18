@@ -60,7 +60,6 @@ class Binary extends Component {
      * @param {Event} event Javascript event triggered on keypress
      */
     handleKeypress(event) {
-
         // Ignore all keypresses if the output binary is not being hovered
         if (!this.currently_hovered) return;
 
@@ -80,7 +79,6 @@ class Binary extends Component {
     * Applies the dilate morphological operation on the output binary and updates its src.
     */
     async dilate() {
-        
         // Make sure we have a binary to work with.
         if (this.output_binary_src === undefined) return;
 
@@ -105,7 +103,6 @@ class Binary extends Component {
      * Applies the erode morphological operation on the output binary and updates its src.
      */
     async erode() {
-        
         // Make sure we have a binary to work with.
         if (this.output_binary_src === undefined) return;
 

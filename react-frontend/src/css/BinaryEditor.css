@@ -21,8 +21,3 @@ div.BinaryEditor div.button-holder label:hover, div.BinaryEditor div.button-hold
 div.BinaryEditor input[type="file"] {
     display: none;
 }
-
-
-/* div.BinaryEditor * {
-    border: 1px solid red;
-} */
