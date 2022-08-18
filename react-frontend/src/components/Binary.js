@@ -11,6 +11,10 @@ class Binary extends Component {
         super(props);
         this.original_binary_src = props.original_binary;
 
+        // If custom keybinds are passed in use those, otherwise use default
+        this.dilate_keybind = props.dilate_keybind || "=";
+        this.erode_keybind = props.erode_keybind || "-";
+
         // The output binary is the same as the input binary until its modified
         this.output_binary_src = props.original_binary;
 
@@ -59,11 +63,11 @@ class Binary extends Component {
         if (!this.currently_hovered) return;
 
         switch(event.key) {
-            case "=":
+            case this.dilate_keybind:
                 console.log("=")
                 this.dilate();
                 break;
-            case "-":
+            case this.erode_keybind:
                 this.erode();
                 break;
             default:
