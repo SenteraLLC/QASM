@@ -63,7 +63,7 @@ class Binary extends Component {
                 this.dilate();
                 break;
             case "-":
-                console.log("-")
+                this.erode();
                 break;
             default:
                 console.log("other")
@@ -82,7 +82,8 @@ class Binary extends Component {
         let binary_image = await Image.load(this.output_binary_src);
 
         // Convert it to a true binary
-        binary_image.grey().mask();
+        binary_image = binary_image.grey().mask();
+        console.log(binary_image)
 
         // Apply dilate
         let new_binary_image = binary_image.dilate();
@@ -106,7 +107,7 @@ class Binary extends Component {
         let binary_image = await Image.load(this.output_binary_src);
 
         // Convert it to a true binary
-        binary_image.grey().mask();
+        binary_image = binary_image.grey().mask();
 
         // Apply erode
         let new_binary_image = binary_image.erode();
