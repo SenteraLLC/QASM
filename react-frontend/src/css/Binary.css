@@ -5,6 +5,10 @@ div.Binary {
     gap: 0 1em;
 }
 
+div.Binary img {
+    max-width: 50vw;
+}
+
 div.Binary img[src=" "] {
     display: none;
 }

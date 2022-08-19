@@ -85,19 +85,48 @@ class S3Browser extends Component {
      * @param {string} file filename
      */
     selectFile(file) {
-        if (this.mode === s3_browser_modes.SELECT_JSON) {
+        // Exclude SELECT_DIRECTORY mode from selecting files
+        if (this.mode !== s3_browser_modes.SELECT_DIRECTORY) {
+
+            // Grab the file's extension
             let ext = file.split('.').pop()
-            if (ext.toLowerCase() === "json") {
-                let data = {
-                    success: true,
-                    path: file,
-                }
-                // Send data back to parent window
-                window.opener.postMessage(data, '*');
-                window.close();
-            } else {
-                alert("Selected file not of type json.");
+
+            // Check the file extension to see if its valid in the current mode
+            switch(this.mode) {
+                case s3_browser_modes.SELECT_JSON:
+                    if (ext.toLowerCase() !== "json") {
+                        alert("Selected file not of type json.");
+                        return;
+                    }
+                    break;
+
+                case s3_browser_modes.SELECT_IMAGE:
+                    // Alert user and return early if file extension isn't in image_types
+                    if (!(ext in image_types)) {
+                        alert("Selected file does not have supported image extension.");
+                        return;
+                    }
+                    else {
+                        console.log("Clicked on an image")
+                    }
+                    break;
+
+                default:
+                    alert("Unsupported mode: " + this.mode);
+                    return;
             }
+
+            console.log("final code being called")
+            let data = {
+                success: true,
+                path: file,
+            }
+            // Send data back to parent window
+            window.opener.postMessage(data, '*');
+            window.close();
+            
+
+
         }
     }
 
@@ -239,7 +268,6 @@ class S3Browser extends Component {
                         </div>
                     </fieldset>
                 {this.mode === s3_browser_modes.SELECT_DIRECTORY &&
-
                     <button 
                         onClick={this.selectFolder}>
                         Select Directory: {this.path}
@@ -256,6 +284,12 @@ class S3Browser extends Component {
                             type="text"
                         />
                     </div>
+                }
+                {this.mode === s3_browser_modes.SELECT_IMAGE && 
+                    <button
+                        onClick={this.selectImage}>
+                        Select Image: {this.path}
+                    </button>
                 }
                 </div>
                 <br/>

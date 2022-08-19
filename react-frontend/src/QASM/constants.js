@@ -11,4 +11,5 @@ exports.local_env = {
 exports.s3_browser_modes = {
     SELECT_DIRECTORY: "select_directory",
     SELECT_JSON: "select_json",
+    SELECT_IMAGE: "select_image",
 }
