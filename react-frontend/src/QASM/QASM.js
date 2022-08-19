@@ -32,7 +32,7 @@ export class QASM_s3 extends QASM {
      * @param {*} data data
      * @returns {*} function response
      */
-    async call_backend (window, function_name, data=null) {
+    async call_backend(window, function_name, data=null) {
         return await function_handlers[function_name](this, data, window);
     }    
 

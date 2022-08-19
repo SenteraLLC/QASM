@@ -6,7 +6,7 @@ exports.function_names = {
     LOAD_LABELS: "loadLabels",
     OPEN_DIR: "openDir",
     LOAD_IMAGES: "loadImages",
-    SAVE_FILE: "saveFile",
+    SAVE_JSON_FILE: "saveJsonFile",
 }
 
 // List of accepted image types

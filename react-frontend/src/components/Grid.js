@@ -240,7 +240,7 @@ class Grid extends Component {
     async saveLabels() {
         this.updateLocalLabels();
         console.log(this.labels);
-        console.log(await this.QASM.call_backend(window, function_names.SAVE_FILE, this.labels));
+        console.log(await this.QASM.call_backend(window, function_names.SAVE_JSON_FILE, this.labels));
     }
 
 

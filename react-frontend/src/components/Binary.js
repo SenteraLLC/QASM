@@ -128,6 +128,7 @@ class Binary extends Component {
         this.showOperations("Erode")
     }
 
+    
     /**
      * Logs the order of morphological operations to the page.
      * 
@@ -172,13 +173,13 @@ class Binary extends Component {
                 <button className="binary-dilate hidden" onClick={this.dilate}>
                     This should be hidden by css.
                     These button are here to allow you to call the dilate and erode 
-                    methods from outside of this component by selecting this component 
+                    methods from outside of this component by selecting this element
                     and using Javascript to click it.
                 </button>
                 <button className="binary-erode hidden" onClick={this.erode}>
                     This should be hidden by css.
                     These button are here to allow you to call the dilate and erode 
-                    methods from outside of this component by selecting this component 
+                    methods from outside of this component by selecting this element
                     and using Javascript to click it.
                 </button>
             </div>
