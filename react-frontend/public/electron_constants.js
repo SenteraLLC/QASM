@@ -5,8 +5,11 @@
 exports.function_names = {
     LOAD_LABELS: "loadLabels",
     OPEN_DIR: "openDir",
+    OPEN_IMG: "openImg",
     LOAD_IMAGES: "loadImages",
+    LOAD_IMAGE: "loadImage",
     SAVE_JSON_FILE: "saveJsonFile",
+    SAVE_IMAGE: "saveImage",
 }
 
 // List of accepted image types

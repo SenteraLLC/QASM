@@ -147,6 +147,7 @@ class Binary extends Component {
 
 
     render() {
+        console.log(this.original_binary_src, "Binary updated")
         return (
             <div className="Binary" >
                 <img 
@@ -161,12 +162,12 @@ class Binary extends Component {
                     className="output-binary" 
                     onMouseEnter={this.handleMouseIn} 
                     onMouseOut={this.handleMouseOut}/>
-                <p className="binary-id-display">
+                {/* <p className="binary-id-display">
                     {this.original_binary_src !== undefined ? "original-" + this.id : null}
                 </p>
                 <p className="binary-id-display">
                     {this.original_binary_src !== undefined ? "output-" + this.id : null}
-                </p>
+                </p> */}
                 <p id={"binary-operations-" + this.id} className="binary-operations">
 
                 </p>

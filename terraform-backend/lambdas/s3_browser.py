@@ -1,8 +1,9 @@
 from multiprocessing.connection import Client
 import boto3
 import json
+import os
 from utils.lambda_utils import get_return_block_with_cors
-from utils.s3_utils import get_all_signed_urls_in_folder
+from utils.s3_utils import get_all_signed_urls_in_folder, get_signed_url
 
 def open_dir(event, context):
     """Get info to construct a custom s3 browser."""
@@ -47,6 +48,16 @@ def get_signed_urls_in_folder(event, context):
     folder_name = body["folder_name"]
     urls = get_all_signed_urls_in_folder(bucket_name, folder_name)
     return get_return_block_with_cors({"urls": urls})
+
+def load_image(event, context):
+    """get a single signed url."""
+    body = json.loads(event["body"])
+    bucket_name = body["bucket_name"]
+    file_name = body["file_name"]
+    folder_path, image_name = os.path.split(file_name)
+    url = get_signed_url(bucket_name, folder_path, image_name, s3_client=None)
+    return get_return_block_with_cors({"url": url})
+    
 
 
 def save_labels(event, context):

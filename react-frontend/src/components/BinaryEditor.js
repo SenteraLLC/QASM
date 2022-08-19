@@ -17,8 +17,9 @@ class BinaryEditor extends Component {
         this.dilate_keybind = props.dilate_keybind;
         this.erode_keybind = props.erode_keybind;
 
-        // Bind function
+        // Bind functions
         this.updateOriginalBinary = this.updateOriginalBinary.bind(this);
+        this.loadBinary           = this.loadBinary.bind(this);
 
         // Keep track of original binary src in state so that we can rerender the dom
         // when original binary src changes
@@ -26,6 +27,31 @@ class BinaryEditor extends Component {
             original_binary_src: this.original_binary_src
         }
     }
+
+
+    async loadBinary() {
+        let directory_path = await this.QASM.call_backend(window, function_names.OPEN_IMG);
+        console.log(directory_path)
+
+        if (directory_path !== undefined) {
+            //document.querySelector("#test-img").src = directory_path
+            this.original_binary_src = directory_path
+
+            this.setState({
+                original_binary_src: this.original_binary_src
+            })
+            this.component_updater++;
+        }
+        else {
+            console.log("Prevented loading invalid directory.");
+        }
+    }
+
+
+    async saveBinary() {
+
+    }
+
 
     /**
      * Creates and updates the src for the original binary from the input element on the page.
@@ -42,16 +68,6 @@ class BinaryEditor extends Component {
             original_binary_src: this.original_binary_src
         });
         this.component_updater++;
-    }
-
-
-    async saveBinary() {
-        // TODO: save
-        // const output_binary = document.querySelector(".output-binary");
-
-
-
-        // console.log(await this.QASM.call_backend(window, function_names.SAVE_FILE, this.labels));
     }
 
 
@@ -88,6 +104,9 @@ class BinaryEditor extends Component {
                     <label for="image_input">
                         Upload Binary
                     </label>
+                    <button onClick={this.loadBinary}>
+
+                    </button>
                     <button onClick={this.saveBinary}>
                         Save New Binary
                     </button>
@@ -97,6 +116,7 @@ class BinaryEditor extends Component {
                     <button onClick={this.erodeBinary}>
                         Erode
                     </button>
+                    <img id="test-img"></img>
                 </div>
                 <Binary 
                     original_binary={this.original_binary_src} 
