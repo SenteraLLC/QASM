@@ -34,6 +34,11 @@ This will build an app based on the specifications found in ``react-frontend/con
                 - ``"svg_overlay": <string>`` (Optional) Name of the class overlay
                     - ``"x_overlay"`` for a big red 'X'
                     - ``null`` for nothing
+                - ``"color": <string>`` (Optional) Color of overlay
+                    - ``"red"`` red
+                    - ``yellow`` yellow
+                    - ``white`` white
+                    - ``green`` green
 
 ### Terraform
 Terraform automatically takes our lambda code and deploys it to all the necessary AWS services (Lambda, API Gateway, IAM, etc) to allow our serverless applications to run.
