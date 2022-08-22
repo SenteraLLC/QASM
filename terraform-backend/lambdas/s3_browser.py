@@ -2,6 +2,7 @@ from multiprocessing.connection import Client
 import boto3
 import json
 import os
+import base64
 from utils.lambda_utils import get_return_block_with_cors
 from utils.s3_utils import get_all_signed_urls_in_folder, get_signed_url
 
@@ -75,6 +76,25 @@ def save_labels(event, context):
         return get_return_block_with_cors("Labels saved.", False)
     except Exception:
         return get_return_block_with_cors("Error saving labels.", False)
+
+
+def save_image(event, context):
+    """Save image to s3 path."""
+    body = json.loads(event["body"])
+    image_string = body["image"]
+    decoded = base64.b64decode(image_string.split(",")[1])
+    bucket_name = body["bucket_name"]
+    file_name = body["file_name"]
+
+    try:
+        s3 = boto3.resource('s3')
+        s3object = s3.Object(bucket_name, file_name)
+        s3object.put(
+            Body=decoded
+        )
+        return get_return_block_with_cors("Image saved.", False)
+    except Exception:
+        return get_return_block_with_cors("Error saving image.", False)
 
 
 def load_labels(event, context):
