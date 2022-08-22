@@ -1,13 +1,32 @@
 import { Component } from 'react';
 import GridImage from "./GridImage.js";
+import Legend from "./Legend.js";
 import x_overlay from "../icons/x.svg";
+import x_overlay_red from "../icons/x_red.svg";
+import x_overlay_yellow from "../icons/x_yellow.svg";
+import x_overlay_white from "../icons/x_white.svg";
+import x_overlay_green from "../icons/x_green.svg";
 import $ from "jquery";
 import "../css/Grid.css";
 const { update_all_overlays } =  require("../QASM/utils.js");
 const { function_names } = require("../../public/electron_constants.js");
 
+const COLORS = {
+    "default": "default",
+    "red": "red",
+    "yellow": "yellow",
+    "white": "white",
+    "green": "green",
+}
+
 const OVERLAYS = {
-    "x_overlay": x_overlay
+    "x_overlay": {
+        [COLORS.default]: x_overlay,
+        [COLORS.red]: x_overlay_red,
+        [COLORS.yellow]: x_overlay_yellow,
+        [COLORS.white]: x_overlay_white,
+        [COLORS.green]: x_overlay_green,
+    }
 }
 
 class Grid extends Component {
@@ -127,7 +146,11 @@ class Grid extends Component {
                 "svg_overlay" in class_props && 
                 class_props["svg_overlay"] in OVERLAYS
             ) {
-                class_props["svg_overlay"] = OVERLAYS[class_props["svg_overlay"]];
+                let overlay_type = class_props.svg_overlay;
+                "color" in class_props && class_props["color"] in COLORS 
+                    ? class_props.svg_overlay = OVERLAYS[overlay_type][COLORS[class_props.color]]
+                    : class_props.svg_overlay = OVERLAYS[overlay_type]["default"]
+                console.log(class_props);
                 this.classes[idx] = class_props;
             }
         }
@@ -446,6 +469,9 @@ class Grid extends Component {
                     className={this.images_shown ? "" : "hidden"}>
                     Clear All
                 </button>
+                <Legend
+                    classes={this.classes}
+                />
                 <table id="Grid-table">
                     <tbody>
                         {this.grid_image_names.map(row_image_names => (
