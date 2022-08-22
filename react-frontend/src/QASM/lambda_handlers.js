@@ -10,6 +10,7 @@ const function_handlers = {
     [function_names.LOAD_IMAGES]:    handleLoadImages,
     [function_names.LOAD_IMAGE]:     handleLoadImage,
     [function_names.SAVE_JSON_FILE]: handleSaveFile,
+    [function_names.SAVE_IMAGE]:     handleSaveImage,
     "openS3Folder":                  handleOpenS3Folder,
 }
 export { function_handlers }
@@ -41,6 +42,27 @@ async function handleSaveFile(QASM, data, window) {
             }
         } catch {
             resolve("Error when saving labels.");
+        }
+    });
+}
+
+async function handleSaveImage(QASM, data, window) {
+    let url = window.location.origin + "/#/s3Browser";
+    let popup = window.open(url, "S3 Browser");
+    popup.S3_BROWSER_MODE = s3_browser_modes.SELECT_IMAGE;
+
+    return new Promise(resolve => window.onmessage = async (e) => {
+        try {
+            if (e.data.success) {
+                let params = {
+                    bucket_name: QASM.s3_bucket,
+                    file_name: e.data.path,
+                    image: data,
+                }
+                resolve(await api_consolidator_error_handler(params, "save_image"));
+            }
+        } catch {
+            resolve("Error when saving image.");
         }
     });
 }

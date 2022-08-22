@@ -20,6 +20,7 @@ class BinaryEditor extends Component {
         // Bind functions
         this.updateOriginalBinary = this.updateOriginalBinary.bind(this);
         this.loadBinary           = this.loadBinary.bind(this);
+        this.saveBinary           = this.saveBinary.bind(this);
 
         // Keep track of original binary src in state so that we can rerender the dom
         // when original binary src changes
@@ -48,8 +49,29 @@ class BinaryEditor extends Component {
     }
 
 
-    async saveBinary() {
+    async getBlob (fileUri) {
+        const resp = await fetch(fileUri);
+        const imageBody = await resp.blob();
+        console.log("Imgae body", imageBody)
+        return imageBody;
+    };
 
+
+    blobToBase64(blob) {
+        return new Promise((resolve, _) => {
+          const reader = new FileReader();
+          reader.onloadend = () => resolve(reader.result);
+          reader.readAsDataURL(blob);
+        });
+    }
+
+
+    async saveBinary() {
+        let output_binary = document.querySelector(".output-binary");
+
+        let blob = await this.blobToBase64(await this.getBlob(output_binary.src));
+
+        console.log(await this.QASM.call_backend(window, function_names.SAVE_IMAGE, blob))
     }
 
 
@@ -101,7 +123,7 @@ class BinaryEditor extends Component {
         return (
             <div className="BinaryEditor" key={this.component_updater}>
                 <div className="button-holder">
-                    <label for="image_input">
+                    <label htmlFor="image_input">
                         Upload Binary
                     </label>
                     <button onClick={this.loadBinary}>

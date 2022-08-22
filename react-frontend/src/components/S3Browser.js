@@ -273,7 +273,7 @@ class S3Browser extends Component {
                         Select Directory: {this.path}
                     </button>
                 }
-                {this.mode === s3_browser_modes.SELECT_JSON &&
+                {this.mode === !s3_browser_modes.SELECT_DIRECTORY &&
                     <div>
                         <button 
                             onClick={this.createFile}>
