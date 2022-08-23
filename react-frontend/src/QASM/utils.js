@@ -1,18 +1,21 @@
 // Utils
 
 /**
- * Takes in a string and converts it into a valid html id/class.
- * Currently it works for our use case, but we should change it to
- * convert any character into a unique representation of valid 
- * html characters instead.
+ * Takes in a string and removes all non valid html id/class characters.
  * 
- * @param {string} file_name string to be converted into valid html id 
+ * @param {string} input_string string to be converted into valid html id 
  * @returns {string} 
  */
-export function file_name_to_valid_id(file_name) {
-    file_name = file_name.replaceAll("_", "-")
-    let valid_name = file_name.substring(0, file_name.indexOf('.'));
-    return valid_name
+export function string_to_vaild_css_selector(input_string) {
+    // Every character that is not a-z A-Z 0-9 or a - gets replaced with ""
+    // ^ means not, so everything that's not a-z0-9 or -
+    // /g means upper and lower case a-z
+    // /i means replace all instances, not just the first.
+    input_string = input_string.replace(/[^a-z0-9 -]/gi, "");
+
+    // Previous replace keeps spaces, so remove those.
+    input_string = input_string.replace(" ", "");
+    return input_string
 }
 
 /**

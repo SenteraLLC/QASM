@@ -63,7 +63,9 @@ class App extends Component {
                 to={component_key === "home" ? "/" : component_key}
                 key={component_key}>
                 <h2>
-                  {this.components[component_key].display_name === undefined ? component_key : this.components[component_key].display_name}
+                  {this.components[component_key].display_name === undefined 
+                  ? component_key 
+                  : this.components[component_key].display_name}
                 </h2>
               </Link>
             ))}
