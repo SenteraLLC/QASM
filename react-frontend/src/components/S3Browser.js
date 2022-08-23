@@ -84,7 +84,7 @@ class S3Browser extends Component {
      * 
      * @param {string} file filename
      */
-    selectFile(file) {
+    selectFile(file, seek_confirmation = true) {
         // Exclude SELECT_DIRECTORY mode from selecting files
         if (this.mode !== s3_browser_modes.SELECT_DIRECTORY) {
 
@@ -94,6 +94,7 @@ class S3Browser extends Component {
             // Check the file extension to see if its valid in the current mode
             switch(this.mode) {
                 case s3_browser_modes.SELECT_JSON:
+                case s3_browser_modes.SAVE_JSON:
                     if (ext.toLowerCase() !== "json") {
                         alert("Selected file not of type json.");
                         return;
@@ -101,6 +102,7 @@ class S3Browser extends Component {
                     break;
 
                 case s3_browser_modes.SELECT_IMAGE:
+                case s3_browser_modes.SAVE_IMAGE:
                     // Alert user and return early if file extension isn't in image_types
                     if (!(ext in image_types)) {
                         alert("Selected file does not have supported image extension.");
@@ -116,6 +118,14 @@ class S3Browser extends Component {
                     return;
             }
 
+            // Ask for confirmation if confirmation is requested and in a saving mode
+            if (seek_confirmation && (this.mode === s3_browser_modes.SAVE_IMAGE || this.mode === s3_browser_modes.SAVE_JSON)) {
+                // If we don't recieve an affermative answer return early
+                if (!window.confirm("Are you sure you want to overwrite " + file + "?")) {
+                    return;
+                }
+            }
+
             console.log("final code being called")
             let data = {
                 success: true,
@@ -124,9 +134,6 @@ class S3Browser extends Component {
             // Send data back to parent window
             window.opener.postMessage(data, '*');
             window.close();
-            
-
-
         }
     }
 
@@ -135,16 +142,33 @@ class S3Browser extends Component {
      * Scrape user filename from the input and
      * ask the user to confirm before saving.
      */
-    createFile() {
+    createFile(current_mode) {
+        let extention;
+
+        switch(current_mode) {
+            case s3_browser_modes.SELECT_JSON:
+            case s3_browser_modes.SAVE_JSON:
+                extention = ".json";
+                break;
+            
+            case s3_browser_modes.SELECT_IMAGE:
+            case s3_browser_modes.SAVE_IMAGE:
+                extention = ".png";
+                break;
+
+            default:
+                throw new Error("Trying to create image with unknow file type.");
+        }
+
         let new_filename = document.getElementById("new-filename").value;
         new_filename = new_filename.replace(" ", "_").split('.')[0]; // Space -> underscore, remove extension
-        new_filename = new_filename + ".json"; // Save as json
+        new_filename = new_filename + extention; // Save with proper extension
         new_filename = this.path + new_filename; // Add full path
         
         /* eslint-disable */
         // Prompt user to confirm, then save
-        if (confirm("Save to new file " + new_filename + "?")) {
-            this.selectFile(new_filename);
+        if (confirm("Save file as " + new_filename + "?")) {
+            this.selectFile(new_filename, false);
         }
     }
 
@@ -273,10 +297,10 @@ class S3Browser extends Component {
                         Select Directory: {this.path}
                     </button>
                 }
-                {this.mode === !s3_browser_modes.SELECT_DIRECTORY &&
+                {(this.mode === s3_browser_modes.SAVE_JSON || this.mode === s3_browser_modes.SAVE_IMAGE) &&
                     <div>
                         <button 
-                            onClick={this.createFile}>
+                            onClick={() => this.createFile(this.mode)}>
                             Save Here to New File:
                         </button>
                         <input
@@ -285,12 +309,12 @@ class S3Browser extends Component {
                         />
                     </div>
                 }
-                {this.mode === s3_browser_modes.SELECT_IMAGE && 
+                {/* {this.mode === s3_browser_modes.SELECT_IMAGE && 
                     <button
                         onClick={this.selectImage}>
                         Select Image: {this.path}
                     </button>
-                }
+                } */}
                 </div>
                 <br/>
                 {this.parents.length !== 0 &&
