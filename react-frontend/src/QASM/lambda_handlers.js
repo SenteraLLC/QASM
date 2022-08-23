@@ -6,10 +6,10 @@ const { s3_browser_modes } = require("./constants.js");
 const function_handlers = {
     [function_names.LOAD_LABELS]:    handleLoadLabels,
     [function_names.OPEN_DIR]:       handleOpenDir,
-    [function_names.OPEN_IMG]:       handleOpenImg,
+    [function_names.OPEN_IMG]:       handleLoadImage,
     [function_names.LOAD_IMAGES]:    handleLoadImages,
     [function_names.LOAD_IMAGE]:     handleLoadImage,
-    [function_names.SAVE_JSON_FILE]: handleSaveFile,
+    [function_names.SAVE_JSON_FILE]: handleSaveJSON,
     [function_names.SAVE_IMAGE]:     handleSaveImage,
     "openS3Folder":                  handleOpenS3Folder,
 }
@@ -25,10 +25,10 @@ export { function_handlers }
  * @param {*} window window
  * @returns {string} result
  */
-async function handleSaveFile(QASM, data, window) {
+async function handleSaveJSON(QASM, data, window) {
     let url = window.location.origin + "/#/s3Browser";
     let popup = window.open(url, "S3 Browser");
-    popup.S3_BROWSER_MODE = s3_browser_modes.SELECT_JSON;
+    popup.S3_BROWSER_MODE = s3_browser_modes.SAVE_JSON;
 
     return new Promise(resolve => window.onmessage = async (e) => {
         try {
@@ -46,10 +46,11 @@ async function handleSaveFile(QASM, data, window) {
     });
 }
 
+
 async function handleSaveImage(QASM, data, window) {
     let url = window.location.origin + "/#/s3Browser";
     let popup = window.open(url, "S3 Browser");
-    popup.S3_BROWSER_MODE = s3_browser_modes.SELECT_IMAGE;
+    popup.S3_BROWSER_MODE = s3_browser_modes.SAVE_IMAGE;
 
     return new Promise(resolve => window.onmessage = async (e) => {
         try {
@@ -66,6 +67,7 @@ async function handleSaveImage(QASM, data, window) {
         }
     });
 }
+
 
 /**
  * Prompt the user to select a file,
@@ -99,6 +101,29 @@ async function handleLoadLabels(QASM, data, window) {
     });
 }
 
+
+async function handleLoadImage(QASM, data, window) {
+    console.log("Handle open image")
+    let url = window.location.origin + "/#/s3Browser";
+    let popup = window.open(url, "S3 Browser");
+    popup.S3_BROWSER_MODE = s3_browser_modes.SELECT_IMAGE;
+    popup.START_FOLDER = data
+
+    return new Promise(resolve => window.onmessage = async (e) => {
+        try {
+            if (e.data.success) {
+                let params = {
+                    bucket_name: QASM.s3_bucket,
+                    file_name: e.data.path,
+                }
+                let res = await api_consolidator_error_handler(params, "load_image");
+                resolve(res.url);
+            }
+        } catch {}
+    });
+}
+
+
 /**
  * Open a directory selection dialog
  *
@@ -122,26 +147,6 @@ async function handleOpenDir(QASM, data, window) {
     });
 }
 
-async function handleOpenImg(QASM, data, window) {
-    console.log("Handle open image")
-    let url = window.location.origin + "/#/s3Browser";
-    let popup = window.open(url, "S3 Browser");
-    popup.S3_BROWSER_MODE = s3_browser_modes.SELECT_IMAGE;
-    popup.START_FOLDER = data
-
-    return new Promise(resolve => window.onmessage = async (e) => {
-        try {
-            if (e.data.success) {
-                let params = {
-                    bucket_name: QASM.s3_bucket,
-                    file_name: e.data.path,
-                }
-                let res = await api_consolidator_error_handler(params, "load_image");
-                resolve(res.url);
-            }
-        } catch {}
-    });
-}
 
 /**
  * Get signed urls for all images in an s3 folder
@@ -152,16 +157,6 @@ async function handleOpenImg(QASM, data, window) {
  * @returns {Object} { image_name: signed_url } 
  */
 async function handleLoadImages(QASM, data, window) {
-    let params = {
-        "bucket_name": QASM.s3_bucket,
-        "folder_name": data
-    }
-    let res = await api_consolidator_error_handler(params, "get_signed_urls_in_folder");
-    return res.urls;
-}
-
-
-async function handleLoadImage(QASM, data, window) {
     let params = {
         "bucket_name": QASM.s3_bucket,
         "folder_name": data
