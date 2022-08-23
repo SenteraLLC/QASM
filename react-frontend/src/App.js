@@ -62,7 +62,9 @@ class App extends Component {
                 className="Link"
                 to={component_key === "home" ? "/" : component_key}
                 key={component_key}>
-                <h2>{component_key}</h2>
+                <h2>
+                  {this.components[component_key].display_name === undefined ? component_key : this.components[component_key].display_name}
+                </h2>
               </Link>
             ))}
           </div>
