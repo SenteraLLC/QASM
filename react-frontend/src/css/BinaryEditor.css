@@ -1,5 +1,6 @@
 div.BinaryEditor div.button-holder {
-    padding: 1em;
+    padding: 0.8em;
+    padding-bottom: 0.3em;
     display: inline-grid;
     grid-template-columns: repeat(4, 1fr);
     gap: 0.5em;

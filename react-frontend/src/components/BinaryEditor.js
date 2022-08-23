@@ -31,7 +31,7 @@ class BinaryEditor extends Component {
         }
     }
 
-    
+
     /**
      * Calls the QASM backend to load in a binary.
      * If it loads, set the original binary src to the binary.
@@ -153,9 +153,17 @@ class BinaryEditor extends Component {
             case "local":
             default:
                 select_image_button = (
-                    <label htmlFor="image_input">
-                        Select Binary
-                    </label>
+                    <div>
+                        <label htmlFor="image_input">
+                            Select Binary
+                        </label>
+                        <input 
+                            type="file" 
+                            accept=".jpeg,.JPEG,.png,.PNG,.jpg,.JPG" 
+                            id="image_input" 
+                            className="hidden"
+                            onChange={this.updateOriginalBinary} />
+                    </div>
                 )
                 break;
         }
@@ -173,18 +181,11 @@ class BinaryEditor extends Component {
                     <button onClick={this.erodeBinary}>
                         Erode
                     </button>
-                    <img id="test-img"></img>
                 </div>
                 <Binary 
                     original_binary={this.original_binary_src} 
                     dilate_keybind={this.dilate_keybind} 
                     erode_keybind={this.erode_keybind}/>
-                <input 
-                type="file" 
-                accept=".jpeg,.JPEG,.png,.PNG,.jpg,.JPG" 
-                id="image_input" 
-                className="hidden"
-                onChange={this.updateOriginalBinary} />
             </div>
         )
     }
