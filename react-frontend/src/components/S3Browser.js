@@ -143,8 +143,8 @@ class S3Browser extends Component {
      * ask the user to confirm before saving.
      */
     createFile(current_mode) {
+        // Get the extention type based on browser mode
         let extention;
-
         switch(current_mode) {
             case s3_browser_modes.SELECT_JSON:
             case s3_browser_modes.SAVE_JSON:

@@ -147,7 +147,6 @@ class Binary extends Component {
 
 
     render() {
-        console.log(this.original_binary_src, "Binary updated")
         return (
             <div className="Binary" >
                 <img 

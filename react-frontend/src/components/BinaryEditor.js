@@ -31,15 +31,18 @@ class BinaryEditor extends Component {
         }
     }
 
-
+    
+    /**
+     * Calls the QASM backend to load in a binary.
+     * If it loads, set the original binary src to the binary.
+     */
     async loadBinary() {
         let directory_path = await this.QASM.call_backend(window, function_names.OPEN_IMG);
-        console.log(directory_path)
 
         if (directory_path !== undefined) {
-            //document.querySelector("#test-img").src = directory_path
             this.original_binary_src = directory_path
 
+            // Update the state and the component updater to get the component to rerender
             this.setState({
                 original_binary_src: this.original_binary_src
             })
@@ -50,7 +53,12 @@ class BinaryEditor extends Component {
         }
     }
 
-
+    /**
+     * Converts a file uri string to a blob.
+     * 
+     * @param {string} fileUri Uri of the image to be saved.
+     * @returns {Blob} A Blob of the uri
+     */
     async getBlob (fileUri) {
         const resp = await fetch(fileUri);
         const imageBody = await resp.blob();
@@ -58,7 +66,12 @@ class BinaryEditor extends Component {
         return imageBody;
     };
 
-
+    /**
+     * Converts a Blob to an base 64 string.
+     * 
+     * @param {Blob} blob An image blob.
+     * @returns {string} A base 64 string.
+     */
     blobToBase64(blob) {
         return new Promise((resolve, _) => {
           const reader = new FileReader();
@@ -68,6 +81,9 @@ class BinaryEditor extends Component {
     }
 
 
+    /**
+     * Grabs the output binary from the page and calls the QASM backend to save the file.
+     */
     async saveBinary() {
         let output_binary = document.querySelector(".output-binary");
 
