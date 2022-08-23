@@ -98,9 +98,6 @@ class Binary extends Component {
         this.setState({
             output_binary_src: this.output_binary_src
         });
-
-        // Log the operation taken to the page
-        this.showOperations("Dilate")
     }
 
 
@@ -125,26 +122,6 @@ class Binary extends Component {
         this.setState({
             output_binary_src: this.output_binary_src
         });
-
-        // Log the operation taken to the page
-        this.showOperations("Erode")
-    }
-
-    
-    /**
-     * Logs the order of morphological operations to the page.
-     * 
-     * @param {string} operation Name of operation added to the show_operations_element.
-     */
-    showOperations(operation) {
-        let show_operations_element = document.querySelector("#binary-operations-" + this.id);
-
-        if (show_operations_element.innerHTML === "") {
-            show_operations_element.innerHTML = "Edits Made:  " + operation;
-        }
-        else {
-            show_operations_element.innerHTML += "  =>  " + operation;
-        }
     }
 
 
@@ -163,9 +140,6 @@ class Binary extends Component {
                     className="output-binary" 
                     onMouseEnter={this.handleMouseIn} 
                     onMouseOut={this.handleMouseOut}/>
-                <p id={"binary-operations-" + this.id} className="binary-operations">
-
-                </p>
                 <button className="binary-dilate hidden" onClick={this.dilate}>
                     This should be hidden by css.
                     These button are here to allow you to call the dilate and erode 
