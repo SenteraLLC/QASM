@@ -13,8 +13,6 @@ class BinaryEditor extends Component {
 
         this.QASM = props.QASM;
 
-        console.log(this.QASM, "this.QASM")
-
         // Save these so we can pass them into the Binary
         this.dilate_keybind = props.dilate_keybind;
         this.erode_keybind = props.erode_keybind;
