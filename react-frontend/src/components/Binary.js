@@ -1,4 +1,5 @@
 import { Component } from "react";
+import { string_to_vaild_css_selector } from "../QASM/utils";
 import "../css/Binary.css";
 
 const { Image } = require("image-js");
@@ -21,6 +22,7 @@ class Binary extends Component {
         // Only set the id if the original binary src isn't undefined
         if (this.original_binary_src !== undefined) {
             this.id = this.original_binary_src.split("/").pop()
+            this.id = string_to_vaild_css_selector(this.id)
         }
         
         // Bind this to each method
@@ -161,14 +163,6 @@ class Binary extends Component {
                     className="output-binary" 
                     onMouseEnter={this.handleMouseIn} 
                     onMouseOut={this.handleMouseOut}/>
-
-                {/* ↓ Commenting out for now ↓ */}
-                {/* <p className="binary-id-display">
-                    {this.original_binary_src !== undefined ? "original-" + this.id : null}
-                </p>
-                <p className="binary-id-display">
-                    {this.original_binary_src !== undefined ? "output-" + this.id : null}
-                </p> */}
                 <p id={"binary-operations-" + this.id} className="binary-operations">
 
                 </p>
