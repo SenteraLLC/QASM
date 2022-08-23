@@ -13,6 +13,8 @@ class BinaryEditor extends Component {
 
         this.QASM = props.QASM;
 
+        console.log(this.QASM, "this.QASM")
+
         // Save these so we can pass them into the Binary
         this.dilate_keybind = props.dilate_keybind;
         this.erode_keybind = props.erode_keybind;
@@ -120,15 +122,32 @@ class BinaryEditor extends Component {
 
 
     render() {
+        // Create the Upload Binary button based on the QASM mode
+        let select_image_button;
+        switch (this.QASM.mode) {
+            case "s3":
+                select_image_button = (
+                    <button onClick={this.loadBinary}>
+                        Select Binary
+                    </button>
+                )
+                break;
+            
+            // Local will be the default
+            case "local":
+            default:
+                select_image_button = (
+                    <label htmlFor="image_input">
+                        Select Binary
+                    </label>
+                )
+                break;
+        }
+
         return (
             <div className="BinaryEditor" key={this.component_updater}>
                 <div className="button-holder">
-                    <label htmlFor="image_input">
-                        Upload Binary
-                    </label>
-                    <button onClick={this.loadBinary}>
-
-                    </button>
+                    {select_image_button}
                     <button onClick={this.saveBinary}>
                         Save New Binary
                     </button>
@@ -144,7 +163,12 @@ class BinaryEditor extends Component {
                     original_binary={this.original_binary_src} 
                     dilate_keybind={this.dilate_keybind} 
                     erode_keybind={this.erode_keybind}/>
-                <input type="file" accept=".jpeg,.JPEG,.png,.PNG,.jpg,.JPG" id="image_input" onChange={this.updateOriginalBinary} />
+                <input 
+                type="file" 
+                accept=".jpeg,.JPEG,.png,.PNG,.jpg,.JPG" 
+                id="image_input" 
+                className="hidden"
+                onChange={this.updateOriginalBinary} />
             </div>
         )
     }
