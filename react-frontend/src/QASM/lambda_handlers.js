@@ -18,7 +18,7 @@ export { function_handlers }
  * and then save the labels.
  * 
  * @param {Object} QASM QASM object
- * @param {Object} data object with all the labels
+ * @param {Object} data {labels: {}, path: ""}
  * @param {*} window window
  * @returns {string} result
  */
@@ -26,6 +26,7 @@ async function handleSaveFile(QASM, data, window) {
     let url = window.location.origin + "/#/s3Browser";
     let popup = window.open(url, "S3 Browser");
     popup.S3_BROWSER_MODE = s3_browser_modes.SELECT_JSON;
+    popup.START_FOLDER = data.path;
 
     return new Promise(resolve => window.onmessage = async (e) => {
         try {
@@ -33,7 +34,7 @@ async function handleSaveFile(QASM, data, window) {
                 let params = {
                     bucket_name: QASM.s3_bucket,
                     file_name: e.data.path,
-                    labels: data,
+                    labels: data.labels,
                 }
                 resolve(await api_consolidator_error_handler(params, "save_labels"));
             }
@@ -48,7 +49,7 @@ async function handleSaveFile(QASM, data, window) {
  * and then load and return the labels.
  * 
  * @param {Object} QASM QASM object
- * @param {*} data data
+ * @param {string} data starting folder
  * @param {*} window window
  * @returns {Object} labels
  */
@@ -57,6 +58,7 @@ async function handleLoadLabels(QASM, data, window) {
     let popup = window.open(url, "S3 Browser");
     // TODO: different mode for loading/saving?
     popup.S3_BROWSER_MODE = s3_browser_modes.SELECT_JSON; 
+    popup.START_FOLDER = data;
 
     return new Promise(resolve => window.onmessage = async (e) => {
         try {
