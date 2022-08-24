@@ -26,7 +26,7 @@ This will build an app based on the specifications found in ``react-frontend/con
 
 - ``"components": <Object>`` Object keys are the names of desired app components
     - ``"home": <Object>``
-        - ``"display_name": <string>`` (Optional) Change the navbar diaplay name
+        - ``"display_name": <string>`` (Optional) Change the navbar display name
     - ``"grid": <Object>``
         - ``"grid_width": <Number>`` Default number of images to show per row
         - ``"classes": <Array>``
@@ -40,9 +40,9 @@ This will build an app based on the specifications found in ``react-frontend/con
                     - ``yellow`` yellow
                     - ``white`` white
                     - ``green`` green
-        - ``"display_name": <string>`` (Optional) Change the navbar diaplay name
+        - ``"display_name": <string>`` (Optional) Change the navbar display name
     - ``"binaryeditor": <Object>``
-        - ``"display_name": <string>`` (Optional) Change the navbar diaplay name
+        - ``"display_name": <string>`` (Optional) Change the navbar display name
 
 ### Terraform
 Terraform automatically takes our lambda code and deploys it to all the necessary AWS services (Lambda, API Gateway, IAM, etc) to allow our serverless applications to run.

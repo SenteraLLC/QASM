@@ -158,25 +158,25 @@ class S3Browser extends Component {
      */
     createFile(current_mode) {
         // Get the extention type based on browser mode
-        let extention;
+        let extension;
         switch(current_mode) {
             case s3_browser_modes.SELECT_JSON:
             case s3_browser_modes.SAVE_JSON:
-                extention = ".json";
+                extension = ".json";
                 break;
             
             case s3_browser_modes.SELECT_IMAGE:
             case s3_browser_modes.SAVE_IMAGE:
-                extention = ".png";
+                extension = ".png";
                 break;
 
             default:
-                throw new Error("Trying to create image with unknow file type.");
+                throw new Error("Trying to create image with unknown file type.");
         }
 
         let new_filename = document.getElementById("new-filename").value;
         new_filename = new_filename.replace(" ", "_").split('.')[0]; // Space -> underscore, remove extension
-        new_filename = new_filename + extention; // Save with proper extension
+        new_filename = new_filename + extension; // Save with proper extension
         new_filename = this.path + new_filename; // Add full path
         
         /* eslint-disable */
