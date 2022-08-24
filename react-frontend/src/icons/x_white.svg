@@ -13,7 +13,7 @@
    xmlnsSodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns="http://www.w3.org/2000/svg"
    xmlnsSvg="http://www.w3.org/2000/svg"
-   fill="red">
+   fill="white">
   <sodipodiNamedview
      id="namedview7"
      pagecolor="#ffffff"

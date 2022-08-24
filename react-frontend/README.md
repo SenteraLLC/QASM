@@ -35,6 +35,11 @@ This will build an app based on the specifications found in ``react-frontend/con
                 - ``"svg_overlay": <string>`` (Optional) Name of the class overlay
                     - ``"x_overlay"`` for a big red 'X'
                     - ``null`` for nothing
+                - ``"color": <string>`` (Optional) Color of overlay
+                    - ``"red"`` red
+                    - ``yellow`` yellow
+                    - ``white`` white
+                    - ``green`` green
         - ``"display_name": <string>`` (Optional) Change the navbar diaplay name
     - ``"binaryeditor": <Object>``
         - ``"display_name": <string>`` (Optional) Change the navbar diaplay name

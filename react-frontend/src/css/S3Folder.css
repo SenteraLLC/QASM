@@ -14,6 +14,12 @@ div.S3Folder div.fieldset-container button {
     margin-top: 0.6em;
 }
 
+div.S3Folder div.fieldset-container input[type=text] {
+    margin-top: 0.6em;
+    width: 80em;
+    z-index: 2;
+}
+
 div.S3Folder fieldset {
     display: inline-block;
     text-align: left;
