@@ -11,10 +11,7 @@ export function string_to_vaild_css_selector(input_string) {
     // ^ means not, so everything that's not a-z0-9 or -
     // /g means upper and lower case a-z
     // /i means replace all instances, not just the first.
-    input_string = input_string.replace(/[^a-z0-9 -]/gi, "");
-
-    // Previous replace keeps spaces, so remove those.
-    input_string = input_string.replace(" ", "");
+    input_string = input_string.replace(/[^a-z0-9-]/gi, "");
     return input_string
 }
 
