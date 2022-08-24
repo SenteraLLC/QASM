@@ -72,7 +72,7 @@ async function handleOpenFile(event, data) {
         return "Canceled saving labels.";
     } else {
         try {
-            fs.writeFileSync(filePath, JSON.stringify(data));
+            fs.writeFileSync(filePath, JSON.stringify(data.labels));
             return "Saved labels at " + filePath;
         } catch {
             return "Error when saving labels.";
