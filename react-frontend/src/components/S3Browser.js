@@ -20,19 +20,7 @@ class S3Browser extends Component {
             this.folders = this.QASM.folders
             this.files   = this.QASM.files
         } else {
-            this.folders = []
-            this.files = []
-            
-            // Populate parent stack
-            this.parents = [""]
-            let folders = this.path.split("/").slice(0, -2);
-            for (let i=0; i < folders.length; i++) {
-                this.parents.push(this.parents[i] + folders[i] + "/");
-            }
-            
-            this.changePath(this.path).then(() => {
-                this.parents.pop(); // Remove starting path from parent stack
-            });
+            this.setS3Path(this.path);
         }
 
         this.state = {
@@ -47,6 +35,32 @@ class S3Browser extends Component {
         this.createFile        = this.createFile.bind(this);
         this.getDisplayMode    = this.getDisplayMode.bind(this);
         this.updateDisplayMode = this.updateDisplayMode.bind(this);
+        this.setS3Path         = this.setS3Path.bind(this);
+        this.readS3Link        = this.readS3Link.bind(this);
+    }
+
+
+    /**
+     * Change the current location to be 
+     * at the given s3 path.
+     * 
+     * @param {string} path s3 path
+     */
+    setS3Path(path) {
+        this.path = path;
+        this.folders = []
+        this.files = []
+            
+        // Populate parent stack
+        this.parents = [""]
+        let folders = path.split("/").slice(0, -2);
+        for (let i=0; i < folders.length; i++) {
+            this.parents.push(this.parents[i] + folders[i] + "/");
+        }
+        
+        this.changePath(path).then(() => {
+            this.parents.pop(); // Remove starting path from parent stack
+        });
     }
 
 
@@ -174,6 +188,21 @@ class S3Browser extends Component {
 
 
     /**
+     * Scrape s3 link from the input and
+     * ask the user to confirm before navigating.
+     */
+     readS3Link() {
+        let link = document.getElementById("s3-link").value;
+        console.log(link);
+        /* eslint-disable */
+        // Prompt user to confirm, then save
+        if (confirm("Go to path ' " + link + " ' ?")) {
+            this.setS3Path(link);
+        }
+    }
+
+
+    /**
      * Change the active path to a new folder
      * and populate its folders and files 
      * 
@@ -269,36 +298,47 @@ class S3Browser extends Component {
                         <legend>Display Mode</legend>
                         <div>
                             <input type="radio" id="grid-display" name="display" value="grid" defaultChecked />
-                            <label for="grid-display">Grid</label>
+                            <label htmlFor="grid-display">Grid</label>
                         </div>
                         <div>
                             <input type="radio" id="list-display" name="display" value="list" />
-                            <label for="list-display">List</label>
+                            <label htmlFor="list-display">List</label>
                         </div>
                     </fieldset>
                     <fieldset className="directory-display-size" onChange={this.updateDisplayMode}>
                         <legend>Size</legend>
                         <div>
                             <input type="radio" id="display-small" name="display-size" value="small" />
-                            <label for="display-small">Small</label>
+                            <label htmlFor="display-small">Small</label>
                         </div>
                         <div>
                             <input type="radio" id="display-medium" name="display-size" value="medium" defaultChecked />
-                            <label for="display-medium">Medium</label>
+                            <label htmlFor="display-medium">Medium</label>
                         </div>
                         <div>
                             <input type="radio" id="display-large" name="display-size" value="large" />
-                            <label for="display-large">Large</label>
+                            <label htmlFor="display-large">Large</label>
                         </div>
                     </fieldset>
-                {this.mode === s3_browser_modes.SELECT_DIRECTORY &&
-                    <button 
-                        onClick={this.selectFolder}>
-                        Select Directory: {this.path}
+                    {this.mode === s3_browser_modes.SELECT_DIRECTORY &&
+                        <button 
+                            onClick={this.selectFolder}>
+                            Select Directory: {this.path}
+                        </button>
+                    }
+                </div>
+                <div className="fieldset-container">
+                    <button
+                        onClick={this.readS3Link}>
+                        Go to S3 Path:
                     </button>
-                }
+                    <input
+                        id="s3-link"
+                        type="text"
+                    />
+                </div>
                 {(this.mode === s3_browser_modes.SAVE_JSON || this.mode === s3_browser_modes.SAVE_IMAGE) &&
-                    <div>
+                    <div className="fieldset-container">
                         <button 
                             onClick={() => this.createFile(this.mode)}>
                             Save Here to New File:
@@ -309,13 +349,15 @@ class S3Browser extends Component {
                         />
                     </div>
                 }
+
                 {/* {this.mode === s3_browser_modes.SELECT_IMAGE && 
                     <button
                         onClick={this.selectImage}>
                         Select Image: {this.path}
                     </button>
                 } */}
-                </div>
+                
+
                 <br/>
                 {this.parents.length !== 0 &&
                     <button 

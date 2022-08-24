@@ -11,8 +11,23 @@
                     "svg_overlay": null
                 }, 
                 {
-                    "class_name": "rogue", 
+                    "class_name": "duplicate", 
                     "svg_overlay": "x_overlay"
+                },
+                {
+                    "class_name": "rogue-week-1", 
+                    "svg_overlay": "x_overlay",
+                    "color": "red"
+                },
+                {
+                    "class_name": "rogue-week-2", 
+                    "svg_overlay": "x_overlay",
+                    "color": "yellow"
+                },
+                {
+                    "class_name": "rogue-week-3", 
+                    "svg_overlay": "x_overlay",
+                    "color": "green"
                 }
             ]
         },
