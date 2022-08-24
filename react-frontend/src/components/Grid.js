@@ -268,7 +268,7 @@ class Grid extends Component {
             path: this.src,
         }
 
-        await this.QASM.call_backend(window, function_names.SAVE_FILE, params);
+        await this.QASM.call_backend(window, function_names.SAVE_JSON_FILE, params);
     }
 
 
