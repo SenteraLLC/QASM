@@ -327,7 +327,7 @@ class S3Browser extends Component {
                         </button>
                     }
                 </div>
-                <div className="fieldset-container">
+                <div className="s3-path-container">
                     <button
                         onClick={this.readS3Link}>
                         Go to S3 Path:
