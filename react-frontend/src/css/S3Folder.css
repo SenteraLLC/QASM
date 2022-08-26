@@ -20,6 +20,14 @@ div.S3Folder div.fieldset-container input[type=text] {
     z-index: 2;
 }
 
+div.S3Folder div.s3-path-container {
+    display: grid;
+    grid-template-columns: 133px auto;
+    gap: 1em;
+    margin: 0 2em;
+    padding-top: 0.5em;
+}
+
 div.S3Folder fieldset {
     display: inline-block;
     text-align: left;
