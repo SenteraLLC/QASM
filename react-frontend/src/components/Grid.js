@@ -262,12 +262,13 @@ class Grid extends Component {
      */
     async saveLabels() {
         this.updateLocalLabels();
+
         let params = {
             labels: this.labels,
             path: this.src,
         }
-        console.log(params);
-        console.log(await this.QASM.call_backend(window, function_names.SAVE_FILE, params));
+
+        await this.QASM.call_backend(window, function_names.SAVE_JSON_FILE, params);
     }
 
 

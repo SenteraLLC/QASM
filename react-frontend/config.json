@@ -30,6 +30,9 @@
                     "color": "green"
                 }
             ]
+        },
+        "binaryeditor": {
+            "display_name": "Binary Editor"
         }
     }
 }
