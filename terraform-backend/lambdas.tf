@@ -16,6 +16,14 @@ locals {
             base_name = "load-labels"
             handler = "s3_browser.load_labels"
         },
+        {
+            base_name = "load-image"
+            handler = "s3_browser.load_image"
+        },
+        {
+            base_name = "save-image"
+            handler = "s3_browser.save_image"
+        }
     ]
 }
 

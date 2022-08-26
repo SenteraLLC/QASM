@@ -3,10 +3,13 @@
 
 // List of valid function name keys
 exports.function_names = {
-    LOAD_LABELS: "loadLabels",
     OPEN_DIR: "openDir",
+    OPEN_IMG: "openImg",
+    LOAD_LABELS: "loadLabels",
+    LOAD_IMAGE: "loadImage",
     LOAD_IMAGES: "loadImages",
-    SAVE_FILE: "saveFile",
+    SAVE_JSON_FILE: "saveJsonFile",
+    SAVE_IMAGE: "saveImage",
 }
 
 // List of accepted image types

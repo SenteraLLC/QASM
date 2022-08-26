@@ -98,20 +98,56 @@ class S3Browser extends Component {
      * 
      * @param {string} file filename
      */
-    selectFile(file) {
-        if (this.mode === s3_browser_modes.SELECT_JSON) {
+    selectFile(file, seek_confirmation = true) {
+        // Exclude SELECT_DIRECTORY mode from selecting files
+        if (this.mode !== s3_browser_modes.SELECT_DIRECTORY) {
+
+            // Grab the file's extension
             let ext = file.split('.').pop()
-            if (ext.toLowerCase() === "json") {
-                let data = {
-                    success: true,
-                    path: file,
-                }
-                // Send data back to parent window
-                window.opener.postMessage(data, '*');
-                window.close();
-            } else {
-                alert("Selected file not of type json.");
+
+            // Check the file extension to see if its valid in the current mode
+            switch(this.mode) {
+                case s3_browser_modes.SELECT_JSON:
+                case s3_browser_modes.SAVE_JSON:
+                    if (ext.toLowerCase() !== "json") {
+                        alert("Selected file not of type json.");
+                        return;
+                    }
+                    break;
+
+                case s3_browser_modes.SELECT_IMAGE:
+                case s3_browser_modes.SAVE_IMAGE:
+                    // Alert user and return early if file extension isn't in image_types
+                    if (!(ext in image_types)) {
+                        alert("Selected file does not have supported image extension.");
+                        return;
+                    }
+                    else {
+                        console.log("Clicked on an image")
+                    }
+                    break;
+
+                default:
+                    alert("Unsupported mode: " + this.mode);
+                    return;
             }
+
+            // Ask for confirmation if confirmation is requested and in a saving mode
+            if (seek_confirmation && (this.mode === s3_browser_modes.SAVE_IMAGE || this.mode === s3_browser_modes.SAVE_JSON)) {
+                // If we don't recieve an affermative answer return early
+                if (!window.confirm("Are you sure you want to overwrite " + file + "?")) {
+                    return;
+                }
+            }
+
+            console.log("final code being called")
+            let data = {
+                success: true,
+                path: file,
+            }
+            // Send data back to parent window
+            window.opener.postMessage(data, '*');
+            window.close();
         }
     }
 
@@ -120,16 +156,33 @@ class S3Browser extends Component {
      * Scrape user filename from the input and
      * ask the user to confirm before saving.
      */
-    createFile() {
+    createFile(current_mode) {
+        // Get the extention type based on browser mode
+        let extension;
+        switch(current_mode) {
+            case s3_browser_modes.SELECT_JSON:
+            case s3_browser_modes.SAVE_JSON:
+                extension = ".json";
+                break;
+            
+            case s3_browser_modes.SELECT_IMAGE:
+            case s3_browser_modes.SAVE_IMAGE:
+                extension = ".png";
+                break;
+
+            default:
+                throw new Error("Trying to create image with unknown file type.");
+        }
+
         let new_filename = document.getElementById("new-filename").value;
         new_filename = new_filename.replace(" ", "_").split('.')[0]; // Space -> underscore, remove extension
-        new_filename = new_filename + ".json"; // Save as json
+        new_filename = new_filename + extension; // Save with proper extension
         new_filename = this.path + new_filename; // Add full path
         
         /* eslint-disable */
         // Prompt user to confirm, then save
-        if (confirm("Save to new file " + new_filename + "?")) {
-            this.selectFile(new_filename);
+        if (confirm("Save file as " + new_filename + "?")) {
+            this.selectFile(new_filename, false);
         }
     }
 
@@ -267,12 +320,12 @@ class S3Browser extends Component {
                             <label htmlFor="display-large">Large</label>
                         </div>
                     </fieldset>
-                {this.mode === s3_browser_modes.SELECT_DIRECTORY &&
-                    <button 
-                        onClick={this.selectFolder}>
-                        Select Directory: {this.path}
-                    </button>
-                }
+                    {this.mode === s3_browser_modes.SELECT_DIRECTORY &&
+                        <button 
+                            onClick={this.selectFolder}>
+                            Select Directory: {this.path}
+                        </button>
+                    }
                 </div>
                 <div className="fieldset-container">
                     <button
@@ -284,10 +337,10 @@ class S3Browser extends Component {
                         type="text"
                     />
                 </div>
-                {this.mode === s3_browser_modes.SELECT_JSON &&
+                {(this.mode === s3_browser_modes.SAVE_JSON || this.mode === s3_browser_modes.SAVE_IMAGE) &&
                     <div className="fieldset-container">
                         <button 
-                            onClick={this.createFile}>
+                            onClick={() => this.createFile(this.mode)}>
                             Save Here to New File:
                         </button>
                         <input
@@ -296,6 +349,15 @@ class S3Browser extends Component {
                         />
                     </div>
                 }
+
+                {/* {this.mode === s3_browser_modes.SELECT_IMAGE && 
+                    <button
+                        onClick={this.selectImage}>
+                        Select Image: {this.path}
+                    </button>
+                } */}
+                
+
                 <br/>
                 {this.parents.length !== 0 &&
                     <button 

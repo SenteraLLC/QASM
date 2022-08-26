@@ -1,0 +1,19 @@
+div.Binary {
+    margin: 0.5em;
+    max-width: 100vw;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0 1em;
+}
+
+div.Binary img {
+    max-width: 100%;
+}
+
+div.Binary img[src=" "] {
+    display: none;
+}
+
+div.Binary p.binary-id-display {
+    margin-bottom: 0;
+}
