@@ -16,22 +16,34 @@ class Legend extends Component {
                 <legend>
                     Legend
                 </legend>
-                {this.classes.map(_class => (
-                    <div className="legend-element">
-                        {_class.svg_overlay === null 
-                            ? <p className="legend-overlay">No Overlay</p>
-                            : <img
-                                src={_class.svg_overlay}
-                                className={_class.class_name + " legend-overlay"} 
-                                alt={_class.class_name + " legend"}
-                                id={_class.class_name + "-legend"}>
-                            </img>
-                        }
-                        <p key={_class.class_name} className="legend-overlay-name">
-                            {_class.class_name}
-                        </p>
-                    </div>
+                {this.classes.map((_class) => (
+                    _class.svg_overlay === null
+                        ? <p className="legend-overlay no-overlay">No Overlay</p>
+                        : <img
+                            src={_class.svg_overlay}
+                            className={_class.class_name + " legend-overlay"} 
+                            alt={_class.class_name + " legend"}
+                            id={_class.class_name + "-legend"}>
+                        </img>
                 ))}
+                {this.classes.map((_class) => (
+                    <p className="legend-overlay-name">{_class.class_name}</p>
+                ))}
+                    
+                        
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+            
+                    
+                
 
                         {/* {this.classes.map(_class => (
                             <td 
