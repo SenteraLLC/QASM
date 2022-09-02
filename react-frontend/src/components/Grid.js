@@ -435,7 +435,7 @@ class Grid extends Component {
                     <Legend
                         classes={this.classes}
                     />
-                    <div className={this.images_shown ? "hidden" : ""}>
+                    <div className={this.images_shown ? "hidden" : "controls-container"}>
                         <button
                             onClick={this.selectImageDir}
                             className="button">
@@ -457,7 +457,7 @@ class Grid extends Component {
                             </input>
                         </div>
                     </div>
-                    <div className={this.images_shown ? "" : "hidden"}>
+                    <div className={this.images_shown ? "controls-container" : "hidden"}>
                         <button
                             onClick={this.selectImageDir}
                             className="button">
@@ -496,7 +496,7 @@ class Grid extends Component {
                         <button 
                             onClick={this.clearAll} 
                             className="button">
-                            Clear All
+                            Clear All Labels
                         </button>
                     </div>
                 </div>

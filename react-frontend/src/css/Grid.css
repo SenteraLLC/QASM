@@ -1,7 +1,28 @@
 div.Grid div.header-container {
     display: grid;
     grid-template-columns: 1fr 1fr;
+    gap: 0.5em;
     margin: 1em;
+}
+
+div.Grid div.controls-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5em;
+    margin-top: 0.5em;
+}
+
+div.Grid div.controls-container > * {
+    flex: 1;
+    flex-basis: auto;
+}
+
+div.Grid div.change-grid-width-container {
+    width: 100%;
+}
+
+div.Grid div.change-grid-width-container label {
+    margin-right: 1em;
 }
 
 div.Grid table {

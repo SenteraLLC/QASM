@@ -1,5 +1,6 @@
 fieldset.Legend {
-    margin: 0 auto 1em auto;
+    margin: 0 auto;
+    padding-top: 0;
     display: grid;
     gap: 1rem;
     max-height: 100%;
