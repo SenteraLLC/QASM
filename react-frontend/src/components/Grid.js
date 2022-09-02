@@ -431,48 +431,75 @@ class Grid extends Component {
     render() {
         return (
             <div className="Grid" key={this.component_updater}>
-                <button 
-                    onClick={this.selectImageDir}>
-                    Select{this.images_shown ? " New " : " "}Directory
-                </button>
-                &nbsp;&nbsp;&nbsp;
-                <button 
-                    onClick={this.addImageLayer}
-                    className={this.images_shown ? "" : "hidden"}>
-                    Add Image Layer
-                </button>
-                &nbsp;&nbsp;&nbsp;
-                <p style={{"display": "inline-block"}}>Grid Width:</p>
-                &nbsp;
-                <input 
-                    type="number" 
-                    value={this.grid_width} 
-                    size={2} // Number of visible digits
-                    step={1} 
-                    min={1}
-                    max={99}
-                    onChange={this.changeGridWidth}>
-                </input><br/>
-                <button 
-                    onClick={this.loadLabels} 
-                    className={this.images_shown ? "" : "hidden"}>
-                    Load Labels
-                </button>
-                &nbsp;&nbsp;&nbsp;
-                <button 
-                    onClick={this.saveLabels} 
-                    className={this.images_shown ? "" : "hidden"}>
-                    Save Labels
-                </button>
-                &nbsp;&nbsp;&nbsp;
-                <button 
-                    onClick={this.clearAll} 
-                    className={this.images_shown ? "" : "hidden"}>
-                    Clear All
-                </button>
-                <Legend
-                    classes={this.classes}
-                />
+                <div className="header-container">
+                    <Legend
+                        classes={this.classes}
+                    />
+                    <div className={this.images_shown ? "hidden" : "controls-container"}>
+                        <button
+                            onClick={this.selectImageDir}
+                            className="button">
+                            Select Directory
+                        </button>
+                        <div className="change-grid-width-container">
+                            <label for="change-grid-width-og">
+                                Grid Width:
+                            </label>
+                            <input 
+                                id="change-grid-width-og"
+                                type="number" 
+                                value={this.grid_width} 
+                                size={2} // Number of visible digits
+                                step={1} 
+                                min={1}
+                                max={99}
+                                onChange={this.changeGridWidth}>
+                            </input>
+                        </div>
+                    </div>
+                    <div className={this.images_shown ? "controls-container" : "hidden"}>
+                        <button
+                            onClick={this.selectImageDir}
+                            className="button">
+                            Select Directory
+                        </button>
+                        <button 
+                            onClick={this.addImageLayer}
+                            className="button">
+                            Add Image Layer
+                        </button>
+                        <div className="change-grid-width-container">
+                            <label for="change-grid-width-new">
+                                Grid Width:
+                            </label>
+                            <input 
+                                id="change-grid-width-new"
+                                type="number" 
+                                value={this.grid_width} 
+                                size={2} // Number of visible digits
+                                step={1} 
+                                min={1}
+                                max={99}
+                                onChange={this.changeGridWidth}>
+                            </input>
+                        </div>
+                        <button 
+                            onClick={this.loadLabels} 
+                            className="button">
+                            Load Labels
+                        </button>
+                        <button 
+                            onClick={this.saveLabels} 
+                            className="button">
+                            Save Labels
+                        </button>
+                        <button 
+                            onClick={this.clearAll} 
+                            className="button">
+                            Clear All Labels
+                        </button>
+                    </div>
+                </div>
                 <table id="Grid-table">
                     <tbody>
                         {this.grid_image_names.map(row_image_names => (

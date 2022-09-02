@@ -6,20 +6,6 @@ div.BinaryEditor div.button-holder {
     gap: 0.5em;
 }
 
-div.BinaryEditor div.button-holder label, div.BinaryEditor div.button-holder button {
-    cursor: pointer;
-    padding: 1em;
-    border: 1px solid #333;
-    border-radius: 0.25em;
-    font-size: small;
-    background-color: #EEE;
-}
-
-div.BinaryEditor div.button-holder label:hover, div.BinaryEditor div.button-holder button:hover {
-    background-color: #E5E5E5;
-    box-shadow: 0 0 1em -0.7em;
-}
-
 div.BinaryEditor p.binary-operations {
     grid-column: 1 / -1;
 }
