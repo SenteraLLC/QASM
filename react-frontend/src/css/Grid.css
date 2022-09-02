@@ -1,3 +1,7 @@
+div.Grid .button {
+    padding: 0;
+}
+
 div.Grid div.header-container {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -19,10 +23,13 @@ div.Grid div.controls-container > * {
 
 div.Grid div.change-grid-width-container {
     width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 div.Grid div.change-grid-width-container label {
-    margin-right: 1em;
+    margin-right: 0.5em;
 }
 
 div.Grid table {
