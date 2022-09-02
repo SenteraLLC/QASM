@@ -141,7 +141,7 @@ class BinaryEditor extends Component {
         switch (this.QASM.mode) {
             case "s3":
                 select_image_button = (
-                    <button onClick={this.loadBinary}>
+                    <button className="button" onClick={this.loadBinary}>
                         Select Binary
                     </button>
                 )
@@ -152,7 +152,7 @@ class BinaryEditor extends Component {
             default:
                 select_image_button = (
                     <div>
-                        <label htmlFor="image_input">
+                        <label className="button" htmlFor="image_input">
                             Select Binary
                         </label>
                         <input 
@@ -170,13 +170,13 @@ class BinaryEditor extends Component {
             <div className="BinaryEditor" key={this.component_updater}>
                 <div className="button-holder">
                     {select_image_button}
-                    <button onClick={this.saveBinary}>
+                    <button className="button" onClick={this.saveBinary}>
                         Save New Binary
                     </button>
-                    <button onClick={this.dilateBinary}>
+                    <button className="button" onClick={this.dilateBinary}>
                         Dilate
                     </button>
-                    <button onClick={this.erodeBinary}>
+                    <button className="button" onClick={this.erodeBinary}>
                         Erode
                     </button>
                 </div>
