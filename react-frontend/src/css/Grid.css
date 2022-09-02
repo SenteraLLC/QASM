@@ -1,5 +1,7 @@
-div.Grid button {
-    margin-bottom: 16px;
+div.Grid div.header-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    margin: 1em;
 }
 
 div.Grid table {

@@ -2,7 +2,7 @@ fieldset.Legend {
     margin: 0 auto 1em auto;
     display: grid;
     gap: 1rem;
-    max-width: 50%;
+    max-height: 100%;
 }
 
 fieldset.Legend legend {
