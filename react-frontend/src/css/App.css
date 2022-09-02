@@ -46,3 +46,17 @@ div.menu a.Link:hover {
 h2::first-letter {
   text-transform: capitalize;
 }
+
+div.App .button {
+  cursor: pointer;
+  padding: 1em;
+  border: 1px solid #333;
+  border-radius: 0.25em;
+  font-size: small;
+  background-color: #EEE;
+}
+
+div.App .button:hover {
+  background-color: #E5E5E5;
+  box-shadow: 0 0 1em -0.7em;
+}

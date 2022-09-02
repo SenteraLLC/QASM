@@ -1,0 +1,17 @@
+fieldset.Legend {
+    margin: 0 auto;
+    padding-top: 0;
+    display: grid;
+    gap: 1rem;
+    max-height: 100%;
+}
+
+fieldset.Legend legend {
+    text-align: left;
+    padding: 0 1em;
+}
+
+fieldset.Legend p.no-overlay {
+    align-self: center;
+    justify-self: center;
+}
