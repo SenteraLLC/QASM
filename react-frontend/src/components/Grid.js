@@ -435,45 +435,67 @@ class Grid extends Component {
                     <Legend
                         classes={this.classes}
                     />
-                    <div>
-                        <button 
+                    <div className={this.images_shown ? "hidden" : ""}>
+                        <button
                             onClick={this.selectImageDir}
                             className="button">
-                            Select{this.images_shown ? " New " : " "}Directory
+                            Select Directory
                         </button>
-                        &nbsp;&nbsp;&nbsp;
+                        <div className="change-grid-width-container">
+                            <label for="change-grid-width-og">
+                                Grid Width:
+                            </label>
+                            <input 
+                                id="change-grid-width-og"
+                                type="number" 
+                                value={this.grid_width} 
+                                size={2} // Number of visible digits
+                                step={1} 
+                                min={1}
+                                max={99}
+                                onChange={this.changeGridWidth}>
+                            </input>
+                        </div>
+                    </div>
+                    <div className={this.images_shown ? "" : "hidden"}>
+                        <button
+                            onClick={this.selectImageDir}
+                            className="button">
+                            Select Directory
+                        </button>
                         <button 
                             onClick={this.addImageLayer}
-                            className={this.images_shown ? "button" : "hidden button"}>
+                            className="button">
                             Add Image Layer
                         </button>
-                        &nbsp;&nbsp;&nbsp;
-                        <p style={{"display": "inline-block"}}>Grid Width:</p>
-                        &nbsp;
-                        <input 
-                            type="number" 
-                            value={this.grid_width} 
-                            size={2} // Number of visible digits
-                            step={1} 
-                            min={1}
-                            max={99}
-                            onChange={this.changeGridWidth}>
-                        </input><br/>
+                        <div className="change-grid-width-container">
+                            <label for="change-grid-width-new">
+                                Grid Width:
+                            </label>
+                            <input 
+                                id="change-grid-width-new"
+                                type="number" 
+                                value={this.grid_width} 
+                                size={2} // Number of visible digits
+                                step={1} 
+                                min={1}
+                                max={99}
+                                onChange={this.changeGridWidth}>
+                            </input>
+                        </div>
                         <button 
                             onClick={this.loadLabels} 
-                            className={this.images_shown ? "button" : "hidden button"}>
+                            className="button">
                             Load Labels
                         </button>
-                        &nbsp;&nbsp;&nbsp;
                         <button 
                             onClick={this.saveLabels} 
-                            className={this.images_shown ? "button" : "hidden button"}>
+                            className="button">
                             Save Labels
                         </button>
-                        &nbsp;&nbsp;&nbsp;
                         <button 
                             onClick={this.clearAll} 
-                            className={this.images_shown ? "button" : "hidden button"}>
+                            className="button">
                             Clear All
                         </button>
                     </div>
