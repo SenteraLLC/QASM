@@ -43,6 +43,8 @@ This will build an app based on the specifications found in ``react-frontend/con
         - ``"display_name": <string>`` (Optional) Change the navbar display name
     - ``"binaryeditor": <Object>``
         - ``"display_name": <string>`` (Optional) Change the navbar display name
+        - ``"dilate_keybind": <string>`` (Optional) Change the dilation keybind. Defaults to "="
+        - ``"erode_keybind": <string>`` (Optional) Change the erosion keybind. Defaults to "-"
 
 ### Terraform
 Terraform automatically takes our lambda code and deploys it to all the necessary AWS services (Lambda, API Gateway, IAM, etc) to allow our serverless applications to run.
