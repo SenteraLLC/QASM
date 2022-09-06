@@ -1,16 +1,74 @@
 import { Component } from "react";
+import Binary from "./Binary";
+import { function_names } from "../../public/electron_constants";
 
 /**
  * Creates a component for editing all binaries in an s3 folder.
  */
-class s3DirectoryBinaryEditor extends Component {
+class S3DirectoryBinaryEditor extends Component {
+    component_updater = 0;
+
+    constructor(props) {
+        super()
+        console.log("s3BinaryEditor", props)
+        this.QASM = props.QASM;
+
+        // Bind functions
+        this.loadDirectory = this.loadDirectory.bind(this);
+        this.loadFirstImage = this.loadFirstImage.bind(this);
+        this.loadNextImage = this.loadNextImage.bind(this);
+    }
+
+
+    async loadDirectory() {
+        let directory_path = await this.QASM.call_backend(window, function_names.OPEN_DIR);
+
+        // console.log(directory_path, "directory path")
+
+        if (directory_path !== undefined) {
+
+            // Create a dictionary for every image in the directory where the image name is
+            // the key and the path is the value
+            this.images = await this.QASM.call_backend(window, function_names.LOAD_IMAGES, directory_path);
+
+            // Create a list of keys
+            this.images_keys = Object.keys(this.images).sort();
+
+            // Load the first image
+            this.loadFirstImage();
+        }
+    }
+
+    loadFirstImage() {
+        // Set the src to the first image key
+        this.src = this.images[this.images_keys[0]];
+        
+        // Reset current image
+        this.current_image = 0;
+
+        // Update the state and component_updater so the component rerenders
+        this.setState({
+            src: this.src
+        });
+        this.component_updater++;
+    }
+
+    async loadNextImage() {
+
+    }
+
     render() {
         return (
-            <div className="s3DirectoryBinaryEditor">
-                Trevor
+            <div className="s3DirectoryBinaryEditor" key={this.component_updater}>
+                <button className="button" onClick={this.loadDirectory}>
+                    Select Directory
+                </button>
+                <Binary
+                    original_binary={this.src}
+                />
             </div>
         )
     }
 }
 
-export default s3DirectoryBinaryEditor;
+export default S3DirectoryBinaryEditor;
