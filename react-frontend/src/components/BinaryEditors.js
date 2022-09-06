@@ -1,5 +1,6 @@
 import { Component } from "react";
 import SingleBinaryEditor from "./SingleBinaryEditor";
+import S3DirectoryBinaryEditor from "./S3DirectoryBinaryEditor";
 
 /**
  * Returns diffrent Binary Editors based on the whichever mode is passed in.
@@ -14,8 +15,8 @@ class BinaryEditors extends Component {
 
     render() {
         switch (this.mode) {
-            case "placeholder":
-                return
+            case "s3directory":
+                return <S3DirectoryBinaryEditor {...this.props}/>
             case "single":
             default:
                 return <SingleBinaryEditor {...this.props}/>
