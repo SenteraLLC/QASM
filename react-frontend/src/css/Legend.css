@@ -15,3 +15,7 @@ fieldset.Legend p.no-overlay {
     align-self: center;
     justify-self: center;
 }
+
+fieldset.Legend p {
+    margin: 0;
+}

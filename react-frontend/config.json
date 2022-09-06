@@ -33,7 +33,7 @@
         },
         "binaryeditor": {
             "display_name": "Binary Editor",
-            "mode": "single",
+            "mode": "s3directory",
             "dilate_keybind": "w"
         }
     }
