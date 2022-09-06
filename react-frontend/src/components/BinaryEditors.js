@@ -14,9 +14,10 @@ class BinaryEditors extends Component {
     }
 
     render() {
-        switch (this.mode) {
+        switch (this.mode.toLowerCase()) {
             case "s3directory":
                 return <S3DirectoryBinaryEditor {...this.props}/>
+            // Single mode will be the default
             case "single":
             default:
                 return <SingleBinaryEditor {...this.props}/>
