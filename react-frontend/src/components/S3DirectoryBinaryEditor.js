@@ -54,7 +54,23 @@ class S3DirectoryBinaryEditor extends Component {
     }
 
     async loadNextImage() {
+        // Increment the current image
+        this.current_image++;
 
+        // Check if the current image is outside the list of images
+        if (this.images.length >= this.current_image) {
+            // If the current image is outside the list of images, then reset it back to 0
+            this.current_image = 0;
+        }
+
+        // Set the src to the new image
+        this.src = this.images[this.images_keys[this.current_image]];
+
+        // Update the state and component_updater so the component rerenders
+        this.setState({
+            src: this.src
+        });
+        this.component_updater++;
     }
 
     render() {
@@ -63,6 +79,12 @@ class S3DirectoryBinaryEditor extends Component {
                 <button className="button" onClick={this.loadDirectory}>
                     Select Directory
                 </button>
+                <button className="button" onClick={this.loadNextImage}>
+                    Show Next Image
+                </button>
+                <p>
+                    {this.src}
+                </p>
                 <Binary
                     original_binary={this.src}
                 />
