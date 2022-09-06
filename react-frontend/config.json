@@ -32,7 +32,9 @@
             ]
         },
         "binaryeditor": {
-            "display_name": "Binary Editor"
+            "display_name": "Binary Editor",
+            "mode": "single",
+            "dilate_keybind": "w"
         }
     }
 }

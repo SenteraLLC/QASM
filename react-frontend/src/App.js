@@ -2,7 +2,7 @@ import { Component } from 'react';
 import './css/App.css';
 import Grid from "./components/Grid.js";
 import Home from "./components/Home.js";
-import BinaryEditor from './components/BinaryEditor';
+import BinaryEditor from './components/SingleBinaryEditor';
 import S3Browser from "./components/S3Browser.js"
 import icon from "../public/icon.png";
 import {HashRouter, Link, Route, Routes} from "react-router-dom";
