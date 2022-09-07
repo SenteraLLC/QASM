@@ -124,6 +124,16 @@ class Binary extends Component {
         });
     }
 
+    /**
+     * Saves the operation used to the page both in a human readable way, and a hidden
+     * machine readable way
+     * 
+     * @param {string} operation Name of the operation to be saved.
+     */
+    saveOperation(operation) {
+
+    }
+
 
     render() {
         return (
@@ -152,6 +162,23 @@ class Binary extends Component {
                     methods from outside of this component by selecting this element
                     and using Javascript to click it.
                 </button>
+                <p 
+                    className="operations" 
+                    id={this.original_binary_src !== undefined
+                        ? string_to_vaild_css_selector(this.original_binary_src)
+                        : null
+                    }
+                >
+                </p>
+                <p 
+                    className="operations-hidden hidden" 
+                    id={this.original_binary_src !== undefined
+                        ? string_to_vaild_css_selector(this.original_binary_src)
+                        : null
+                    }
+                >
+
+                </p>
             </div>
         );
     }
