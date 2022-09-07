@@ -6,6 +6,10 @@ import x_overlay_red from "../icons/x_red.svg";
 import x_overlay_yellow from "../icons/x_yellow.svg";
 import x_overlay_white from "../icons/x_white.svg";
 import x_overlay_green from "../icons/x_green.svg";
+import criss_cross from "../icons/criss_cross.svg";
+import curved from "../icons/curved.svg";
+import sparse from "../icons/sparse.svg";
+import field_edge from "../icons/field_edge.svg";
 import $ from "jquery";
 import "../css/Grid.css";
 const { update_all_overlays } =  require("../QASM/utils.js");
@@ -26,6 +30,18 @@ const OVERLAYS = {
         [COLORS.yellow]: x_overlay_yellow,
         [COLORS.white]: x_overlay_white,
         [COLORS.green]: x_overlay_green,
+    },
+    "criss_cross": {
+        [COLORS.default]: criss_cross
+    },
+    "curved": {
+        [COLORS.default]: curved
+    },
+    "sparse": {
+        [COLORS.default]: sparse
+    },
+    "field_edge": {
+        [COLORS.default]: field_edge
     }
 }
 
@@ -150,10 +166,10 @@ class Grid extends Component {
                 "color" in class_props && class_props["color"] in COLORS 
                     ? class_props.svg_overlay = OVERLAYS[overlay_type][COLORS[class_props.color]]
                     : class_props.svg_overlay = OVERLAYS[overlay_type]["default"]
-                console.log(class_props);
                 this.classes[idx] = class_props;
             }
         }
+        console.log(this.classes);
 
         // Grab the document's head tag and create a style tag
         let document_head = document.getElementsByTagName('head')[0];
@@ -442,7 +458,7 @@ class Grid extends Component {
                             Select Directory
                         </button>
                         <div className="change-grid-width-container">
-                            <label for="change-grid-width-og">
+                            <label htmlFor="change-grid-width-og">
                                 Grid Width:
                             </label>
                             <input 
@@ -469,7 +485,7 @@ class Grid extends Component {
                             Add Image Layer
                         </button>
                         <div className="change-grid-width-container">
-                            <label for="change-grid-width-new">
+                            <label htmlFor="change-grid-width-new">
                                 Grid Width:
                             </label>
                             <input 
