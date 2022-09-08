@@ -5,8 +5,10 @@ import "../css/Binary.css";
 const { Image } = require("image-js");
 
 class Binary extends Component {
+    component_updater = 0;
     currently_hovered = false;
-
+    operations = "";
+    shown_operations = "";
 
     constructor(props) {
         super(props);
@@ -31,6 +33,7 @@ class Binary extends Component {
         this.handleKeypress = this.handleKeypress.bind(this);
         this.erode          = this.erode.bind(this);
         this.dilate         = this.dilate.bind(this);
+        this.saveOperation  = this.saveOperation.bind(this);
 
         // Set state
         this.state = {
@@ -98,6 +101,9 @@ class Binary extends Component {
         this.setState({
             output_binary_src: this.output_binary_src
         });
+
+        // Save operation to the dom
+        this.saveOperation("Dilate");
     }
 
 
@@ -122,6 +128,9 @@ class Binary extends Component {
         this.setState({
             output_binary_src: this.output_binary_src
         });
+
+        // Save operation to the dom
+        this.saveOperation("Erode");
     }
 
     /**
@@ -131,13 +140,29 @@ class Binary extends Component {
      * @param {string} operation Name of the operation to be saved.
      */
     saveOperation(operation) {
+        // First save it in a human readable way
+        if (this.shown_operations === "") {
+            this.shown_operations = this.shown_operations + operation;
+        }
+        else {
+            this.shown_operations = this.shown_operations + "  →  " + operation;
+        }
 
+        // Then save just the first letter
+        this.operations = this.operations + operation[0].toLowerCase();
+
+        // Set the state to rerender
+        this.setState({
+            operations: this.operations,
+            shown_operations: this.shown_operations
+        });
+        this.component_updater++;
     }
 
 
     render() {
         return (
-            <div className="Binary" >
+            <div className="Binary" key={this.component_updater}>
                 <img 
                     src={this.original_binary_src !== undefined ? this.original_binary_src : " "} 
                     alt="Original Binary" 
@@ -165,19 +190,20 @@ class Binary extends Component {
                 <p 
                     className="operations" 
                     id={this.original_binary_src !== undefined
-                        ? string_to_vaild_css_selector(this.original_binary_src)
+                        ? "operations-" + string_to_vaild_css_selector(this.original_binary_src)
                         : null
                     }
                 >
+                    {this.shown_operations}
                 </p>
                 <p 
                     className="operations-hidden hidden" 
                     id={this.original_binary_src !== undefined
-                        ? string_to_vaild_css_selector(this.original_binary_src)
+                        ? "operations-hidden-" + string_to_vaild_css_selector(this.original_binary_src)
                         : null
                     }
                 >
-
+                    {this.operations}
                 </p>
             </div>
         );
