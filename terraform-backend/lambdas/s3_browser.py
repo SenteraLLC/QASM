@@ -120,6 +120,7 @@ def create_binary_directory(event, context):
     try:
         print(bucket_name)
         print(data)
+        print("this is a test log")
 
         return get_return_block_with_cors("Saved Images", False)
         
