@@ -98,10 +98,10 @@ class S3DirectoryBinaryEditor extends Component {
                 <button className="button" onClick={this.loadDirectory}>
                     Select Directory
                 </button>
-                <button className="button" onClick={this.loadNextImage}>
+                <button className={this.directory_path === undefined ? "hidden" : "button"} onClick={this.loadNextImage}>
                     Show Next Image
                 </button>
-                <button className="button" onClick={this.save}>
+                <button className={this.directory_path === undefined ? "hidden" : "button"} onClick={this.save}>
                     Save
                 </button>
                 <Binary
