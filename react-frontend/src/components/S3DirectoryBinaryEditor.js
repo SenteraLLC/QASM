@@ -14,22 +14,23 @@ class S3DirectoryBinaryEditor extends Component {
         this.QASM = props.QASM;
 
         // Bind functions
-        this.loadDirectory = this.loadDirectory.bind(this);
+        this.loadDirectory  = this.loadDirectory.bind(this);
         this.loadFirstImage = this.loadFirstImage.bind(this);
-        this.loadNextImage = this.loadNextImage.bind(this);
+        this.loadNextImage  = this.loadNextImage.bind(this);
+        this.save           = this.save.bind(this);
     }
 
 
     async loadDirectory() {
-        let directory_path = await this.QASM.call_backend(window, function_names.OPEN_DIR);
+        this.directory_path = await this.QASM.call_backend(window, function_names.OPEN_DIR);
 
         // console.log(directory_path, "directory path")
 
-        if (directory_path !== undefined) {
+        if (this.directory_path !== undefined) {
 
             // Create a dictionary for every image in the directory where the image name is
             // the key and the path is the value
-            this.images = await this.QASM.call_backend(window, function_names.LOAD_IMAGES, directory_path);
+            this.images = await this.QASM.call_backend(window, function_names.LOAD_IMAGES, this.directory_path);
             console.log(this.images)
             // Create a list of keys
             this.images_keys = Object.keys(this.images).sort();
@@ -38,6 +39,7 @@ class S3DirectoryBinaryEditor extends Component {
             this.loadFirstImage();
         }
     }
+
 
     loadFirstImage() {
         // Set the src to the first image key
@@ -53,7 +55,8 @@ class S3DirectoryBinaryEditor extends Component {
         this.component_updater++;
     }
 
-    async loadNextImage() {
+
+    loadNextImage() {
         // Increment the current image
         this.current_image++;
 
@@ -73,6 +76,22 @@ class S3DirectoryBinaryEditor extends Component {
         this.component_updater++;
     }
 
+
+    async save() {
+        // Grab the binary operations to perform
+        const operations = document.querySelector(".operations-hidden").innerHTML;
+
+        const data = {
+            operations: operations,
+            directory_path: this.directory_path,
+        }
+
+        // Have the backend apply the binary operations to every image in the directory, and
+        // save it in a new folder
+        await this.QASM.call_backend(window, function_names.SAVE_BINARY_DIRECTORY, data)
+    }
+
+
     render() {
         return (
             <div className="s3DirectoryBinaryEditor" key={this.component_updater}>
@@ -82,6 +101,9 @@ class S3DirectoryBinaryEditor extends Component {
                 <button className="button" onClick={this.loadNextImage}>
                     Show Next Image
                 </button>
+                <button className="button" onClick={this.save}>
+                    Save
+                </button>
                 <Binary
                     original_binary={this.src}
                 />
@@ -89,5 +111,6 @@ class S3DirectoryBinaryEditor extends Component {
         )
     }
 }
+
 
 export default S3DirectoryBinaryEditor;

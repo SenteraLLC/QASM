@@ -4,14 +4,15 @@ const { s3_browser_modes } = require("./constants.js");
 
 // Export like this so static site works idk why
 const function_handlers = {
-    [function_names.LOAD_LABELS]:    handleLoadLabels,
-    [function_names.OPEN_DIR]:       handleOpenDir,
-    [function_names.OPEN_IMG]:       handleLoadImage,
-    [function_names.LOAD_IMAGES]:    handleLoadImages,
-    [function_names.LOAD_IMAGE]:     handleLoadImage,
-    [function_names.SAVE_JSON_FILE]: handleSaveJSON,
-    [function_names.SAVE_IMAGE]:     handleSaveImage,
-    "openS3Folder":                  handleOpenS3Folder,
+    [function_names.SAVE_BINARY_DIRECTORY]:   saveBinaryDirectory,
+    [function_names.LOAD_LABELS]:             handleLoadLabels,
+    [function_names.LOAD_IMAGE]:              handleLoadImage,
+    [function_names.LOAD_IMAGES]:             handleLoadImages,
+    [function_names.OPEN_DIR]:                handleOpenDir,
+    [function_names.OPEN_IMG]:                handleLoadImage,
+    [function_names.SAVE_IMAGE]:              handleSaveImage,
+    [function_names.SAVE_JSON_FILE]:          handleSaveJSON,
+    "openS3Folder":                           handleOpenS3Folder,
 }
 export { function_handlers }
 
@@ -182,4 +183,15 @@ async function handleOpenS3Folder(QASM, data, window) {
         "prefix": data
     }
     return await api_consolidator_error_handler(params, "open_dir");
+}
+
+
+async function saveBinaryDirectory(QASM, data, window) {
+    // Create parameters
+    let params = {
+        "bucket_name": QASM.s3_bucket,
+        "data": data
+    }
+
+    return await api_consolidator_error_handler(params, "create_binary_directory")
 }
