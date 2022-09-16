@@ -108,3 +108,24 @@ def load_labels(event, context):
     file_content = content_object.get()['Body'].read().decode('utf-8')
     labels = json.loads(file_content)
     return get_return_block_with_cors({"labels": labels})
+
+
+def create_binary_directory(event, context):
+    """Apply set morphological operations to all images in a folder, and save them in another folder."""
+
+    body = json.loads(event["body"])
+    bucket_name = body["bucket_name"]
+    data = body["data"]
+
+    try:
+        print(bucket_name)
+        print(data)
+
+        return get_return_block_with_cors("Saved Images", False)
+        
+    except:
+        return get_return_block_with_cors("Error While Saving", False)
+
+
+
+    return get_return_block_with_cors("placeholder", False)

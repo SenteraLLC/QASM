@@ -3,6 +3,7 @@
 
 // List of valid function name keys
 exports.function_names = {
+    SAVE_BINARY_DIRECTORY: "saveBinaryDirectory",
     OPEN_DIR: "openDir",
     OPEN_IMG: "openImg",
     LOAD_LABELS: "loadLabels",
