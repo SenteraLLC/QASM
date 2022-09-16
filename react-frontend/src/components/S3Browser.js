@@ -1,6 +1,7 @@
 import { Component } from 'react';
 import S3Folder from "./S3Folder.js";
 import S3File from "./S3File.js";
+import "../css/S3Browser.css";
 const { image_types } = require("../../public/electron_constants.js");
 const { s3_browser_modes } = require("../QASM/constants.js");
 
@@ -290,7 +291,7 @@ class S3Browser extends Component {
 
     render() {
         return (
-            <div className="S3Folder">
+            <div className="S3Browser">
                 <h2>S3 Browser: {this.QASM.s3_bucket}</h2>
                 <div className="fieldset-container">
                     <fieldset className="directory-display-mode" onChange={this.updateDisplayMode}>
@@ -351,7 +352,6 @@ class S3Browser extends Component {
                         />
                     </div>
                 }
-                <br/>
                 {this.parents.length !== 0 &&
                     <button 
                         onClick={this.goBack}

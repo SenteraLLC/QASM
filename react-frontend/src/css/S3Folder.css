@@ -139,3 +139,12 @@ div.S3Folder div.list p {
     margin: 0;
     margin-left: 16px;
 }
+
+
+
+
+
+
+div.S3Folder p {
+    word-wrap: break-word;
+}
