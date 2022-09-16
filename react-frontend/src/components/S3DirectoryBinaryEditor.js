@@ -78,8 +78,23 @@ class S3DirectoryBinaryEditor extends Component {
 
 
     async save() {
-        // Grab the binary operations to perform
+        // Saving cannot happen if no directory path is selected
+        if (this.directory_path === undefined) {
+            alert("You cannot save with not directory selected");
+            return;
+        }
+        
+        // Grab the morphological operations
         const operations = document.querySelector(".operations-hidden").innerHTML;
+
+        // Saving cannot happen if no morphological operations have been performed
+        if (operations === "") {
+            alert("You cannot save without performing at least one morphological operation");
+            return;
+        }
+
+        // Prompt the user if they want to save, if not then return wihout saving
+        if (!window.confirm("Are you sure you want to save?")) return;
 
         const data = {
             operations: operations,
