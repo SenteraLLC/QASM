@@ -132,7 +132,3 @@ def create_binary_directory(event, context):
         
     except:
         return get_return_block_with_cors("Error While Saving", False)
-
-
-
-    return get_return_block_with_cors("placeholder", False)
