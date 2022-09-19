@@ -3,6 +3,8 @@ import boto3
 import json
 import os
 import base64
+import cv2
+import numpy as np
 from utils.lambda_utils import get_return_block_with_cors
 from utils.s3_utils import get_all_signed_urls_in_folder, get_signed_url
 
@@ -50,6 +52,7 @@ def get_signed_urls_in_folder(event, context):
     urls = get_all_signed_urls_in_folder(bucket_name, folder_name)
     return get_return_block_with_cors({"urls": urls})
 
+    
 def load_image(event, context):
     """get a single signed url."""
     body = json.loads(event["body"])
@@ -58,7 +61,6 @@ def load_image(event, context):
     folder_path, image_name = os.path.split(file_name)
     url = get_signed_url(bucket_name, folder_path, image_name, s3_client=None)
     return get_return_block_with_cors({"url": url})
-    
 
 
 def save_labels(event, context):
@@ -121,6 +123,10 @@ def create_binary_directory(event, context):
         print(bucket_name)
         print(data)
         print("this is a test log")
+
+        urls = get_all_signed_urls_in_folder(bucket_name, data["directory_path"])
+
+        print(urls)
 
         return get_return_block_with_cors("Saved Images", False)
         
