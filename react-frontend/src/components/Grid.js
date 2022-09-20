@@ -169,7 +169,6 @@ class Grid extends Component {
                 this.classes[idx] = class_props;
             }
         }
-        console.log(this.classes);
 
         // Grab the document's head tag and create a style tag
         let document_head = document.getElementsByTagName('head')[0];
