@@ -3,8 +3,8 @@ import boto3
 import json
 import os
 import base64
-import cv2
-import numpy as np
+# import cv2
+# import numpy as np
 from utils.lambda_utils import get_return_block_with_cors
 from utils.s3_utils import get_all_signed_urls_in_folder, get_signed_url
 
