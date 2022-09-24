@@ -42,8 +42,7 @@ class S3Browser extends Component {
 
 
     /**
-     * Change the current location to be 
-     * at the given s3 path.
+     * Change the current location to be at the given s3 path.
      * 
      * @param {string} path s3 path
      */
@@ -293,40 +292,44 @@ class S3Browser extends Component {
         return (
             <div className="S3Browser">
                 <h2>S3 Browser: {this.QASM.s3_bucket}</h2>
-                <div className="fieldset-container">
-                    <fieldset className="directory-display-mode" onChange={this.updateDisplayMode}>
-                        <legend>Display Mode</legend>
-                        <div>
-                            <input type="radio" id="grid-display" name="display" value="grid" defaultChecked />
-                            <label htmlFor="grid-display">Grid</label>
-                        </div>
-                        <div>
-                            <input type="radio" id="list-display" name="display" value="list" />
-                            <label htmlFor="list-display">List</label>
-                        </div>
-                    </fieldset>
-                    <fieldset className="directory-display-size" onChange={this.updateDisplayMode}>
-                        <legend>Size</legend>
-                        <div>
-                            <input type="radio" id="display-small" name="display-size" value="small" />
-                            <label htmlFor="display-small">Small</label>
-                        </div>
-                        <div>
-                            <input type="radio" id="display-medium" name="display-size" value="medium" defaultChecked />
-                            <label htmlFor="display-medium">Medium</label>
-                        </div>
-                        <div>
-                            <input type="radio" id="display-large" name="display-size" value="large" />
-                            <label htmlFor="display-large">Large</label>
-                        </div>
-                    </fieldset>
-                    {this.mode === s3_browser_modes.SELECT_DIRECTORY &&
-                        <button 
-                            onClick={this.selectFolder}
-                            className="button">
-                            Select Directory: {this.path}
-                        </button>
-                    }
+                <div className="header">
+                    <div className="fieldset-container">
+                        <fieldset className="directory-display-mode" onChange={this.updateDisplayMode}>
+                            <legend>Display</legend>
+                            <div>
+                                <input type="radio" id="grid-display" name="display" value="grid" defaultChecked />
+                                <label htmlFor="grid-display">Grid</label>
+                            </div>
+                            <div>
+                                <input type="radio" id="list-display" name="display" value="list" />
+                                <label htmlFor="list-display">List</label>
+                            </div>
+                        </fieldset>
+                        <fieldset className="directory-display-size" onChange={this.updateDisplayMode}>
+                            <legend>Size</legend>
+                            <div>
+                                <input type="radio" id="display-small" name="display-size" value="small" />
+                                <label htmlFor="display-small">Small</label>
+                            </div>
+                            <div>
+                                <input type="radio" id="display-medium" name="display-size" value="medium" defaultChecked />
+                                <label htmlFor="display-medium">Medium</label>
+                            </div>
+                            <div>
+                                <input type="radio" id="display-large" name="display-size" value="large" />
+                                <label htmlFor="display-large">Large</label>
+                            </div>
+                        </fieldset>
+                    </div>
+                    <div className="path-container">
+                        {this.mode === s3_browser_modes.SELECT_DIRECTORY &&
+                            <button 
+                                onClick={this.selectFolder}
+                                className="button">
+                                Select Directory: {this.path}
+                            </button>
+                        }
+                    </div>
                 </div>
                 <div className="s3-path-container">
                     <button

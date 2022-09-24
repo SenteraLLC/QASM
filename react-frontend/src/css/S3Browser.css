@@ -1,22 +1,26 @@
-div.S3Browser div.grid {
+div.S3Browser {
     margin: 0 1em;
+}
+
+div.S3Browser div.header {
     display: flex;
-    flex-wrap: wrap;
-    justify-content: space-between;
+    gap: 1em;
 }
 
-div.S3Browser div.grid > * {
-    margin: 0 1em;
+div.S3Browser div.header div.fieldset-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
 }
 
-div.S3Browser div.grid.small > * {
-    width: 
+div.S3Browser div.header div.fieldset-container fieldset {
+    text-align: left;
 }
 
-div.S3Browser div.grid.medium > * {
-    width: 90px;
+div.S3Browser div.header div.fieldset-container fieldset legend {
+    text-align: left;
 }
 
-div.S3Browser div.grid.large > * {
-    width: 
+div.S3Browser div.header button.button {
+    flex-grow: 1;
+    text-align: left;
 }
