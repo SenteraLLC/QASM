@@ -4,6 +4,7 @@ fieldset.Legend {
     display: grid;
     gap: 1rem;
     max-height: 100%;
+    align-items: center;
 }
 
 fieldset.Legend legend {
