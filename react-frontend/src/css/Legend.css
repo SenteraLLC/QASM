@@ -16,3 +16,8 @@ fieldset.Legend p.no-overlay {
     align-self: center;
     justify-self: center;
 }
+
+fieldset.Legend p.legend-overlay-name {
+    margin: 0;
+    margin-top: 1em;
+}
