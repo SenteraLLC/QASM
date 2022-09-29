@@ -16,7 +16,7 @@ class S3File extends Component {
                     src={file_icon} 
                     id={this.path}
                     alt="file_icon"/>
-                <p>{this.path.split(/[\\\/]/).pop()}</p>
+                <p>{this.path.split(/[\\/]/).pop()}</p>
             </div>
         )
     }
