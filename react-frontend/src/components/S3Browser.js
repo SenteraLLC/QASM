@@ -65,8 +65,7 @@ class S3Browser extends Component {
 
 
     /**
-     * Check that current folder has images,
-     * then send folder path to the main window.
+     * Check that current folder has images, then send folder path to the main window.
      */
     selectFolder() {
         let images_present = false;
