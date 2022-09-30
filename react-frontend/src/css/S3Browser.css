@@ -2,6 +2,23 @@ div.S3Browser {
     margin: 0 1em;
 }
 
+div.S3Browser div.clickable {
+    cursor: pointer;
+    border: 1px solid rgba(0, 0, 0, 0);
+}
+
+div.S3Browser div.clickable:hover {
+    background-color: rgba(0,200,255, 0.15);
+    border: 1px solid rgba(0,200,255, 0.2);
+}
+
+div.S3Browser #s3-item-holder {
+    margin-top: 1em;
+}
+
+
+/* --------- Header styling --------- */
+
 div.S3Browser div.header {
     display: flex;
     gap: 1em;
@@ -14,13 +31,28 @@ div.S3Browser div.header div.fieldset-container {
 
 div.S3Browser div.header div.fieldset-container fieldset {
     text-align: left;
+    width: 78px; /* Minimum size to prevent word wrap */
 }
 
 div.S3Browser div.header div.fieldset-container fieldset legend {
     text-align: left;
 }
 
+div.S3Browser div.header label, div.S3Browser div.header input {
+    cursor: pointer;
+}
+
 div.S3Browser div.header button.button {
     flex-grow: 1;
     text-align: left;
+}
+
+
+/* --------- Grid styling --------- */
+
+div.S3Browser div.grid {
+    display: flex;
+    gap: 1em 0.5em;
+    justify-content: flex-start;
+    flex-wrap: wrap;
 }

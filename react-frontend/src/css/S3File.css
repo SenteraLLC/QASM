@@ -1,0 +1,32 @@
+div.grid.small div.S3File {
+    width: 4em;
+}
+
+div.grid.medium div.S3File {
+    width: 7em;
+}
+
+div.grid.large div.S3File {
+    width: 10em;
+}
+
+div.list.small div.S3File {
+    
+}
+
+div.list.medium div.S3File {
+    
+}
+
+div.list.large div.S3File {
+    
+}
+
+div.S3File {
+    margin: 0 0.5em;
+}
+
+div.S3File p {
+    margin: 0.25em 0;
+    word-wrap: break-word;
+}
