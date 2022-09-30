@@ -21,17 +21,19 @@ class S3DirectoryBinaryEditor extends Component {
     }
 
 
+    /**
+     * Uses the QASM backend to select a directory from S3 then creates a dictonary where the image
+     * name is the key and the image url is the value. Finally loads in the first image to be viewed.
+     */
     async loadDirectory() {
         this.directory_path = await this.QASM.call_backend(window, function_names.OPEN_DIR);
-
-        // console.log(directory_path, "directory path")
 
         if (this.directory_path !== undefined) {
 
             // Create a dictionary for every image in the directory where the image name is
             // the key and the path is the value
             this.images = await this.QASM.call_backend(window, function_names.LOAD_IMAGES, this.directory_path);
-            console.log(this.images)
+
             // Create a list of keys
             this.images_keys = Object.keys(this.images).sort();
 
@@ -41,6 +43,9 @@ class S3DirectoryBinaryEditor extends Component {
     }
 
 
+    /**
+     * Sets the first image in the images dictionary to be shown on the page.
+     */
     loadFirstImage() {
         // Set the src to the first image key
         this.src = this.images[this.images_keys[0]];
@@ -56,6 +61,10 @@ class S3DirectoryBinaryEditor extends Component {
     }
 
 
+    /**
+     * Checks which image is currently being shown in from the images dictionary and displays the
+     * next image.
+     */
     loadNextImage() {
         // Increment the current image
         this.current_image++;
@@ -76,11 +85,15 @@ class S3DirectoryBinaryEditor extends Component {
         this.component_updater++;
     }
 
-
+    
+    /**
+     * Prompts the user to ask if they're sure they want to save. If yes, calls the QASM backend to create
+     * a new directory and a copy of each binary with the correct morphological operations applied to it.
+     */
     async save() {
         // Saving cannot happen if no directory path is selected
         if (this.directory_path === undefined) {
-            alert("You cannot save with not directory selected");
+            alert("You cannot save with no directory selected");
             return;
         }
         
