@@ -1,3 +1,16 @@
+div.S3File {
+    margin: 0 0.5em;
+}
+
+div.S3File p {
+    margin: 0.25em;
+    margin-right: 0;
+    word-wrap: break-word;
+}
+
+
+/* --------- Grid styling --------- */
+
 div.grid.small div.S3File {
     width: 4em;
 }
@@ -10,23 +23,38 @@ div.grid.large div.S3File {
     width: 10em;
 }
 
+
+/* --------- List styling --------- */
+
+div.list div.S3File {
+    display: flex;
+    align-items: center;
+}
+
+div.list div.S3File p {
+    display: inline-block;
+}
+
 div.list.small div.S3File {
-    
+    height: 2em;
+}
+
+div.list.small div.S3File p {
+    font-size: small;
 }
 
 div.list.medium div.S3File {
-    
+    height: 3.5em;
+}
+
+div.list.medium div.S3File p {
+    font-size: large;
 }
 
 div.list.large div.S3File {
-    
+    height: 5em;
 }
 
-div.S3File {
-    margin: 0 0.5em;
-}
-
-div.S3File p {
-    margin: 0.25em 0;
-    word-wrap: break-word;
+div.list.large div.S3File p {
+    font-size: xx-large;
 }
