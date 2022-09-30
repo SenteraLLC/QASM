@@ -283,7 +283,7 @@ class S3Browser extends Component {
      * Updates the class on the div that holds all of the s3 stuff.
      */
     updateDisplayMode() {
-        document.getElementById("s3-folder-holder").className = this.getDisplayMode();
+        document.getElementById("s3-item-holder").className = this.getDisplayMode();
     }
 
 
@@ -361,7 +361,7 @@ class S3Browser extends Component {
                         Back
                     </button>
                 }
-                <div className={this.getDisplayMode()} id="s3-folder-holder">
+                <div className={this.getDisplayMode()} id="s3-item-holder">
                     {this.folders.map(folder_name => (
                         <div onClick={e => this.changePath(folder_name)} key={folder_name} className="clickable">
                             <S3Folder

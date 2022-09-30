@@ -1,4 +1,4 @@
-:root {
+/* :root {
     --grid-icon-size: 8em;
     --list-icon-size: 2em;
 }
@@ -65,7 +65,7 @@ div.S3Folder button.back-button {
 
 /* ----- CSS for grid display ----- */
 
-div.S3Folder div.grid {
+/* div.S3Folder div.grid {
     margin: 0 2em;
     display: grid;
     grid-template-columns: repeat(5, 1fr);
@@ -93,11 +93,11 @@ div.S3Folder div.grid.large {
 div.S3Folder div.grid p {
     word-break: break-word;
 }
-
+ */
 
 /* ----- CSS for list display ----- */
 
-div.S3Folder div.list {
+/* div.S3Folder div.list {
     width: 90vw;
     margin: 0 auto;
     text-align: left;
@@ -138,13 +138,38 @@ div.S3Folder div.list p {
     font-size: calc(var(--list-icon-size) / 2.5);
     margin: 0;
     margin-left: 16px;
+} */ 
+
+
+div.grid.small div.S3Folder {
+    width: 4em;
 }
 
+div.grid.medium div.S3Folder {
+    width: 7em;
+}
 
+div.grid.large div.S3Folder {
+    width: 10em;
+}
 
+div.list.small div.S3Folder {
+    
+}
 
+div.list.medium div.S3Folder {
+    
+}
 
+div.list.large div.S3Folder {
+    
+}
+
+div.S3Folder {
+    margin: 0 0.5em;
+}
 
 div.S3Folder p {
+    margin: 0.25em 0;
     word-wrap: break-word;
 }
