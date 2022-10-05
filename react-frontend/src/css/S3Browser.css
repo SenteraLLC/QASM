@@ -47,6 +47,12 @@ div.S3Browser div.header button.button {
     text-align: left;
 }
 
+div.S3Browser div.header button.select-button {
+    grid-column: 1 / -1;
+    margin: 0.25em 2px 0 2px;
+    text-align: center;
+}
+
 
 /* --------- Grid styling --------- */
 
