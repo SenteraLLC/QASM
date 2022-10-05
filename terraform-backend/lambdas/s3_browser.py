@@ -42,7 +42,7 @@ def open_dir(event, context):
     return get_return_block_with_cors(ret)
 
 
-def get_dir_children(event, context):
+def get_cascading_dir_children(event, context):
     """Get all the children folders for all segments in an S3 path."""
     body = json.loads(event["body"])
     bucket_name = body["bucket"]

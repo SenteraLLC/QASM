@@ -10,6 +10,7 @@ exports.function_names = {
     LOAD_IMAGES: "loadImages",
     SAVE_JSON_FILE: "saveJsonFile",
     SAVE_IMAGE: "saveImage",
+    GET_CASCADING_DIR_CHILDREN: "getCascadingChildren",
 }
 
 // List of accepted image types
