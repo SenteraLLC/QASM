@@ -319,8 +319,8 @@ class S3Browser extends Component {
                                 <label htmlFor="display-large">Large</label>
                             </div>
                         </fieldset>
-                    </div>
-                    <div className="path-container">
+                    
+                    {/* <div className="path-container">
                         {this.mode === s3_browser_modes.SELECT_DIRECTORY &&
                             <button 
                                 onClick={this.selectFolder}
@@ -328,39 +328,47 @@ class S3Browser extends Component {
                                 Select Directory: {this.path}
                             </button>
                         }
+                    </div> */}
+                    {this.mode === s3_browser_modes.SELECT_DIRECTORY && 
+                        <button
+                            onClick={this.selectFolder}
+                            className="select-button button">
+                            Select Current Directory
+                        </button>
+                    }
                     </div>
-                </div>
-                <div className="s3-path-container">
-                    <button
-                        onClick={this.readS3Link}
-                        className="button">
-                        Go to S3 Path:
-                    </button>
-                    <input
-                        id="s3-link"
-                        type="text"
-                    />
-                </div>
-                {(this.mode === s3_browser_modes.SAVE_JSON || this.mode === s3_browser_modes.SAVE_IMAGE) &&
-                    <div className="fieldset-container">
-                        <button 
-                            onClick={() => this.createFile(this.mode)}
+                    {/* <div className="s3-path-container">
+                        <button
+                            onClick={this.readS3Link}
                             className="button">
-                            Save Here to New File:
+                            Go to S3 Path:
                         </button>
                         <input
-                            id="new-filename"
+                            id="s3-link"
                             type="text"
                         />
-                    </div>
-                }
-                {this.parents.length !== 0 &&
-                    <button 
-                        onClick={this.goBack}
-                        className="back-button button">
-                        Back
-                    </button>
-                }
+                    </div> */}
+                    {(this.mode === s3_browser_modes.SAVE_JSON || this.mode === s3_browser_modes.SAVE_IMAGE) &&
+                        <div className="fieldset-container">
+                            <button 
+                                onClick={() => this.createFile(this.mode)}
+                                className="button">
+                                Save Here to New File:
+                            </button>
+                            <input
+                                id="new-filename"
+                                type="text"
+                            />
+                        </div>
+                    }
+                    {this.parents.length !== 0 &&
+                        <button 
+                            onClick={this.goBack}
+                            className="back-button button">
+                            Back
+                        </button>
+                    }
+                </div>
                 <div className={this.getDisplayMode()} id="s3-item-holder">
                     {this.folders.map(folder_name => (
                         <div onClick={e => this.changePath(folder_name)} key={folder_name} className="clickable">
