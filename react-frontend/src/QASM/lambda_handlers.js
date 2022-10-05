@@ -4,14 +4,15 @@ const { s3_browser_modes } = require("./constants.js");
 
 // Export like this so static site works idk why
 const function_handlers = {
-    [function_names.LOAD_LABELS]:    handleLoadLabels,
-    [function_names.OPEN_DIR]:       handleOpenDir,
-    [function_names.OPEN_IMG]:       handleLoadImage,
-    [function_names.LOAD_IMAGES]:    handleLoadImages,
-    [function_names.LOAD_IMAGE]:     handleLoadImage,
-    [function_names.SAVE_JSON_FILE]: handleSaveJSON,
-    [function_names.SAVE_IMAGE]:     handleSaveImage,
-    "openS3Folder":                  handleOpenS3Folder,
+    [function_names.LOAD_LABELS]:                handleLoadLabels,
+    [function_names.OPEN_DIR]:                   handleOpenDir,
+    [function_names.OPEN_IMG]:                   handleLoadImage,
+    [function_names.LOAD_IMAGES]:                handleLoadImages,
+    [function_names.LOAD_IMAGE]:                 handleLoadImage,
+    [function_names.SAVE_JSON_FILE]:             handleSaveJSON,
+    [function_names.SAVE_IMAGE]:                 handleSaveImage,
+    [function_names.GET_CASCADING_DIR_CHILDREN]: getS3FolderChildren,
+    "openS3Folder":                              handleOpenS3Folder,
 }
 export { function_handlers }
 
@@ -190,5 +191,5 @@ async function getS3FolderChildren(QASM, data, window) {
         "bucket": QASM.s3_bucket,
         "prefix": data
     }
-    return await api_consolidator_error_handler(params, "get_dir_children");
+    return await api_consolidator_error_handler(params, "get_cascading_dir_children");
 }
