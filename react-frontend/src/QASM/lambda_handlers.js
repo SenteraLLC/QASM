@@ -183,3 +183,12 @@ async function handleOpenS3Folder(QASM, data, window) {
     }
     return await api_consolidator_error_handler(params, "open_dir");
 }
+
+
+async function getS3FolderChildren(QASM, data, window) {
+    const params = {
+        "bucket": QASM.s3_bucket,
+        "prefix": data
+    }
+    return await api_consolidator_error_handler(params, "get_dir_children");
+}
