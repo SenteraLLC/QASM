@@ -407,10 +407,21 @@ class S3Browser extends Component {
                     }
                     <div className="path-display-grid">
                         <div>
-                            {path_array.map(path_folder => (
-                                path_folder !== "" &&
+                            {path_array.map(folder_segment => (
+                                folder_segment !== "" &&
                                 <span>
-                                   
+                                    <button>
+                                        {folder_segment}
+                                    </button>
+                                    {this.getFolders(path_array, folder_segment) !== [] && 
+                                        <div>
+                                            {this.getFolders(path_array, folder_segment).map(folder => (
+                                                <button>
+                                                    {folder}
+                                                </button>
+                                            ))}
+                                        </div>
+                                    }
                                 </span>
                                 
                             ))}
