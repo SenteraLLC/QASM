@@ -91,6 +91,7 @@ def get_signed_urls_in_folder(event, context):
     urls = get_all_signed_urls_in_folder(bucket_name, folder_name)
     return get_return_block_with_cors({"urls": urls})
 
+
 def load_image(event, context):
     """get a single signed url."""
     body = json.loads(event["body"])
@@ -100,7 +101,6 @@ def load_image(event, context):
     url = get_signed_url(bucket_name, folder_path, image_name, s3_client=None)
     return get_return_block_with_cors({"url": url})
     
-
 
 def save_labels(event, context):
     """Save json data to s3 path."""
