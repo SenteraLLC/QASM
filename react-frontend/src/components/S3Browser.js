@@ -32,6 +32,7 @@ class S3Browser extends Component {
         this.selectFolder      = this.selectFolder.bind(this);
         this.changePath        = this.changePath.bind(this);
         this.goBack            = this.goBack.bind(this);
+        this.getFolders        = this.getFolders.bind(this);
         this.selectFile        = this.selectFile.bind(this);
         this.createFile        = this.createFile.bind(this);
         this.getDisplayMode    = this.getDisplayMode.bind(this);
@@ -54,6 +55,7 @@ class S3Browser extends Component {
         // Populate parent stack
         this.parents = [""]
         let folders = path.split("/").slice(0, -2);
+        console.log("folders:", folders)
         for (let i=0; i < folders.length; i++) {
             this.parents.push(this.parents[i] + folders[i] + "/");
         }
@@ -248,6 +250,37 @@ class S3Browser extends Component {
         }
     }
 
+    /**
+     * @param {string[]} path_array Array of all the S3 folder path segments
+     * @param {string} final_segment The final S3 folder path segment
+     */
+    async getFolders(path_array, final_segment) {
+        try {
+            // Create a variable to hold the final path
+            let final_path = "";
+
+            // Loop through the path array. Add to the final path until you get to the final segment
+            for (let path in path_array) {
+                if (path === final_segment) {
+                    final_path = final_path + path;
+                    break;
+                }
+                else {
+                    final_path = final_path + path + "/";
+                }
+            }
+
+            // Get all the contents of the folder and return all the folders it contains
+            const response = await this.QASM.call_backend(window, "openS3folder", final_path);
+            console.log(response.folders, "response.folders");
+            return response.folders;
+        }
+        catch {
+            console.log("Failed to get folders")
+            return [];
+        }
+    }
+
 
     /**
      * Checks which mode and size are currently selected. If the radio
@@ -288,6 +321,17 @@ class S3Browser extends Component {
 
 
     render() {
+        let path_array;
+        console.log("this is the path", this.path, this.path.charAt(this.path.length - 1))
+        if (this.path.charAt(this.path.length - 1) === "/") {
+            // Everything except the final character
+            path_array = this.path.slice(0, -1).split("/");
+        }
+        else {
+            // The only time / isn't at the end of the path is at the root directory
+            path_array = [];
+        }
+        console.log("This is the path array", path_array)
         return (
             <div className="S3Browser">
                 <h2>S3 Browser: {this.QASM.s3_bucket}</h2>
@@ -320,22 +364,22 @@ class S3Browser extends Component {
                             </div>
                         </fieldset>
                     
-                    {/* <div className="path-container">
-                        {this.mode === s3_browser_modes.SELECT_DIRECTORY &&
-                            <button 
+                        {/* <div className="path-container">
+                            {this.mode === s3_browser_modes.SELECT_DIRECTORY &&
+                                <button 
+                                    onClick={this.selectFolder}
+                                    className="button">
+                                    Select Directory: {this.path}
+                                </button>
+                            }
+                        </div> */}
+                        {this.mode === s3_browser_modes.SELECT_DIRECTORY && 
+                            <button
                                 onClick={this.selectFolder}
-                                className="button">
-                                Select Directory: {this.path}
+                                className="select-button button">
+                                Select Current Directory
                             </button>
                         }
-                    </div> */}
-                    {this.mode === s3_browser_modes.SELECT_DIRECTORY && 
-                        <button
-                            onClick={this.selectFolder}
-                            className="select-button button">
-                            Select Current Directory
-                        </button>
-                    }
                     </div>
                     {/* <div className="s3-path-container">
                         <button
@@ -361,13 +405,24 @@ class S3Browser extends Component {
                             />
                         </div>
                     }
-                    {this.parents.length !== 0 &&
-                        <button 
-                            onClick={this.goBack}
-                            className="back-button button">
-                            Back
-                        </button>
-                    }
+                    <div className="path-display-grid">
+                        <div>
+                            {path_array.map(path_folder => (
+                                path_folder !== "" &&
+                                <span>
+                                   
+                                </span>
+                                
+                            ))}
+                        </div>
+                        {this.parents.length !== 0 &&
+                            <button 
+                                onClick={this.goBack}
+                                className="back-button button">
+                                Back
+                            </button>
+                        }
+                    </div>
                 </div>
                 <div className={this.getDisplayMode()} id="s3-item-holder">
                     {this.folders.map(folder_name => (
