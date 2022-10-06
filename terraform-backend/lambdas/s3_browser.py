@@ -69,16 +69,17 @@ def get_cascading_dir_children(event, context):
                 # Otherwise add the next path to the current folder with / as a seperator
                 current_folder = current_folder + "/" + folder_array[j]
             
-            # If the current folder is empty then the prefix should be an empty string, in which case we don't care
-            if current_folder == "":
-                return get_return_block_with_cors([])
+        # If the current folder is empty then the prefix should be an empty string, in which case we don't care
+        if current_folder == "":
+            return get_return_block_with_cors([])
+        else:
+            response = s3.list_objects_v2(Bucket=bucket_name, Prefix=current_folder, Delimiter="/") 
+            if 'CommonPrefixes' in response:
+                folders = [fld["Prefix"] for fld in response["CommonPrefixes"]]
+                print(folders, f"Loop {j}")
             else:
-                response = s3.list_objects_v2(Bucket=bucket_name, Prefix=current_folder, Delimiter="/") 
-                if 'CommonPrefixes' in response:
-                    folders = [fld["Prefix"] for fld in response["CommonPrefixes"]]
-                else:
-                    folders = []
-                output.push(folders)
+                folders = []
+            output.push(folders)
 
     return get_return_block_with_cors(output)
 
