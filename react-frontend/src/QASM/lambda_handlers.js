@@ -187,6 +187,7 @@ async function handleOpenS3Folder(QASM, data, window) {
 
 
 async function getS3FolderChildren(QASM, data, window) {
+    console.log("gets3children was called!")
     const params = {
         "bucket": QASM.s3_bucket,
         "prefix": data

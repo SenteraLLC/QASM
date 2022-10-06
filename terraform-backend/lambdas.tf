@@ -23,6 +23,10 @@ locals {
         {
             base_name = "save-image"
             handler = "s3_browser.save_image"
+        },
+        {
+            base_name = "get-cascading-dir-children"
+            handler = "s3_browser.get_cascading_dir_children"
         }
     ]
 }
