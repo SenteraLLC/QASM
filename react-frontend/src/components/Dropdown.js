@@ -24,10 +24,16 @@ class Dropdown extends Component {
             this.invalid = true;
             this.invalid_props.push("props.items");
         }
+
+        // Ensure a callback was given
+        if (!(this.callback instanceof Function)) {
+            this.invalid = true;
+            this.invalid_props.push("props.callback");
+        }
         
         // Check if display text was given, if not use the default
         if (this.display_text === undefined) {
-            this.display_text = "▶"
+            this.display_text = "▶";
         }
     }
 
@@ -48,7 +54,11 @@ class Dropdown extends Component {
                     {this.display_text}
                 </button>
                 <div className="dropdown-content">
-
+                    {this.items.map(option => (
+                        <button onClick={() => this.callback(option)}>
+                            {option}
+                        </button>
+                    ))}
                 </div>
             </div>
         )

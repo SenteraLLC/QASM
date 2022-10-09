@@ -101,6 +101,7 @@ class Grid extends Component {
         this.autoScroll          = this.autoScroll.bind(this);
         this.initOverlays        = this.initOverlays.bind(this);
         this.initEventListeners  = this.initEventListeners.bind(this);
+        this.test = this.test.bind(this);
     }
 
 
@@ -443,6 +444,11 @@ class Grid extends Component {
         } 
     }
 
+    test(info) {
+        console.log("The test function was called", info)
+    }
+
+
 
     render() {
         return (
@@ -517,7 +523,7 @@ class Grid extends Component {
                     </div>
                 </div>
                 <Dropdown 
-                    
+                    callback={this.test}
                     items={["Trevor1", "Trevor2"]}
                 />
                 <table id="Grid-table">
