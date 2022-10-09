@@ -12,6 +12,7 @@ import sparse from "../icons/sparse.svg";
 import field_edge from "../icons/field_edge.svg";
 import $ from "jquery";
 import "../css/Grid.css";
+import Dropdown from './Dropdown.js';
 const { update_all_overlays } =  require("../QASM/utils.js");
 const { function_names } = require("../../public/electron_constants.js");
 
@@ -515,6 +516,9 @@ class Grid extends Component {
                         </button>
                     </div>
                 </div>
+                <Dropdown 
+                    
+                />
                 <table id="Grid-table">
                     <tbody>
                         {this.grid_image_names.map(row_image_names => (
