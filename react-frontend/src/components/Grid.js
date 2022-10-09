@@ -518,6 +518,7 @@ class Grid extends Component {
                 </div>
                 <Dropdown 
                     
+                    items={["Trevor1", "Trevor2"]}
                 />
                 <table id="Grid-table">
                     <tbody>
