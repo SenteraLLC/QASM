@@ -3,20 +3,41 @@ div.Dropdown {
     display: inline-block;
 }
 
-div.Dropdown div.dropdown-content {
-    display: none;
+div.Dropdown button.toggle-display.rotate {
+    padding: 0;
+    width: 2em;
+    height: 2em;
 }
 
-div.Dropdown:focus-within {
-    background-color: aquamarine;
+div.Dropdown:focus-within button.toggle-display.rotate {
+    transform: rotate(90deg);
+    padding-top: 0.25em;
 }
 
 div.Dropdown:focus-within div.dropdown-content {
     display: block;
+}
+
+div.Dropdown div.dropdown-content {
+    display: none;
     position: absolute;
+    border: 1px solid black;
     background-color: #f9f9f9;
     min-width: 160px;
-    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
-    padding: 12px 16px;
+    max-height: 14em;
+    box-shadow: 2px 2px rgba(0,0,0,0.5);
+    overflow-y: scroll;
     z-index: 1;
+}
+
+div.Dropdown div.dropdown-content > * {
+    display: inline-block;
+    width: 100%;
+    border: none;
+    background-color: white;
+    text-align: left;
+}
+
+div.Dropdown div.dropdown-content > *:hover {
+    background-color: #99bbee77;
 }

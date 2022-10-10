@@ -4,14 +4,15 @@ import "../css/Dropdown.css";
 class Dropdown extends Component {
     invalid = false;
     invalid_props = [];
+    rotate = false;
 
     constructor(props) {
         super(props);
 
-        this.items        = props.items;        // Required
-        this.callback     = props.callback;     // Required
-        this.style        = props.style;        // Optional
-        this.display_text = props.display_text; // Optional
+        this.items              = props.items;             // Required
+        this.callback           = props.callback;          // Required
+        this.style              = props.style;             // Optional
+        this.display_text       = props.display_text;      // Optional
 
         // Make sure that items both exists and is an array with at least one item
         try {
@@ -34,6 +35,7 @@ class Dropdown extends Component {
         // Check if display text was given, if not use the default
         if (this.display_text === undefined) {
             this.display_text = "▶";
+            this.rotate = true;
         }
     }
 
@@ -50,7 +52,7 @@ class Dropdown extends Component {
         }
         return (
             <div className="Dropdown">
-                <button className="toggle-display">
+                <button className={this.rotate ? "toggle-display rotate" : "toggle-display"}>
                     {this.display_text}
                 </button>
                 <div className="dropdown-content">
