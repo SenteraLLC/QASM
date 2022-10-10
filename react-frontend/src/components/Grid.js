@@ -525,7 +525,7 @@ class Grid extends Component {
                 <Dropdown 
                     callback={this.test}
                     items={["Trevor1", "Trevor2", "Trevor2", "Trevor2", "Trevor2", "Trevor2", "Trevor2", "Trevor2", "Trevor2", "Trevor2", "Trevor2", "Trevor2", "Trevor2", "Trevor2"]}
-                    currently_selected={{text:"Trevor1",disabled:true}}
+                    currently_selected={[]}
                 />
                 <table id="Grid-table">
                     <tbody>

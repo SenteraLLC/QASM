@@ -5,6 +5,7 @@ class Dropdown extends Component {
     invalid = false;
     invalid_props = [];
     rotate = false;
+    currently_selected_info = "currently_selected is not required; however it was provided and it was missing the following: ";
 
     constructor(props) {
         super(props);
@@ -15,7 +16,8 @@ class Dropdown extends Component {
         this.display_text       = props.display_text;      // Optional
         this.currently_selected = props.currently_selected // Optional {text: String, disable: Boolean}
 
-        this.makeID = this.makeID.bind(this);
+        this.makeID                 = this.makeID.bind(this);
+        this.ensureDropdownOnscreen = this.ensureDropdownOnscreen.bind(this);
 
         // Make sure that items both exists and is an array with at least one item
         try {
@@ -41,10 +43,24 @@ class Dropdown extends Component {
             this.rotate = true;
         }
 
+        // If currently_selected wasn't given, set a default
         if (this.currently_selected === undefined) {
             this.currently_selected = {text: "", disable: false}
         }
+        else {
+            // If it was given ensure it has the required fields
+            if (this.currently_selected.text === undefined) {
+                this.invalid_props.push("currently_selected.text");
+                this.invalid = true;
+            }
+            if (this.currently_selected_info.disable === undefined) {
+                this.invalid_props.push("currently_selected.disable");
+                this.invalid = true;
+            }
+        }
+
     }
+
 
     /**
      * Takes in a list and concatonates all elements to be used as an id.
@@ -58,19 +74,39 @@ class Dropdown extends Component {
     }
 
 
+    /**
+     * Moves the dropdown back onto the screen, if it was off the right side of the screen.
+     * Fixing it being off of the left side isn't implimented because that shouldn't happen.
+     */
+    ensureDropdownOnscreen() {
+        // TODO: Better implimentation where the dropdown doesn't show in the incorrect place briefly the first time its shown.
+        // Grab the dropdown component
+        let dropdown = document.getElementById(this.makeID(this.items));
+
+        // Get the dropdown's position
+        const position = dropdown.getBoundingClientRect();
+
+        // Check to see if the dropdown is off the right side of the page
+        if (position.right >= (window.innerWidth || document.documentElement.clientWidth)) {
+            // Move it left by how many pixels off of the page it was, plus an extra 3px of buffer to make it look nicer
+            dropdown.style.left = ((window.innerWidth || document.documentElement.clientWidth) - position.right - 3) + "px";
+        }
+    }
+
+
     render() {
         if (this.invalid) {
             return (
                 <div>
                     This component was either missing or given the following invalid props:
-                    <br/ >
-                    {this.invalid_props}
+                    <br/>
+                    {this.invalid_props.join(", ")}
                 </div>
             )
         }
         return (
-            <div className="Dropdown" style={{marginLeft:"40em"}}>
-                <button className={this.rotate ? "toggle-display rotate" : "toggle-display"}>
+            <div className="Dropdown">
+                <button className={this.rotate ? "toggle-display rotate" : "toggle-display"} onClick={this.ensureDropdownOnscreen}>
                     {this.display_text}
                 </button>
                 <div className="dropdown-content" id={this.makeID(this.items)}>
@@ -86,11 +122,6 @@ class Dropdown extends Component {
                 </div>
             </div>
         )
-    }
-
-    componentDidMount() {
-        const client_width = Math.max(document.documentElement.clientHeight, window.innerHeight || 0)
-
     }
 }
 
