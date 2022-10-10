@@ -13,6 +13,9 @@ class Dropdown extends Component {
         this.callback           = props.callback;          // Required
         this.style              = props.style;             // Optional
         this.display_text       = props.display_text;      // Optional
+        this.currently_selected = props.currently_selected // Optional {text: String, disable: Boolean}
+
+        this.makeID = this.makeID.bind(this);
 
         // Make sure that items both exists and is an array with at least one item
         try {
@@ -37,6 +40,21 @@ class Dropdown extends Component {
             this.display_text = "▶";
             this.rotate = true;
         }
+
+        if (this.currently_selected === undefined) {
+            this.currently_selected = {text: "", disable: false}
+        }
+    }
+
+    /**
+     * Takes in a list and concatonates all elements to be used as an id.
+     * 
+     * @param {string[]} items Options passed into the Dropdown component
+     * @returns {string} Concatonates all elements in the array
+     */
+    makeID(items) {
+        if (items.constructor !== Array || this.items.length === 0) return "";
+        return items.join('-');
     }
 
 
@@ -51,21 +69,28 @@ class Dropdown extends Component {
             )
         }
         return (
-            <div className="Dropdown">
+            <div className="Dropdown" style={{marginLeft:"40em"}}>
                 <button className={this.rotate ? "toggle-display rotate" : "toggle-display"}>
                     {this.display_text}
                 </button>
-                <div className="dropdown-content">
+                <div className="dropdown-content" id={this.makeID(this.items)}>
                     {this.items.map(option => (
                         <button 
                             onClick={() => this.callback(option)}
-                            key={option}>
+                            key={option}
+                            disable={(this.currently_selected.text === option) && (this.disable)}
+                            style={{fontWeight: this.currently_selected.text === option ? "bold" : "normal"}}>
                             {option}
                         </button>
                     ))}
                 </div>
             </div>
         )
+    }
+
+    componentDidMount() {
+        const client_width = Math.max(document.documentElement.clientHeight, window.innerHeight || 0)
+
     }
 }
 
