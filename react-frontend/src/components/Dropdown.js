@@ -114,7 +114,7 @@ class Dropdown extends Component {
                         <button 
                             onClick={() => this.callback(option)}
                             key={option}
-                            disable={(this.currently_selected.text === option) && (this.disable)}
+                            disable={(this.currently_selected.text === option) && (this.disable).toString()}
                             style={{fontWeight: this.currently_selected.text === option ? "bold" : "normal"}}>
                             {option}
                         </button>
