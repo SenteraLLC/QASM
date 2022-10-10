@@ -101,7 +101,6 @@ class Grid extends Component {
         this.autoScroll          = this.autoScroll.bind(this);
         this.initOverlays        = this.initOverlays.bind(this);
         this.initEventListeners  = this.initEventListeners.bind(this);
-        this.test = this.test.bind(this);
     }
 
 
@@ -444,11 +443,6 @@ class Grid extends Component {
         } 
     }
 
-    test(info) {
-        console.log("The test function was called", info)
-    }
-
-
 
     render() {
         return (
@@ -522,10 +516,6 @@ class Grid extends Component {
                         </button>
                     </div>
                 </div>
-                <Dropdown 
-                    callback={this.test}
-                    items={["Trevor1", "Trevor2", "Trevor3", "Trevor4", "Trevor5", "Trevor6", "Trevor7", "Trevor8", "Trevor9", "Trevor20", "Trevor21", "Trevor22", "Trevor23", "Trevor24"]}
-                />
                 <table id="Grid-table">
                     <tbody>
                         {this.grid_image_names.map(row_image_names => (
