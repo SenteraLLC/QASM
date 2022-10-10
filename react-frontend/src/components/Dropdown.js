@@ -55,7 +55,9 @@ class Dropdown extends Component {
                 </button>
                 <div className="dropdown-content">
                     {this.items.map(option => (
-                        <button onClick={() => this.callback(option)}>
+                        <button 
+                            onClick={() => this.callback(option)}
+                            key={option}>
                             {option}
                         </button>
                     ))}
