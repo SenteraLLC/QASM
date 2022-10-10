@@ -5,7 +5,6 @@ class Dropdown extends Component {
     invalid = false;
     invalid_props = [];
     rotate = false;
-    currently_selected_info = "currently_selected is not required; however it was provided and it was missing the following: ";
 
     constructor(props) {
         super(props);
@@ -53,7 +52,7 @@ class Dropdown extends Component {
                 this.invalid_props.push("currently_selected.text");
                 this.invalid = true;
             }
-            if (this.currently_selected_info.disable === undefined) {
+            if (this.currently_selected.disable === undefined) {
                 this.invalid_props.push("currently_selected.disable");
                 this.invalid = true;
             }
