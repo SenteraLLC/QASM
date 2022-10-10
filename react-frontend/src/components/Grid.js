@@ -524,7 +524,7 @@ class Grid extends Component {
                 </div>
                 <Dropdown 
                     callback={this.test}
-                    items={["Trevor1", "Trevor2"]}
+                    items={["Trevor1", "Trevor2", "Trevor2", "Trevor2", "Trevor2", "Trevor2", "Trevor2", "Trevor2", "Trevor2", "Trevor2", "Trevor2", "Trevor2", "Trevor2", "Trevor2"]}
                 />
                 <table id="Grid-table">
                     <tbody>
