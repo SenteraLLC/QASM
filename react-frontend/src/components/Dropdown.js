@@ -57,7 +57,6 @@ class Dropdown extends Component {
                 this.invalid = true;
             }
         }
-
     }
 
 
