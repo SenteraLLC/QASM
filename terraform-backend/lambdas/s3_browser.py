@@ -11,9 +11,54 @@ def open_dir(event, context):
     body = json.loads(event["body"])
     bucket_name = body["bucket"]
     prefix = body["prefix"]
-    s3 = boto3.client("s3")
     print(prefix)
-    if prefix is None:
+
+    files, folders = get_folder_content(bucket_name, prefix)
+
+    ret = {
+        "files": files,
+        "folders": folders
+    }
+    return get_return_block_with_cors(ret)
+
+
+def get_cascading_dir_children(event, context):
+    """Get all the children folders for all segments in an S3 path."""
+    body = json.loads(event["body"])
+    bucket_name = body["bucket"]
+    prefix = body["prefix"]
+    s3 = boto3.client("s3")
+
+    # Create an array from the S3 path string
+    folder_array = prefix.split("/")
+
+    full_segments = []
+
+    # For every segment concatanate all segments up until it with / as a seperator
+    for idx in range(len(folder_array)):
+        new_path = ""
+        for j in range(idx):
+            if new_path == "":
+                new_path = folder_array[0]
+            else:
+                new_path = new_path + "/" + folder_array[j]
+        full_segments.append(new_path)
+
+    ret = []
+    for segment in full_segments:
+        files, folders = get_folder_content(bucket_name, segment)
+        ret.append({
+            "files": files,
+            "folders": folders
+        })
+    print(ret)
+    return get_return_block_with_cors({"data": ret})
+
+
+def get_folder_content(bucket_name, prefix) -> tuple:
+    """Get a tuple containing an array of a path's children files and folders."""
+    s3 = boto3.client("s3")
+    if (prefix is None) or (prefix == ""):
         response = s3.list_objects_v2(Bucket=bucket_name, Delimiter="/")
         if 'Contents' in response:
             files = [obj['Key'] for obj in response['Contents']]
@@ -35,53 +80,42 @@ def open_dir(event, context):
             folders = [fld["Prefix"] for fld in response["CommonPrefixes"]]
         else:
             folders = []
-    ret = {
-        "files": files,
-        "folders": folders
-    }
-    return get_return_block_with_cors(ret)
+    return (files, folders)
+    
+    
+    # # Initilize the output
+    # output = []
 
+    # # Go through all folders in the array
+    # for idx in range(folder_array):
 
-def get_cascading_dir_children(event, context):
-    """Get all the children folders for all segments in an S3 path."""
-    body = json.loads(event["body"])
-    bucket_name = body["bucket"]
-    prefix = body["prefix"]
-    s3 = boto3.client("s3")
+    #     # Reset the current folder
+    #     current_folder = ""
+    #     print(f"current folder {current_folder}")
+    #     for j in range(idx):
 
-    # Create an array from the S3 path string
-    folder_array = prefix.split("/") # ["base_dir", "second_dir", "nadir", "RGB"]
-
-    # Initilize the output
-    output = []
-
-    # Go through all folders in the array
-    for idx in range(folder_array):
-
-        # Reset the current folder
-        current_folder = ""
-        for j in range(idx):
-
-            if current_folder == "":
-                # If the current folder is empty then add the first segment to the current folder
-                current_folder = folder_array[j]
-            else:
-                # Otherwise add the next path to the current folder with / as a seperator
-                current_folder = current_folder + "/" + folder_array[j]
+    #         if current_folder == "":
+    #             # If the current folder is empty then add the first segment to the current folder
+    #             current_folder = folder_array[j]
+    #             print(f"current folder {current_folder}, {j}")
+    #         else:
+    #             # Otherwise add the next path to the current folder with / as a seperator
+    #             current_folder = current_folder + "/" + folder_array[j]
+    #             print(f"current folder {current_folder}, {j}")
             
-        # If the current folder is empty then the prefix should be an empty string, in which case we don't care
-        if current_folder == "":
-            return get_return_block_with_cors([])
-        else:
-            response = s3.list_objects_v2(Bucket=bucket_name, Prefix=current_folder, Delimiter="/") 
-            if 'CommonPrefixes' in response:
-                folders = [fld["Prefix"] for fld in response["CommonPrefixes"]]
-                print(folders, f"Loop {j}")
-            else:
-                folders = []
-            output.push(folders)
+    #     # If the current folder is empty then the prefix should be an empty string, in which case we don't care
+    #     if current_folder == "":
+    #         return get_return_block_with_cors([])
+    #     else:
+    #         response = s3.list_objects_v2(Bucket=bucket_name, Prefix=current_folder, Delimiter="/") 
+    #         if 'CommonPrefixes' in response:
+    #             folders = [fld["Prefix"] for fld in response["CommonPrefixes"]]
+    #             print(folders, f"Loop {j}")
+    #         else:
+    #             folders = []
+    #         output.push(folders)
 
-    return get_return_block_with_cors(output)
+    # return get_return_block_with_cors(output)
 
 
 def get_signed_urls_in_folder(event, context):

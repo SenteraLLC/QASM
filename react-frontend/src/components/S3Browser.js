@@ -2,8 +2,7 @@ import { Component } from 'react';
 import S3Folder from "./S3Folder.js";
 import S3File from "./S3File.js";
 import "../css/S3Browser.css";
-import { function_handlers } from '../QASM/lambda_handlers.js';
-const { image_types } = require("../../public/electron_constants.js");
+const { image_types, function_names } = require("../../public/electron_constants.js");
 const { s3_browser_modes } = require("../QASM/constants.js");
 
 class S3Browser extends Component {
@@ -40,6 +39,7 @@ class S3Browser extends Component {
         this.updateDisplayMode = this.updateDisplayMode.bind(this);
         this.setS3Path         = this.setS3Path.bind(this);
         this.readS3Link        = this.readS3Link.bind(this);
+        this.temp = this.temp.bind(this);
     }
 
 
@@ -321,6 +321,11 @@ class S3Browser extends Component {
     }
 
 
+    async temp() {
+        console.log(await this.QASM.call_backend(window, function_names.GET_CASCADING_DIR_CHILDREN, this.path))
+    }
+
+
     render() {
         return (
             <div className="S3Browser">
@@ -396,7 +401,9 @@ class S3Browser extends Component {
                         </div>
                     }
                     <div className="path-display-grid">
-                        
+                        <button onClick={this.temp}>
+                            Click me
+                        </button>
                         {this.parents.length !== 0 &&
                             <button 
                                 onClick={this.goBack}
