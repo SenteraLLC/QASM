@@ -40,7 +40,6 @@ class S3Browser extends Component {
         this.updateDisplayMode = this.updateDisplayMode.bind(this);
         this.setS3Path         = this.setS3Path.bind(this);
         this.readS3Link        = this.readS3Link.bind(this);
-        this.temp = this.temp.bind(this);
     }
 
 
@@ -322,25 +321,7 @@ class S3Browser extends Component {
     }
 
 
-    async temp() {
-        return await this.QASM.call_backend(window, "getCascadingChildren", this.path)
-    }
-
     render() {
-        // let path_array;
-        // console.log("this is the path", this.path, this.path.charAt(this.path.length - 1))
-        // if (this.path.charAt(this.path.length - 1) === "/") {
-        //     // Everything except the final character
-        //     path_array = this.path.slice(0, -1).split("/");
-        // }
-        // else {
-        //     // The only time / isn't at the end of the path is at the root directory
-        //     path_array = [];
-        // }
-        // console.log("This is the path array", path_array)
-
-        console.log(this.temp());
-
         return (
             <div className="S3Browser">
                 <h2>S3 Browser: {this.QASM.s3_bucket}</h2>
@@ -415,26 +396,7 @@ class S3Browser extends Component {
                         </div>
                     }
                     <div className="path-display-grid">
-                        <div>
-                            {path_array.map(folder_segment => (
-                                folder_segment !== "" &&
-                                <span>
-                                    <button>
-                                        {folder_segment}
-                                    </button>
-                                    {this.getFolders(path_array, folder_segment) !== [] && 
-                                        <div>
-                                            {this.getFolders(path_array, folder_segment).map(folder => (
-                                                <button>
-                                                    {folder}
-                                                </button>
-                                            ))}
-                                        </div>
-                                    }
-                                </span>
-                                
-                            ))}
-                        </div>
+                        
                         {this.parents.length !== 0 &&
                             <button 
                                 onClick={this.goBack}
