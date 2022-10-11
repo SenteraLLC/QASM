@@ -1,13 +1,12 @@
 {
-    "app": "s3",
-    "bucket": "sentera-rogues-data",
+    "app": "local",
     "components": {
         "home": {},
         "grid": {
             "grid_width": 2,
             "classes": [
                 {
-                    "class_name": "plant", 
+                    "class_name": "normal", 
                     "svg_overlay": null
                 }, 
                 {

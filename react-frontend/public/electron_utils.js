@@ -10,7 +10,7 @@ exports.function_handlers = {
     [function_names.LOAD_LABELS]:  handleLoadLabels,
     [function_names.OPEN_DIR]:     handleOpenDir,
     [function_names.LOAD_IMAGES]:  handleLoadImages,
-    [function_names.SAVE_FILE]:    handleSaveFile,
+    [function_names.SAVE_JSON_FILE]: handleSaveFile,
 }
 
 
