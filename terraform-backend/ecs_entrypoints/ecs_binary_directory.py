@@ -120,9 +120,9 @@ def get_name_and_ext_from_obj_summary(object_summary) -> Tuple[str, str]:
 
 
 if __name__ == "__main__":
-    # main()
-    bucket_name = "stand-qa-data"
-    src_dir = "mfstand/2022/Mexico/GuillerminaOjos/052022T205734/binaries/exg/"
-    operations = "eeedd"
-    dest_dir = "mfstand/2022/Mexico/GuillerminaOjos/052022T205734/binaries/potatoes/"
-    generate_binaries(bucket_name, src_dir, operations, dest_dir)
+    main()
+    # bucket_name = "stand-qa-data"
+    # src_dir = "mfstand/2022/Mexico/GuillerminaOjos/052022T205734/binaries/exg/"
+    # operations = "eeedd"
+    # dest_dir = "mfstand/2022/Mexico/GuillerminaOjos/052022T205734/binaries/potatoes/"
+    # generate_binaries(bucket_name, src_dir, operations, dest_dir)
