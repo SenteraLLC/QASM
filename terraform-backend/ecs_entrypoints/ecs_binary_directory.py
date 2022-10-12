@@ -41,13 +41,13 @@ def generate_binaries(
     dest_dir: str = None
 ):
     """Generate new binaries given a source directory and a set of operations."""
-    if bucket_name is None:
+    if bucket_name in ["", None]:
         raise Exception("No S3 bucket name provided.")
-    if src_dir is None:
+    if src_dir in ["", None]:
         raise Exception("No source directory provided.")
-    if operations is None:
+    if operations in ["", None]:
         raise Exception("No operations provided.")
-    if dest_dir is None:
+    if dest_dir in ["", None]:
         parts = list(Path(src_dir).parts)
         parts[-1] = f"{DEFAULT_DEST_PREFIX}_{parts[-1]}" # add prefix to folder name
         dest_dir = str(Path(*parts)).replace("\\", "/")
