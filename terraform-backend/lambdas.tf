@@ -1,5 +1,6 @@
 locals {
     lambda_defs = [
+        # Normal lambdas
         { 
             base_name = "open-dir"
             handler = "s3_browser.open_dir"
@@ -27,7 +28,14 @@ locals {
         {
             base_name = "create-binary-directory"
             handler = "s3_browser.create_binary_directory"
-        }
+        },
+
+        # ECS Lambdas
+        {
+            base_name = "ecs-binary-directory"
+            handler = "ecs_procs.ecs_binary_directory"
+            env_variables = module.ecs_tasks["binary-directory"]
+        },
     ]
 }
 
