@@ -114,6 +114,8 @@ class S3DirectoryBinaryEditor extends Component {
             directory_path: this.directory_path,
         }
 
+        console.log(data);
+
         // Have the backend apply the binary operations to every image in the directory, and
         // save it in a new folder
         await this.QASM.call_backend(window, function_names.SAVE_BINARY_DIRECTORY, data)
