@@ -57,11 +57,14 @@ def generate_binaries(
     src_dir = src_dir.rstrip("/")
     dest_dir = dest_dir.rstrip("/")
 
+    # Note the base src folder so we don't loop over folders that are named similarily
+    base_folder = Path(src_dir).parts[-1]
+
     bucket = s3.Bucket(bucket_name)
     for object_summary in bucket.objects.filter(Prefix=src_dir):
+        cur_base_folder = Path(object_summary.key).parts[-2]
         try:
-            # Don't include subfolder key itself
-            if object_summary.key != f"{src_dir}/":
+            if cur_base_folder == base_folder:
                 # Get image name from path
                 image_name, ext = get_name_and_ext_from_obj_summary(object_summary)
                 print(f"image: {image_name}, ext: {ext}")
@@ -117,9 +120,9 @@ def get_name_and_ext_from_obj_summary(object_summary) -> Tuple[str, str]:
 
 
 if __name__ == "__main__":
-    main()
-    # bucket_name = "stand-qa-data"
-    # src_dir = "mfstand/2022/Mexico/GuillerminaOjos/052022T205734/binaries/exg/"
-    # operations = "ede"
-    # dest_dir = "mfstand/2022/Mexico/GuillerminaOjos/052022T205734/binaries/potatoes/"
-    # generate_binaries(bucket_name, src_dir, operations, dest_dir)
+    # main()
+    bucket_name = "stand-qa-data"
+    src_dir = "mfstand/2022/Mexico/GuillerminaOjos/052022T205734/binaries/exg/"
+    operations = "eeedd"
+    dest_dir = "mfstand/2022/Mexico/GuillerminaOjos/052022T205734/binaries/potatoes/"
+    generate_binaries(bucket_name, src_dir, operations, dest_dir)
