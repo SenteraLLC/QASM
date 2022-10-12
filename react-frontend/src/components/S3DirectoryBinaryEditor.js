@@ -7,6 +7,7 @@ import { function_names } from "../../public/electron_constants";
  */
 class S3DirectoryBinaryEditor extends Component {
     component_updater = 0;
+    destination_path = "";
 
     constructor(props) {
         super()
@@ -111,14 +112,15 @@ class S3DirectoryBinaryEditor extends Component {
 
         const data = {
             operations: operations,
-            directory_path: this.directory_path,
+            src_dir: this.directory_path,
+            dest_dir: this.destination_path,
         }
 
         console.log(data);
 
         // Have the backend apply the binary operations to every image in the directory, and
         // save it in a new folder
-        await this.QASM.call_backend(window, function_names.SAVE_BINARY_DIRECTORY, data)
+        console.log(await this.QASM.call_backend(window, function_names.SAVE_BINARY_DIRECTORY, data))
     }
 
 

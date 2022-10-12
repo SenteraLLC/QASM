@@ -4,7 +4,7 @@ resource "aws_ecs_cluster" "qasm_ecs_cluster" {
 # ECS Tasks 
 
 locals {
-    binary_directory_args = "--operations \"$OPERATIONS\" --src_dir \"$SRC_DIR\" --dest_dir \"$DEST_DIR\""
+    binary_directory_args = "--operations \"$OPERATIONS\" --src_dir \"$SRC_DIR\" --bucket_name \"$BUCKET_NAME\" --dest_dir \"$DEST_DIR\""
     ecs_tasks = [
         {
             "base_name" = "binary-directory",
