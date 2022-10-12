@@ -48,6 +48,7 @@ module "api-lambdas" {
     }
     base_name = each.value.base_name 
     handler = each.value.handler
+    env_variables = try(each.value.env_variables, {"git"="gud"})
     timeout = try(each.value.timeout, 60)
 
     role = aws_iam_role.qasm_lambda_exec_role.arn 

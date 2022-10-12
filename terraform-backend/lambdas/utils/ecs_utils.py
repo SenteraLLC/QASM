@@ -8,16 +8,20 @@ from utils.lambda_utils import get_return_block_with_cors
 ParamAppenders = {
     "operations": {
         "name": "OPERATIONS",
-        "value": None,
+        "value": "",
     },
     "src_dir": {
         "name": "SRC_DIR",
-        "value": None,
+        "value": "",
     },
     "dest_dir": {
         "name": "DEST_DIR",
-        "value": None,
+        "value": "",
     },
+    "bucket_name": {
+        "name": "BUCKET_NAME",
+        "value": "",
+    }
 }
 
 
@@ -69,6 +73,7 @@ def get_ecs_cluster_task_params():
             "containerOverrides": [
                 {
                     "name": os.environ["task_name"],
+                    "environment": [],
                 }
             ]
         },
