@@ -25,10 +25,6 @@ locals {
             base_name = "save-image"
             handler = "s3_browser.save_image"
         },
-        {
-            base_name = "create-binary-directory"
-            handler = "s3_browser.create_binary_directory"
-        },
 
         # ECS Lambdas
         {
