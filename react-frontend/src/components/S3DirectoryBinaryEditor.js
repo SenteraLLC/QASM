@@ -11,7 +11,6 @@ class S3DirectoryBinaryEditor extends Component {
 
     constructor(props) {
         super()
-        console.log("s3BinaryEditor", props)
         this.QASM = props.QASM;
 
         // Bind functions
@@ -116,11 +115,9 @@ class S3DirectoryBinaryEditor extends Component {
             dest_dir: this.destination_path,
         }
 
-        console.log(data);
-
         // Have the backend apply the binary operations to every image in the directory, and
         // save it in a new folder
-        console.log(await this.QASM.call_backend(window, function_names.SAVE_BINARY_DIRECTORY, data))
+        alert(await this.QASM.call_backend(window, function_names.SAVE_BINARY_DIRECTORY, data))
     }
 
 
