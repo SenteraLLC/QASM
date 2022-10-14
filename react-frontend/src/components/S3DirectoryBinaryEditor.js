@@ -1,6 +1,7 @@
 import { Component } from "react";
 import Binary from "./Binary";
 import { function_names } from "../../public/electron_constants";
+import "../css/S3DirectoryBinaryEditor.css";
 
 /**
  * Creates a component for editing all binaries in an s3 folder.
@@ -120,18 +121,52 @@ class S3DirectoryBinaryEditor extends Component {
     }
 
 
+    /**
+     * Runs the dilate method from the Binary component by clicking a hidden button
+     * in the component that runs the dilate method on click.
+     */
+    dilateBinary() {
+        let dilate_button_list = document.getElementsByClassName("binary-dilate");
+
+        for (let button of dilate_button_list) {
+            button.click();
+        }
+    }
+    
+    
+    /**
+     * Runs the dilate method from the Binary component by clicking a hidden button
+     * in the component that runs the dilate method on click.
+     */
+    erodeBinary() {
+        let erode_button_list = document.getElementsByClassName("binary-erode");
+
+        for (let button of erode_button_list) {
+            button.click();
+        }
+    }
+
+
     render() {
         return (
-            <div className="s3DirectoryBinaryEditor" key={this.component_updater}>
-                <button className="button" onClick={this.loadDirectory}>
-                    Select Directory
-                </button>
-                <button className={this.directory_path === undefined ? "hidden" : "button"} onClick={this.loadNextImage}>
-                    Show Next Image
-                </button>
-                <button className={this.directory_path === undefined ? "hidden" : "button"} onClick={this.save}>
-                    Save
-                </button>
+            <div className="S3DirectoryBinaryEditor" key={this.component_updater}>
+                <header>
+                    <button className="button" onClick={this.loadDirectory}>
+                        Select Directory
+                    </button>
+                    <button className={this.directory_path === undefined ? "hidden" : "button"} onClick={this.loadNextImage}>
+                        Show Next Image
+                    </button>
+                    <button className={this.directory_path === undefined ? "hidden" : "button"} onClick={this.dilateBinary}>
+                        Dilate
+                    </button>
+                    <button className={this.directory_path === undefined ? "hidden" : "button"} onClick={this.erodeBinary}>
+                        Erode
+                    </button>
+                    <button className={this.directory_path === undefined ? "hidden" : "button"} onClick={this.save}>
+                        Save
+                    </button>
+                </header>
                 <Binary
                     original_binary={this.src}
                 />
