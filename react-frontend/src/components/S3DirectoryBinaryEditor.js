@@ -148,6 +148,13 @@ class S3DirectoryBinaryEditor extends Component {
 
 
     render() {
+        if (this.QASM.mode !== "s3") {
+            return (
+                <div>
+                    This component can only be used in S3 mode. 
+                </div>
+            )
+        }
         return (
             <div className="S3DirectoryBinaryEditor" key={this.component_updater}>
                 <header className={this.directory_path === undefined ? "one" : "five"}>
