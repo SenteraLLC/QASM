@@ -174,6 +174,7 @@ async function handleLoadImages(QASM, data, window) {
  * 
  * @param {Object} QASM QASM object
  * @param {string} data s3 prefix
+ * @param {*} window window 
  * @returns {Object} { folders: [], files: [] }
  */
 async function handleOpenS3Folder(QASM, data, window) {
@@ -185,13 +186,23 @@ async function handleOpenS3Folder(QASM, data, window) {
     return await api_consolidator_error_handler(params, "open_dir");
 }
 
-
+/**
+ * 
+ * @param {Object} QASM QASM object 
+ * @param {Object} data { src_dir: string, operations: string, dest_dir: string }
+ * @param {*} window window
+ * @returns {string} ECS response message
+ */
 async function saveBinaryDirectory(QASM, data, window) {
     // Create parameters
     let params = {
         "bucket_name": QASM.s3_bucket,
-        "data": data
     }
 
-    return await api_consolidator_error_handler(params, "create_binary_directory")
+    // Add parameters passed in as 'data'
+    for (let [key, value] of Object.entries(data)) {
+        params[key] = value;
+    }
+    console.log("params", params);
+    return await api_consolidator_error_handler(params, "ecs_binary_directory")
 }
