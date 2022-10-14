@@ -7,6 +7,7 @@ const { s3_browser_modes } = require("../QASM/constants.js");
 
 class S3Browser extends Component {
     component_updater = 0;
+    path_segments_children = [];
 
     constructor(props) {
         super(props);
@@ -322,7 +323,12 @@ class S3Browser extends Component {
 
 
     async temp() {
-        console.log(await this.QASM.call_backend(window, function_names.GET_CASCADING_DIR_CHILDREN, this.path))
+        let data_object = await this.QASM.call_backend(window, function_names.GET_CASCADING_DIR_CHILDREN, this.path);
+        this.path_segments_children = data_object.data;
+        console.log(this.path_segments_children, "Path segments")
+        this.setState({
+            path_segments_children: this.path_segments_children
+        })
     }
 
 
