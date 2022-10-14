@@ -1,0 +1,7 @@
+div.S3DirectoryBinaryEditor header {
+    margin: 1em;
+    margin-bottom: 2em;
+    display: flex;
+    justify-content: center;
+    gap: 0.5em;
+}
