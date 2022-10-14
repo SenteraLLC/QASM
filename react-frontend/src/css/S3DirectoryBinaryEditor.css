@@ -1,7 +1,14 @@
 div.S3DirectoryBinaryEditor header {
-    margin: 1em;
+    margin: 1em 350px;
     margin-bottom: 2em;
-    display: flex;
-    justify-content: center;
-    gap: 0.5em;
+    display: grid;
+    gap: 1em;
+}
+
+div.S3DirectoryBinaryEditor header.one {
+    grid-template-columns: 1fr;
+}
+
+div.S3DirectoryBinaryEditor header.five {
+    grid-template-columns: repeat(5, 1fr);
 }
