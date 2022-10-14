@@ -34,12 +34,16 @@ This will build an app based on the specifications found in ``react-frontend/con
                 - ``"class_name": <string>`` (Required) Custom name for a class
                 - ``"svg_overlay": <string>`` (Optional) Name of the class overlay
                     - ``"x_overlay"`` for a big red 'X'
+                    - ``"sparse"`` for very spaced out dots (*Color options not implemented*)
+                    - ``"criss_cross"`` for grid of criss crossing lines (*Color options not implemented*)
+                    - ``"curved"`` for curved lines (*Color options not implemented*)
+                    - ``"field_edge"`` for parallel lines next to a blob of vegetation (*Color options not implemented*)
                     - ``null`` for nothing
                 - ``"color": <string>`` (Optional) Color of overlay
                     - ``"red"`` red
-                    - ``yellow`` yellow
-                    - ``white`` white
-                    - ``green`` green
+                    - ``"yellow"`` yellow
+                    - ``"white"`` white
+                    - ``"green"`` green
         - ``"display_name": <string>`` (Optional) Change the navbar display name
     - ``"binaryeditor": <Object>``
         - ``"display_name": <string>`` (Optional) Change the navbar display name

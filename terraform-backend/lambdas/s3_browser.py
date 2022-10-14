@@ -52,14 +52,13 @@ def get_signed_urls_in_folder(event, context):
 
     
 def load_image(event, context):
-    """get a single signed url."""
+    """Get a single signed url."""
     body = json.loads(event["body"])
     bucket_name = body["bucket_name"]
     file_name = body["file_name"]
     folder_path, image_name = os.path.split(file_name)
     url = get_signed_url(bucket_name, folder_path, image_name, s3_client=None)
     return get_return_block_with_cors({"url": url})
-
 
 def save_labels(event, context):
     """Save json data to s3 path."""
@@ -79,7 +78,7 @@ def save_labels(event, context):
 
 
 def save_image(event, context):
-    """Save image to s3 path."""
+    """Save image to an s3 path."""
     body = json.loads(event["body"])
     image_string = body["image"]
     decoded = base64.b64decode(image_string.split(",")[1])
@@ -108,25 +107,3 @@ def load_labels(event, context):
     file_content = content_object.get()['Body'].read().decode('utf-8')
     labels = json.loads(file_content)
     return get_return_block_with_cors({"labels": labels})
-
-
-def create_binary_directory(event, context):
-    """Apply set morphological operations to all images in a folder, and save them in another folder."""
-
-    body = json.loads(event["body"])
-    bucket_name = body["bucket_name"]
-    data = body["data"]
-
-    try:
-        print(bucket_name)
-        print(data)
-        print("this is a test log")
-
-        urls = get_all_signed_urls_in_folder(bucket_name, data["directory_path"])
-
-        print(urls)
-
-        return get_return_block_with_cors("Saved Images", False)
-        
-    except:
-        return get_return_block_with_cors("Error While Saving", False)
