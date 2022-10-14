@@ -4,8 +4,12 @@ div.S3DirectoryBinaryEditor header {
 }
 
 div.S3DirectoryBinaryEditor header.five {
-    display: grid;
-    grid-template-columns: repeat(5, 1fr);
+    display: flex;
+    justify-content: center;
     gap: 1em;
-    margin: 1em 24em 2em;
+    flex-wrap: wrap;
+}
+
+div.S3DirectoryBinaryEditor header.five > * {
+    width: 10.3em;
 }
