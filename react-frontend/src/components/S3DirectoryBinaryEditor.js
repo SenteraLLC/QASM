@@ -150,7 +150,7 @@ class S3DirectoryBinaryEditor extends Component {
     render() {
         return (
             <div className="S3DirectoryBinaryEditor" key={this.component_updater}>
-                <header>
+                <header className={this.directory_path === undefined ? "one" : "five"}>
                     <button className="button" onClick={this.loadDirectory}>
                         Select Directory
                     </button>
