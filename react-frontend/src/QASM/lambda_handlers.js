@@ -1,17 +1,19 @@
 const { api_consolidator_error_handler } = require("./api_utils.js");
+const { get_new_window_url } = require("./utils.js");
 const { function_names } = require("../../public/electron_constants.js");
 const { s3_browser_modes } = require("./constants.js");
 
 // Export like this so static site works idk why
 const function_handlers = {
-    [function_names.LOAD_LABELS]:    handleLoadLabels,
-    [function_names.OPEN_DIR]:       handleOpenDir,
-    [function_names.OPEN_IMG]:       handleLoadImage,
-    [function_names.LOAD_IMAGES]:    handleLoadImages,
-    [function_names.LOAD_IMAGE]:     handleLoadImage,
-    [function_names.SAVE_JSON_FILE]: handleSaveJSON,
-    [function_names.SAVE_IMAGE]:     handleSaveImage,
-    "openS3Folder":                  handleOpenS3Folder,
+    [function_names.SAVE_BINARY_DIRECTORY]:   saveBinaryDirectory,
+    [function_names.LOAD_LABELS]:             handleLoadLabels,
+    [function_names.LOAD_IMAGE]:              handleLoadImage,
+    [function_names.LOAD_IMAGES]:             handleLoadImages,
+    [function_names.OPEN_DIR]:                handleOpenDir,
+    [function_names.OPEN_IMG]:                handleLoadImage,
+    [function_names.SAVE_IMAGE]:              handleSaveImage,
+    [function_names.SAVE_JSON_FILE]:          handleSaveJSON,
+    [function_names.OPEN_S3_FOLDER]:          handleOpenS3Folder,
 }
 export { function_handlers }
 
@@ -26,7 +28,7 @@ export { function_handlers }
  * @returns {string} result
  */
 async function handleSaveJSON(QASM, data, window) {
-    let url = window.location.origin + "/#/s3Browser";
+    let url = get_new_window_url(window, "s3Browser");
     let popup = window.open(url, "S3 Browser");
     popup.S3_BROWSER_MODE = s3_browser_modes.SAVE_JSON;
     popup.START_FOLDER = data.path;
@@ -48,8 +50,15 @@ async function handleSaveJSON(QASM, data, window) {
 }
 
 
+/**
+ * Save an image to s3
+ * 
+ * @param {Object} QASM QASM object
+ * @param {string} data image
+ * @param {*} window window
+ */
 async function handleSaveImage(QASM, data, window) {
-    let url = window.location.origin + "/#/s3Browser";
+    let url = get_new_window_url(window, "s3Browser");
     let popup = window.open(url, "S3 Browser");
     popup.S3_BROWSER_MODE = s3_browser_modes.SAVE_IMAGE;
 
@@ -80,7 +89,7 @@ async function handleSaveImage(QASM, data, window) {
  * @returns {Object} labels
  */
 async function handleLoadLabels(QASM, data, window) {
-    let url = window.location.origin + "/#/s3Browser";
+    let url = get_new_window_url(window, "s3Browser");
     let popup = window.open(url, "S3 Browser");
     // TODO: different mode for loading/saving?
     popup.S3_BROWSER_MODE = s3_browser_modes.SELECT_JSON; 
@@ -104,9 +113,16 @@ async function handleLoadLabels(QASM, data, window) {
 }
 
 
+/**
+ * Get url for a single image
+ * @param {Object} QASM QASM object
+ * @param {string} data starting folder
+ * @param {*} window window
+ * @returns {*} image url
+ */
 async function handleLoadImage(QASM, data, window) {
     console.log("Handle open image")
-    let url = window.location.origin + "/#/s3Browser";
+    let url = get_new_window_url(window, "s3Browser");
     let popup = window.open(url, "S3 Browser");
     popup.S3_BROWSER_MODE = s3_browser_modes.SELECT_IMAGE;
     popup.START_FOLDER = data
@@ -132,10 +148,10 @@ async function handleLoadImage(QASM, data, window) {
  * @param {Object} QASM QASM object
  * @param {string} data starting folder
  * @param {*} window window
- * @returns s3 path on sucess, nothing on cancel
+ * @returns s3 path on success, nothing on cancel
  */
 async function handleOpenDir(QASM, data, window) {
-    let url = window.location.origin + "/#/s3Browser";
+    let url = get_new_window_url(window, "s3Browser");
     let popup = window.open(url, "S3 Browser");
     popup.S3_BROWSER_MODE = s3_browser_modes.SELECT_DIRECTORY;
     popup.START_FOLDER = data
@@ -173,13 +189,34 @@ async function handleLoadImages(QASM, data, window) {
  * 
  * @param {Object} QASM QASM object
  * @param {string} data s3 prefix
+ * @param {*} window window 
  * @returns {Object} { folders: [], files: [] }
  */
 async function handleOpenS3Folder(QASM, data, window) {
-    // Setup S3 Browser
     let params = {
         "bucket": QASM.s3_bucket,
         "prefix": data
     }
     return await api_consolidator_error_handler(params, "open_dir");
+}
+
+/**
+ * 
+ * @param {Object} QASM QASM object 
+ * @param {Object} data { src_dir: string, operations: string, dest_dir: string }
+ * @param {*} window window
+ * @returns {string} ECS response message
+ */
+async function saveBinaryDirectory(QASM, data, window) {
+    // Create parameters
+    let params = {
+        "bucket_name": QASM.s3_bucket,
+    }
+
+    // Add parameters passed in as 'data'
+    for (let [key, value] of Object.entries(data)) {
+        params[key] = value;
+    }
+    console.log("params", params);
+    return await api_consolidator_error_handler(params, "ecs_binary_directory")
 }

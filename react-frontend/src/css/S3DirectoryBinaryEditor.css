@@ -1,0 +1,15 @@
+div.S3DirectoryBinaryEditor header {
+    margin: 1em;
+    margin-bottom: 2em;
+}
+
+div.S3DirectoryBinaryEditor header.five {
+    display: flex;
+    justify-content: center;
+    gap: 1em;
+    flex-wrap: wrap;
+}
+
+div.S3DirectoryBinaryEditor header.five > * {
+    width: 10.3em;
+}

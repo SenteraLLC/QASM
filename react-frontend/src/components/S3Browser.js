@@ -1,7 +1,7 @@
 import { Component } from 'react';
 import S3Folder from "./S3Folder.js";
 import S3File from "./S3File.js";
-const { image_types } = require("../../public/electron_constants.js");
+const { image_types, function_names } = require("../../public/electron_constants.js");
 const { s3_browser_modes } = require("../QASM/constants.js");
 
 class S3Browser extends Component {
@@ -210,7 +210,7 @@ class S3Browser extends Component {
      */
     async changePath(folder) {
         try {
-            let response = await this.QASM.call_backend(window, "openS3Folder", folder);
+            let response = await this.QASM.call_backend(window, function_names.OPEN_S3_FOLDER, folder);
             this.folders = response.folders;
             this.files = response.files;
             this.parents.push(this.path);
@@ -235,7 +235,7 @@ class S3Browser extends Component {
             folder += folder.endsWith("/") ? "" : "/" // Add trailing slash if not present
         }
         try {
-            let response = await this.QASM.call_backend(window, "openS3Folder", folder);
+            let response = await this.QASM.call_backend(window, function_names.OPEN_S3_FOLDER, folder);
             this.folders = response.folders;
             this.files = response.files;
             this.path = folder;

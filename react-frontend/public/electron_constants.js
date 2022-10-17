@@ -3,6 +3,7 @@
 
 // List of valid function name keys
 exports.function_names = {
+    SAVE_BINARY_DIRECTORY: "saveBinaryDirectory",
     OPEN_DIR: "openDir",
     OPEN_IMG: "openImg",
     LOAD_LABELS: "loadLabels",
@@ -10,6 +11,7 @@ exports.function_names = {
     LOAD_IMAGES: "loadImages",
     SAVE_JSON_FILE: "saveJsonFile",
     SAVE_IMAGE: "saveImage",
+    OPEN_S3_FOLDER: "openS3Folder",
 }
 
 // List of accepted image types
