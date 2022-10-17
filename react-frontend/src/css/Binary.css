@@ -14,6 +14,6 @@ div.Binary img[src=" "] {
     display: none;
 }
 
-div.Binary p.binary-id-display {
-    margin-bottom: 0;
+div.Binary p.operations {
+    grid-column: 1 / 3;
 }

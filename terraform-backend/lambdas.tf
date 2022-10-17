@@ -1,5 +1,6 @@
 locals {
     lambda_defs = [
+        # Normal lambdas
         { 
             base_name = "open-dir"
             handler = "s3_browser.open_dir"
@@ -23,7 +24,14 @@ locals {
         {
             base_name = "save-image"
             handler = "s3_browser.save_image"
-        }
+        },
+
+        # ECS Lambdas
+        {
+            base_name = "ecs-binary-directory"
+            handler = "ecs_procs.ecs_binary_directory"
+            env_variables = module.ecs_tasks["binary-directory"]
+        },
     ]
 }
 
@@ -36,6 +44,7 @@ module "api-lambdas" {
     }
     base_name = each.value.base_name 
     handler = each.value.handler
+    env_variables = try(each.value.env_variables, {"git"="gud"})
     timeout = try(each.value.timeout, 60)
 
     role = aws_iam_role.qasm_lambda_exec_role.arn 
