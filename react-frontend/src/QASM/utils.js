@@ -74,3 +74,14 @@ export function update_all_overlays() {
     overlay.width  = image.clientWidth;
     overlay.height = image.clientHeight;
 }
+
+/**
+ * Get the url for a new popup window.
+ * @param {*} window window
+ * @param {string} new_path desired path for new window
+ * @returns {string} url for new window
+ */
+export function get_new_window_url(window, new_path) {
+    let rmv = window.location.href.split("/").slice(-1);
+    return window.location.href.replace(rmv, new_path);
+}

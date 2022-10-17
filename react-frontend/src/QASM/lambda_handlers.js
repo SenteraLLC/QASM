@@ -1,4 +1,5 @@
 const { api_consolidator_error_handler } = require("./api_utils.js");
+const { get_new_window_url } = require("./utils.js");
 const { function_names } = require("../../public/electron_constants.js");
 const { s3_browser_modes } = require("./constants.js");
 
@@ -27,7 +28,7 @@ export { function_handlers }
  * @returns {string} result
  */
 async function handleSaveJSON(QASM, data, window) {
-    let url = window.location.origin + "/#/s3Browser";
+    let url = get_new_window_url(window, "s3Browser");
     let popup = window.open(url, "S3 Browser");
     popup.S3_BROWSER_MODE = s3_browser_modes.SAVE_JSON;
     popup.START_FOLDER = data.path;
@@ -50,7 +51,7 @@ async function handleSaveJSON(QASM, data, window) {
 
 
 async function handleSaveImage(QASM, data, window) {
-    let url = window.location.origin + "/#/s3Browser";
+    let url = get_new_window_url(window, "s3Browser");
     let popup = window.open(url, "S3 Browser");
     popup.S3_BROWSER_MODE = s3_browser_modes.SAVE_IMAGE;
 
@@ -81,7 +82,7 @@ async function handleSaveImage(QASM, data, window) {
  * @returns {Object} labels
  */
 async function handleLoadLabels(QASM, data, window) {
-    let url = window.location.origin + "/#/s3Browser";
+    let url = get_new_window_url(window, "s3Browser");
     let popup = window.open(url, "S3 Browser");
     // TODO: different mode for loading/saving?
     popup.S3_BROWSER_MODE = s3_browser_modes.SELECT_JSON; 
@@ -107,7 +108,7 @@ async function handleLoadLabels(QASM, data, window) {
 
 async function handleLoadImage(QASM, data, window) {
     console.log("Handle open image")
-    let url = window.location.origin + "/#/s3Browser";
+    let url = get_new_window_url(window, "s3Browser");
     let popup = window.open(url, "S3 Browser");
     popup.S3_BROWSER_MODE = s3_browser_modes.SELECT_IMAGE;
     popup.START_FOLDER = data
@@ -133,10 +134,10 @@ async function handleLoadImage(QASM, data, window) {
  * @param {Object} QASM QASM object
  * @param {string} data starting folder
  * @param {*} window window
- * @returns s3 path on sucess, nothing on cancel
+ * @returns s3 path on success, nothing on cancel
  */
 async function handleOpenDir(QASM, data, window) {
-    let url = window.location.origin + "/#/s3Browser";
+    let url = get_new_window_url(window, "s3Browser");
     let popup = window.open(url, "S3 Browser");
     popup.S3_BROWSER_MODE = s3_browser_modes.SELECT_DIRECTORY;
     popup.START_FOLDER = data
