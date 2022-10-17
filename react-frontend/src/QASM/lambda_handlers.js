@@ -13,7 +13,7 @@ const function_handlers = {
     [function_names.OPEN_IMG]:                handleLoadImage,
     [function_names.SAVE_IMAGE]:              handleSaveImage,
     [function_names.SAVE_JSON_FILE]:          handleSaveJSON,
-    "openS3Folder":                           handleOpenS3Folder,
+    [function_names.OPEN_S3_FOLDER]:          handleOpenS3Folder,
 }
 export { function_handlers }
 
@@ -193,7 +193,6 @@ async function handleLoadImages(QASM, data, window) {
  * @returns {Object} { folders: [], files: [] }
  */
 async function handleOpenS3Folder(QASM, data, window) {
-    // Setup S3 Browser
     let params = {
         "bucket": QASM.s3_bucket,
         "prefix": data

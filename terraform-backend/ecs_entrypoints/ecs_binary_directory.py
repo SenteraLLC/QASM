@@ -2,7 +2,7 @@ import argparse
 import sys
 from pathlib import Path
 import boto3
-from typing import Tuple, Union
+from typing import Tuple
 import cv2
 import numpy as np
 
