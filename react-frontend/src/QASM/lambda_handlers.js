@@ -50,6 +50,13 @@ async function handleSaveJSON(QASM, data, window) {
 }
 
 
+/**
+ * Save an image to s3
+ * 
+ * @param {Object} QASM QASM object
+ * @param {string} data image
+ * @param {*} window window
+ */
 async function handleSaveImage(QASM, data, window) {
     let url = get_new_window_url(window, "s3Browser");
     let popup = window.open(url, "S3 Browser");
@@ -106,6 +113,13 @@ async function handleLoadLabels(QASM, data, window) {
 }
 
 
+/**
+ * Get url for a single image
+ * @param {Object} QASM QASM object
+ * @param {string} data starting folder
+ * @param {*} window window
+ * @returns {*} image url
+ */
 async function handleLoadImage(QASM, data, window) {
     console.log("Handle open image")
     let url = get_new_window_url(window, "s3Browser");
