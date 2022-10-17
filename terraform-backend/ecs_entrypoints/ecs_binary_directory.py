@@ -97,9 +97,9 @@ def create_and_save_binary(
 ):
     """Perform operations on an image and upload it to s3."""
     for operation in operations:
-        if operation in ["e", "E"]:
+        if operation.lower() == 'e':
             img = cv2.erode(img, KERNEL)
-        elif operation in ["d", "D"]:
+        elif operation.lower() == 'd':
             img = cv2.dilate(img, KERNEL)
 
     # Convert to image_string and upload
