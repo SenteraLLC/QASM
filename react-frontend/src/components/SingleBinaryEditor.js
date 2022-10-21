@@ -4,7 +4,7 @@ import "../css/BinaryEditor.css";
 const { function_names } = require("../../public/electron_constants.js");
 
 
-class BinaryEditor extends Component {
+class SingleBinaryEditor extends Component {
     component_updater = 0;
 
 
@@ -12,6 +12,8 @@ class BinaryEditor extends Component {
         super(props);
 
         this.QASM = props.QASM;
+
+        console.log(props.dilate_keybind)
 
         // Save these so we can pass them into the Binary
         this.dilate_keybind = props.dilate_keybind;
@@ -189,4 +191,4 @@ class BinaryEditor extends Component {
     }
 }
 
-export default BinaryEditor
+export default SingleBinaryEditor
