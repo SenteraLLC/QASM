@@ -406,17 +406,20 @@ class S3Browser extends Component {
                             />
                         </div>
                     }
-                    <div className="path-display-grid">
-                        <button onClick={this.temp}>
+                    <div className="path-display">
+                        {/* <button onClick={this.temp}>
                             Click me
+                        </button> */}
+                        <button 
+                            className={this.parents.length !== 0 ? "nav-button not-disabled-button" : "nav-button disabled-button"}
+                            onClick={this.goBack} 
+                            disabled={this.parents.length !== 0 ? false : true}>
+                            ⮨
                         </button>
-                        {this.parents.length !== 0 &&
-                            <button 
-                                onClick={this.goBack}
-                                className="back-button button">
-                                Back
-                            </button>
-                        }
+                        <button className="nav-button">
+                            ⮩
+                        </button>
+
                     </div>
                 </div>
                 <div className={this.getDisplayMode()} id="s3-item-holder">

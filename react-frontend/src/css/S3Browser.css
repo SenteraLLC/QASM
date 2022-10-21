@@ -38,7 +38,7 @@ div.S3Browser div.header div.fieldset-container fieldset legend {
     text-align: left;
 }
 
-div.S3Browser div.header label, div.S3Browser div.header input {
+div.S3Browser div.header label, div.S3Browser div.header input, div.S3Browser div.header button {
     cursor: pointer;
 }
 
@@ -51,6 +51,24 @@ div.S3Browser div.header button.select-button {
     grid-column: 1 / -1;
     margin: 0.25em 2px 0 2px;
     text-align: center;
+}
+
+div.S3Browser div.header button.nav-button {
+    margin: 0.25em;
+    padding: 0;
+    border: none;
+    background-color: rgba(0, 0, 0, 0);
+    font-size: x-large;
+    transition-timing-function: ease-in;
+    transition-duration: 1s;
+}
+
+div.S3Browser div.header button.nav-button.disabled-button {
+    transition-duration: 0s;
+}
+
+div.S3Browser div.header button.nav-button.not-disabled-button:hover {
+    color: rgb(69, 179, 224);
 }
 
 
