@@ -32,7 +32,7 @@ locals {
         {
             base_name = "get-folder-content"
             handler = "s3_browser.get_folder_content"
-        }
+        },
 
         # ECS Lambdas
         {
