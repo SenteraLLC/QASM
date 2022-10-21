@@ -38,15 +38,15 @@ def get_cascading_dir_children(event, context):
         new_path = ""
         for j in range(idx):
             if new_path == "":
-                new_path = folder_array[0]
+                new_path = folder_array[0] + "/"
             else:
-                new_path = new_path + "/" + folder_array[j]
+                new_path = new_path + folder_array[j] + "/"
+
         full_segments.append(new_path)
 
     ret = []
     for segment in full_segments:
         files, folders = get_folder_content(bucket_name, segment)
-        print(f"segment: {segment}\nfiles: {files}\nfolders: {folders}")
         ret.append({
             "files": files,
             "folders": folders
@@ -58,7 +58,6 @@ def get_cascading_dir_children(event, context):
 def get_folder_content(bucket_name, prefix) -> tuple:
     """Get a tuple containing an array of a path's children files and folders."""
     s3 = boto3.client("s3")
-    print(bucket_name, prefix)
     if (prefix is None) or (prefix == ""):
         response = s3.list_objects_v2(Bucket=bucket_name, Delimiter="/")
         if 'Contents' in response:
@@ -72,7 +71,7 @@ def get_folder_content(bucket_name, prefix) -> tuple:
             folders = []
     else:
         response = s3.list_objects_v2(Bucket=bucket_name, Prefix=prefix, Delimiter="/")
-        print(f"response: {response}")
+
         if 'Contents' in response:
             files = [obj['Key'] for obj in response['Contents'] if obj['Key'] != prefix]
         else:
@@ -82,7 +81,7 @@ def get_folder_content(bucket_name, prefix) -> tuple:
             folders = [fld["Prefix"] for fld in response["CommonPrefixes"]]
         else:
             folders = []
-    print(f"files, folders {files}{folders}")
+
     return (files, folders)
 
 
