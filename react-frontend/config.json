@@ -11,22 +11,15 @@
                     "svg_overlay": null
                 }, 
                 {
-                    "class_name": "sparse", 
-                    "svg_overlay": "sparse"
-                },
-                {
-                    "class_name": "criss_cross", 
-                    "svg_overlay": "criss_cross"
-                },
-                {
-                    "class_name": "curved", 
-                    "svg_overlay": "curved"
-                },
-                {
-                    "class_name": "field_edge", 
-                    "svg_overlay": "field_edge"
+                    "class_name": "rogue", 
+                    "svg_overlay": "x_overlay"
                 }
             ]
+        },
+        "binaryeditor": {
+            "display_name": "Binary Editor",
+            "mode": "s3directory",
+            "dilate_keybind": "w"
         }
     }
 }

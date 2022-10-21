@@ -213,7 +213,7 @@ class S3Browser extends Component {
      */
     async changePath(folder) {
         try {
-            let response = await this.QASM.call_backend(window, "openS3Folder", folder);
+            let response = await this.QASM.call_backend(window, function_names.OPEN_S3_FOLDER, folder);
             this.folders = response.folders;
             this.files = response.files;
             this.parents.push(this.path);
@@ -238,7 +238,7 @@ class S3Browser extends Component {
             folder += folder.endsWith("/") ? "" : "/" // Add trailing slash if not present
         }
         try {
-            let response = await this.QASM.call_backend(window, "openS3Folder", folder);
+            let response = await this.QASM.call_backend(window, function_names.OPEN_S3_FOLDER, folder);
             this.folders = response.folders;
             this.files = response.files;
             this.path = folder;

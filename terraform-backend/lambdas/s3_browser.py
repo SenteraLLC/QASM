@@ -84,41 +84,6 @@ def get_folder_content(bucket_name, prefix) -> tuple:
             folders = []
     print(f"files, folders {files}{folders}")
     return (files, folders)
-    
-    
-    # # Initilize the output
-    # output = []
-
-    # # Go through all folders in the array
-    # for idx in range(folder_array):
-
-    #     # Reset the current folder
-    #     current_folder = ""
-    #     print(f"current folder {current_folder}")
-    #     for j in range(idx):
-
-    #         if current_folder == "":
-    #             # If the current folder is empty then add the first segment to the current folder
-    #             current_folder = folder_array[j]
-    #             print(f"current folder {current_folder}, {j}")
-    #         else:
-    #             # Otherwise add the next path to the current folder with / as a seperator
-    #             current_folder = current_folder + "/" + folder_array[j]
-    #             print(f"current folder {current_folder}, {j}")
-            
-    #     # If the current folder is empty then the prefix should be an empty string, in which case we don't care
-    #     if current_folder == "":
-    #         return get_return_block_with_cors([])
-    #     else:
-    #         response = s3.list_objects_v2(Bucket=bucket_name, Prefix=current_folder, Delimiter="/") 
-    #         if 'CommonPrefixes' in response:
-    #             folders = [fld["Prefix"] for fld in response["CommonPrefixes"]]
-    #             print(folders, f"Loop {j}")
-    #         else:
-    #             folders = []
-    #         output.push(folders)
-
-    # return get_return_block_with_cors(output)
 
 
 def get_signed_urls_in_folder(event, context):
@@ -129,16 +94,15 @@ def get_signed_urls_in_folder(event, context):
     urls = get_all_signed_urls_in_folder(bucket_name, folder_name)
     return get_return_block_with_cors({"urls": urls})
 
-
+    
 def load_image(event, context):
-    """get a single signed url."""
+    """Get a single signed url."""
     body = json.loads(event["body"])
     bucket_name = body["bucket_name"]
     file_name = body["file_name"]
     folder_path, image_name = os.path.split(file_name)
     url = get_signed_url(bucket_name, folder_path, image_name, s3_client=None)
     return get_return_block_with_cors({"url": url})
-    
 
 def save_labels(event, context):
     """Save json data to s3 path."""
@@ -158,7 +122,7 @@ def save_labels(event, context):
 
 
 def save_image(event, context):
-    """Save image to s3 path."""
+    """Save image to an s3 path."""
     body = json.loads(event["body"])
     image_string = body["image"]
     decoded = base64.b64decode(image_string.split(",")[1])

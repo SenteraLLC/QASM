@@ -1,3 +1,5 @@
+import { function_names } from "../../public/electron_constants.js";
+
 // Definitions for base QASM class.
 const { function_handlers } = require("./lambda_handlers.js");
 
@@ -43,7 +45,7 @@ export class QASM_s3 extends QASM {
      */
     async init() {
         // Preload first level of s3 bucket
-        let response = await this.call_backend(window, "openS3Folder", null);
+        let response = await this.call_backend(window, function_names.OPEN_S3_FOLDER, null);
         this.folders = response.folders;
         this.files = response.files;
         return this;
