@@ -23,7 +23,7 @@ div.Dropdown div.dropdown-content {
     position: absolute;
     border: 1px solid black;
     background-color: #f9f9f9;
-    min-width: 160px;
+    width: 18em;
     max-height: 14em;
     box-shadow: 2px 2px rgba(0,0,0,0.5);
     overflow-y: scroll;
