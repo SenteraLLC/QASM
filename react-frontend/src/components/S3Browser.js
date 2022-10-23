@@ -331,16 +331,6 @@ class S3Browser extends Component {
     }
 
 
-    async temp() {
-        let data_object = await this.QASM.call_backend(window, function_names.GET_CASCADING_DIR_CHILDREN, this.path);
-        this.path_segments_children = data_object.data;
-        console.log(this.path_segments_children, "Path segments")
-        this.setState({
-            path_segments_children: this.path_segments_children
-        })
-    }
-
-
     render() {
         return (
             <div className="S3Browser">
