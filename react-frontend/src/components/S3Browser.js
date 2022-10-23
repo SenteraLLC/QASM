@@ -1,4 +1,5 @@
 import { Component } from 'react';
+import Dropdown from "./Dropdown.js";
 import S3Folder from "./S3Folder.js";
 import S3File from "./S3File.js";
 import "../css/S3Browser.css";
@@ -30,16 +31,17 @@ class S3Browser extends Component {
         };
 
         // Bind functions
-        this.selectFolder      = this.selectFolder.bind(this);
-        this.changePath        = this.changePath.bind(this);
-        this.goBack            = this.goBack.bind(this);
-        this.getFolders        = this.getFolders.bind(this);
-        this.selectFile        = this.selectFile.bind(this);
-        this.createFile        = this.createFile.bind(this);
-        this.getDisplayMode    = this.getDisplayMode.bind(this);
-        this.updateDisplayMode = this.updateDisplayMode.bind(this);
-        this.setS3Path         = this.setS3Path.bind(this);
-        this.readS3Link        = this.readS3Link.bind(this);
+        this.selectFolder            = this.selectFolder.bind(this);
+        this.changePath              = this.changePath.bind(this);
+        this.goBack                  = this.goBack.bind(this);
+        this.getFolders              = this.getFolders.bind(this);
+        this.selectFile              = this.selectFile.bind(this);
+        this.createFile              = this.createFile.bind(this);
+        this.getDisplayMode          = this.getDisplayMode.bind(this);
+        this.updateDisplayMode       = this.updateDisplayMode.bind(this);
+        this.setS3Path               = this.setS3Path.bind(this);
+        this.readS3Link              = this.readS3Link.bind(this);
+        this.getPathSegmentsChildren = this.getPathSegmentsChildren.bind(this);
         this.temp = this.temp.bind(this);
     }
 
@@ -331,7 +333,14 @@ class S3Browser extends Component {
     }
 
 
+    temp(string1) {
+        console.log(string1, "Inside S3Browser")
+    }
+
+
     render() {
+        console.log(this.path_segments_children)
+        console.log(this.temp, "this.temp")
         return (
             <div className="S3Browser">
                 <h2>S3 Browser: {this.QASM.s3_bucket}</h2>
@@ -418,7 +427,18 @@ class S3Browser extends Component {
                         <button className="nav-button">
                             ⮩
                         </button>
-
+                        {this.path_segments_children.length >= 2 && 
+                            <div>
+                                {this.path_segments_children.map(segment => (
+                                    <div>
+                                        <Dropdown
+                                            items={segment.folders}
+                                            callback={this.temp}
+                                        />
+                                    </div>
+                                ))}
+                            </div>
+                        }
                     </div>
                 </div>
                 <div className={this.getDisplayMode()} id="s3-item-holder">
