@@ -71,6 +71,11 @@ div.S3Browser div.header button.nav-button.not-disabled-button:hover {
     color: rgb(69, 179, 224);
 }
 
+div.S3Browser div.header button:disabled,
+div.S3Browser div.header button[disabled] {
+    cursor: default;
+}
+
 
 /* --------- Grid styling --------- */
 
