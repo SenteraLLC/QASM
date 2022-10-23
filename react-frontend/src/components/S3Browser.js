@@ -219,8 +219,10 @@ class S3Browser extends Component {
             this.parents.push(this.path);
             this.path = folder;
 
+            this.path_segments_children = await this.getPathSegmentsChildren();
             this.setState({
-                path: this.path
+                path: this.path,
+                path_segments_children: this.path_segments_children
             });
         } catch {
             console.log("Failed to load " + folder);
@@ -242,9 +244,10 @@ class S3Browser extends Component {
             this.folders = response.folders;
             this.files = response.files;
             this.path = folder;
-
+            this.path_segments_children = await this.getPathSegmentsChildren();
             this.setState({
-                path: this.path
+                path: this.path,
+                path_segments_children: this.path_segments_children
             });
         } catch {
             console.log("Failed to go back to " + folder);
@@ -319,6 +322,12 @@ class S3Browser extends Component {
      */
     updateDisplayMode() {
         document.getElementById("s3-item-holder").className = this.getDisplayMode();
+    }
+
+
+    async getPathSegmentsChildren() {
+        const data = await this.QASM.call_backend(window, function_names.GET_CASCADING_DIR_CHILDREN, this.path);
+        return data.data;
     }
 
 

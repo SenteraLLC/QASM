@@ -38,7 +38,9 @@ div.S3Browser div.header div.fieldset-container fieldset legend {
     text-align: left;
 }
 
-div.S3Browser div.header label, div.S3Browser div.header input, div.S3Browser div.header button {
+div.S3Browser div.header label, 
+div.S3Browser div.header input, 
+div.S3Browser div.header button {
     cursor: pointer;
 }
 
