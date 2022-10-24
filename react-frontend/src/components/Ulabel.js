@@ -1,5 +1,6 @@
 import { Component } from 'react';
 import { ULabel } from 'ulabel';
+import "../css/Ulabel.css";
 const { function_names } = require("../../public/electron_constants.js");
 
 class Ulabel extends Component {
@@ -76,9 +77,9 @@ class Ulabel extends Component {
     render() {
 
         return (
-            <div id="container">
-                <h2>ULabel?</h2>
-            </div>
+            <div
+                id="container" className="ulabel-container"
+            ></div>
         )
     }
 }
