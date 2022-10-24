@@ -47,7 +47,13 @@ def get_cascading_dir_children(event, context):
     ret = []
     for segment in full_segments:
         files, folders = get_folder_content(bucket_name, segment)
+        try:
+            name = segment.split("/")[-2]
+        except:
+            name = ""
+            
         ret.append({
+            "name": name,
             "files": files,
             "folders": folders
         })
