@@ -421,23 +421,21 @@ class S3Browser extends Component {
                         <button 
                             className={this.parents.length !== 0 ? "nav-button not-disabled-button" : "nav-button disabled-button"}
                             onClick={this.goBack} 
-                            disabled={this.parents.length !== 0 ? false : true}>
+                            disabled={this.parents.length !== 0 ? undefined : true}>
                             ⮨
                         </button>
-                        <button className="nav-button">
+                        <button className="nav-button" disabled={true}>
                             ⮩
                         </button>
                         {this.path_segments_children.length >= 2 && 
-                            <div>
-                                {this.path_segments_children.map(segment => (
-                                    <div>
-                                        <Dropdown
-                                            items={segment.folders}
-                                            callback={this.temp}
-                                        />
-                                    </div>
-                                ))}
-                            </div>
+                            this.path_segments_children.map(segment => (
+                                <div>
+                                    <Dropdown
+                                        items={segment.folders}
+                                        callback={this.temp}
+                                    />
+                                </div>
+                            ))
                         }
                     </div>
                 </div>
