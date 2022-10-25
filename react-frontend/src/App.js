@@ -27,17 +27,17 @@ class App extends Component {
     this.QASM           = props.QASM; // QASM object
     this.config         = props.config;
     this.components     = this.config.components;
-    this.component_keys = Object.keys(this.components);
+    // this.component_keys = Object.keys(this.components);
     this.location       = window.location.href.split("/").slice(-1)[0] // Just page name
     
-    for (let component_key in this.components) {
+    for (let component_idx in this.components) {
       // Add QASM object to all component props
-      let props = this.components[component_key]
+      let props = this.components[component_idx]
       props.QASM = this.QASM;
 
       // Build component list
       this.componentList.push(
-        COMPONENT_KEYS[component_key](props)
+        COMPONENT_KEYS[this.components[component_idx].component](props)
       )
     }
 
@@ -57,15 +57,20 @@ class App extends Component {
             <a href='/' id="menu-logo">
               <img src={icon} alt="Logo" />
             </a>
-            {this.component_keys.map(component_key => (
+            {this.components.map(component => (
               <Link 
                 className="Link"
-                to={component_key === "home" ? "/" : component_key}
-                key={component_key}>
+                to={component.component === "home" 
+                  ? "/" 
+                  : component.key !== undefined
+                    ? component.component + component.key
+                    : component.component
+                }
+                key={component.key !== undefined ? component.key : component.component /* component.key should be provided whenever duplicate components are added to the config */}> 
                 <h2>
-                  {this.components[component_key].display_name === undefined 
-                  ? component_key 
-                  : this.components[component_key].display_name}
+                  {component.display_name === undefined 
+                  ? component.component
+                  : component.display_name}
                 </h2>
               </Link>
             ))}
@@ -74,7 +79,10 @@ class App extends Component {
         <Routes>
           {this.componentList.map((component, idx) => (
             <Route 
-              path={this.component_keys[idx] === "home" ? "/" : this.component_keys[idx]} 
+              path={this.components[idx].component === "home"
+                ? "/"
+                : this.components[idx].component + this.components[idx].key
+              }
               element={component}
               key={idx}/>
           ))}
