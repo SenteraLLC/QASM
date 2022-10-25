@@ -1,0 +1,7 @@
+.ulabel-container {
+    width: 100%;
+    height: calc(100vh - 66px);
+    position: absolute;
+    top: 66px;
+    left: 0;
+}
