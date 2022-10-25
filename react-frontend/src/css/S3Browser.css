@@ -20,7 +20,8 @@ div.S3Browser #s3-item-holder {
 /* --------- Header styling --------- */
 
 div.S3Browser div.header {
-    display: flex;
+    display: grid;
+    grid-template-columns: auto 1fr auto;
     gap: 1em;
 }
 

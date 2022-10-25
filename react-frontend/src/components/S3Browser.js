@@ -345,6 +345,56 @@ class S3Browser extends Component {
             <div className="S3Browser">
                 <h2>S3 Browser: {this.QASM.s3_bucket}</h2>
                 <div className="header">
+                    {/* <div className="s3-path-container">
+                        <button
+                            onClick={this.readS3Link}
+                            className="button">
+                            Go to S3 Path:
+                        </button>
+                        <input
+                            id="s3-link"
+                            type="text"
+                        />
+                    </div> */}
+                    {(this.mode === s3_browser_modes.SAVE_JSON || this.mode === s3_browser_modes.SAVE_IMAGE) &&
+                        <div className="fieldset-container">
+                            <button 
+                                onClick={() => this.createFile(this.mode)}
+                                className="button">
+                                Save Here to New File:
+                            </button>
+                            <input
+                                id="new-filename"
+                                type="text"
+                            />
+                        </div>
+                    }
+                    <div className="nav-buttons">
+                        <button 
+                            className={this.parents.length !== 0 ? "nav-button not-disabled-button" : "nav-button disabled-button"}
+                            onClick={this.goBack} 
+                            disabled={this.parents.length !== 0 ? undefined : true}>
+                            ⮨
+                        </button>
+                        <button className="nav-button" disabled={true}>
+                            ⮩
+                        </button>
+                    </div>
+                    <div className="path-display">
+                        {this.path_segments_children.length >= 2 && 
+                            this.path_segments_children.map(segment => (
+                                <div className="path-segment">
+                                    <p>
+                                        {segment.name === "" ? this.QASM.s3_bucket : segment.name}
+                                    </p>
+                                    <Dropdown
+                                        items={segment.folders}
+                                        callback={this.temp}
+                                    />
+                                </div>
+                            ))
+                        }
+                    </div>
                     <div className="fieldset-container">
                         <fieldset className="directory-display-mode" onChange={this.updateDisplayMode}>
                             <legend>Display</legend>
@@ -388,54 +438,6 @@ class S3Browser extends Component {
                                 className="select-button button">
                                 Select Current Directory
                             </button>
-                        }
-                    </div>
-                    {/* <div className="s3-path-container">
-                        <button
-                            onClick={this.readS3Link}
-                            className="button">
-                            Go to S3 Path:
-                        </button>
-                        <input
-                            id="s3-link"
-                            type="text"
-                        />
-                    </div> */}
-                    {(this.mode === s3_browser_modes.SAVE_JSON || this.mode === s3_browser_modes.SAVE_IMAGE) &&
-                        <div className="fieldset-container">
-                            <button 
-                                onClick={() => this.createFile(this.mode)}
-                                className="button">
-                                Save Here to New File:
-                            </button>
-                            <input
-                                id="new-filename"
-                                type="text"
-                            />
-                        </div>
-                    }
-                    <div className="path-display">
-                        {/* <button onClick={this.temp}>
-                            Click me
-                        </button> */}
-                        <button 
-                            className={this.parents.length !== 0 ? "nav-button not-disabled-button" : "nav-button disabled-button"}
-                            onClick={this.goBack} 
-                            disabled={this.parents.length !== 0 ? undefined : true}>
-                            ⮨
-                        </button>
-                        <button className="nav-button" disabled={true}>
-                            ⮩
-                        </button>
-                        {this.path_segments_children.length >= 2 && 
-                            this.path_segments_children.map(segment => (
-                                <div>
-                                    <Dropdown
-                                        items={segment.folders}
-                                        callback={this.temp}
-                                    />
-                                </div>
-                            ))
                         }
                     </div>
                 </div>
