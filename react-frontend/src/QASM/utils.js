@@ -83,5 +83,9 @@ export function update_all_overlays() {
  */
 export function get_new_window_url(window, new_path) {
     let rmv = window.location.href.split("/").slice(-1);
-    return window.location.href.replace(rmv, new_path);
+    if (rmv[0] === "") {
+        return window.location.href + new_path;
+    } else {
+        return window.location.href.replace(rmv, new_path);
+    }
 }

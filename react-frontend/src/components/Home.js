@@ -2,6 +2,12 @@ import { Component } from 'react';
 import icon from "../../public/icon.png";
 
 class Home extends Component {
+    constructor(props) {
+        super(props);
+
+        // Initialize props
+        this.QASM = props.QASM;
+    }
 
     render() {
         return (
