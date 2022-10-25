@@ -40,9 +40,10 @@ def main():
         print(f"Missing one or more required keys in config: {REQUIRED_QASM_KEYS}")
         return
 
-    if any(key not in QASM_COMPONENTS for key in config["components"].keys()): # Unrecognized component
-        print(f"One or more unrecognized components. Use only the following: {QASM_COMPONENTS}")
-        return
+    # TODO: Reimpliment this
+    # if any(key not in QASM_COMPONENTS for key in config["components"].keys()): # Unrecognized component
+    #     print(f"One or more unrecognized components. Use only the following: {QASM_COMPONENTS}")
+    #     return
     
     app = config["app"]
     if (app in QASM_MODES):
