@@ -109,7 +109,7 @@ class App extends Component {
             <Route 
               path={this.components[idx].component === "home"
                 ? "/"
-                : this.components[idx].component + this.components[idx].key
+                : this.components[idx].key
               }
               element={component}
               key={idx}/>
