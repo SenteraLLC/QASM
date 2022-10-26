@@ -92,9 +92,7 @@ class App extends Component {
                 className="Link"
                 to={component.component === "home" 
                   ? "/" 
-                  : component.key !== undefined
-                    ? component.component + component.key
-                    : component.component
+                  : component.key
                 }
                 key={component.key !== undefined ? component.key : component.component /* component.key should be provided whenever duplicate components are added to the config */}> 
                 <h2>
