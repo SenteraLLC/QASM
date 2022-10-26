@@ -3,12 +3,10 @@
     "bucket": "stand-qa-data",
     "components": [
         {
-            "component": "home",
-            "key": "home"
+            "component": "home"
         },
         {
             "component": "grid",
-            "key": "grid",
             "grid_width": 2,
             "classes": [
                 {
@@ -23,7 +21,6 @@
         },
         {
             "component": "grid",
-            "key": "trevor",
             "display_name": "Trevor Grid",
             "grid_width": 4,
             "classes": [
@@ -39,7 +36,6 @@
         },
         {
             "component": "binaryeditor",
-            "key": "binary",
             "display_name": "Binary Editor",
             "mode": "s3directory",
             "dilate_keybind": "w"
