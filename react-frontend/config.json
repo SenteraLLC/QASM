@@ -3,12 +3,10 @@
     "bucket": "stand-qa-data",
     "components": [
         {
-            "component": "home",
-            "key": "home"
+            "component": "home"
         },
         {
             "component": "grid",
-            "key": "grid",
             "grid_width": 2,
             "classes": [
                 {
@@ -23,7 +21,7 @@
         },
         {
             "component": "grid",
-            "key": "trevor",
+            "key": "test",
             "display_name": "Trevor Grid",
             "grid_width": 4,
             "classes": [
@@ -34,12 +32,16 @@
                 {
                     "class_name": "rogue", 
                     "svg_overlay": "x_overlay"
+                },
+                {
+                    "class_name": "Trevor",
+                    "svg_overlay": "x_overlay",
+                    "color": "green"
                 }
             ]
         },
         {
             "component": "binaryeditor",
-            "key": "binary",
             "display_name": "Binary Editor",
             "mode": "s3directory",
             "dilate_keybind": "w"
