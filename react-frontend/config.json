@@ -31,6 +31,11 @@
                 {
                     "class_name": "rogue", 
                     "svg_overlay": "x_overlay"
+                },
+                {
+                    "class_name": "Trevor",
+                    "svg_overlay": "x_overlay",
+                    "color": "green"
                 }
             ]
         },
