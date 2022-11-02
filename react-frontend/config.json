@@ -21,6 +21,7 @@
         },
         {
             "component": "grid",
+
             "display_name": "Trevor Grid",
             "grid_width": 4,
             "classes": [
