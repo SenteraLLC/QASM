@@ -29,16 +29,41 @@ class App extends Component {
     this.components     = this.config.components;
     // this.component_keys = Object.keys(this.components);
     this.location       = window.location.href.split("/").slice(-1)[0] // Just page name
+
+    // Create object to keep track of number of diffrent components
+    let component_counter = {};
     
     for (let component_idx in this.components) {
-      // Add QASM object to all component props
+      // Grab the props passed to each component
       let props = this.components[component_idx]
+
+      // Add QASM object to all component props
       props.QASM = this.QASM;
 
+      if (component_counter[props.component] === undefined) {
+        // Set the component counter for this component to 1
+        component_counter[props.component] = 1;
+
+        // Then set the key
+        props.component_key = props.component;
+      }
+      else {
+        // If the component counter for this component is already a number, then add 1 to it
+        component_counter[props.component] += 1;
+
+        // This isn't the first component of this type, so its id will be the component name plus which number component it is
+        props.component_key = props.component + component_counter[props.component];
+      }
+
+      console.log(props)
       // Build component list
       this.componentList.push(
-        COMPONENT_KEYS[this.components[component_idx].component](props)
+        COMPONENT_KEYS[props.component](props)
       )
+    }
+
+    for (let component of this.components) {
+      console.log(component, "Components still in constructor")
     }
 
     // Setup S3 browser
@@ -62,11 +87,9 @@ class App extends Component {
                 className="Link"
                 to={component.component === "home" 
                   ? "/" 
-                  : component.key !== undefined
-                    ? component.component + component.key
-                    : component.component
+                  : component.component_key
                 }
-                key={component.key !== undefined ? component.key : component.component /* component.key should be provided whenever duplicate components are added to the config */}> 
+                key={component.component_key}> 
                 <h2>
                   {component.display_name === undefined 
                   ? component.component
@@ -81,7 +104,7 @@ class App extends Component {
             <Route 
               path={this.components[idx].component === "home"
                 ? "/"
-                : this.components[idx].component + this.components[idx].key
+                : this.components[idx].component.component_key
               }
               element={component}
               key={idx}/>

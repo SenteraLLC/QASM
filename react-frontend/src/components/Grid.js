@@ -68,6 +68,7 @@ class Grid extends Component {
     constructor(props) {
         super(props);
         
+        console.log(props, "props inside of grid constructor")
         // Initialize props
         this.QASM         = props.QASM
         this.grid_width   = props.grid_width || 2;
