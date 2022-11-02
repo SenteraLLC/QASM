@@ -54,6 +54,10 @@ class App extends Component {
 
         // Set the path to be the component name + the number of that component so far.
         component.path = component.component + component_counter[component.component];
+
+        // As far as I know component.key isn't used anywhere.
+        // I have no idea why, but it breaks without this line ¯\_(ツ)_/¯
+        component.key = component.component + component_counter[component.component];
       }
 
       // Add an instance of the component to the componentList
@@ -62,41 +66,12 @@ class App extends Component {
       )
     }
 
-    // Create unique keys for each component
-    this.createComponentKeys(this.components)
-
     // Setup S3 browser
     this.s3props = {
       "QASM": this.QASM,
     }
-
-    // Bind functions
-    this.createComponentKeys = this.createComponentKeys.bind(this);
   }
 
-  /**
-   * Loops through each component in the component list. It keeps track of how many of each component there is.
-   * If its the first component of its type, then its key will be the same name as its component. Otherwise, its
-   * key is the name of its component plus which number component it is.
-   * e.g. [{component: home, key: home}, {component: grid, key: grid}, {component: grid, key: grid2}]
-   * 
-   * @param {Object[]} component_list An array of component config objects
-   */
-  createComponentKeys(component_list) {
-    // Define an object to count how many types of an object are in component_list
-    let component_counter = {}
-
-    for (let component of component_list) {
-      if (component_counter[component.component] === undefined) {
-        component_counter[component.component] = 1;
-        component.key = component.component;
-      }
-      else {
-        component_counter[component.component] += 1;
-        component.key = component.component + component_counter[component.component];
-      }
-    }
-  }
   
   render() {
     console.log(this.components)
