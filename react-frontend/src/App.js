@@ -9,10 +9,10 @@ import {HashRouter, Link, Route, Routes} from "react-router-dom";
 
 // Link keys to components
 const COMPONENT_KEYS = {
-  "grid":          (props) => {return <Grid {...props}/>},
-  "home":          (props) => {return <Home {...props}/>},
-  "binaryeditor":  (props) => {return <BinaryEditors {...props}/>},
-  "S3Browser":     (props) => {return <S3Browser {...props}/>},
+  "grid":         (props) => {return <Grid {...props}/>},
+  "home":         (props) => {return <Home {...props}/>},
+  "binaryeditor": (props) => {return <BinaryEditors {...props}/>},
+  "S3Browser":    (props) => {return <S3Browser {...props}/>},
 }
 
 class App extends Component {
@@ -27,7 +27,6 @@ class App extends Component {
     this.QASM           = props.QASM; // QASM object
     this.config         = props.config;
     this.components     = this.config.components;
-    // this.component_keys = Object.keys(this.components);
     this.location       = window.location.href.split("/").slice(-1)[0] // Just page name
 
     // Create object to keep track of number of different components
@@ -57,41 +56,10 @@ class App extends Component {
         component.path = component.component + component_counter[component.component];
       }
 
-
-
-
-
-
-      // // Grab the props passed to each component
-      // let props = this.components[component_idx]
-
-      // // Add QASM object to all component props
-      // props.QASM = this.QASM;
-
-      // if (component_counter[props.component] === undefined) {
-      //   // Set the component counter for this component to 1
-      //   component_counter[props.component] = 1;
-
-      //   // Then set the key
-      //   props.component_key = props.component;
-      // }
-      // else {
-      //   // If the component counter for this component is already a number, then add 1 to it
-      //   component_counter[props.component] += 1;
-
-      //   // This isn't the first component of this type, so its id will be the component name plus which number component it is
-      //   props.component_key = props.component + component_counter[props.component];
-      // }
-
-      // console.log(props)
-      // Build component list
+      // Add an instance of the component to the componentList
       this.componentList.push(
         COMPONENT_KEYS[component.component](component)
       )
-    }
-
-    for (let component of this.components) {
-      console.log(component, "Components still in constructor")
     }
 
     // Setup S3 browser
