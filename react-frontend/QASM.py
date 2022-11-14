@@ -54,6 +54,7 @@ def main():
         # Edit package json build name
         with open(PACKAGE_JSON_PATH, "r+") as f:
             package_json = json.load(f)
+            package_json["name"] = name.replace(" ", "-") # No whitespace for package name
             package_json["build"]["productName"] = name
             f.seek(0)
             json.dump(package_json, f)
