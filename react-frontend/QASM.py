@@ -1,6 +1,7 @@
 import json
 import argparse
 import subprocess
+import bs4
 
 ENV_KEY = "REACT_APP_QASM_MODE"
 REQUIRED_QASM_KEYS = ["app", "components"]
@@ -10,6 +11,7 @@ QASM_MODES = ["local", "s3"]
 RUN_MODES = ["dev", "build-exe"]
 APP_NAME_KEY = "name"
 PACKAGE_JSON_PATH = "./package.json"
+INDEX_PATH = "./public/index.html"
 
 def main():
     """Start QASM app based off config.json."""
@@ -46,13 +48,24 @@ def main():
         print(f"One or more unrecognized components. Use only the following: {QASM_COMPONENTS}")
         return
 
+    # Use custom app name
     if APP_NAME_KEY in config:
         name = config[APP_NAME_KEY]
+        # Edit package json build name
         with open(PACKAGE_JSON_PATH, "r+") as f:
             package_json = json.load(f)
             package_json["build"]["productName"] = name
             f.seek(0)
             json.dump(package_json, f)
+            f.truncate()
+
+        # Edit index.html
+        with open(INDEX_PATH, "r+") as f:
+            txt = f.read()
+            soup = bs4.BeautifulSoup(txt, "html.parser")
+            soup.title.string = name
+            f.seek(0)
+            f.write(str(soup))
             f.truncate()
     
     app = config["app"]
