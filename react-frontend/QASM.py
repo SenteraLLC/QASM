@@ -54,8 +54,8 @@ def main():
         # Edit package json build name
         with open(PACKAGE_JSON_PATH, "r+") as f:
             package_json = json.load(f)
-            package_json["name"] = name.replace(" ", "-") # No whitespace for package name
-            package_json["build"]["productName"] = name
+            package_json["name"] = name.lower().replace(" ", "-") # Lowercase, no whitespace for package name
+            package_json["build"]["productName"] = name # Windows application name
             f.seek(0)
             json.dump(package_json, f)
             f.truncate()
@@ -64,7 +64,7 @@ def main():
         with open(INDEX_PATH, "r+") as f:
             txt = f.read()
             soup = bs4.BeautifulSoup(txt, "html.parser")
-            soup.title.string = name
+            soup.title.string = name # Name displayed in app header
             f.seek(0)
             f.write(str(soup))
             f.truncate()
