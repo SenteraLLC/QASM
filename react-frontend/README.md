@@ -24,6 +24,9 @@ This will build an app based on the specifications found in ``react-frontend/con
 - ``"bucket": <string>``
     - Name of the s3 bucket from which to pull data (only required for ``"app": "s3"``)
 
+- ``"name": <string>``
+    - (Optional) Display name of the app
+
 - ``"components": <Object>`` Object keys are the names of desired app components
     - ``"home": <Object>``
         - ``"display_name": <string>`` (Optional) Change the navbar display name
