@@ -57,7 +57,7 @@ def main():
             package_json["name"] = name.lower().replace(" ", "-") # Lowercase, no whitespace for package name
             package_json["build"]["productName"] = name # Windows application name
             f.seek(0)
-            json.dump(package_json, f)
+            json.dump(package_json, f, indent=4)
             f.truncate()
 
         # Edit index.html
