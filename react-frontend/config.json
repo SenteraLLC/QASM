@@ -1,4 +1,5 @@
 {
+    "name": "Potatoe69",
     "app": "s3",
     "bucket": "stand-qa-data",
     "components": {

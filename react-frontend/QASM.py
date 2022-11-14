@@ -8,6 +8,8 @@ REQUIRED_S3_KEYS = ["bucket"]
 QASM_COMPONENTS = ["home", "grid", "binaryeditor"]
 QASM_MODES = ["local", "s3"]
 RUN_MODES = ["dev", "build-exe"]
+APP_NAME_KEY = "name"
+PACKAGE_JSON_PATH = "./package.json"
 
 def main():
     """Start QASM app based off config.json."""
@@ -43,6 +45,15 @@ def main():
     if any(key not in QASM_COMPONENTS for key in config["components"].keys()): # Unrecognized component
         print(f"One or more unrecognized components. Use only the following: {QASM_COMPONENTS}")
         return
+
+    if APP_NAME_KEY in config:
+        name = config[APP_NAME_KEY]
+        with open(PACKAGE_JSON_PATH, "r+") as f:
+            package_json = json.load(f)
+            package_json["build"]["productName"] = name
+            f.seek(0)
+            json.dump(package_json, f)
+            f.truncate()
     
     app = config["app"]
     if (app in QASM_MODES):
