@@ -42,9 +42,7 @@
                         }
                     ],
                     "allowed_modes": ["polyline"],
-                    "resume_from": "row_annotations",
-                    "task_meta": null,
-                    "annotation_meta": null
+                    "resume_from": "row_annotations"
                 }
             }
         }
