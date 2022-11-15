@@ -12,6 +12,7 @@ exports.function_names = {
     SAVE_JSON_FILE: "saveJsonFile",
     SAVE_IMAGE: "saveImage",
     OPEN_S3_FOLDER: "openS3Folder",
+    LOAD_JSON: "loadJson",
 }
 
 // List of accepted image types
