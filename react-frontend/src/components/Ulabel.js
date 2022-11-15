@@ -40,8 +40,6 @@ class Ulabel extends Component {
         this.startULabel        = this.startULabel.bind(this);
         this.defaultOnSubmit    = this.defaultOnSubmit.bind(this);
 
-        // console.log("Starting:", this.image);
-
         // Start ulabel
         this.startULabel();
     }
@@ -53,12 +51,12 @@ class Ulabel extends Component {
 
     async startULabel() {
         if (this.image == null) {
-            this.image = await this.QASM.call_backend(window, function_names.LOAD_IMAGE);
-            // alert("No image provided, canceling ulabel job...");
-            // return;
+            // this.image = await this.QASM.call_backend(window, function_names.LOAD_IMAGE);
+            alert("No image provided, canceling ulabel job...");
+            return;
         }
 
-        console.log(this.image);
+        await setTimeout(() => {}, 1); // idk why but unless we wait ulabel can't load the image
 
         // Initial ULabel configuration
         let ulabel = new ULabel(
@@ -74,9 +72,6 @@ class Ulabel extends Component {
         ulabel.init(function () {
             console.log("Finished initialization");
         });
-
-        console.log("round 2")
-        ulabel.init();
     }
 
     render() {
