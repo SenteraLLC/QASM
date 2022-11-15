@@ -40,6 +40,8 @@ class Ulabel extends Component {
         this.startULabel        = this.startULabel.bind(this);
         this.defaultOnSubmit    = this.defaultOnSubmit.bind(this);
 
+        // console.log("Starting:", this.image);
+
         // Start ulabel
         this.startULabel();
     }
@@ -51,10 +53,12 @@ class Ulabel extends Component {
 
     async startULabel() {
         if (this.image == null) {
-            // this.image = await this.QASM.call_backend(window, function_names.LOAD_IMAGE);
-            alert("No image provided, canceling ulabel job...");
-            return;
+            this.image = await this.QASM.call_backend(window, function_names.LOAD_IMAGE);
+            // alert("No image provided, canceling ulabel job...");
+            // return;
         }
+
+        console.log(this.image);
 
         // Initial ULabel configuration
         let ulabel = new ULabel(
@@ -71,6 +75,8 @@ class Ulabel extends Component {
             console.log("Finished initialization");
         });
 
+        console.log("round 2")
+        ulabel.init();
     }
 
     render() {
