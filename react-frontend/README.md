@@ -52,6 +52,29 @@ This will build an app based on the specifications found in ``react-frontend/con
         - ``"display_name": <string>`` (Optional) Change the navbar display name
         - ``"dilate_keybind": <string>`` (Optional) Change the dilation keybind. Defaults to "="
         - ``"erode_keybind": <string>`` (Optional) Change the erosion keybind. Defaults to "-"
+    - ``"imagelabeler": <Object>``
+         - ``"display_name": <string>`` (Optional) Change the navbar display name
+         - ``"image_dir": <string>`` (Optional) Path to directory of images
+         - ``"anno_dir": <string>`` (Optional) Path to directory of labels/annotations
+         - ``"subtasks": <Object>`` ULabel subtasks definition(s)
+            - ``<string>: <Object>`` Custom subtask name, followed by the subtask definition object
+                - ``"display_name": <string>`` Displayed subtask name
+                - ``"classes": <Array>`` List of class definition objects
+                    - ``<Object>`` Object with class definition
+                        - ``"name": <string>`` Class name
+                        - ``"color": <string>`` Class color
+                        - ``"id": <Number`` Class id number
+                - ``"allowed_modes: <Array>"`` List of allowed annotation modes
+                    - ``"polyline":`` A simple series of points that needn't define a closed polygon
+                    - ``"bbox":`` A simple single-frame bounding box
+                    - ``"bbox3":`` A bounding box that can extend through multiple frames
+                    - ``"polygon":`` A simple series of points that must define a closed polygon
+                    - ``"tbar":`` Two lines defining a "T" shape
+                    - ``"contour":`` A freehand line
+                    - ``"whole-image":`` A label to be applied to an entire frame
+                    - ``"global":`` A label to be applied to the entire series of frames
+                    - ``"point":`` A keypoint within a single frame 
+                - ``"resume_from": <string>`` (Optional) Key used in annotation jsons. Used to load in annotations from the annotation directory (*Use `null` for no anno loading`*)
 
 ### Terraform
 Terraform automatically takes our lambda code and deploys it to all the necessary AWS services (Lambda, API Gateway, IAM, etc) to allow our serverless applications to run.
