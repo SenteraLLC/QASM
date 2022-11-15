@@ -30,11 +30,12 @@ class Ulabel extends Component {
         super(props);
 
         // Initialize props
-        this.QASM     = props.QASM;
-        this.image    = props.image    || null;
-        this.username = props.username || "QASM_User";
-        this.onSubmit = props.onSubmit || this.defaultOnSubmit;
-        this.subtasks = props.subtasks || this.ex_subtasks;
+        this.QASM        = props.QASM;
+        this.image       = props.image       || null;
+        this.username    = props.username    || "QASM_User";
+        this.onSubmit    = props.onSubmit    || this.defaultOnSubmit;
+        this.subtasks    = props.subtasks    || this.ex_subtasks;
+        this.annotations = props.annotations || null
 
         // Bind functions
         this.startULabel        = this.startULabel.bind(this);
@@ -54,6 +55,19 @@ class Ulabel extends Component {
             // this.image = await this.QASM.call_backend(window, function_names.LOAD_IMAGE);
             alert("No image provided, canceling ulabel job...");
             return;
+        }
+
+        // In config.json "subtasks" field, the user should specify the
+        // key used to store the annotations in their json as the "resume_from" field. 
+        // Here we use that key to put the actual annotations in the resume_from of
+        // the subtask.
+        if (this.annotations != null) {
+            for (let task in this.subtasks) {
+                if (this.subtasks[task]["resume_from"] !== null) {
+                    let resume_from_key = this.subtasks[task]["resume_from"]; // User defined key
+                    this.subtasks[task]["resume_from"] = this.annotations[resume_from_key];
+                }
+            }
         }
 
         await setTimeout(() => {}, 1); // idk why but unless we wait ulabel can't load the image

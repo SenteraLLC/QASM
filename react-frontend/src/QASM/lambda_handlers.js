@@ -12,6 +12,7 @@ const function_handlers = {
     [function_names.OPEN_DIR]:                handleOpenDir,
     [function_names.OPEN_IMG]:                handleLoadImage,
     [function_names.SAVE_IMAGE]:              handleSaveImage,
+    [function_names.LOAD_JSON]:              handleLoadJson,
     [function_names.SAVE_JSON_FILE]:          handleSaveJSON,
     [function_names.OPEN_S3_FOLDER]:          handleOpenS3Folder,
 }
@@ -219,4 +220,21 @@ async function saveBinaryDirectory(QASM, data, window) {
     }
     console.log("params", params);
     return await api_consolidator_error_handler(params, "ecs_binary_directory")
+}
+
+/**
+ * Get annotation json from an s3 folder
+ * 
+ * @param {Object} QASM QASM object
+ * @param {string} data full s3 path to file
+ * @param {*} window window
+ * @returns {Object} annotation json
+ */
+ async function handleLoadJson(QASM, data, window) {
+    let params = {
+        "bucket_name": QASM.s3_bucket,
+        "file_name": data
+    }
+    let res = await api_consolidator_error_handler(params, "load_labels");
+    return res.labels;
 }
