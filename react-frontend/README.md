@@ -27,10 +27,15 @@ This will build an app based on the specifications found in ``react-frontend/con
 - ``"name": <string>``
     - (Optional) Display name of the app
 
-- ``"components": <Object>`` Object keys are the names of desired app components
-    - ``"home": <Object>``
-        - ``"display_name": <string>`` (Optional) Change the navbar display name
-    - ``"grid": <Object>``
+- ``"components": <Array>`` Array of component config objects. Order of the components is the order they appear in the toolbar
+    - Required for all components:
+        - ``"component": <string>`` Currently only "home", "grid", "imagelabeler", or "binaryeditor" are valid
+
+    - Optional for all components:
+        - ``"display_name": <string>`` Change the navbar display name
+
+
+    - ``"grid"`` Configuration ``<Object>``:
         - ``"grid_width": <Number>`` Default number of images to show per row
         - ``"classes": <Array>``
             - ``<Object>`` with class details
@@ -47,13 +52,8 @@ This will build an app based on the specifications found in ``react-frontend/con
                     - ``"yellow"`` yellow
                     - ``"white"`` white
                     - ``"green"`` green
-        - ``"display_name": <string>`` (Optional) Change the navbar display name
-    - ``"binaryeditor": <Object>``
-        - ``"display_name": <string>`` (Optional) Change the navbar display name
-        - ``"dilate_keybind": <string>`` (Optional) Change the dilation keybind. Defaults to "="
-        - ``"erode_keybind": <string>`` (Optional) Change the erosion keybind. Defaults to "-"
-    - ``"imagelabeler": <Object>``
-         - ``"display_name": <string>`` (Optional) Change the navbar display name
+
+    - ``"imagelabeler"`` Configuration ``<Object>``:
          - ``"image_dir": <string>`` (Optional) Path to directory of images
          - ``"anno_dir": <string>`` (Optional) Path to directory of labels/annotations
          - ``"subtasks": <Object>`` ULabel subtasks definition(s)
@@ -75,6 +75,12 @@ This will build an app based on the specifications found in ``react-frontend/con
                     - ``"global":`` A label to be applied to the entire series of frames
                     - ``"point":`` A keypoint within a single frame 
                 - ``"resume_from": <string>`` (Optional) Key used in annotation jsons. Used to load in annotations from the annotation directory (*Use `null` for no anno loading`*)
+
+
+    - ``"binaryeditor"`` Configuration ``<Object>``:
+        - ``"dilate_keybind": <string>`` Change the dilation keybind. Defaults to "="
+        - ``"erode_keybind": <string>`` Change the erosion keybind. Defaults to "-"
+
 
 ### Terraform
 Terraform automatically takes our lambda code and deploys it to all the necessary AWS services (Lambda, API Gateway, IAM, etc) to allow our serverless applications to run.

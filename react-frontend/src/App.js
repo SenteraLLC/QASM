@@ -31,17 +31,42 @@ class App extends Component {
     this.QASM           = props.QASM; // QASM object
     this.config         = props.config;
     this.components     = this.config.components;
-    this.component_keys = Object.keys(this.components);
     this.location       = window.location.href.split("/").slice(-1)[0] // Just page name
-    
-    for (let component_key in this.components) {
-      // Add QASM object to all component props
-      let props = this.components[component_key]
-      props.QASM = this.QASM;
 
-      // Build component list
+    // Create object to keep track of number of different components
+    let component_counter = {};
+    
+    for (let component of this.components) {
+      // Add QASM to each component
+      component.QASM = this.QASM;
+
+      // If the component is home the path will always be /
+      if (component.component === "home") {
+        component.path = "/"
+      }
+      // If its the first instance of a component the component_counter will be undefined for that components
+      else if (component_counter[component.component] === undefined) {
+        // Set the component_counter to 1 for that component
+        component_counter[component.component] = 1;
+
+        // Set the path to the component name
+        component.path = component.component;
+      }
+      else {
+        // Add 1 to the component_counter
+        component_counter[component.component] += 1;
+
+        // Set the path to be the component name + the number of that component so far.
+        component.path = component.component + component_counter[component.component];
+
+        // As far as I know component.key isn't used anywhere.
+        // I have no idea why, but it breaks without this line 
+        component.key = component.component + component_counter[component.component];
+      }
+
+      // Add an instance of the component to the componentList
       this.componentList.push(
-        COMPONENT_KEYS[component_key](props)
+        COMPONENT_KEYS[component.component](component)
       )
     }
 
@@ -50,8 +75,10 @@ class App extends Component {
       "QASM": this.QASM,
     }
   }
+
   
   render() {
+    console.log(this.components)
     return (
       <HashRouter>
       <div className="App">
@@ -61,15 +88,15 @@ class App extends Component {
             <a href='/' id="menu-logo">
               <img src={icon} alt="Logo" />
             </a>
-            {this.component_keys.map(component_key => (
+            {this.components.map(component => (
               <Link 
                 className="Link"
-                to={component_key === "home" ? "/" : component_key}
-                key={component_key}>
+                to={component.path}
+                key={component.path}> 
                 <h2>
-                  {this.components[component_key].display_name === undefined 
-                  ? component_key 
-                  : this.components[component_key].display_name}
+                  {component.display_name === undefined 
+                  ? component.component
+                  : component.display_name}
                 </h2>
               </Link>
             ))}
@@ -78,7 +105,7 @@ class App extends Component {
         <Routes>
           {this.componentList.map((component, idx) => (
             <Route 
-              path={this.component_keys[idx] === "home" ? "/" : this.component_keys[idx]} 
+              path={component.props.path}
               element={component}
               key={idx}/>
           ))}
