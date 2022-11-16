@@ -1,6 +1,6 @@
 {
-  "name": "react-frontend",
-  "version": "0.8.0",
+  "name": "qasm-app",
+  "version": "0.11.0",
   "private": true,
   "proxy": "http://localhost:3000",
   "homepage": "./",
@@ -20,6 +20,7 @@
     "react-dom": "^18.2.0",
     "react-router-dom": "^6.3.0",
     "react-scripts": "5.0.1",
+    "ulabel": "^0.4.21",
     "util": "^0.12.4",
     "wait-on": "^6.0.1",
     "web-vitals": "^2.1.4",
@@ -31,8 +32,8 @@
   },
   "main": "public/electron.js",
   "scripts": {
-    "QASM": "python QASM.py",
-    "QASM-build": "python QASM.py --mode build-exe",
+    "qasm": "python QASM.py",
+    "qasm-build": "python QASM.py --mode build-exe",
     "start": "react-app-rewired start",
     "build": "react-app-rewired build",
     "dev": "concurrently -k \"cross-env BROWSER=none npm start\" \"npm:electron\"",
