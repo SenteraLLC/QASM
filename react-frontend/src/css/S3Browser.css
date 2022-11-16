@@ -79,6 +79,21 @@ div.S3Browser div.header button[disabled] {
     cursor: default;
 }
 
+div.S3Browser div.header div.path-display {
+    margin-top: 0.25em;
+}
+
+div.S3Browser div.header div.path-segment {
+    display: inline-block;
+}
+
+div.S3Browser div.header div.path-segment p {
+    display: inline;
+    padding: 0;
+    padding-left: 0.5em;
+    padding-right: 0.25em;
+}
+
 
 /* --------- Grid styling --------- */
 
