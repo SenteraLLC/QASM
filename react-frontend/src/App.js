@@ -56,7 +56,7 @@ class App extends Component {
         component.path = component.component + component_counter[component.component];
 
         // As far as I know component.key isn't used anywhere.
-        // I have no idea why, but it breaks without this line ¯\_(ツ)_/¯
+        // I have no idea why, but it breaks without this line 
         component.key = component.component + component_counter[component.component];
       }
 
