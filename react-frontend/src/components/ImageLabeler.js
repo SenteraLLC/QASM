@@ -10,15 +10,16 @@ class ImageLabeler extends Component {
     cur_image_name = null;
     cur_image_idx = 0;
     annotations = {};
+    anno_filename = null;
 
     constructor(props) {
         super(props);
 
         // Initialize props
         this.QASM      = props.QASM;
-        this.image_dir = props.image_dir;
-        this.anno_dir  = props.anno_dir;
-        this.subtasks  = props.subtasks;
+        this.image_dir = props.image_dir || undefined
+        this.anno_dir  = props.anno_dir  || undefined
+        this.subtasks  = props.subtasks  || null
 
         // Init state
         this.state = {
@@ -32,9 +33,9 @@ class ImageLabeler extends Component {
         this.selectAnnoDir   = this.selectAnnoDir.bind(this);
         this.loadAnnotations = this.loadAnnotations.bind(this);
         this.changeCurImage  = this.changeCurImage.bind(this);
+        this.on_submit       = this.on_submit.bind(this);
 
-        // TODO: image selection logic (drop down? progress screen? in order?)
-        // TODO: on-submit logic (save annos, nav to next?)
+        // TODO: on-submit logic (save annos, nav to next? mark qa?)
         this.loadImageDir();
     }
 
@@ -87,13 +88,13 @@ class ImageLabeler extends Component {
         if (this.anno_dir !== undefined) {
 
             // anno filename should be image_name.json
-            let filename = this.anno_dir + this.cur_image_name + ".json";
+            this.anno_filename = this.anno_dir + this.cur_image_name + ".json";
             try {
-                this.annotations = await this.QASM.call_backend(window, function_names.LOAD_JSON, filename);
+                this.annotations = await this.QASM.call_backend(window, function_names.LOAD_JSON, this.anno_filename);
             } catch (e) {
                 console.log(e);
                 console.log("Failed to load annotation for " + this.cur_image_name);
-                console.log("Anno name: " + filename);
+                console.log("Anno name: " + this.anno_filename);
             }
         }
     }
@@ -108,6 +109,32 @@ class ImageLabeler extends Component {
         this.cur_image_name = this.images_keys[this.cur_image_idx];
         await this.loadAnnotations();
         this.updateState();
+    }
+
+    // Save annotations in the same way we loaded them
+    async on_submit(annotations) {
+        if (this.anno_filename !== null) {
+            let params = {
+                labels: {},
+                path: this.anno_filename,
+            }
+            console.log(annotations);
+            for (let task in this.subtasks) {
+                if (this.subtasks[task]["resume_from"] !== null) {
+                    let resume_from_key = this.subtasks[task]["resume_from"]; // User defined key
+                    params.labels[resume_from_key] = annotations["annotations"][task];
+                }
+            }           
+
+            try {
+                await this.QASM.call_backend(window, function_names.SAVE_JSON_TO_PATH, params);
+                console.log("Annotations saved."); 
+            } catch(e) {
+                console.log(e);
+                console.log("Failed to save annotations for " + this.cur_image_name);
+            }
+            this.changeCurImage(1); // Go to next image
+        }
     }
 
     render() {
@@ -135,6 +162,7 @@ class ImageLabeler extends Component {
                         image = {this.images[this.cur_image_name]}
                         subtasks = {this.subtasks}
                         annotations = {this.annotations}
+                        on_submit = {this.on_submit}
                     />
                 }
             </div>

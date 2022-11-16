@@ -11,6 +11,7 @@ exports.function_names = {
     LOAD_IMAGE: "loadImage",
     LOAD_IMAGES: "loadImages",
     SAVE_JSON_FILE: "saveJsonFile",
+    SAVE_JSON_TO_PATH: "saveJsonToPath",
     SAVE_IMAGE: "saveImage",
     OPEN_S3_FOLDER: "openS3Folder",
     LOAD_JSON: "loadJson",
