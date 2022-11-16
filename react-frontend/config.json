@@ -2,9 +2,12 @@
     "name": "QASM App",
     "app": "s3",
     "bucket": "stand-qa-data",
-    "components": {
-        "home": {},
-        "grid": {
+    "components": [
+        {
+            "component": "home"
+        },
+        {
+            "component": "grid",
             "grid_width": 2,
             "classes": [
                 {
@@ -17,12 +20,14 @@
                 }
             ]
         },
-        "binaryeditor": {
+        {
+            "component": "binaryeditor",
             "display_name": "Binary Editor",
             "mode": "s3directory",
             "dilate_keybind": "w"
         },
-        "imagelabeler": {
+        {
+            "component": "imagelabeler",
             "display_name": "Image Labeler",
             "image_dir": "mfstand/2022/1051-Thonbontle/AckermannJWSP1A/100722T140321/RGB/",
             "anno_dir": "mfstand/2022/1051-Thonbontle/AckermannJWSP1A/100722T140321/row_annotations/",
@@ -46,5 +51,5 @@
                 }
             }
         }
-    }
+    ]
 }
