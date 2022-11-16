@@ -8,6 +8,7 @@ class ImageLabeler extends Component {
     image_dir = undefined;
     anno_dir = undefined;
     cur_image_name = null;
+    cur_image_idx = 0;
     annotations = {};
 
     constructor(props) {
@@ -30,8 +31,8 @@ class ImageLabeler extends Component {
         this.selectImageDir  = this.selectImageDir.bind(this);
         this.selectAnnoDir   = this.selectAnnoDir.bind(this);
         this.loadAnnotations = this.loadAnnotations.bind(this);
+        this.changeCurImage  = this.changeCurImage.bind(this);
 
-        // TODO: prompt anno dir selection if not provided
         // TODO: image selection logic (drop down? progress screen? in order?)
         // TODO: on-submit logic (save annos, nav to next?)
         this.loadImageDir();
@@ -58,9 +59,11 @@ class ImageLabeler extends Component {
 
             // Create a list of keys
             this.images_keys = Object.keys(this.images).sort();
+            this.n_images = this.images_keys.length;
 
             // Load the first image
-            this.cur_image_name = this.images_keys[0];
+            this.cur_image_idx = 0;
+            this.cur_image_name = this.images_keys[this.cur_image_idx];
 
             // Load annotations
             await this.loadAnnotations();
@@ -95,9 +98,22 @@ class ImageLabeler extends Component {
         }
     }
 
+    async changeCurImage(idx_mod) {
+        this.cur_image_idx += idx_mod;
+        if (this.cur_image_idx < 0) { // Loop to end
+            this.cur_image_idx = this.n_images - 1;
+        } else if (this.cur_image_idx >= this.n_images) { // Loop back to start
+            this.cur_image_idx = 0;
+        }
+        this.cur_image_name = this.images_keys[this.cur_image_idx];
+        await this.loadAnnotations();
+        this.updateState();
+    }
+
     render() {
         return (
             <div className="S3DirectoryBinaryEditor" key={this.component_updater}>
+                <h2 className={this.cur_image_name === null ? "hidden" : ""}>{this.cur_image_name}</h2>
                 <header>
                     <button className="button" onClick={this.selectImageDir}>
                         Select Image Directory (Current: {this.image_dir === undefined ? "None" : this.image_dir})
@@ -105,9 +121,13 @@ class ImageLabeler extends Component {
                     <button className="button" onClick={this.selectAnnoDir}>
                         Select Annotation Directory (Current: {this.anno_dir === undefined ? "None" : this.anno_dir})
                     </button>
-                    {/* <button className={this.directory_path === undefined ? "hidden" : "button"} onClick={this.loadNextImage}>
-                        Show Next Image
-                    </button> */}
+                    <br/>
+                    <button className={this.cur_image_name === null ? "hidden" : "button"} onClick={() => this.changeCurImage(-1)}>
+                        Back
+                    </button>
+                    <button className={this.cur_image_name === null ? "hidden" : "button"} onClick={() => this.changeCurImage(1)}>
+                        Next
+                    </button>
                 </header>
                 {this.cur_image_name !== null &&
                     <Ulabel
