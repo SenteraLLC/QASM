@@ -10,9 +10,10 @@ const function_handlers = {
     [function_names.LOAD_IMAGE]:              handleLoadImage,
     [function_names.LOAD_IMAGES]:             handleLoadImages,
     [function_names.OPEN_DIR]:                handleOpenDir,
+    [function_names.OPEN_IMG_DIR]:            handleOpenImgDir,
     [function_names.OPEN_IMG]:                handleLoadImage,
     [function_names.SAVE_IMAGE]:              handleSaveImage,
-    [function_names.LOAD_JSON]:              handleLoadJson,
+    [function_names.LOAD_JSON]:               handleLoadJson,
     [function_names.SAVE_JSON_FILE]:          handleSaveJSON,
     [function_names.OPEN_S3_FOLDER]:          handleOpenS3Folder,
 }
@@ -155,6 +156,30 @@ async function handleOpenDir(QASM, data, window) {
     let url = get_new_window_url(window, "s3Browser");
     let popup = window.open(url, "S3 Browser");
     popup.S3_BROWSER_MODE = s3_browser_modes.SELECT_DIRECTORY;
+    popup.START_FOLDER = data
+
+    return new Promise(resolve => window.onmessage = (e) => {
+        try {
+            if (e.data.success) {
+                resolve(e.data.path);
+            }
+        } catch {}
+    });
+}
+
+/**
+ * Open a directory selection dialog that
+ * only allows folders that contain images
+ *
+ * @param {Object} QASM QASM object
+ * @param {string} data starting folder
+ * @param {*} window window
+ * @returns s3 path on success, nothing on cancel
+ */
+ async function handleOpenImgDir(QASM, data, window) {
+    let url = get_new_window_url(window, "s3Browser");
+    let popup = window.open(url, "S3 Browser");
+    popup.S3_BROWSER_MODE = s3_browser_modes.SELECT_IMG_DIRECTORY;
     popup.START_FOLDER = data
 
     return new Promise(resolve => window.onmessage = (e) => {
