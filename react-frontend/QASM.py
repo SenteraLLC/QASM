@@ -44,10 +44,15 @@ def main():
         print(f"Missing one or more required keys in config: {REQUIRED_QASM_KEYS}")
         return
 
-    # TODO: Reimpliment this
-    # if any(key not in QASM_COMPONENTS for key in config["components"].keys()): # Unrecognized component
-    #     print(f"One or more unrecognized components. Use only the following: {QASM_COMPONENTS}")
-    #     return
+    # Check if any component is unrecognized
+    will_break = False
+    for component in config["components"]:
+        # print(component, "This is the component")
+        if component["component"] not in QASM_COMPONENTS:
+            print("{} is an unrecognized component. Use only the following: {}".format(component["component"], QASM_COMPONENTS))
+            will_break = True
+    if will_break:
+        return
 
     # Use custom app name
     if APP_NAME_KEY in config:
