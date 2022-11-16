@@ -5,6 +5,7 @@
 exports.function_names = {
     SAVE_BINARY_DIRECTORY: "saveBinaryDirectory",
     OPEN_DIR: "openDir",
+    OPEN_IMG_DIR: "openImgDir",
     OPEN_IMG: "openImg",
     LOAD_LABELS: "loadLabels",
     LOAD_IMAGE: "loadImage",
