@@ -15,6 +15,7 @@ const function_handlers = {
     [function_names.SAVE_IMAGE]:              handleSaveImage,
     [function_names.LOAD_JSON]:               handleLoadJson,
     [function_names.SAVE_JSON_FILE]:          handleSaveJSON,
+    [function_names.SAVE_JSON_TO_PATH]:       handleSaveJSONtoPath,
     [function_names.OPEN_S3_FOLDER]:          handleOpenS3Folder,
 }
 export { function_handlers }
@@ -49,6 +50,27 @@ async function handleSaveJSON(QASM, data, window) {
             resolve("Error when saving labels.");
         }
     });
+}
+
+/**
+ * Save data to the specified path.
+ * 
+ * @param {Object} QASM QASM object
+ * @param {Object} data {labels: {}, path: ""}
+ * @param {*} window window
+ * @returns {string} result
+ */
+ async function handleSaveJSONtoPath(QASM, data, window) {
+    try { 
+        let params = {
+            bucket_name: QASM.s3_bucket,
+            file_name: data.path,
+            labels: data.labels,
+        }
+        await api_consolidator_error_handler(params, "save_labels");
+    } catch {
+        console.log("Error when saving labels.");
+    }
 }
 
 

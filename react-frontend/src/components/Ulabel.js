@@ -33,7 +33,7 @@ class Ulabel extends Component {
         this.QASM        = props.QASM;
         this.image       = props.image       || null;
         this.username    = props.username    || "QASM_User";
-        this.onSubmit    = props.onSubmit    || this.defaultOnSubmit;
+        this.on_submit   = props.on_submit   || this.defaultOnSubmit;
         this.annotations = props.annotations || null;
 
         // Deep copy 
@@ -81,7 +81,7 @@ class Ulabel extends Component {
             "container",        // container_id
             this.image,         // image_data
             this.username,      // username
-            this.onSubmit,      // on_submit
+            this.on_submit,     // on_submit
             this.subtasks,      // subtasks
         );
         this.ulabel = ulabel;
