@@ -1,6 +1,7 @@
 import json
 import argparse
 import subprocess
+import bs4
 
 ENV_KEY = "REACT_APP_QASM_MODE"
 REQUIRED_QASM_KEYS = ["app", "components"]
@@ -8,6 +9,9 @@ REQUIRED_S3_KEYS = ["bucket"]
 QASM_COMPONENTS = ["home", "grid", "binaryeditor"]
 QASM_MODES = ["local", "s3"]
 RUN_MODES = ["dev", "build-exe"]
+APP_NAME_KEY = "name"
+PACKAGE_JSON_PATH = "./package.json"
+INDEX_PATH = "./public/index.html"
 
 def main():
     """Start QASM app based off config.json."""
@@ -40,9 +44,35 @@ def main():
         print(f"Missing one or more required keys in config: {REQUIRED_QASM_KEYS}")
         return
 
-    if any(key not in QASM_COMPONENTS for key in config["components"].keys()): # Unrecognized component
-        print(f"One or more unrecognized components. Use only the following: {QASM_COMPONENTS}")
+    # Check if any component is unrecognized
+    will_break = False
+    for component in config["components"]:
+        if component["component"] not in QASM_COMPONENTS:
+            print("{} is an unrecognized component. Use only the following: {}".format(component["component"], QASM_COMPONENTS))
+            will_break = True
+    if will_break:
         return
+
+    # Use custom app name
+    if APP_NAME_KEY in config:
+        name = config[APP_NAME_KEY]
+        # Edit package json build name
+        with open(PACKAGE_JSON_PATH, "r+") as f:
+            package_json = json.load(f)
+            package_json["name"] = name.lower().replace(" ", "-") # Lowercase, no whitespace for package name
+            package_json["build"]["productName"] = name # Windows application name
+            f.seek(0)
+            json.dump(package_json, f, indent=2)
+            f.truncate()
+
+        # Edit index.html
+        with open(INDEX_PATH, "r+") as f:
+            txt = f.read()
+            soup = bs4.BeautifulSoup(txt, "html.parser")
+            soup.title.string = name # Name displayed in app header
+            f.seek(0)
+            f.write(str(soup))
+            f.truncate()
     
     app = config["app"]
     if (app in QASM_MODES):

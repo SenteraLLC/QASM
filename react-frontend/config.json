@@ -1,9 +1,13 @@
 {
+    "name": "QASM App",
     "app": "s3",
-    "bucket": "sentera-rogues-data",
-    "components": {
-        "home": {},
-        "grid": {
+    "bucket": "stand-qa-data",
+    "components": [
+        {
+            "component": "home"
+        },
+        {
+            "component": "grid",
             "grid_width": 2,
             "classes": [
                 {
@@ -16,10 +20,11 @@
                 }
             ]
         },
-        "binaryeditor": {
+        {
+            "component": "binaryeditor",
             "display_name": "Binary Editor",
             "mode": "s3directory",
             "dilate_keybind": "w"
         }
-    }
+    ]
 }

@@ -122,7 +122,7 @@ async function handleLoadLabels(QASM, data, window) {
  * @returns {*} image url
  */
 async function handleLoadImage(QASM, data, window) {
-    console.log("Handle open image")
+    console.log("Handle open image");
     let url = get_new_window_url(window, "s3Browser");
     let popup = window.open(url, "S3 Browser");
     popup.S3_BROWSER_MODE = s3_browser_modes.SELECT_IMAGE;
