@@ -27,7 +27,7 @@ This will build an app based on the specifications found in ``react-frontend/con
 - ``"name": <string>``
     - (Optional) Display name of the app
 
-- ``"components": <Array>`` Order of the components is the order they appear in the toolbar
+- ``"components": <Array>`` Array of component config objects. Order of the components is the order they appear in the toolbar
     - Required for all components:
         - ``"component": <string>`` Currently only "home", "grid", or "binaryeditor" are valid
 
