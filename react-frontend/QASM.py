@@ -47,7 +47,6 @@ def main():
     # Check if any component is unrecognized
     will_break = False
     for component in config["components"]:
-        # print(component, "This is the component")
         if component["component"] not in QASM_COMPONENTS:
             print("{} is an unrecognized component. Use only the following: {}".format(component["component"], QASM_COMPONENTS))
             will_break = True
