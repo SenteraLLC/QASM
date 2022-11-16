@@ -28,6 +28,7 @@ class ImageLabeler extends Component {
         // Bind functions
         this.loadImageDir    = this.loadImageDir.bind(this);
         this.selectImageDir  = this.selectImageDir.bind(this);
+        this.selectAnnoDir   = this.selectAnnoDir.bind(this);
         this.loadAnnotations = this.loadAnnotations.bind(this);
 
         // TODO: prompt anno dir selection if not provided
@@ -73,12 +74,24 @@ class ImageLabeler extends Component {
         this.loadImageDir();
     }
 
+    async selectAnnoDir() {
+        this.anno_dir = await this.QASM.call_backend(window, function_names.OPEN_DIR); // prompt selection
+        await this.loadAnnotations();
+        this.updateState();
+    }
+
     async loadAnnotations() {
         if (this.anno_dir !== undefined) {
 
             // anno filename should be image_name.json
             let filename = this.anno_dir + this.cur_image_name + ".json";
-            this.annotations = await this.QASM.call_backend(window, function_names.LOAD_JSON, filename);
+            try {
+                this.annotations = await this.QASM.call_backend(window, function_names.LOAD_JSON, filename);
+            } catch (e) {
+                console.log(e);
+                console.log("Failed to load annotation for " + this.cur_image_name);
+                console.log("Anno name: " + filename);
+            }
         }
     }
 
@@ -88,6 +101,9 @@ class ImageLabeler extends Component {
                 <header>
                     <button className="button" onClick={this.selectImageDir}>
                         Select Image Directory (Current: {this.image_dir === undefined ? "None" : this.image_dir})
+                    </button>
+                    <button className="button" onClick={this.selectAnnoDir}>
+                        Select Annotation Directory (Current: {this.anno_dir === undefined ? "None" : this.anno_dir})
                     </button>
                     {/* <button className={this.directory_path === undefined ? "hidden" : "button"} onClick={this.loadNextImage}>
                         Show Next Image

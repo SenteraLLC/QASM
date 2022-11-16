@@ -1,7 +1,7 @@
 import { Component } from 'react';
 import { ULabel } from 'ulabel';
 import "../css/Ulabel.css";
-const { function_names } = require("../../public/electron_constants.js");
+// const { function_names } = require("../../public/electron_constants.js");
 
 class Ulabel extends Component {
     ex_subtasks = {
@@ -34,8 +34,10 @@ class Ulabel extends Component {
         this.image       = props.image       || null;
         this.username    = props.username    || "QASM_User";
         this.onSubmit    = props.onSubmit    || this.defaultOnSubmit;
-        this.subtasks    = props.subtasks    || this.ex_subtasks;
-        this.annotations = props.annotations || null
+        this.annotations = props.annotations || null;
+
+        // Deep copy 
+        this.subtasks    = JSON.parse(JSON.stringify(props.subtasks)) || this.ex_subtasks;
 
         // Bind functions
         this.startULabel        = this.startULabel.bind(this);
@@ -69,6 +71,8 @@ class Ulabel extends Component {
                 }
             }
         }
+
+        console.log(this.subtasks);
 
         await setTimeout(() => {}, 1); // idk why but unless we wait ulabel can't load the image
 
