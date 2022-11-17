@@ -74,14 +74,20 @@ class ImageLabeler extends Component {
     }
 
     async selectImageDir() {
-        this.image_dir = await this.QASM.call_backend(window, function_names.OPEN_DIR); // prompt selection
-        this.loadImageDir();
+        let res = await this.QASM.call_backend(window, function_names.OPEN_DIR); // prompt selection
+        if (res !== undefined) {
+            this.image_dir = res;
+            this.loadImageDir();
+        }
     }
 
     async selectAnnoDir() {
-        this.anno_dir = await this.QASM.call_backend(window, function_names.OPEN_DIR); // prompt selection
-        await this.loadAnnotations();
-        this.updateState();
+        let res = await this.QASM.call_backend(window, function_names.OPEN_DIR); // prompt selection
+        if (res !== undefined) {
+            this.anno_dir = res;
+            await this.loadAnnotations();
+            this.updateState();
+        }
     }
 
     async loadAnnotations() {
