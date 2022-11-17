@@ -29,22 +29,30 @@ class Ulabel extends Component {
     constructor(props) {
         super(props);
 
+        this.initProps(props);
+     
+        // Bind functions
+        this.initProps            = this.initProps.bind(this);
+        this.startULabel          = this.startULabel.bind(this);
+        this.defaultOnSubmit      = this.defaultOnSubmit.bind(this);
+        this.attachAnnosToSubtask = this.attachAnnosToSubtask.bind(this);
+        this.reload               = this.reload.bind(this);
+        this.clearAllAnnotations  = this.clearAllAnnotations.bind(this);
+
+        // Start ulabel
+        this.startULabel();
+    }
+
+    initProps(props) {
         // Initialize props
         this.QASM        = props.QASM;
         this.image       = props.image       || null;
         this.username    = props.username    || "QASM_User";
         this.on_submit   = props.on_submit   || this.defaultOnSubmit;
         this.annotations = props.annotations || null;
-
+        
         // Deep copy 
         this.subtasks    = JSON.parse(JSON.stringify(props.subtasks)) || this.ex_subtasks;
-
-        // Bind functions
-        this.startULabel        = this.startULabel.bind(this);
-        this.defaultOnSubmit    = this.defaultOnSubmit.bind(this);
-
-        // Start ulabel
-        this.startULabel();
     }
 
     defaultOnSubmit(annotations) {
@@ -59,18 +67,7 @@ class Ulabel extends Component {
             return;
         }
 
-        // In config.json "subtasks" field, the user should specify the
-        // key used to store the annotations in their json as the "resume_from" field. 
-        // Here we use that key to put the actual annotations in the resume_from of
-        // the subtask.
-        if (this.annotations != null) {
-            for (let task in this.subtasks) {
-                if (this.subtasks[task]["resume_from"] !== null) {
-                    let resume_from_key = this.subtasks[task]["resume_from"]; // User defined key
-                    this.subtasks[task]["resume_from"] = this.annotations[resume_from_key];
-                }
-            }
-        }
+        await this.attachAnnosToSubtask();
 
         console.log(this.subtasks);
 
@@ -92,12 +89,50 @@ class Ulabel extends Component {
         });
     }
 
+    async attachAnnosToSubtask(reload=false) {
+        // In config.json "subtasks" field, the user should specify the
+        // key used to store the annotations in their json as the "resume_from" field. 
+        // Here we use that key to put the actual annotations in the resume_from of
+        // the subtask.
+        if (this.annotations != null) {
+            for (let task in this.subtasks) {
+                if (this.subtasks[task]["resume_from"] !== null) {
+                    let resume_from_key = this.subtasks[task]["resume_from"]; // User defined key
+                    if (resume_from_key in this.annotations) {
+                        this.subtasks[task]["resume_from"] = this.annotations[resume_from_key];
+
+                        if (reload) { // On reload, ulabel is already running so we update in place
+                            this.ulabel.set_annotations(this.annotations[resume_from_key], task);
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    clearAllAnnotations(subtasks) {
+        for (let task in subtasks) {
+            this.ulabel.set_annotations({}, task);
+        }
+    }
+
+    reload(props, oldSubtasks) {
+        this.initProps(props);
+        this.ulabel.swap_frame_image(this.image);
+        this.clearAllAnnotations(oldSubtasks);
+        this.attachAnnosToSubtask(true);
+    }
+
     render() {
         return (
             <div
                 id="container" className="ulabel-container"
             ></div>
         )
+    }
+
+    componentDidUpdate(prevProps) { // Triggers when props change
+        this.reload(this.props, prevProps.subtasks);
     }
 }
 
