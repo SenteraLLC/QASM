@@ -5,8 +5,6 @@ const { function_names } = require("../../public/electron_constants.js");
 
 class ImageLabeler extends Component {
     component_updater = 0;
-    image_dir = undefined;
-    anno_dir = undefined;
     cur_image_name = null;
     cur_image_idx = 0;
     annotations = {};
@@ -153,7 +151,7 @@ class ImageLabeler extends Component {
     render() {
         return (
             <div className="S3DirectoryBinaryEditor" key={this.component_updater}>
-                <h2 className={this.cur_image_name === null ? "hidden" : ""}>{this.cur_image_name}</h2>
+                <h2 className={this.cur_image_name === null ? "hidden" : ""}>{this.cur_image_name} ({this.cur_image_idx+1} of {this.n_images})</h2>
                 <header>
                     <button className="button" onClick={this.selectImageDir}>
                         Select Image Directory (Current: {this.image_dir === undefined ? "None" : this.image_dir})
