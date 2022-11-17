@@ -25,6 +25,9 @@ class ImageLabeler extends Component {
         this.state = {
             image_dir: this.image_dir,
             cur_image_name: this.cur_image_name,
+            image: null,
+            subtasks: this.subtasks,
+            annotations: this.annotations,
         };
 
         // Bind functions
@@ -47,8 +50,11 @@ class ImageLabeler extends Component {
         this.setState({
             image_dir: this.image_dir,
             cur_image_name: this.cur_image_name,
+            image: this.images[this.cur_image_name],
+            subtasks: this.subtasks,
+            annotations: this.annotations,
         });
-        this.component_updater++;
+        this.component_updater = 1; // only updates the first time the page renders
     }
 
     async loadImageDir() {
@@ -101,6 +107,7 @@ class ImageLabeler extends Component {
                 console.log(e);
                 console.log("Failed to load annotation for " + this.cur_image_name);
                 console.log("Anno name: " + this.anno_filename);
+                this.annotations = {};
             }
         }
     }
@@ -165,9 +172,9 @@ class ImageLabeler extends Component {
                 {this.cur_image_name !== null &&
                     <Ulabel
                         QASM = {this.QASM}
-                        image = {this.images[this.cur_image_name]}
-                        subtasks = {this.subtasks}
-                        annotations = {this.annotations}
+                        image = {this.state.image} // Use state so changes trigger child "componentDidUpdate" hook
+                        subtasks = {this.state.subtasks}
+                        annotations = {this.state.annotations}
                         on_submit = {this.on_submit}
                     />
                 }
