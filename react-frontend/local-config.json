@@ -1,7 +1,7 @@
 {
     "name": "QASM App",
-    "app": "s3",
-    "bucket": "sentera-rogues-data",
+    "app": "local",
+    "bucket": "stand-qa-data",
     "components": [
         {
             "component": "home"
@@ -21,16 +21,10 @@
             ]
         },
         {
-            "component": "binaryeditor",
-            "display_name": "Binary Editor",
-            "mode": "s3directory",
-            "dilate_keybind": "w"
-        },
-        {
             "component": "imagelabeler",
             "display_name": "Image Labeler",
-            "image_dir": "mfstand/2022/1051-Thonbontle/AckermannJWSP1A/100722T140321/RGB/",
-            "anno_dir": "mfstand/2022/1051-Thonbontle/AckermannJWSP1A/100722T140321/row_annotations/",
+            "image_dir": "C:/Users/Trevor/Desktop/Sentera/QASM/RGB/",
+            "anno_dir": "C:/Users/Trevor/Desktop/Sentera/QASM/row_annotations/",
             "subtasks": {
                 "row_classification": {
                     "display_name": "Row Classification",
