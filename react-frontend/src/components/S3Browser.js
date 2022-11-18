@@ -388,7 +388,7 @@ class S3Browser extends Component {
                                         </p>
                                         <Dropdown
                                             items={segment.folders}
-                                            callback={this.temp}
+                                            callback={this.changePath}
                                         />
                                     </div>
                                 ))
