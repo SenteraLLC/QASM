@@ -371,7 +371,7 @@ class S3Browser extends Component {
                         <button 
                             className={this.parents.length !== 0 ? "nav-button not-disabled-button" : "nav-button disabled-button"}
                             onClick={this.goBack} 
-                            disabled={this.parents.length !== 0 ? undefined : true}>
+                            disabled={this.parents.length == 0 ? true : undefined}>
                             ⮨
                         </button>
                         <button className="nav-button" disabled={true}>
@@ -382,7 +382,7 @@ class S3Browser extends Component {
                         <div className="path-display-inner">
                             {this.path_segments_children.length >= 1 && 
                                 this.path_segments_children.map(segment => (
-                                    <div className="path-segment">
+                                    <div className="path-segment" key={segment.name}>
                                         <p>
                                             {segment.name === "" ? this.QASM.s3_bucket : segment.name}
                                         </p>
