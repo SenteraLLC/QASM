@@ -339,8 +339,6 @@ class S3Browser extends Component {
 
 
     render() {
-        console.log(this.path_segments_children)
-        console.log(this.temp, "this.temp")
         return (
             <div className="S3Browser">
                 <h2>S3 Browser: {this.QASM.s3_bucket}</h2>
@@ -382,7 +380,7 @@ class S3Browser extends Component {
                     </div>
                     <div className="path-display">
                         <div className="path-display-inner">
-                            {this.path_segments_children.length >= 2 && 
+                            {this.path_segments_children.length >= 1 && 
                                 this.path_segments_children.map(segment => (
                                     <div className="path-segment">
                                         <p>
@@ -460,6 +458,16 @@ class S3Browser extends Component {
                 </div>
             </div>
         )
+    }
+
+
+    async componentDidMount() { 
+        try {
+          this.path_segments_children = await this.getPathSegmentsChildren();
+          this.forceUpdate();
+        } catch(error) {
+            console.error(error)
+        }
     }
 }
 
