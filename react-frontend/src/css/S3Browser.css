@@ -93,14 +93,16 @@ div.S3Browser div.header div.path-display div.path-display-inner:empty {
 }
 
 div.S3Browser div.header div.path-segment {
-    display: inline-block;
+    display: inline-flex;
+    align-content: stretch;
+    align-items: stretch;
 }
 
 div.S3Browser div.header div.path-segment p {
     display: inline;
-    padding: 0;
-    padding-left: 0.5em;
-    padding-right: 0.25em;
+    margin: 0;
+    padding: 0 0.5em;
+    padding-top: 0.4em;
 }
 
 div.S3Browser div.header div.path-segment div.Dropdown button.toggle-display {
