@@ -57,7 +57,7 @@ div.S3Browser div.header button.select-button {
 }
 
 div.S3Browser div.header button.nav-button {
-    margin: 0.25em;
+    margin: 0 0.25em;
     padding: 0;
     border: none;
     background-color: rgba(0, 0, 0, 0);
@@ -80,7 +80,12 @@ div.S3Browser div.header button[disabled] {
 }
 
 div.S3Browser div.header div.path-display {
-    margin-top: 0.25em;
+    font-size: small;
+    text-align: left;
+}
+
+div.S3Browser div.header div.path-display div.path-display-inner {
+    border: 1px solid rgba(119, 136, 153, 0.3);
 }
 
 div.S3Browser div.header div.path-segment {
@@ -92,6 +97,20 @@ div.S3Browser div.header div.path-segment p {
     padding: 0;
     padding-left: 0.5em;
     padding-right: 0.25em;
+}
+
+div.S3Browser div.header div.path-segment div.Dropdown button.toggle-display {
+    background-color: rgba(0, 0, 0, 0);
+    border: none;
+}
+
+div.S3Browser div.header div.path-segment > * {
+    border: 1px solid rgba(0, 0, 0, 0);
+}
+
+div.S3Browser div.header div.path-segment:hover > * {
+    background-color: rgba(0,200,255, 0.15);
+    border: 1px solid rgba(0,200,255, 0.2);
 }
 
 

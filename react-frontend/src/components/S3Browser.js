@@ -381,19 +381,21 @@ class S3Browser extends Component {
                         </button>
                     </div>
                     <div className="path-display">
-                        {this.path_segments_children.length >= 2 && 
-                            this.path_segments_children.map(segment => (
-                                <div className="path-segment">
-                                    <p>
-                                        {segment.name === "" ? this.QASM.s3_bucket : segment.name}
-                                    </p>
-                                    <Dropdown
-                                        items={segment.folders}
-                                        callback={this.temp}
-                                    />
-                                </div>
-                            ))
-                        }
+                        <div className="path-display-inner">
+                            {this.path_segments_children.length >= 2 && 
+                                this.path_segments_children.map(segment => (
+                                    <div className="path-segment">
+                                        <p>
+                                            {segment.name === "" ? this.QASM.s3_bucket : segment.name}
+                                        </p>
+                                        <Dropdown
+                                            items={segment.folders}
+                                            callback={this.temp}
+                                        />
+                                    </div>
+                                ))
+                            }
+                        </div>
                     </div>
                     <div className="fieldset-container">
                         <fieldset className="directory-display-mode" onChange={this.updateDisplayMode}>
