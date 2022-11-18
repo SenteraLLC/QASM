@@ -88,6 +88,10 @@ div.S3Browser div.header div.path-display div.path-display-inner {
     border: 1px solid rgba(119, 136, 153, 0.3);
 }
 
+div.S3Browser div.header div.path-display div.path-display-inner:empty {
+    border: 1px solid rgba(0, 0, 0, 0);
+}
+
 div.S3Browser div.header div.path-segment {
     display: inline-block;
 }
