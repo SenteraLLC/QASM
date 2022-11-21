@@ -1,3 +1,4 @@
+from distutils.log import error
 from multiprocessing.connection import Client
 import boto3
 import json
@@ -11,7 +12,6 @@ def open_dir(event, context):
     body = json.loads(event["body"])
     bucket_name = body["bucket"]
     prefix = body["prefix"]
-    print(prefix)
 
     files, folders = get_folder_content(bucket_name, prefix)
 
@@ -51,11 +51,18 @@ def get_cascading_dir_children(event, context):
             name = segment.split("/")[-2]
         except:
             name = ""
+        
+        modified_folders = []
+        for folder in folders:
+            try:
+                modified_folders.append(folder.split("/")[-2])
+            except ValueError:
+                print(ValueError)
             
         ret.append({
             "name": name,
             "files": files,
-            "folders": folders
+            "folders": modified_folders
         })
 
     return get_return_block_with_cors({"data": ret})
