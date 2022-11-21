@@ -15,8 +15,8 @@ class ImageLabeler extends Component {
 
         // Initialize props
         this.QASM      = props.QASM;
-        this.image_dir = props.image_dir || undefined
-        this.anno_dir  = props.anno_dir  || undefined
+        this.image_dir = props.image_dir || null
+        this.anno_dir  = props.anno_dir  || null
         this.subtasks  = props.subtasks  || null
 
         // Init state
@@ -56,7 +56,7 @@ class ImageLabeler extends Component {
     }
 
     async loadImageDir() {
-        if (this.image_dir !== undefined) {
+        if (this.image_dir !== null) {
 
             // Create a dictionary for every image in the directory where the image name is
             // the key and the path is the value
@@ -78,16 +78,16 @@ class ImageLabeler extends Component {
     }
 
     async selectImageDir() {
-        let res = await this.QASM.call_backend(window, function_names.OPEN_DIR); // prompt selection
-        if (res !== undefined) {
+        let res = await this.QASM.call_backend(window, function_names.OPEN_DIR, this.image_dir); // prompt selection
+        if (res !== null) {
             this.image_dir = res;
             this.loadImageDir();
         }
     }
 
     async selectAnnoDir() {
-        let res = await this.QASM.call_backend(window, function_names.OPEN_DIR); // prompt selection
-        if (res !== undefined) {
+        let res = await this.QASM.call_backend(window, function_names.OPEN_DIR, this.anno_dir); // prompt selection
+        if (res !== null) {
             this.anno_dir = res;
             await this.loadAnnotations();
             this.updateState();
@@ -95,7 +95,7 @@ class ImageLabeler extends Component {
     }
 
     async loadAnnotations() {
-        if (this.anno_dir !== undefined) {
+        if (this.anno_dir !== null) {
 
             // anno filename should be image_name.json
             this.anno_filename = this.anno_dir + this.cur_image_name + ".json";
@@ -154,10 +154,10 @@ class ImageLabeler extends Component {
                 <h2 className={this.cur_image_name === null ? "hidden" : ""}>{this.cur_image_name} ({this.cur_image_idx+1} of {this.n_images})</h2>
                 <header>
                     <button className="button" onClick={this.selectImageDir}>
-                        Select Image Directory (Current: {this.image_dir === undefined ? "None" : this.image_dir})
+                        Select Image Directory (Current: {this.image_dir === null ? "None" : this.image_dir})
                     </button>
                     <button className="button" onClick={this.selectAnnoDir}>
-                        Select Annotation Directory (Current: {this.anno_dir === undefined ? "None" : this.anno_dir})
+                        Select Annotation Directory (Current: {this.anno_dir === null ? "None" : this.anno_dir})
                     </button>
                     <br/>
                     <button className={this.cur_image_name === null ? "hidden" : "button"} onClick={() => this.changeCurImage(-1)}>
