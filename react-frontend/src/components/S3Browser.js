@@ -386,10 +386,12 @@ class S3Browser extends Component {
                                         <p>
                                             {segment.name === "" ? this.QASM.s3_bucket : segment.name}
                                         </p>
-                                        <Dropdown
-                                            items={segment.folders}
-                                            callback={this.changePath}
-                                        />
+                                            {segment.folders.length !== 0 &&
+                                                <Dropdown
+                                                    items={segment.folders}
+                                                    callback={this.changePath}
+                                                />
+                                            }
                                     </div>
                                 ))
                             }
