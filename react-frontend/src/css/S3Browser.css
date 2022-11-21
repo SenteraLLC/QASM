@@ -101,8 +101,8 @@ div.S3Browser div.header div.path-segment {
 div.S3Browser div.header div.path-segment p {
     display: inline;
     margin: 0;
-    padding: 0 0.5em;
-    padding-top: 0.4em;
+    padding: 0.45em 0.5em;
+    /* padding-top: 0.4em; */
 }
 
 div.S3Browser div.header div.path-segment div.Dropdown button.toggle-display {
