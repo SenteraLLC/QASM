@@ -43,6 +43,7 @@ class S3Browser extends Component {
         this.readS3Link              = this.readS3Link.bind(this);
         this.getPathSegmentsChildren = this.getPathSegmentsChildren.bind(this);
         this.temp = this.temp.bind(this);
+        this.createPath = this.createPath.bind(this);
     }
 
 
@@ -338,6 +339,27 @@ class S3Browser extends Component {
     }
 
 
+    createPath(final_segment, depth) {
+        // Grab a list of all path segments 
+        let path_segments = Array.from(document.querySelectorAll(".segment-name"));
+
+        // Remove the first segment because its actually the bucket name
+        path_segments.shift()
+
+        // Create a path up to a specified depth
+        let path = "";
+        for (let idx = 0; idx < depth; idx++) {
+            path += path_segments[idx].innerText + "/"
+        }
+
+        // Add the final segment
+        path += final_segment + "/"
+
+        // Navigate to path
+        this.changePath(path)
+    }
+
+
     render() {
         return (
             <div className="S3Browser">
@@ -381,9 +403,11 @@ class S3Browser extends Component {
                     <div className="path-display">
                         <div className="path-display-inner">
                             {this.path_segments_children.length >= 1 && 
-                                this.path_segments_children.map(segment => (
+                                this.path_segments_children.map((segment, index) => (
                                     <div className="path-segment" key={segment.name}>
-                                        <button className="segment-name">
+                                        <button 
+                                            className="segment-name"
+                                            onClick={() => this.createPath(segment.name, index - 1)}>
                                             {segment.name === "" ? this.QASM.s3_bucket : segment.name}
                                         </button>
                                             {segment.folders.length !== 0 &&
