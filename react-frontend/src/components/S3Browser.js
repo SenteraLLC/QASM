@@ -383,9 +383,9 @@ class S3Browser extends Component {
                             {this.path_segments_children.length >= 1 && 
                                 this.path_segments_children.map(segment => (
                                     <div className="path-segment" key={segment.name}>
-                                        <p>
+                                        <button className="segment-name">
                                             {segment.name === "" ? this.QASM.s3_bucket : segment.name}
-                                        </p>
+                                        </button>
                                             {segment.folders.length !== 0 &&
                                                 <Dropdown
                                                     items={segment.folders}

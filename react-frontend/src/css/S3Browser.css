@@ -98,10 +98,11 @@ div.S3Browser div.header div.path-segment {
     align-items: stretch;
 }
 
-div.S3Browser div.header div.path-segment p {
+div.S3Browser div.header div.path-segment button.segment-name {
     display: inline;
     margin: 0;
     padding: 0.45em 0.5em;
+    background-color: rgba(0, 0, 0, 0);
 }
 
 div.S3Browser div.header div.path-segment div.Dropdown button.toggle-display {
@@ -114,8 +115,8 @@ div.S3Browser div.header div.path-segment > * {
 }
 
 div.S3Browser div.header div.path-segment:hover > * {
-    background-color: rgba(0,200,255, 0.15);
-    border: 1px solid rgba(0,200,255, 0.2);
+    background-color: rgba(0,200,255, 0.15) !important;
+    border: 1px solid rgba(0,200,255, 0.2) !important;
 }
 
 
