@@ -340,6 +340,12 @@ class S3Browser extends Component {
 
 
     createPath(final_segment, depth) {
+        // If the depth is negative, route to the root folder
+        if (depth === -1) {
+            this.changePath("");
+            return
+        }
+
         // Grab a list of all path segments 
         let path_segments = Array.from(document.querySelectorAll(".segment-name"));
 
