@@ -340,6 +340,7 @@ class S3Browser extends Component {
 
 
     createPath(final_segment, depth) {
+        console.log(final_segment, depth)
         // If the depth is negative, route to the root folder
         if (depth === -1) {
             this.changePath("");
@@ -360,7 +361,7 @@ class S3Browser extends Component {
 
         // Add the final segment
         path += final_segment + "/"
-
+        console.log(path)
         // Navigate to path
         this.changePath(path)
     }
@@ -419,7 +420,7 @@ class S3Browser extends Component {
                                             {segment.folders.length !== 0 &&
                                                 <Dropdown
                                                     items={segment.folders}
-                                                    callback={this.changePath}
+                                                    callback={(segment) => this.createPath(segment, index)}
                                                 />
                                             }
                                     </div>
