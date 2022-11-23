@@ -1,5 +1,6 @@
 import { Component } from 'react';
 import { ULabel } from 'ulabel';
+// import { ULabel } from "../../public/ulabel.js";
 import "../css/Ulabel.css";
 // const { function_names } = require("../../public/electron_constants.js");
 
