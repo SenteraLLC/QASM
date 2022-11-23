@@ -15,3 +15,8 @@ contextBridge.exposeInMainWorld("electron",{
       }
   },
 })
+
+// Adds jquery to Electron Isolated Context once window is ready
+// window.onload = () => {
+//   window.$ = window.jQuery = require('jquery');
+// }

@@ -7,26 +7,6 @@
             "component": "home"
         },
         {
-            "component": "grid",
-            "grid_width": 2,
-            "classes": [
-                {
-                    "class_name": "normal", 
-                    "svg_overlay": null
-                }, 
-                {
-                    "class_name": "rogue", 
-                    "svg_overlay": "x_overlay"
-                }
-            ]
-        },
-        {
-            "component": "binaryeditor",
-            "display_name": "Binary Editor",
-            "mode": "s3directory",
-            "dilate_keybind": "w"
-        },
-        {
             "component": "imagelabeler",
             "display_name": "Image Labeler",
             "image_dir": "mfstand/2022/1051-Thonbontle/AckermannJWSP1A/100722T140321/RGB/",
