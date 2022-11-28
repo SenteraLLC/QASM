@@ -1,10 +1,30 @@
 {
-    "name": "Image Labeler",
+    "name": "QASM App",
     "app": "s3",
     "bucket": "stand-qa-data",
     "components": [
         {
             "component": "home"
+        },
+        {
+            "component": "grid",
+            "grid_width": 2,
+            "classes": [
+                {
+                    "class_name": "normal", 
+                    "svg_overlay": null
+                }, 
+                {
+                    "class_name": "rogue", 
+                    "svg_overlay": "x_overlay"
+                }
+            ]
+        },
+        {
+            "component": "binaryeditor",
+            "display_name": "Binary Editor",
+            "mode": "s3directory",
+            "dilate_keybind": "w"
         },
         {
             "component": "imagelabeler",
