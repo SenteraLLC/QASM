@@ -1,5 +1,5 @@
 {
-    "name": "QASM App",
+    "name": "Image Labeler",
     "app": "s3",
     "bucket": "stand-qa-data",
     "components": [
