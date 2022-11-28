@@ -19,24 +19,46 @@ div.S3Browser #s3-item-holder {
 
 /* --------- Header styling --------- */
 
-div.S3Browser div.header {
+/* div.S3Browser div.header {
     display: grid;
     grid-template-columns: auto 1fr auto;
     gap: 1em;
+} */
+
+div.S3Browser div.header div.options {
+    /* display: grid;
+    grid-template-columns: 1fr 1fr; */
+    margin: 0 -1em;
+    border: 1px solid rgba(0, 0, 0, 0.05);
+    padding: 0.25em 1em;
+    display: flex;
+    justify-content: flex-start;
+    align-items: stretch;
+    background-color: rgba(0, 0, 0, 0.04)
 }
 
-div.S3Browser div.header div.fieldset-container {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-}
-
-div.S3Browser div.header div.fieldset-container fieldset {
+div.S3Browser div.header div.options fieldset {
     text-align: left;
-    width: 78px; /* Minimum size to prevent word wrap */
+    min-width: 4em;
 }
 
-div.S3Browser div.header div.fieldset-container fieldset legend {
-    text-align: left;
+div.S3Browser div.header div.options fieldset input {
+    margin-left: 0;
+
+      /* remove standard background appearance
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    /* create custom radiobutton appearance */
+
+    /* background-color only for content */
+    /* background-clip: content-box;
+    border: 2px solid #bbbbbb;
+    background-color: #e7e6e7;
+    border-radius: 50%;
+
+ */ 
+
 }
 
 div.S3Browser div.header label, 
@@ -80,11 +102,14 @@ div.S3Browser div.header button[disabled] {
 }
 
 div.S3Browser div.header div.path-display {
-    font-size: small;
-    text-align: left;
+    display: grid;
+    grid-template-columns: auto 1fr;
+    margin-top: 0.1em;
 }
 
 div.S3Browser div.header div.path-display div.path-display-inner {
+    font-size: small;
+    text-align: left;
     border: 1px solid rgba(119, 136, 153, 0.3);
 }
 
@@ -119,6 +144,10 @@ div.S3Browser div.header div.path-segment:hover > * {
     border: 1px solid rgba(0,200,255, 0.2) !important;
 }
 
+/* --------- Content styling --------- */
+div.S3Browser div.content {
+    margin-bottom: 4.5em;
+}
 
 /* --------- Grid styling --------- */
 
@@ -127,4 +156,29 @@ div.S3Browser div.grid {
     gap: 1em 0.5em;
     justify-content: flex-start;
     flex-wrap: wrap;
+}
+
+
+/* --------- Footer styling --------- */
+
+div.footer {
+    display: flex;
+    align-items: center;
+    gap: 1em;
+    position: fixed;
+    bottom: 0;
+    right: 1em;
+
+
+    height: 4em;
+    width: 100%;
+    background-color: rgb(235, 235, 235);
+    text-align: right;
+}
+
+div.footer > * {
+    flex-grow: 0;
+}
+div.footer input#s3-link {
+    flex-grow: 1;
 }

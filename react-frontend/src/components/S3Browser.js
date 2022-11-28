@@ -44,6 +44,7 @@ class S3Browser extends Component {
         this.getPathSegmentsChildren = this.getPathSegmentsChildren.bind(this);
         this.temp = this.temp.bind(this);
         this.createPath = this.createPath.bind(this);
+        this.handleKeyPress = this.handleKeyPress.bind(this);
     }
 
 
@@ -339,7 +340,7 @@ class S3Browser extends Component {
     }
 
 
-    createPath(final_segment, depth) {
+    createPath(final_segment, depth, cascade=false) {
         console.log(final_segment, depth)
         // If the depth is negative, route to the root folder
         if (depth === -1) {
@@ -347,7 +348,13 @@ class S3Browser extends Component {
             return
         }
 
-        // Grab a list of all path segments 
+        document.getElementById
+
+        console.log(cascade)
+
+
+
+        // Grab a list of all path segments and convert it from a nodelist to an array
         let path_segments = Array.from(document.querySelectorAll(".segment-name"));
 
         // Remove the first segment because its actually the bucket name
@@ -361,9 +368,16 @@ class S3Browser extends Component {
 
         // Add the final segment
         path += final_segment + "/"
-        console.log(path)
+
         // Navigate to path
         this.changePath(path)
+    }
+
+
+    handleKeyPress(key) {
+        if (key !== "Enter") return
+
+        this.readS3Link()
     }
 
 
@@ -372,63 +386,7 @@ class S3Browser extends Component {
             <div className="S3Browser">
                 <h2>S3 Browser: {this.QASM.s3_bucket}</h2>
                 <div className="header">
-                    {/* <div className="s3-path-container">
-                        <button
-                            onClick={this.readS3Link}
-                            className="button">
-                            Go to S3 Path:
-                        </button>
-                        <input
-                            id="s3-link"
-                            type="text"
-                        />
-                    </div> */}
-                    {(this.mode === s3_browser_modes.SAVE_JSON || this.mode === s3_browser_modes.SAVE_IMAGE) &&
-                        <div className="fieldset-container">
-                            <button 
-                                onClick={() => this.createFile(this.mode)}
-                                className="button">
-                                Save Here to New File:
-                            </button>
-                            <input
-                                id="new-filename"
-                                type="text"
-                            />
-                        </div>
-                    }
-                    <div className="nav-buttons">
-                        <button 
-                            className={this.parents.length !== 0 ? "nav-button not-disabled-button" : "nav-button disabled-button"}
-                            onClick={this.goBack} 
-                            disabled={this.parents.length == 0 ? true : undefined}>
-                            ⮨
-                        </button>
-                        <button className="nav-button" disabled={true}>
-                            ⮩
-                        </button>
-                    </div>
-                    <div className="path-display">
-                        <div className="path-display-inner">
-                            {this.path_segments_children.length >= 1 && 
-                                this.path_segments_children.map((segment, index) => (
-                                    <div className="path-segment" key={segment.name}>
-                                        <button 
-                                            className="segment-name"
-                                            onClick={() => this.createPath(segment.name, index - 1)}>
-                                            {segment.name === "" ? this.QASM.s3_bucket : segment.name}
-                                        </button>
-                                            {segment.folders.length !== 0 &&
-                                                <Dropdown
-                                                    items={segment.folders}
-                                                    callback={(segment) => this.createPath(segment, index)}
-                                                />
-                                            }
-                                    </div>
-                                ))
-                            }
-                        </div>
-                    </div>
-                    <div className="fieldset-container">
+                    <div className="options">
                         <fieldset className="directory-display-mode" onChange={this.updateDisplayMode}>
                             <legend>Display</legend>
                             <div>
@@ -455,6 +413,71 @@ class S3Browser extends Component {
                                 <label htmlFor="display-large">Large</label>
                             </div>
                         </fieldset>
+                        <div className="cascade">
+                            <label>
+                                Cascade
+                            </label>
+                            <input type="checkbox" />
+                        </div>
+                    </div>
+                    {/* <div className="s3-path-container">
+                        <button
+                            onClick={this.readS3Link}
+                            className="button">
+                            Go to S3 Path:
+                        </button>
+                        <input
+                            id="s3-link"
+                            type="text"
+                        />
+                    </div> */}
+                    {(this.mode === s3_browser_modes.SAVE_JSON || this.mode === s3_browser_modes.SAVE_IMAGE) &&
+                        <div className="fieldset-container">
+                            <button 
+                                onClick={() => this.createFile(this.mode)}
+                                className="button">
+                                Save Here to New File:
+                            </button>
+                            <input
+                                id="new-filename"
+                                type="text"
+                            />
+                        </div>
+                    }
+                    <div className="path-display">
+                        <div className="nav-buttons">
+                            <button 
+                                className={this.parents.length !== 0 ? "nav-button not-disabled-button" : "nav-button disabled-button"}
+                                onClick={this.goBack} 
+                                disabled={this.parents.length == 0 ? true : undefined}>
+                                ⮨
+                            </button>
+                            <button className="nav-button" disabled={true}>
+                                ⮩
+                            </button>
+                        </div>
+                        <div className="path-display-inner">
+                            {this.path_segments_children.length >= 1 && 
+                                this.path_segments_children.map((segment, index) => (
+                                    <div className="path-segment" key={segment.name}>
+                                        <button 
+                                            className="segment-name"
+                                            onClick={() => this.createPath(segment.name, index - 1)}>
+                                            {segment.name === "" ? this.QASM.s3_bucket : segment.name}
+                                        </button>
+                                            {segment.folders.length !== 0 &&
+                                                <Dropdown
+                                                    items={segment.folders}
+                                                    callback={(segment) => this.createPath(segment, index)}
+                                                />
+                                            }
+                                    </div>
+                                ))
+                            }
+                        </div>
+                    </div>
+                    <div className="fieldset-container">
+                        
                     
                         {/* <div className="path-container">
                             {this.mode === s3_browser_modes.SELECT_DIRECTORY &&
@@ -474,7 +497,7 @@ class S3Browser extends Component {
                         }
                     </div>
                 </div>
-                <div className={this.getDisplayMode()} id="s3-item-holder">
+                <div className={this.getDisplayMode() + " content"} id="s3-item-holder">
                     {this.folders.map(folder_name => (
                         <div onClick={e => this.changePath(folder_name)} key={folder_name} className="clickable">
                             <S3Folder
@@ -488,6 +511,26 @@ class S3Browser extends Component {
                                 path={file_name}/> 
                         </div> 
                     ))}
+                </div>
+                <div className="footer">
+                    <span>
+                        Folder:
+                    </span>
+                    <input
+                        id="s3-link"
+                        type="text"
+                        onKeyDown={(e) => this.handleKeyPress(e.key)}
+                    />
+                    {this.mode === s3_browser_modes.SELECT_DIRECTORY && 
+                        <button
+                            onClick={this.selectFolder}
+                            className="select-button button">
+                            Select Current Directory
+                        </button>
+                    }
+                    <button className="button">
+                        Cancel
+                    </button>
                 </div>
             </div>
         )
