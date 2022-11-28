@@ -150,7 +150,7 @@ class ImageLabeler extends Component {
 
     render() {
         return (
-            <div className="S3DirectoryBinaryEditor" key={this.component_updater}>
+            <div className="ImageLabeler" key={this.component_updater}>
                 <h2 className={this.cur_image_name === null ? "hidden" : ""}>{this.cur_image_name} ({this.cur_image_idx+1} of {this.n_images})</h2>
                 <header>
                     <button className="button" onClick={this.selectImageDir}>
