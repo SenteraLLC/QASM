@@ -1,5 +1,5 @@
 {
-  "name": "qasm-app",
+  "name": "image-labeler",
   "version": "0.11.0",
   "private": true,
   "proxy": "http://localhost:3000",
@@ -59,7 +59,7 @@
     ]
   },
   "build": {
-    "productName": "QASM App",
+    "productName": "Image Labeler",
     "win": {
       "target": "NSIS",
       "icon": "public/icon.png"
