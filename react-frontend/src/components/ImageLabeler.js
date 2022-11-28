@@ -1,6 +1,6 @@
 import { Component } from 'react';
 import Ulabel from './Ulabel.js';
-// import "../css/ImageLabeler.css";
+import "../css/ImageLabeler.css";
 const { function_names } = require("../../public/electron_constants.js");
 
 class ImageLabeler extends Component {

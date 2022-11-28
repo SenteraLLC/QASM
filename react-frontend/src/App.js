@@ -8,7 +8,7 @@ import S3Browser from "./components/S3Browser.js";
 import ImageLabeler from './components/ImageLabeler';
 
 import icon from "../public/icon.png";
-import {BrowserRouter, Link, Route, Routes} from "react-router-dom";
+import {Link, MemoryRouter, Route, Routes} from "react-router-dom";
 
 // Link keys to components
 const COMPONENT_KEYS = {
@@ -80,7 +80,7 @@ class App extends Component {
   render() {
     console.log(this.components)
     return (
-      <BrowserRouter basename={process.env.PUBLIC_URL}>
+      <MemoryRouter>
       <div className="App">
         { this.location !== "s3Browser" &&
           // Disable navbar when in the s3Browser
@@ -115,9 +115,9 @@ class App extends Component {
             key="S3Browser"/>
         </Routes>
       </div>
-      </BrowserRouter>
+      </MemoryRouter>
     );
-  }  
+  }
 }
 
 export default App;

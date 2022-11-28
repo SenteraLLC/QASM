@@ -1,0 +1,35 @@
+{
+    "name": "Image Labeler",
+    "app": "s3",
+    "bucket": "stand-qa-data",
+    "components": [
+        {
+            "component": "home"
+        },
+        {
+            "component": "imagelabeler",
+            "display_name": "Image Labeler",
+            "image_dir": "mfstand/2022/1051-Thonbontle/AckermannJWSP1A/100722T140321/RGB/",
+            "anno_dir": "mfstand/2022/1051-Thonbontle/AckermannJWSP1A/100722T140321/row_annotations/",
+            "subtasks": {
+                "row_classification": {
+                    "display_name": "Row Classification",
+                    "classes": [
+                        {
+                            "name": "Male",
+                            "color": "blue",
+                            "id": 10
+                        },
+                        {
+                            "name": "Female",
+                            "color": "white",
+                            "id": 11
+                        }
+                    ],
+                    "allowed_modes": ["polyline"],
+                    "resume_from": "row_annotations"
+                }
+            }
+        }
+    ]
+}
