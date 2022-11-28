@@ -140,7 +140,10 @@ class Ulabel extends Component {
         // when navigating to a new page. Otherwise, 
         // multiple layers of ulabel hooks build up in 
         // the app which causes some wacky stuff to happen.
-        window.location.reload();
+
+        // TODO: With MemoryRouter this will always go back to homepage,
+        // when it should ideally reload the target component
+        window.location.reload(); 
     }
 }
 
