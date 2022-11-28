@@ -1,6 +1,6 @@
 {
   "name": "qasm-app",
-  "version": "0.11.0",
+  "version": "0.12.0",
   "private": true,
   "proxy": "http://localhost:3000",
   "homepage": "./",
