@@ -8,7 +8,7 @@ import S3Browser from "./components/S3Browser.js";
 import ImageLabeler from './components/ImageLabeler';
 
 import icon from "../public/icon.png";
-import {HashRouter, BrowserRouter, Link, Route, Routes} from "react-router-dom";
+import {BrowserRouter, Link, Route, Routes} from "react-router-dom";
 
 // Link keys to components
 const COMPONENT_KEYS = {
