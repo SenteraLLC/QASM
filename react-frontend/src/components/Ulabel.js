@@ -73,17 +73,16 @@ class Ulabel extends Component {
         await setTimeout(() => {}, 1); // idk why but unless we wait ulabel can't load the image
 
         // Initial ULabel configuration
-        let ulabel = new ULabel(
+        this.ulabel = new ULabel(
             "container",        // container_id
             this.image,         // image_data
             this.username,      // username
             this.on_submit,     // on_submit
             this.subtasks,      // subtasks
         );
-        this.ulabel = ulabel;
 
         // Wait for ULabel instance to finish initialization
-        ulabel.init(function () {
+        this.ulabel.init(function () {
             console.log("Finished initialization");
         });
     }
@@ -125,13 +124,23 @@ class Ulabel extends Component {
     render() {
         return (
             <div
-                id="container" className="ulabel-container"
+                id="container" 
+                className="ulabel-container"
             ></div>
         )
     }
 
     componentDidUpdate(prevProps) { // Triggers when props change
         this.reload(this.props, prevProps.subtasks);
+    }
+
+    componentWillUnmount() {
+        // This is a hack to force the page to reload
+        // when ulabel needs to be destroyed, such as 
+        // when navigating to a new page. Otherwise, 
+        // multiple layers of ulabel hooks build up in 
+        // the app which causes some wacky stuff to happen.
+        window.location.reload();
     }
 }
 
