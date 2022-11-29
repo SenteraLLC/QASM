@@ -34,6 +34,7 @@
   "scripts": {
     "qasm": "python QASM.py",
     "QASM": "python QASM.py",
+    "qams": "python QASM.py",
     "qasm-build": "python QASM.py --mode build-exe",
     "start": "react-app-rewired start",
     "build": "react-app-rewired build",

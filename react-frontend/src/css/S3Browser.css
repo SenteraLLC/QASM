@@ -1,5 +1,7 @@
 div.S3Browser {
     margin: 0 1em;
+    display: flex;
+    flex-direction: column;
 }
 
 div.S3Browser div.clickable {
@@ -45,19 +47,8 @@ div.S3Browser div.header div.options fieldset {
 div.S3Browser div.header div.options fieldset input {
     margin-left: 0;
 
-      /* remove standard background appearance
-    -webkit-appearance: none;
-    -moz-appearance: none;
-    appearance: none;
-    /* create custom radiobutton appearance */
 
-    /* background-color only for content */
-    /* background-clip: content-box;
-    border: 2px solid #bbbbbb;
-    background-color: #e7e6e7;
-    border-radius: 50%;
-
- */ 
+ 
 
 }
 
@@ -146,7 +137,7 @@ div.S3Browser div.header div.path-segment:hover > * {
 
 /* --------- Content styling --------- */
 div.S3Browser div.content {
-    margin-bottom: 4.5em;
+    margin-bottom: 2em;
 }
 
 /* --------- Grid styling --------- */
@@ -162,16 +153,17 @@ div.S3Browser div.grid {
 /* --------- Footer styling --------- */
 
 div.footer {
+    /* Page positioning */
+    position: fixed;
+    bottom: 0;
+    width: calc(100% - 2em);
+    left: 0;
+    padding: 1em;
+
+    /* Content positioning */
     display: flex;
     align-items: center;
     gap: 1em;
-    position: fixed;
-    bottom: 0;
-    right: 1em;
-
-
-    height: 4em;
-    width: 100%;
     background-color: rgb(235, 235, 235);
     text-align: right;
 }
@@ -179,6 +171,7 @@ div.footer {
 div.footer > * {
     flex-grow: 0;
 }
+
 div.footer input#s3-link {
     flex-grow: 1;
 }
