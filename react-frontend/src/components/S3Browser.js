@@ -392,7 +392,7 @@ class S3Browser extends Component {
         return (
             <div className="S3Browser">
                 <h2>S3 Browser: {this.QASM.s3_bucket}</h2>
-                <div className="header">
+                <header>
                     <div className="options">
                         <fieldset className="directory-display-mode" onChange={this.updateDisplayMode}>
                             <legend>Display</legend>
@@ -421,10 +421,11 @@ class S3Browser extends Component {
                             </div>
                         </fieldset>
                         <div className="cascade">
-                            <label>
+                            <label
+                                for="cascade-checkbox">
                                 Cascade
                             </label>
-                            <input type="checkbox" />
+                            <input type="checkbox" id="cascade-checkbox"/>
                         </div>
                     </div>
                     {/* <div className="s3-path-container">
@@ -496,7 +497,7 @@ class S3Browser extends Component {
                             }
                         </div> */}
                     </div>
-                </div>
+                </header>
                 <div className={this.getDisplayMode() + " content"} id="s3-item-holder">
                     {this.folders.map(folder_name => (
                         <div onClick={e => this.changePath(folder_name)} key={folder_name} className="clickable">

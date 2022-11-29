@@ -21,15 +21,18 @@ div.S3Browser #s3-item-holder {
 
 /* --------- Header styling --------- */
 
-/* div.S3Browser div.header {
-    display: grid;
-    grid-template-columns: auto 1fr auto;
-    gap: 1em;
-} */
+div.S3Browser header label, 
+div.S3Browser header input, 
+div.S3Browser header button {
+    cursor: pointer;
+}    
 
-div.S3Browser div.header div.options {
-    /* display: grid;
-    grid-template-columns: 1fr 1fr; */
+div.S3Browser header button:disabled,
+div.S3Browser header button[disabled] {
+    cursor: default;
+} 
+
+div.S3Browser header div.options {
     margin: 0 -1em;
     border: 1px solid rgba(0, 0, 0, 0.05);
     padding: 0.25em 1em;
@@ -37,39 +40,28 @@ div.S3Browser div.header div.options {
     justify-content: flex-start;
     align-items: stretch;
     background-color: rgba(0, 0, 0, 0.04)
-}
+}            
 
-div.S3Browser div.header div.options fieldset {
+div.S3Browser header div.options > * {
+    margin: 0 2px 2px;
+}            
+
+div.S3Browser header div.options fieldset {
     text-align: left;
     min-width: 4em;
-}
+}            
 
-div.S3Browser div.header div.options fieldset input {
+div.S3Browser header div.options fieldset input {
     margin-left: 0;
+}            
 
-
- 
-
+div.S3Browser header div.path-display {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    margin-top: 0.1em;
 }
 
-div.S3Browser div.header label, 
-div.S3Browser div.header input, 
-div.S3Browser div.header button {
-    cursor: pointer;
-}
-
-div.S3Browser div.header button.button {
-    flex-grow: 1;
-    text-align: left;
-}
-
-div.S3Browser div.header button.select-button {
-    grid-column: 1 / -1;
-    margin: 0.25em 2px 0 2px;
-    text-align: center;
-}
-
-div.S3Browser div.header button.nav-button {
+div.S3Browser header div.path-display div.nav-buttons button.nav-button {
     margin: 0 0.25em;
     padding: 0;
     border: none;
@@ -77,63 +69,53 @@ div.S3Browser div.header button.nav-button {
     font-size: x-large;
     transition-timing-function: ease-in;
     transition-duration: 1s;
-}
+}        
 
-div.S3Browser div.header button.nav-button.disabled-button {
+div.S3Browser div.path-display div.nav-buttons header button.nav-button.disabled-button {
     transition-duration: 0s;
-}
+}        
 
-div.S3Browser div.header button.nav-button.not-disabled-button:hover {
+div.S3Browser header div.path-display div.nav-buttons button.nav-button.not-disabled-button:hover {
     color: rgb(69, 179, 224);
-}
+}        
 
-div.S3Browser div.header button:disabled,
-div.S3Browser div.header button[disabled] {
-    cursor: default;
-}
-
-div.S3Browser div.header div.path-display {
-    display: grid;
-    grid-template-columns: auto 1fr;
-    margin-top: 0.1em;
-}
-
-div.S3Browser div.header div.path-display div.path-display-inner {
+div.S3Browser header div.path-display div.path-display-inner {
     font-size: small;
     text-align: left;
     border: 1px solid rgba(119, 136, 153, 0.3);
 }
 
-div.S3Browser div.header div.path-display div.path-display-inner:empty {
+div.S3Browser header div.path-display div.path-display-inner:empty {
     border: 1px solid rgba(0, 0, 0, 0);
 }
 
-div.S3Browser div.header div.path-segment {
+div.S3Browser header div.path-segment {
     display: inline-flex;
     align-content: stretch;
     align-items: stretch;
 }
 
-div.S3Browser div.header div.path-segment button.segment-name {
+div.S3Browser header div.path-segment > * {
+    border: 1px solid rgba(0, 0, 0, 0);
+}
+
+div.S3Browser header div.path-segment button.segment-name {
     display: inline;
     margin: 0;
     padding: 0.45em 0.5em;
     background-color: rgba(0, 0, 0, 0);
-}
+}    
 
-div.S3Browser div.header div.path-segment div.Dropdown button.toggle-display {
+div.S3Browser header div.path-segment div.Dropdown button.toggle-display {
     background-color: rgba(0, 0, 0, 0);
     border: none;
+}    
+
+div.S3Browser header div.path-segment:hover > * {
+    background-color: rgba(0, 200, 255, 0.15) !important;
+    border: 1px solid rgba(0, 200, 255, 0.20) !important;
 }
 
-div.S3Browser div.header div.path-segment > * {
-    border: 1px solid rgba(0, 0, 0, 0);
-}
-
-div.S3Browser div.header div.path-segment:hover > * {
-    background-color: rgba(0,200,255, 0.15) !important;
-    border: 1px solid rgba(0,200,255, 0.2) !important;
-}
 
 /* --------- Content styling --------- */
 div.S3Browser div.content {
