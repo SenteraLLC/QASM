@@ -488,13 +488,6 @@ class S3Browser extends Component {
                                 </button>
                             }
                         </div> */}
-                        {this.mode === s3_browser_modes.SELECT_DIRECTORY && 
-                            <button
-                                onClick={this.selectFolder}
-                                className="select-button button">
-                                Select Current Directory
-                            </button>
-                        }
                     </div>
                 </div>
                 <div className={this.getDisplayMode() + " content"} id="s3-item-holder">
