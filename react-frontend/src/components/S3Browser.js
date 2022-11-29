@@ -381,6 +381,13 @@ class S3Browser extends Component {
     }
 
 
+    closeWindow() {
+        if (confirm("Do you want to close the browser without selecting anything?")) {
+            window.close()
+        }
+    }
+
+
     render() {
         return (
             <div className="S3Browser">
@@ -521,7 +528,9 @@ class S3Browser extends Component {
                             Select Current Directory
                         </button>
                     }
-                    <button className="button">
+                    <button 
+                        className="button"
+                        onClick={this.closeWindow}>
                         Cancel
                     </button>
                 </div>
