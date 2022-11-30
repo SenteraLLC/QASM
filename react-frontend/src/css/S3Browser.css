@@ -1,7 +1,5 @@
 div.S3Browser {
     margin: 0 1em;
-    display: flex;
-    flex-direction: column;
 }
 
 div.S3Browser div.clickable {
@@ -25,12 +23,12 @@ div.S3Browser header label,
 div.S3Browser header input, 
 div.S3Browser header button {
     cursor: pointer;
-}    
+}
 
 div.S3Browser header button:disabled,
 div.S3Browser header button[disabled] {
     cursor: default;
-} 
+}
 
 div.S3Browser header div.options {
     margin: 0 -1em;
@@ -40,20 +38,20 @@ div.S3Browser header div.options {
     justify-content: flex-start;
     align-items: stretch;
     background-color: rgba(0, 0, 0, 0.04)
-}            
+}
 
 div.S3Browser header div.options > * {
     margin: 0 2px 2px;
-}            
+}
 
 div.S3Browser header div.options fieldset {
     text-align: left;
     min-width: 4em;
-}            
+}
 
 div.S3Browser header div.options fieldset input {
     margin-left: 0;
-}            
+}
 
 div.S3Browser header div.path-display {
     display: grid;
@@ -69,15 +67,15 @@ div.S3Browser header div.path-display div.nav-buttons button.nav-button {
     font-size: x-large;
     transition-timing-function: ease-in;
     transition-duration: 1s;
-}        
+}
 
 div.S3Browser div.path-display div.nav-buttons header button.nav-button.disabled-button {
     transition-duration: 0s;
-}        
+}
 
 div.S3Browser header div.path-display div.nav-buttons button.nav-button.not-disabled-button:hover {
     color: rgb(69, 179, 224);
-}        
+}
 
 div.S3Browser header div.path-display div.path-display-inner {
     font-size: small;
@@ -104,12 +102,12 @@ div.S3Browser header div.path-segment button.segment-name {
     margin: 0;
     padding: 0.45em 0.5em;
     background-color: rgba(0, 0, 0, 0);
-}    
+}
 
 div.S3Browser header div.path-segment div.Dropdown button.toggle-display {
     background-color: rgba(0, 0, 0, 0);
     border: none;
-}    
+}
 
 div.S3Browser header div.path-segment:hover > * {
     background-color: rgba(0, 200, 255, 0.15) !important;
