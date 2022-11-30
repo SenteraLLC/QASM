@@ -74,7 +74,6 @@ class App extends Component {
 
   
   render() {
-    console.log(this.components)
     return (
       <HashRouter>
       <div className="App">

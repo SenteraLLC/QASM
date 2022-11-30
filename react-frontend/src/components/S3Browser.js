@@ -43,7 +43,6 @@ class S3Browser extends Component {
         this.setS3Path               = this.setS3Path.bind(this);
         this.readS3Link              = this.readS3Link.bind(this);
         this.getPathSegmentsChildren = this.getPathSegmentsChildren.bind(this);
-        this.temp                    = this.temp.bind(this);
         this.createPath              = this.createPath.bind(this);
         this.handleKeyPress          = this.handleKeyPress.bind(this);
         this.goForward               = this.goForward.bind(this);
@@ -227,8 +226,8 @@ class S3Browser extends Component {
         let add_to_parents = kwargs.add_to_parents;
 
         if (folder === undefined) {
-            console.error("changePath must be given a path")
-            return
+            console.error("changePath must be given a path");
+            return;
         }
         
         if (flush_redo_stack === undefined) {
@@ -269,8 +268,7 @@ class S3Browser extends Component {
 
 
     /**
-     * Go up one folder level and
-     * populate the folders and files
+     * Go up one folder level and populate the folders and files.
      */
     async goBack() {
         // Add the current folder to the redo stack
@@ -296,7 +294,9 @@ class S3Browser extends Component {
         }
     }
 
-
+    /**
+     * Navigates to the folder on the top of the redo_stack.
+     */
     goForward() {
         this.changePath({
             "folder": this.redo_stack.pop(),
@@ -375,31 +375,23 @@ class S3Browser extends Component {
         document.getElementById("s3-item-holder").className = this.getDisplayMode();
     }
 
-
+    /**
+     * Call the backend to get all the children of each folder along a path
+     * 
+     * @returns {string[][]} Returns an array of string arrays. Each string array contains all of the children of a folder segment
+     */
     async getPathSegmentsChildren() {
         const data = await this.QASM.call_backend(window, function_names.GET_CASCADING_DIR_CHILDREN, this.path);
         return data.data;
     }
 
 
-    temp(string1) {
-        console.log(string1, "Inside S3Browser")
-    }
-
-
     createPath(final_segment, depth, cascade=false) {
-        console.log(final_segment, depth)
         // If the depth is negative, route to the root folder
         if (depth === -1) {
             this.changePath({"folder": ""});
             return
         }
-
-        document.getElementById
-
-        console.log(cascade)
-
-
 
         // Grab a list of all path segments and convert it from a nodelist to an array
         let path_segments = Array.from(document.querySelectorAll(".segment-name"));
@@ -420,14 +412,20 @@ class S3Browser extends Component {
         this.changePath({"folder": path})
     }
 
-
+    /**
+     * Handles key presses when focus is on the s3path input.
+     * 
+     * @param {string} key String saying what key was pressed
+     */
     handleKeyPress(key) {
         if (key !== "Enter") return
 
         this.readS3Link()
     }
 
-
+    /**
+     * Ask the user if they want to close the window. If they say yes, then close the window.
+     */
     closeWindow() {
         if (confirm("Do you want to close the browser without selecting anything?")) {
             window.close()
@@ -436,8 +434,6 @@ class S3Browser extends Component {
 
 
     render() {
-        console.log(this.parents, "Parents stack")
-        console.log(this.redo_stack, "redo stack")
         return (
             <div className="S3Browser">
                 <h2>S3 Browser: {this.QASM.s3_bucket}</h2>
@@ -471,7 +467,7 @@ class S3Browser extends Component {
                         </fieldset>
                         <div className="cascade">
                             <label
-                                for="cascade-checkbox">
+                                htmlFor="cascade-checkbox">
                                 Cascade
                             </label>
                             <input type="checkbox" id="cascade-checkbox"/>
@@ -506,13 +502,13 @@ class S3Browser extends Component {
                             <button 
                                 className={this.parents.length !== 0 ? "nav-button not-disabled-button" : "nav-button disabled-button"}
                                 onClick={this.goBack} 
-                                disabled={this.parents.length == 0 ? "true" : undefined}>
+                                disabled={this.parents.length == 0 ? true : undefined}>
                                 ⮨
                             </button>
                             <button 
                                 className="nav-button"
                                 onClick={this.goForward}
-                                disabled={this.redo_stack.length == 0 ? "true" : undefined}>
+                                disabled={this.redo_stack.length == 0 ? true : undefined}>
                                 ⮩
                             </button>
                         </div>
