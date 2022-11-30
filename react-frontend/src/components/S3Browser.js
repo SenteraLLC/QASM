@@ -466,11 +466,11 @@ class S3Browser extends Component {
                             </div>
                         </fieldset>
                         <div className="cascade">
+                            <input type="checkbox" id="cascade-checkbox"/>
                             <label
                                 htmlFor="cascade-checkbox">
                                 Cascade
                             </label>
-                            <input type="checkbox" id="cascade-checkbox"/>
                         </div>
                     </div>
                     {/* <div className="s3-path-container">
