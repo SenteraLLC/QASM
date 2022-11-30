@@ -1,4 +1,4 @@
-import { Component} from 'react';
+import { Component } from 'react';
 import icon from "../../public/icon.png";
 
 class Home extends Component {
