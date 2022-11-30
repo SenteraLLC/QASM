@@ -56,7 +56,7 @@ This will build an app based on the specifications found in ``react-frontend/con
     - ``"imagelabeler"`` Configuration ``<Object>``:
          - ``"image_dir": <string>`` (Optional) Path to directory of images
          - ``"anno_dir": <string>`` (Optional) Path to directory of labels/annotations
-         - ``"subtasks": <Object>`` ULabel subtasks definition(s)
+        - ``"subtasks": <Object>`` ULabel [subtasks](https://github.com/SenteraLLC/ulabel/blob/044c24072fe00a30b89e0f370fb8d4ddad28b59d/api_spec.md#subtasks) definition(s) 
             - ``<string>: <Object>`` Custom subtask name, followed by the subtask definition object
                 - ``"display_name": <string>`` Displayed subtask name
                 - ``"classes": <Array>`` List of class definition objects
