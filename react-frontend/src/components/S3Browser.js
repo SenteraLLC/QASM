@@ -386,7 +386,7 @@ class S3Browser extends Component {
     }
 
 
-    createPath(final_segment, depth, cascade=false) {
+    async createPath(final_segment, depth, cascade=false) {
         // If the depth is negative, route to the root folder
         if (depth === -1) {
             this.changePath({"folder": ""});
@@ -402,11 +402,29 @@ class S3Browser extends Component {
         // Create a path up to a specified depth
         let path = "";
         for (let idx = 0; idx < depth; idx++) {
-            path += path_segments[idx].innerText + "/"
+            path += path_segments[idx].innerText + "/";
         }
 
         // Add the final segment
         path += final_segment + "/"
+
+        // if cascade is true, add the rest of the path segments as well
+        if (cascade) {
+            let cascaded_path = path;
+            for (let idx = depth + 1; idx < path_segments.length; idx++) {
+                cascaded_path += path_segments[idx].innerText + "/";
+            }
+
+            const response = await this.QASM.call_backend(window, function_names.OPEN_S3_FOLDER, cascaded_path);
+            const folders = response.folders;
+            const files = response.files;
+
+            // Check if making the cascaded path results in a valid folder
+            if (folders.length !== 0 || files.length !== 0) {
+                this.changePath({"folder": cascaded_path})
+                return
+            }
+        }
 
         // Navigate to path
         this.changePath({"folder": path})
@@ -524,7 +542,11 @@ class S3Browser extends Component {
                                             {segment.folders.length !== 0 &&
                                                 <Dropdown
                                                     items={segment.folders}
-                                                    callback={(segment) => this.createPath(segment, index)}
+                                                    callback={(segment) => this.createPath(
+                                                        segment, 
+                                                        index, 
+                                                        document.querySelector('#cascade-checkbox').checked
+                                                    )}
                                                 />
                                             }
                                     </div>
