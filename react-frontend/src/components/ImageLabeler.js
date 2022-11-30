@@ -35,11 +35,9 @@ class ImageLabeler extends Component {
         this.loadAnnotations  = this.loadAnnotations.bind(this);
         this.changeCurImage   = this.changeCurImage.bind(this);
         this.on_submit        = this.on_submit.bind(this);
-        this.disableScrollBar = this.disableScrollBar.bind(this);
 
         // TODO: on-submit logic (save annos, nav to next? mark qa?)
         this.loadImageDir();
-        this.disableScrollBar();
     }
 
     /**
@@ -148,11 +146,6 @@ class ImageLabeler extends Component {
             }
             this.changeCurImage(1); // Go to next image
         }
-    }
-
-    disableScrollBar() {
-        // Disable the scroll bar bc ULabel was reseting it when certain buttons were clicked
-        document.documentElement.style.overflow = 'hidden';
     }
 
     render() {
