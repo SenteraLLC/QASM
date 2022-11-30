@@ -82,26 +82,29 @@ class App extends Component {
     return (
       <MemoryRouter>
       <div className="App">
-        { this.location !== "s3Browser" &&
-          // Disable navbar when in the s3Browser
-          <div className="menu">
-            <a href='/' id="menu-logo">
-              <img src={icon} alt="Logo" />
-            </a>
-            {this.components.map(component => (
-              <Link 
-                className="Link"
-                to={component.path}
-                key={component.path}> 
-                <h2>
-                  {component.display_name === undefined 
-                  ? component.component
-                  : component.display_name}
-                </h2>
-              </Link>
-            ))}
-          </div>
-        }
+        <div className={this.location === "s3Browser" ? "hidden" : "menu"}> 
+          {/* Disable navbar when in the s3Browser */}
+          <a href='/' id="menu-logo">
+            <img src={icon} alt="Logo" />
+          </a>
+          {this.components.map(component => (
+            <Link 
+              className="Link"
+              to={component.path}
+              key={component.path}> 
+              <h2>
+                {component.display_name === undefined 
+                ? component.component
+                : component.display_name}
+              </h2>
+            </Link>
+          ))}
+          <Link 
+              id="s3browser-link"
+              className=" Link hidden"
+              to="S3Browser"
+              key="S3Browser"/>
+        </div>
         <Routes>
           {this.componentList.map((component, idx) => (
             <Route 
