@@ -9,6 +9,7 @@ const { s3_browser_modes } = require("../QASM/constants.js");
 class S3Browser extends Component {
     component_updater = 0;
     path_segments_children = [];
+    redo_stack = [];
 
     constructor(props) {
         super(props);
@@ -42,9 +43,10 @@ class S3Browser extends Component {
         this.setS3Path               = this.setS3Path.bind(this);
         this.readS3Link              = this.readS3Link.bind(this);
         this.getPathSegmentsChildren = this.getPathSegmentsChildren.bind(this);
-        this.temp = this.temp.bind(this);
-        this.createPath = this.createPath.bind(this);
-        this.handleKeyPress = this.handleKeyPress.bind(this);
+        this.temp                    = this.temp.bind(this);
+        this.createPath              = this.createPath.bind(this);
+        this.handleKeyPress          = this.handleKeyPress.bind(this);
+        this.goForward               = this.goForward.bind(this);
     }
 
 
@@ -66,7 +68,7 @@ class S3Browser extends Component {
             this.parents.push(this.parents[i] + folders[i] + "/");
         }
         
-        this.changePath(path).then(() => {
+        this.changePath({"folder": path}).then(() => {
             this.parents.pop(); // Remove starting path from parent stack
         });
     }
@@ -198,7 +200,7 @@ class S3Browser extends Component {
      * Scrape s3 link from the input and
      * ask the user to confirm before navigating.
      */
-     readS3Link() {
+    readS3Link() {
         let link = document.getElementById("s3-link").value;
         console.log(link);
         /* eslint-disable */
@@ -213,14 +215,39 @@ class S3Browser extends Component {
      * Change the active path to a new folder
      * and populate its folders and files 
      * 
-     * @param {string} folder folder name
+     * @param {Object} kwargs {
+     *  {string} folder: Folder to change the path to, 
+     *  {Boolean} flush_redo_stack: Whether or not to reset the redo stack, 
+     *  {Boolean} add_to_parents: Whether or not to add the previous path to the parent stack
+     * }
      */
-    async changePath(folder) {
+    async changePath(kwargs) {
+        const folder = kwargs.folder;
+        let flush_redo_stack = kwargs.flush_redo_stack;
+        let add_to_parents = kwargs.add_to_parents;
+
+        if (folder === undefined) {
+            console.error("changePath must be given a path")
+            return
+        }
+        
+        if (flush_redo_stack === undefined) {
+            // Set default
+            flush_redo_stack = true;
+        }
+
+        if (add_to_parents === undefined) {
+            // Set default
+            add_to_parents = true;
+        }
+
         try {
             let response = await this.QASM.call_backend(window, function_names.OPEN_S3_FOLDER, folder);
             this.folders = response.folders;
             this.files = response.files;
-            this.parents.push(this.path);
+            if (add_to_parents) {
+                this.parents.push(this.path);
+            }
             this.path = folder;
 
             this.path_segments_children = await this.getPathSegmentsChildren();
@@ -228,8 +255,15 @@ class S3Browser extends Component {
                 path: this.path,
                 path_segments_children: this.path_segments_children
             });
+
+            // redo_stack should be flushed if this method isn't being called by goBack or goForward methods
+            if (flush_redo_stack) {
+                this.redo_stack = [];
+            }
+            return true
         } catch {
             console.log("Failed to load " + folder);
+            return false
         }
     }
 
@@ -239,25 +273,38 @@ class S3Browser extends Component {
      * populate the folders and files
      */
     async goBack() {
+        // Add the current folder to the redo stack
+        this.redo_stack.push(this.path);
+
         let folder = this.parents.pop();
         if (this.parents.length > 0) {
             folder += folder.endsWith("/") ? "" : "/" // Add trailing slash if not present
         }
-        try {
-            let response = await this.QASM.call_backend(window, function_names.OPEN_S3_FOLDER, folder);
-            this.folders = response.folders;
-            this.files = response.files;
-            this.path = folder;
-            this.path_segments_children = await this.getPathSegmentsChildren();
-            this.setState({
-                path: this.path,
-                path_segments_children: this.path_segments_children
-            });
-        } catch {
-            console.log("Failed to go back to " + folder);
-            this.parents.push(folder);
+        
+        // Change the path and record if the change was successful
+        let success = this.changePath({
+            "folder": folder,
+            "flush_redo_stack": false,
+            "add_to_parents": false
+        })
+
+        // If changing the path wasn't successful then we need to undo the changes we made to
+        // the undo and parents stack
+        if (!success) {
+            this.redo_stack.pop();
+            this.parents.push(folder)
         }
     }
+
+
+    goForward() {
+        this.changePath({
+            "folder": this.redo_stack.pop(),
+            "flush_redo_stack": false,
+            "add_to_parents": true
+        })
+    }
+
 
     /**
      * @param {string[]} path_array Array of all the S3 folder path segments
@@ -344,7 +391,7 @@ class S3Browser extends Component {
         console.log(final_segment, depth)
         // If the depth is negative, route to the root folder
         if (depth === -1) {
-            this.changePath("");
+            this.changePath({"folder": ""});
             return
         }
 
@@ -370,7 +417,7 @@ class S3Browser extends Component {
         path += final_segment + "/"
 
         // Navigate to path
-        this.changePath(path)
+        this.changePath({"folder": path})
     }
 
 
@@ -389,6 +436,8 @@ class S3Browser extends Component {
 
 
     render() {
+        console.log(this.parents, "Parents stack")
+        console.log(this.redo_stack, "redo stack")
         return (
             <div className="S3Browser">
                 <h2>S3 Browser: {this.QASM.s3_bucket}</h2>
@@ -457,10 +506,13 @@ class S3Browser extends Component {
                             <button 
                                 className={this.parents.length !== 0 ? "nav-button not-disabled-button" : "nav-button disabled-button"}
                                 onClick={this.goBack} 
-                                disabled={this.parents.length == 0 ? true : undefined}>
+                                disabled={this.parents.length == 0 ? "true" : undefined}>
                                 ⮨
                             </button>
-                            <button className="nav-button" disabled={true}>
+                            <button 
+                                className="nav-button"
+                                onClick={this.goForward}
+                                disabled={this.redo_stack.length == 0 ? "true" : undefined}>
                                 ⮩
                             </button>
                         </div>
@@ -500,7 +552,7 @@ class S3Browser extends Component {
                 </header>
                 <div className={this.getDisplayMode() + " content"} id="s3-item-holder">
                     {this.folders.map(folder_name => (
-                        <div onClick={e => this.changePath(folder_name)} key={folder_name} className="clickable">
+                        <div onClick={e => this.changePath({"folder": folder_name})} key={folder_name} className="clickable">
                             <S3Folder
                                 path={folder_name}/>  
                         </div>
