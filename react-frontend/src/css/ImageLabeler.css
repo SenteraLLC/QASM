@@ -3,6 +3,6 @@ div.ImageLabeler header {
     margin-bottom: 0;
 }
 
-body {
+body:has(div.ImageLabeler) {
     overflow: hidden; /* Hide scrollbar */
 }
