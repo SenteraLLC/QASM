@@ -3,6 +3,14 @@
 <html lang="en">
 <head>
 <meta charset="utf-8"/>
+<!-- 
+  Node 'module' definition causes jquery to mount incorrectly
+  https://github.com/aurelia/skeleton-navigation/pull/675#issuecomment-275467435 
+-->
+<!-- <script> delete window.require; delete window.exports; delete window.module; </script> -->
+<!-- This gets it in the local scope -->
+<!-- <script src="https://unpkg.com/ulabel/dist/ulabel.js"></script> -->
+<!-- <script src="https://code.jquery.com/jquery-3.6.1.min.js" type="text/javascript"></script> -->
 <link href="%PUBLIC_URL%/icon.png" rel="icon"/>
 <meta content="width=device-width, initial-scale=1" name="viewport"/>
 <meta content="#000000" name="theme-color"/>
