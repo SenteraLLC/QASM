@@ -24,7 +24,7 @@ class Home extends Component {
         // Runs on page load. The timeout makes it actually work for some reason
         setTimeout(() => {
             this.forwardToS3Browser();
-        }, 0)
+        }, 1)
     }
 
     render() {
