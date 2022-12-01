@@ -255,6 +255,9 @@ class S3Browser extends Component {
                 path_segments_children: this.path_segments_children
             });
 
+            // Fill in the path link with the new path
+            document.getElementById("s3-link").value = this.path;
+
             // redo_stack should be flushed if this method isn't being called by goBack or goForward methods
             if (flush_redo_stack) {
                 this.redo_stack = [];

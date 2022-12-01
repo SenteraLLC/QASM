@@ -117,7 +117,7 @@ div.S3Browser header div.path-segment:hover > * {
 
 /* --------- Content styling --------- */
 div.S3Browser div.content {
-    margin-bottom: 2em;
+    margin-bottom: 6em;
 }
 
 /* --------- Grid styling --------- */
