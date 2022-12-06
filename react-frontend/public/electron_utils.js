@@ -7,10 +7,18 @@ const path = require('path');
 
 // Connect function names with their function handlers
 exports.function_handlers = {
-    [function_names.LOAD_LABELS]:  handleLoadLabels,
-    [function_names.OPEN_DIR]:     handleOpenDir,
-    [function_names.LOAD_IMAGES]:  handleLoadImages,
-    [function_names.SAVE_JSON_FILE]: handleSaveFile,
+    // [function_names.SAVE_BINARY_DIRECTORY]:   saveBinaryDirectory,
+    [function_names.LOAD_LABELS]:             handleLoadLabels,
+    // [function_names.LOAD_IMAGE]:              handleLoadImage,
+    [function_names.LOAD_IMAGES]:             handleLoadImages,
+    [function_names.OPEN_DIR]:                handleOpenDir,
+    // [function_names.OPEN_IMG_DIR]:            handleOpenImgDir,
+    // [function_names.OPEN_IMG]:                handleLoadImage,
+    // [function_names.SAVE_IMAGE]:              handleSaveImage,
+    [function_names.LOAD_JSON]:               handleLoadJson,
+    [function_names.SAVE_JSON_FILE]:          handleSaveJSON,
+    [function_names.SAVE_JSON_TO_PATH]:       handleSaveJSONtoPath,
+    // [function_names.OPEN_S3_FOLDER]:          handleOpenS3Folder,
 }
 
 
@@ -57,10 +65,10 @@ async function handleOpenFile(event, data) {
  * Open a save file dialog
  * 
  * @param event event
- * @param {object} data data to be saved
+ * @param {object} data {labels: {}, path: ""}
  * @returns file path on sucess, nothing on cancel
  */
- async function handleSaveFile(event, data) {
+ async function handleSaveJSON(event, data) {
     const dialogOptions = {
         title: "Select Where to Save Labels",
         filters: [
@@ -77,6 +85,22 @@ async function handleOpenFile(event, data) {
         } catch {
             return "Error when saving labels.";
         }
+    }
+}
+
+/**
+ * Save a json to a path
+ * 
+ * @param event event
+ * @param {object} data {labels: {}, path: ""}
+ * @returns file path on sucess, nothing on cancel
+ */
+ async function handleSaveJSONtoPath(event, data) {
+    try {
+        fs.writeFileSync(data.path, JSON.stringify(data.labels));
+        return "Saved labels at " + data.path;
+    } catch (e) {
+        return "Error when saving labels.";
     }
 }
 
@@ -144,4 +168,16 @@ async function handleLoadLabels(event, data) {
     } catch {
         return {};
     }
+}
+
+/**
+ * Get annotation json from a file path
+ * 
+ * @param {*} event event
+ * @param {string} data file path
+ * @returns {Object} annotation json
+ */
+ async function handleLoadJson(event, data) {
+    let rawdata = fs.readFileSync(data);
+    return JSON.parse(rawdata);
 }
