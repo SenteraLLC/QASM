@@ -563,7 +563,7 @@ class S3Browser extends Component {
                 <div className="footer">
                     {(this.mode === s3_browser_modes.SAVE_JSON || this.mode === s3_browser_modes.SAVE_IMAGE) && 
                         <div className="new-filename-container">
-                            <label>
+                            <label htmlFor="new-filename">
                                 New Filename: 
                             </label>
                             <input
@@ -573,9 +573,9 @@ class S3Browser extends Component {
                         </div>
                     }
                     <div className="main-footer-content">
-                        <span>
+                        <label htmlFor="s3-link">
                             Folder:
-                        </span>
+                        </label>
                         <input
                             id="s3-link"
                             type="text"
@@ -609,10 +609,10 @@ class S3Browser extends Component {
 
     async componentDidMount() { 
         try {
-          this.path_segments_children = await this.getPathSegmentsChildren();
-          this.forceUpdate();
+            this.path_segments_children = await this.getPathSegmentsChildren();
+            this.forceUpdate();
         } catch(error) {
-            console.error(error)
+            console.error(error);
         }
     }
 }
