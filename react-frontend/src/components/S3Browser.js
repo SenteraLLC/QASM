@@ -182,7 +182,18 @@ class S3Browser extends Component {
                 throw new Error("Trying to create image with unknown file type.");
         }
 
-        let new_filename = document.getElementById("new-filename").value;
+        const new_filename_input = document.getElementById("new-filename")
+        let new_filename = new_filename_input.value;
+
+        // Make sure the filename isn't blank
+        if (new_filename === "") {
+            // TODO: Show an alert if the user trys to save without a filename
+            // The built-in javascript alert() was causing a weird bug with electron
+            console.warn("No filename provided")
+            new_filename_input.focus();
+            return
+        }
+
         new_filename = new_filename.replace(" ", "_").split('.')[0]; // Space -> underscore, remove extension
         new_filename = new_filename + extension; // Save with proper extension
         new_filename = this.path + new_filename; // Add full path
@@ -494,30 +505,6 @@ class S3Browser extends Component {
                             </label>
                         </div>
                     </div>
-                    {/* <div className="s3-path-container">
-                        <button
-                            onClick={this.readS3Link}
-                            className="button">
-                            Go to S3 Path:
-                        </button>
-                        <input
-                            id="s3-link"
-                            type="text"
-                        />
-                    </div> */}
-                    {(this.mode === s3_browser_modes.SAVE_JSON || this.mode === s3_browser_modes.SAVE_IMAGE) &&
-                        <div className="fieldset-container">
-                            <button 
-                                onClick={() => this.createFile(this.mode)}
-                                className="button">
-                                Save Here to New File:
-                            </button>
-                            <input
-                                id="new-filename"
-                                type="text"
-                            />
-                        </div>
-                    }
                     <div className="path-display">
                         <div className="nav-buttons">
                             <button 
@@ -557,19 +544,6 @@ class S3Browser extends Component {
                             }
                         </div>
                     </div>
-                    <div className="fieldset-container">
-                        
-                    
-                        {/* <div className="path-container">
-                            {this.mode === s3_browser_modes.SELECT_DIRECTORY &&
-                                <button 
-                                    onClick={this.selectFolder}
-                                    className="button">
-                                    Select Directory: {this.path}
-                                </button>
-                            }
-                        </div> */}
-                    </div>
                 </header>
                 <div className={this.getDisplayMode() + " content"} id="s3-item-holder">
                     {this.folders.map(folder_name => (
@@ -587,26 +561,46 @@ class S3Browser extends Component {
                     ))}
                 </div>
                 <div className="footer">
-                    <span>
-                        Folder:
-                    </span>
-                    <input
-                        id="s3-link"
-                        type="text"
-                        onKeyDown={(e) => this.handleKeyPress(e.key)}
-                    />
-                    {this.mode === s3_browser_modes.SELECT_DIRECTORY && 
-                        <button
-                            onClick={this.selectFolder}
-                            className="select-button button">
-                            Select Current Directory
-                        </button>
+                    {(this.mode === s3_browser_modes.SAVE_JSON || this.mode === s3_browser_modes.SAVE_IMAGE) && 
+                        <div className="new-filename-container">
+                            <label>
+                                New Filename: 
+                            </label>
+                            <input
+                                id="new-filename"
+                                type="text" 
+                            />
+                        </div>
                     }
-                    <button 
-                        className="button"
-                        onClick={this.closeWindow}>
-                        Cancel
-                    </button>
+                    <div className="main-footer-content">
+                        <span>
+                            Folder:
+                        </span>
+                        <input
+                            id="s3-link"
+                            type="text"
+                            onKeyDown={(e) => this.handleKeyPress(e.key)}
+                        />
+                        {this.mode === s3_browser_modes.SELECT_DIRECTORY && 
+                            <button
+                                onClick={this.selectFolder}
+                                className="select-button button">
+                                Select Current Directory
+                            </button>
+                        }
+                        {(this.mode === s3_browser_modes.SAVE_JSON || this.mode === s3_browser_modes.SAVE_IMAGE) &&
+                            <button
+                                onClick={() => this.createFile(this.mode)}
+                                className="button">
+                                Save New File Here
+                            </button>
+                        }
+                        <button 
+                            className="button"
+                            onClick={this.closeWindow}>
+                            Cancel
+                        </button>
+                    </div>
                 </div>
             </div>
         )
