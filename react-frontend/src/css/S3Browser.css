@@ -120,6 +120,13 @@ div.S3Browser div.content {
     margin-bottom: 6em;
 }
 
+div.S3Browser:has(input#new-filename) div.content {
+    /* When input#new-filename is present we need to account for the greater
+    size of the footer by adding more margin to the content */
+    margin-bottom: 8em;
+}
+
+
 /* --------- Grid styling --------- */
 
 div.S3Browser div.grid {
@@ -133,25 +140,34 @@ div.S3Browser div.grid {
 /* --------- Footer styling --------- */
 
 div.footer {
-    /* Page positioning */
     position: fixed;
     bottom: 0;
     width: calc(100% - 2em);
     left: 0;
     padding: 1em;
+    background-color: rgb(235, 235, 235);
+}
 
-    /* Content positioning */
+div.footer div.main-footer-content {
     display: flex;
     align-items: center;
     gap: 1em;
-    background-color: rgb(235, 235, 235);
     text-align: right;
 }
 
-div.footer > * {
-    flex-grow: 0;
+div.footer div.main-footer-content input#s3-link {
+    flex-grow: 1;
 }
 
-div.footer input#s3-link {
-    flex-grow: 1;
+div.footer div.new-filename-container {
+    display: flex;
+    margin-bottom: 1em;
+}
+
+div.footer label {
+    margin-right: 1em;
+}
+
+div.footer input#new-filename {
+    flex: 1;
 }
