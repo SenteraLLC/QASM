@@ -24,10 +24,18 @@ This will build an app based on the specifications found in ``react-frontend/con
 - ``"bucket": <string>``
     - Name of the s3 bucket from which to pull data (only required for ``"app": "s3"``)
 
-- ``"components": <Object>`` Object keys are the names of desired app components
-    - ``"home": <Object>``
-        - ``"display_name": <string>`` (Optional) Change the navbar display name
-    - ``"grid": <Object>``
+- ``"name": <string>``
+    - (Optional) Display name of the app
+
+- ``"components": <Array>`` Array of component config objects. Order of the components is the order they appear in the toolbar
+    - Required for all components:
+        - ``"component": <string>`` Currently only "home", "grid", "imagelabeler", or "binaryeditor" are valid
+
+    - Optional for all components:
+        - ``"display_name": <string>`` Change the navbar display name
+
+
+    - ``"grid"`` Configuration ``<Object>``:
         - ``"grid_width": <Number>`` Default number of images to show per row
         - ``"classes": <Array>``
             - ``<Object>`` with class details
@@ -44,11 +52,35 @@ This will build an app based on the specifications found in ``react-frontend/con
                     - ``"yellow"`` yellow
                     - ``"white"`` white
                     - ``"green"`` green
-        - ``"display_name": <string>`` (Optional) Change the navbar display name
-    - ``"binaryeditor": <Object>``
-        - ``"display_name": <string>`` (Optional) Change the navbar display name
-        - ``"dilate_keybind": <string>`` (Optional) Change the dilation keybind. Defaults to "="
-        - ``"erode_keybind": <string>`` (Optional) Change the erosion keybind. Defaults to "-"
+
+    - ``"imagelabeler"`` Configuration ``<Object>``:
+         - ``"image_dir": <string>`` (Optional) Path to directory of images
+         - ``"anno_dir": <string>`` (Optional) Path to directory of labels/annotations
+        - ``"subtasks": <Object>`` ULabel [subtasks](https://github.com/SenteraLLC/ulabel/blob/044c24072fe00a30b89e0f370fb8d4ddad28b59d/api_spec.md#subtasks) definition(s) 
+            - ``<string>: <Object>`` Custom subtask name, followed by the subtask definition object
+                - ``"display_name": <string>`` Displayed subtask name
+                - ``"classes": <Array>`` List of class definition objects
+                    - ``<Object>`` Object with class definition
+                        - ``"name": <string>`` Class name
+                        - ``"color": <string>`` Class color
+                        - ``"id": <Number`` Class id number
+                - ``"allowed_modes: <Array>"`` List of allowed annotation modes
+                    - ``"polyline":`` A simple series of points that needn't define a closed polygon
+                    - ``"bbox":`` A simple single-frame bounding box
+                    - ``"bbox3":`` A bounding box that can extend through multiple frames
+                    - ``"polygon":`` A simple series of points that must define a closed polygon
+                    - ``"tbar":`` Two lines defining a "T" shape
+                    - ``"contour":`` A freehand line
+                    - ``"whole-image":`` A label to be applied to an entire frame
+                    - ``"global":`` A label to be applied to the entire series of frames
+                    - ``"point":`` A keypoint within a single frame 
+                - ``"resume_from": <string>`` (Optional) Key used in annotation jsons. Used to load in annotations from the annotation directory (*Use `null` for no anno loading`*)
+
+
+    - ``"binaryeditor"`` Configuration ``<Object>``:
+        - ``"dilate_keybind": <string>`` Change the dilation keybind. Defaults to "="
+        - ``"erode_keybind": <string>`` Change the erosion keybind. Defaults to "-"
+
 
 ### Terraform
 Terraform automatically takes our lambda code and deploys it to all the necessary AWS services (Lambda, API Gateway, IAM, etc) to allow our serverless applications to run.
