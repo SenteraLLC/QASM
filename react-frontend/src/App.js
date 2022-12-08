@@ -83,18 +83,20 @@ class App extends Component {
             <a href='/' id="menu-logo">
               <img src={icon} alt="Logo" />
             </a>
-            {this.components.map(component => (
-              <Link 
-                className="Link"
-                to={component.path}
-                key={component.path}> 
-                <h2>
-                  {component.display_name === undefined 
-                  ? component.component
-                  : component.display_name}
-                </h2>
-              </Link>
-            ))}
+            <div className="link-holder">
+              {this.components.map(component => (
+                <Link 
+                  className="Link"
+                  to={component.path}
+                  key={component.path}> 
+                  <h2>
+                    {component.display_name === undefined 
+                    ? component.component
+                    : component.display_name}
+                  </h2>
+                </Link>
+              ))}
+            </div>
           </div>
         }
         <Routes>
