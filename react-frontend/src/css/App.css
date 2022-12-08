@@ -8,23 +8,29 @@ body {
 }
 
 div.menu {
+  display: flex;
   background-color: lightgray;
   color: #888;  /*Colors box shadow */
   box-shadow: 0 0 0.3em 0.05em;
   display: flex;
-  justify-content: center;
+  justify-content: left;
   align-items: center;
   position: relative;
 }
 
 div.menu #menu-logo {
-  position: absolute;
-  left: 1em;
   max-height: 50px;
+  margin: 0 1em;
 }
 
 div.menu #menu-logo img {
   max-height: 50px;
+}
+
+div.menu div.link-holder {
+  flex: 1;
+  display: flex;
+  flex-wrap: wrap;
 }
 
 div.menu a.Link {
