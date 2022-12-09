@@ -568,7 +568,8 @@ class S3Browser extends Component {
                             </label>
                             <input
                                 id="new-filename"
-                                type="text" 
+                                type="text"
+                                onKeyDown={(e) => this.handleKeyPress(e.key)}
                             />
                         </div>
                     }
