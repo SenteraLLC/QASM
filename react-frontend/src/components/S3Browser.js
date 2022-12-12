@@ -10,6 +10,7 @@ class S3Browser extends Component {
     component_updater = 0;
     path_segments_children = [];
     redo_stack = [];
+    cached_folder_structure = {};
 
     constructor(props) {
         super(props);
@@ -46,6 +47,7 @@ class S3Browser extends Component {
         this.createPath              = this.createPath.bind(this);
         this.handleKeyPress          = this.handleKeyPress.bind(this);
         this.goForward               = this.goForward.bind(this);
+        this.addFoldersToCache       = this.addFoldersToCache.bind(this);
     }
 
 
@@ -251,14 +253,24 @@ class S3Browser extends Component {
             add_to_parents = true;
         }
 
+
+
+
+
+
+
+
+
         try {
             let response = await this.QASM.call_backend(window, function_names.OPEN_S3_FOLDER, folder);
             this.folders = response.folders;
             this.files = response.files;
+            this.path = folder;
+            
+            // Redo button should not add to parents
             if (add_to_parents) {
                 this.parents.push(this.path);
             }
-            this.path = folder;
 
             this.path_segments_children = await this.getPathSegmentsChildren();
             this.setState({
@@ -273,6 +285,7 @@ class S3Browser extends Component {
             if (flush_redo_stack) {
                 this.redo_stack = [];
             }
+            console.log("Finished changeing path")
             return true
         } catch {
             console.log("Failed to load " + folder);
@@ -462,6 +475,28 @@ class S3Browser extends Component {
         if (confirm("Do you want to close the browser without selecting anything?")) {
             window.close()
         }
+    }
+
+    /**
+     * 
+     * @param {string} folder The folder which will have the folders added to
+     * @param {string[]} folders Array of folders that are children of the base folder
+     *  @param {string[]} files Array of files that are children of the base folder
+     */
+    addFoldersToCache(folder, folders, files) {
+        let temp = this.cached_folder_structure
+    }
+    
+    /**
+     * 
+     * @param {string} path Should be an s3path structured like so "root/folder1/folder2/file" or "root/folder1/folder2/"
+     */
+    getPathSegments(path) {
+        // Check if the final character is a /. If it is remove it. Otherwise the path stays the same
+        path = path.charAt(path.length - 1) === "/" ? path.slice(0, -1) : path;
+
+        // Return an array where the string was split at each /
+        return path.split("/");
     }
 
 
