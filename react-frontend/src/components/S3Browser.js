@@ -28,6 +28,8 @@ class S3Browser extends Component {
             this.setS3Path(this.path);
         }
 
+        console.log(this.folders, this.files, "Inside constructor")
+
         this.state = {
             path: this.path
         };
@@ -272,6 +274,8 @@ class S3Browser extends Component {
                 this.parents.push(this.path);
             }
 
+            this.addFoldersToCache(folder, this.folders, this.files);
+
             this.path_segments_children = await this.getPathSegmentsChildren();
             this.setState({
                 path: this.path,
@@ -485,13 +489,43 @@ class S3Browser extends Component {
      */
     addFoldersToCache(folder, folders, files) {
         let temp = this.cached_folder_structure
+
+        console.log(JSON.parse(JSON.stringify(temp)))
+
+        const folder_segments = this.getPathSegments(folder);
+
+        try {
+            // Go down the cashe to the current folder
+            for (let key of folder_segments) {
+                temp = temp[key]
+                console.log(JSON.parse(JSON.stringify(temp)))
+            }
+
+            // Add each folder in the folders to the current folder
+            for (let idx = 0; idx < folders.length; idx++) {
+                temp[folders[idx]] = {};
+            }
+
+            temp["files"] = files;
+
+            console.log(JSON.parse(JSON.stringify(temp)))
+        }
+        catch(e) {
+            console.log(e, "Error catch")
+        }
     }
     
+
     /**
      * 
      * @param {string} path Should be an s3path structured like so "root/folder1/folder2/file" or "root/folder1/folder2/"
      */
     getPathSegments(path) {
+        // If the path is an empty string return an empty array
+        if (path === "") {
+            return [];
+        }
+
         // Check if the final character is a /. If it is remove it. Otherwise the path stays the same
         path = path.charAt(path.length - 1) === "/" ? path.slice(0, -1) : path;
 
@@ -501,6 +535,7 @@ class S3Browser extends Component {
 
 
     render() {
+        console.log(this.files, this.folders, "render")
         return (
             <div className="S3Browser">
                 <h2>S3 Browser: {this.QASM.s3_bucket}</h2>
@@ -646,6 +681,7 @@ class S3Browser extends Component {
     async componentDidMount() { 
         try {
             this.path_segments_children = await this.getPathSegmentsChildren();
+            this.addFoldersToCache("", this.folders, this.files)
             this.forceUpdate();
         } catch(error) {
             console.error(error);
