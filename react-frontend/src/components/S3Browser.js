@@ -11,6 +11,7 @@ class S3Browser extends Component {
     path_segments_children = [];
     redo_stack = [];
     cached_folder_structure = {};
+    cashe = {};
 
     constructor(props) {
         super(props);
@@ -50,6 +51,7 @@ class S3Browser extends Component {
         this.handleKeyPress          = this.handleKeyPress.bind(this);
         this.goForward               = this.goForward.bind(this);
         this.addFoldersToCache       = this.addFoldersToCache.bind(this);
+        this.addCache = this.addToCache.bind(this)
     }
 
 
@@ -256,40 +258,65 @@ class S3Browser extends Component {
         }
 
 
+        if (this.cashe[folder] !== undefined) {
+            console.log("cashe is not undefined")
+            console.log(this.cashe[folder], "Cashed folder")
 
+            // Update the browser with the cashed folders and files
+            this.folders = this.cashe[folder].folders
+            this.files = this.cashe[folder].files
+            this.path = folder
 
+            this.setState({
+                path: this.path
+            })
 
-
-
-
-
-        try {
-            let response = await this.QASM.call_backend(window, function_names.OPEN_S3_FOLDER, folder);
-            this.folders = response.folders;
-            this.files = response.files;
-            this.path = folder;
-            
             // Redo button should not add to parents
             if (add_to_parents) {
                 this.parents.push(this.path);
             }
-
-            this.addFoldersToCache(folder, this.folders, this.files);
-
-            this.path_segments_children = await this.getPathSegmentsChildren();
-            this.setState({
-                path: this.path,
-                path_segments_children: this.path_segments_children
-            });
+            
+            // redo_stack should be flushed if this method isn't being called by goBack or goForward methods
+            if (flush_redo_stack) {
+                this.redo_stack = [];
+            }
 
             // Fill in the path link with the new path
             document.getElementById("s3-link").value = this.path;
+
+            return true
+        }
+
+        try {
+            // Call the backend to get the folder's children folders and files
+            let response = await this.QASM.call_backend(window, function_names.OPEN_S3_FOLDER, folder);
+
+            // Update the browser's folders, files, and path
+            this.folders = response.folders;
+            this.files = response.files;
+            this.path = folder;
+            
+            this.setState({
+                path: this.path
+            });
+
+            // Add the folders and files to the cashe so we don't have to call the backend again for this folder
+            this.addToCache(folder, this.folders, this.files);
 
             // redo_stack should be flushed if this method isn't being called by goBack or goForward methods
             if (flush_redo_stack) {
                 this.redo_stack = [];
             }
-            console.log("Finished changeing path")
+
+            // Redo button should not add to parents
+            if (add_to_parents) {
+                this.parents.push(this.path);
+            }
+            
+            // Fill in the path link with the new path
+            document.getElementById("s3-link").value = this.path;
+    
+            console.log("Finished changing path")
             return true
         } catch {
             console.log("Failed to load " + folder);
@@ -531,6 +558,14 @@ class S3Browser extends Component {
 
         // Return an array where the string was split at each /
         return path.split("/");
+    }
+
+
+    addToCache(base_folder, folders, files) {
+        this.cashe[base_folder] = {};
+
+        this.cashe[base_folder]["folders"] = folders
+        this.cashe[base_folder]["files"] = files
     }
 
 
