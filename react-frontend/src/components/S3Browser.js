@@ -541,11 +541,20 @@ class S3Browser extends Component {
             console.log(e, "Error catch")
         }
     }
+       
     
+    addToCache(base_folder, folders, files) {
+        this.cashe[base_folder] = {};
+
+        this.cashe[base_folder]["folders"] = folders
+        this.cashe[base_folder]["files"] = files
+    }
+
 
     /**
      * 
      * @param {string} path Should be an s3path structured like so "root/folder1/folder2/file" or "root/folder1/folder2/"
+     * @returns {string[]} An array of each segment in a path. ["root", "folder1", "folder2", "file"]
      */
     getPathSegments(path) {
         // If the path is an empty string return an empty array
@@ -561,16 +570,38 @@ class S3Browser extends Component {
     }
 
 
-    addToCache(base_folder, folders, files) {
-        this.cashe[base_folder] = {};
+    /**
+     * Given a path, this will return an array of each path along the path. For example "root/folder1/folder2/file"
+     * would return ["root", "root/folder1", "root/folder1/folder2", "root/folder1/folder2/file"]
+     * 
+     * @param {string} path 
+     * @return {string[]} 
+     */
+    buildPaths(path) {
+        // Get an array of each segment
+        const path_segments = this.getPathSegments(path)
 
-        this.cashe[base_folder]["folders"] = folders
-        this.cashe[base_folder]["files"] = files
+        let paths = []
+
+        for (let idx = 0; idx < path_segments.length; idx++) {
+            let current_path = "";
+            for (let inner_idx = 0; inner_idx <= idx; inner_idx++) {
+                current_path += path_segments[inner_idx]
+            }
+            paths.push(current_path)
+        }
+        console.log("Built paths", paths)
+    }
+
+
+    getNavigationInfo() {
+        navigation_info = []
+        const path_segments = this.getPathSegments(this.path)
     }
 
 
     render() {
-        console.log(this.files, this.folders, "render")
+        this.buildPaths(this.path)
         return (
             <div className="S3Browser">
                 <h2>S3 Browser: {this.QASM.s3_bucket}</h2>
