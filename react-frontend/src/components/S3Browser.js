@@ -48,7 +48,6 @@ class S3Browser extends Component {
         this.createPath              = this.createPath.bind(this);
         this.handleKeyPress          = this.handleKeyPress.bind(this);
         this.goForward               = this.goForward.bind(this);
-        this.addFoldersToCache       = this.addFoldersToCache.bind(this);
         this.addCache = this.addToCache.bind(this)
         this.getNavigationInfo = this.getNavigationInfo.bind(this);
     }
@@ -501,40 +500,6 @@ class S3Browser extends Component {
             window.close()
         }
     }
-
-    /**
-     * 
-     * @param {string} folder The folder which will have the folders added to
-     * @param {string[]} folders Array of folders that are children of the base folder
-     *  @param {string[]} files Array of files that are children of the base folder
-     */
-    addFoldersToCache(folder, folders, files) {
-        let temp = this.cached_folder_structure
-
-        console.log(JSON.parse(JSON.stringify(temp)))
-
-        const folder_segments = this.getPathSegments(folder);
-
-        try {
-            // Go down the cashe to the current folder
-            for (let key of folder_segments) {
-                temp = temp[key]
-                console.log(JSON.parse(JSON.stringify(temp)))
-            }
-
-            // Add each folder in the folders to the current folder
-            for (let idx = 0; idx < folders.length; idx++) {
-                temp[folders[idx]] = {};
-            }
-
-            temp["files"] = files;
-
-            console.log(JSON.parse(JSON.stringify(temp)))
-        }
-        catch(e) {
-            console.log(e, "Error catch")
-        }
-    }
        
     
     addToCache(base_folder, folders, files) {
@@ -766,7 +731,6 @@ class S3Browser extends Component {
     async componentDidMount() { 
         try {
             this.path_segments_children = await this.getPathSegmentsChildren();
-            this.addFoldersToCache("", this.folders, this.files)
             this.forceUpdate();
         } catch(error) {
             console.error(error);
