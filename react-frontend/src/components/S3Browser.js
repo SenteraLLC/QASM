@@ -29,8 +29,6 @@ class S3Browser extends Component {
             this.setS3Path(this.path);
         }
 
-        console.log(this.folders, this.files, "Inside constructor")
-
         this.state = {
             path: this.path
         };
@@ -52,6 +50,7 @@ class S3Browser extends Component {
         this.goForward               = this.goForward.bind(this);
         this.addFoldersToCache       = this.addFoldersToCache.bind(this);
         this.addCache = this.addToCache.bind(this)
+        this.getNavigationInfo = this.getNavigationInfo.bind(this);
     }
 
 
@@ -68,7 +67,6 @@ class S3Browser extends Component {
         // Populate parent stack
         this.parents = [""]
         let folders = path.split("/").slice(0, -2);
-        console.log("folders:", folders)
         for (let i=0; i < folders.length; i++) {
             this.parents.push(this.parents[i] + folders[i] + "/");
         }
@@ -218,7 +216,6 @@ class S3Browser extends Component {
      */
     readS3Link() {
         let link = document.getElementById("s3-link").value;
-        console.log(link);
         /* eslint-disable */
         // Prompt user to confirm, then save
         if (confirm("Go to path ' " + link + " ' ?")) {
@@ -259,9 +256,6 @@ class S3Browser extends Component {
 
 
         if (this.cashe[folder] !== undefined) {
-            console.log("cashe is not undefined")
-            console.log(this.cashe[folder], "Cashed folder")
-
             // Update the browser with the cashed folders and files
             this.folders = this.cashe[folder].folders
             this.files = this.cashe[folder].files
@@ -583,9 +577,9 @@ class S3Browser extends Component {
 
         let paths = []
 
-        for (let idx = 0; idx < path_segments.length; idx++) {
+        for ( let idx = 0; idx < path_segments.length; idx++ ) {
             let current_path = "";
-            for (let inner_idx = 0; inner_idx <= idx; inner_idx++) {
+            for ( let inner_idx = 0; inner_idx <= idx; inner_idx++ ) {
                 current_path += path_segments[inner_idx]
             }
             paths.push(current_path)
@@ -595,13 +589,38 @@ class S3Browser extends Component {
 
 
     getNavigationInfo() {
-        navigation_info = []
-        const path_segments = this.getPathSegments(this.path)
+        let navigation_info = []
+        const full_path_segments = this.buildPaths(this.path)
+
+        console.log(this.cashe)
+        
+        try {
+            // The bucket will always be displayed, so add that first.
+            navigation_info.push({
+                "name": "",
+                "folders": this.cashe[""].folders,
+                "files": this.cashe[""].files
+            })
+
+            // Add the rest of the 
+            for ( let idx = 0; idx < full_path_segments.length; idx++ ) {
+                navigation_info.push({
+                    "name": full_path_segments[idx],
+                    "folders": this.cashe[full_path_segments[idx]].folders,
+                    "files": this.cashe[full_path_segments[idx]].files
+                })
+            }
+        } 
+        catch {
+            console.log("getNavInfo Failed")
+        }
+
+        console.log(navigation_info, "This is the nav info")
     }
 
 
     render() {
-        this.buildPaths(this.path)
+        this.getNavigationInfo()
         return (
             <div className="S3Browser">
                 <h2>S3 Browser: {this.QASM.s3_bucket}</h2>
