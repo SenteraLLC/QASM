@@ -24,12 +24,13 @@ class MultiClassGridImage extends Component {
         // Use state to store current class
         // First class_value in each class_type
         this.state = {};
-        Object.keys(this.classes).map(class_type => (
-            this.state[class_type] = this.classes[class_type][0].class_value
-        ))
-        this.setState(this.state);
+        for (let class_type in this.classes) {
+            if ("default" in this.classes[class_type]) {
+                this.state[class_type] = this.classes[class_type]["default"];
+            }
+        }
 
-        
+
 
         // Bind functions
         this.changeClass = this.changeClass.bind(this);
@@ -40,19 +41,18 @@ class MultiClassGridImage extends Component {
      */
     changeClass() {
         let new_state = {};
-        Object.keys(this.classes).map(class_type => (
-            this.classes[class_type].map(class_data => {
-                if (document.getElementById(this.image_name + "_" + class_data.class_value).checked) 
-                { 
-                    new_state[class_type] = class_data.class_value;
+        for (let class_type in this.classes) {
+            for (let class_val of this.classes[class_type].class_values) {
+                if (document.getElementById(this.image_name + "_" + class_val).checked) {
+                    new_state[class_type] = class_val;
                 }
-                return null;
+                else if (this.state[class_type] === class_val) {
+                    delete this.state[class_type]
+                }
             }
-            )
-        ))
+        }
 
         this.setState(new_state);
-        console.log(new_state);
     }
 
     render() {
@@ -83,28 +83,55 @@ class MultiClassGridImage extends Component {
                     ))}
                 </div>
                 <p className="image-name">{this.image_name}</p>
-                {Object.keys(this.classes).map(class_type => (
-                    <div style={{"float": "left"}}>
-
-                        {this.classes[class_type].map(class_data => (
-                            <div>
-                                <input 
-                                    type="radio" 
-                                    name={this.image_name + "_" + class_type}
-                                    id={this.image_name + "_" + class_data.class_value}
-                                    onChange={this.changeClass}
-                                    checked={this.state[class_type] === class_data.class_value}
-                                    ></input>
-                                <label for={this.image_name + "_" + class_data.class_value}>{class_data.class_value}</label>
+                {Object.keys(this.classes).map(class_type => {
+                    if (this.classes[class_type].selector_type === "radio") {
+                        return (
+                            <div style={{ "float": "left" }}>
+                                <p>{class_type}</p>
+                                {this.classes[class_type].class_values.map(class_val => (
+                                    <div>
+                                        <input
+                                            type="radio"
+                                            name={this.image_name + "_" + class_type}
+                                            id={this.image_name + "_" + class_val}
+                                            onChange={this.changeClass}
+                                            checked={this.state[class_type] === class_val}
+                                        ></input>
+                                        <label for={this.image_name + "_" + class_val}>{class_val}</label>
+                                    </div>
+                                ))}
                             </div>
-                        ))}
-                    </div>
-                ))}
+                        )
+                    }
+                    else if (this.classes[class_type].selector_type === "checkbox") {
+                        return (
+                            <div style={{ "float": "left" }}>
+                                <p>{class_type}</p>
+                                {this.classes[class_type].class_values.map(class_val => (
+                                    <div>
+                                        <input
+                                            type="checkbox"
+                                            name={this.image_name + "_" + class_type}
+                                            id={this.image_name + "_" + class_val}
+                                            onChange={this.changeClass}
+                                            checked={this.state[class_type] === class_val}
+                                        ></input>
+                                        <label for={this.image_name + "_" + class_val}>{class_val}</label>
+                                    </div>
+                                ))}
+                            </div>
+                        )
+                    }
+                    return ( 
+                        <p>pp</p>
+                    )
+                })}
             </div>
         )
     }
 
     componentDidUpdate() {
+
     }
 }
 
