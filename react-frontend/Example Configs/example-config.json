@@ -10,23 +10,35 @@
             "component": "multiclassgrid",
             "grid_width": 2,
             "classes": { 
-                "week": [ 
-                    {
-                        "class_value": "Week 1"
-                    },
-                    { 
-                        "class_value": "Week 2"
-                    }
-                ],
-                "plant_type": [ 
-                    { 
-                        "class_value": "normie"
-                    },
-                    { 
-                        "class_value": "rogue"
-                    }
+                "plant_type": { 
+                    "selector_type": "radio",
+                    "class_values": [ 
+                        "Normal",
+                        "Delay Rogue",
+                        "Hybrid Rogue",
+                        "Mix Rogue"
+                    ],
+                    "default": "Normal"
+                },
+                "week": { 
+                    "selector_type": "checkbox", 
+                    "class_values": [ 
+                        "Week 1",
+                        "Week 2",
+                        "Week 3",
+                        "Week 4",
+                        "Week 5"
+                    ]
+                },
+                "stake_color": { 
+                    "selector_type": "checkbox",
+                    "class_values": [ 
+                        "Yellow",
+                        "White",
+                        "Red"
+                    ]
 
-                ]
+                } 
             }
         },
         {
