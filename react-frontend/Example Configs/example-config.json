@@ -1,6 +1,6 @@
 {
     "name": "QASM App",
-    "app": "s3",
+    "app": "local",
     "bucket": "sentera-rogues-data",
     "components": [
         {
