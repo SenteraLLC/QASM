@@ -15,7 +15,7 @@ class MultiClassGrid extends Component {
     grid_width = 2;
     grid_image_names = [];
     src = "";
-    classes = [];
+    classes = {};
     labels = {};   
     component_updater = 0;
     image_stack = []; 
@@ -169,10 +169,17 @@ class MultiClassGrid extends Component {
         this.labels = {};
         for (let i=0; i < this.image_names.length; i++) {
             let image_name = this.image_names[i];
-            let class_name = document.getElementById(image_name).classList[1];
-            this.labels[image_name] = {
-                "class": class_name
-            }
+            Object.keys(this.classes).map(class_type => (
+                this.classes[class_type].map(class_data => {
+                    if (document.getElementById(image_name + "_" + class_data.class_value).checked) 
+                    { 
+                        this.labels[image_name] = class_data.class_value;
+                    }
+                    return null;
+                }
+                )
+            ))
+
         }
     }
 
