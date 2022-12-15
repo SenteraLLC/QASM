@@ -4,7 +4,7 @@ import './css/index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 import { QASM } from "./QASM/QASM.js";
-import config from "../config.json";
+import config from "../Example Configs/example-config.json";
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
