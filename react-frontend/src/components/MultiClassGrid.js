@@ -4,7 +4,7 @@ import MultiClassGridImage from "./MultiClassGridImage.js";
 import Legend from "./Legend.js";
 import $ from "jquery";
 import "../css/Grid.css";
-const { update_all_overlays } =  require("../QASM/utils.js");
+const { update_all_overlays } = require("../QASM/utils.js");
 const { function_names } = require("../../public/electron_constants.js");
 
 
@@ -16,9 +16,9 @@ class MultiClassGrid extends Component {
     grid_image_names = [];
     src = "";
     classes = {};
-    labels = {};   
+    labels = {};
     component_updater = 0;
-    image_stack = []; 
+    image_stack = [];
     hover_image_id = null;
     hover_row_id = null;
     images_shown = false;
@@ -27,36 +27,36 @@ class MultiClassGrid extends Component {
 
     constructor(props) {
         super(props);
-        
+
         // Initialize props
-        this.QASM         = props.QASM
-        this.grid_width   = props.grid_width || 1;
-        this.classes      = props.classes
-        this.src          = props.src
-        
+        this.QASM = props.QASM
+        this.grid_width = props.grid_width || 1;
+        this.classes = props.classes
+        this.src = props.src
+
         this.state = {
             labels: this.labels,
             src: this.src,
         };
-        
+
 
         // Attach event listeners
         this.initEventListeners();
 
         // Bind functions
-        this.loadImages          = this.loadImages.bind(this);
-        this.saveLabels          = this.saveLabels.bind(this);
-        this.loadLabels          = this.loadLabels.bind(this);
-        this.clearAll            = this.clearAll.bind(this);
-        this.selectImageDir      = this.selectImageDir.bind(this);
-        this.changeGridWidth     = this.changeGridWidth.bind(this);
-        this.updateState         = this.updateState.bind(this);
-        this.updateLocalLabels   = this.updateLocalLabels.bind(this);
-        this.addImageLayer       = this.addImageLayer.bind(this);
+        this.loadImages = this.loadImages.bind(this);
+        this.saveLabels = this.saveLabels.bind(this);
+        this.loadLabels = this.loadLabels.bind(this);
+        this.clearAll = this.clearAll.bind(this);
+        this.selectImageDir = this.selectImageDir.bind(this);
+        this.changeGridWidth = this.changeGridWidth.bind(this);
+        this.updateState = this.updateState.bind(this);
+        this.updateLocalLabels = this.updateLocalLabels.bind(this);
+        this.addImageLayer = this.addImageLayer.bind(this);
         this.getImageStackByName = this.getImageStackByName.bind(this);
-        this.changeImage         = this.changeImage.bind(this);
-        this.autoScroll          = this.autoScroll.bind(this);
-        this.initEventListeners  = this.initEventListeners.bind(this);
+        this.changeImage = this.changeImage.bind(this);
+        this.autoScroll = this.autoScroll.bind(this);
+        this.initEventListeners = this.initEventListeners.bind(this);
     }
 
 
@@ -74,7 +74,7 @@ class MultiClassGrid extends Component {
                 // inside of a div, that has the id that we're trying to select.
                 this.hover_image_id = e.target.parentNode.parentNode.id;
                 this.hover_row_id = e.target.parentNode.parentNode.parentNode.parentNode.id;
-            } 
+            }
             else {
                 this.hover_image_id = null;
                 this.hover_row_id = null;
@@ -88,7 +88,7 @@ class MultiClassGrid extends Component {
             } else {
                 this.hover_image_id = null;
             }
-        }); 
+        });
 
         // Keybinds
         window.addEventListener("keydown", (e) => {
@@ -134,7 +134,7 @@ class MultiClassGrid extends Component {
         this.gridSetup();
         this.clearAll();
     }
-    
+
 
     /**
      * Organize the images into rows
@@ -167,13 +167,17 @@ class MultiClassGrid extends Component {
     updateLocalLabels() {
         // Get state of each GridImage
         this.labels = {};
-        for (let i=0; i < this.image_names.length; i++) {
+        for (let i = 0; i < this.image_names.length; i++) {
             let image_name = this.image_names[i];
+            if (this.labels[image_name] === undefined) { this.labels[image_name] = {}; }
             Object.keys(this.classes).map(class_type => (
                 this.classes[class_type].class_values.map(class_val => {
-                    if (document.getElementById(image_name + "_" + class_val).checked) 
-                    { 
-                        this.labels[image_name] = class_val;
+                    if (document.getElementById(image_name + "_" + class_val).checked) {
+
+                        this.labels[image_name][class_type] = class_val;
+                    }
+                    else if (this.labels[image_name] === class_val) {
+                        delete this.labels[image_name][class_type];
                     }
                     return null;
                 }
@@ -208,7 +212,7 @@ class MultiClassGrid extends Component {
         // Load in previous labels
         this.labels = await this.QASM.call_backend(window, function_names.LOAD_LABELS, this.src);
         console.log(this.labels);
-        
+
         if (Object.keys(this.labels).length > 0) {
             this.updateState(); // Update state to rerender page
         } else {
@@ -216,7 +220,7 @@ class MultiClassGrid extends Component {
         }
     }
 
-    
+
     /**
      * Clear all the current labels
      */
@@ -239,7 +243,7 @@ class MultiClassGrid extends Component {
             }
             this.src = dir_path;
             await this.loadImages();
-            
+
             // Set the images shown to true now that the images are shown
             this.images_shown = true;
             this.updateState();
@@ -264,11 +268,11 @@ class MultiClassGrid extends Component {
             console.log("Prevent adding empty layer.");
         } else {
             this.image_stack.push(image_layer);
-        }   
+        }
         console.log(this.image_stack);
         this.updateState();
     }
-    
+
 
     /**
      * Change the grid width
@@ -296,7 +300,7 @@ class MultiClassGrid extends Component {
                 image_stack.push(image_layer[image_name]);
             }
         }
-        return(image_stack);
+        return (image_stack);
     }
 
 
@@ -316,17 +320,17 @@ class MultiClassGrid extends Component {
             if (layer.id.includes("overlay") || layer.classList.contains("hidden")) {
                 continue;
             }
-            
+
             // Change currently shown image to hidden
             layer.classList.add("hidden");
 
             // Change next hidden image to shown
-            if (idx+1 === layers.length) {
+            if (idx + 1 === layers.length) {
                 // If we're at the last layer, turn on the og image
                 layers[1].classList.remove("hidden");
             } else {
                 // Un-hide next image
-                layers[idx+1].classList.remove("hidden");
+                layers[idx + 1].classList.remove("hidden");
             }
             // Done
             break;
@@ -341,10 +345,10 @@ class MultiClassGrid extends Component {
      */
     autoScroll(hover_row_id) {
         // Scroll to next row
-        $(document).scrollTop($("#"+hover_row_id).next().offset().top);
+        $(document).scrollTop($("#" + hover_row_id).next().offset().top);
         // Set next row as hovered for consecutive navigation
-        this.hover_row_id = $("#"+hover_row_id).next()[0].id;
-        
+        this.hover_row_id = $("#" + hover_row_id).next()[0].id;
+
         // Set next image as hovered
         if (this.hover_image_id != null) {
             let row = parseInt(hover_row_id.slice(4)); // Row index
@@ -352,7 +356,7 @@ class MultiClassGrid extends Component {
             row = parseInt(this.hover_row_id.slice(4)); // New row index
             this.hover_image_id = this.grid_image_names[row][col]; // Set new image as hovered
             this.allow_next_scroll = true; // Override scroll protection
-        } 
+        }
     }
 
 
@@ -373,12 +377,12 @@ class MultiClassGrid extends Component {
                             <label htmlFor="change-grid-width-og">
                                 Grid Width:
                             </label>
-                            <input 
+                            <input
                                 id="change-grid-width-og"
-                                type="number" 
-                                value={this.grid_width} 
+                                type="number"
+                                value={this.grid_width}
                                 size={2} // Number of visible digits
-                                step={1} 
+                                step={1}
                                 min={1}
                                 max={99}
                                 onChange={this.changeGridWidth}>
@@ -391,7 +395,7 @@ class MultiClassGrid extends Component {
                             className="button">
                             Select Directory
                         </button>
-                        <button 
+                        <button
                             onClick={this.addImageLayer}
                             className="button">
                             Add Image Layer
@@ -400,29 +404,29 @@ class MultiClassGrid extends Component {
                             <label htmlFor="change-grid-width-new">
                                 Grid Width:
                             </label>
-                            <input 
+                            <input
                                 id="change-grid-width-new"
-                                type="number" 
-                                value={this.grid_width} 
+                                type="number"
+                                value={this.grid_width}
                                 size={2} // Number of visible digits
-                                step={1} 
+                                step={1}
                                 min={1}
                                 max={99}
                                 onChange={this.changeGridWidth}>
                             </input>
                         </div>
-                        <button 
-                            onClick={this.loadLabels} 
+                        <button
+                            onClick={this.loadLabels}
                             className="button">
                             Load Labels
                         </button>
-                        <button 
-                            onClick={this.saveLabels} 
+                        <button
+                            onClick={this.saveLabels}
                             className="button">
                             Save Labels
                         </button>
-                        <button 
-                            onClick={this.clearAll} 
+                        <button
+                            onClick={this.clearAll}
                             className="button">
                             Clear All Labels
                         </button>
@@ -431,15 +435,15 @@ class MultiClassGrid extends Component {
                 <table id="Grid-table">
                     <tbody>
                         {this.grid_image_names.map(row_image_names => (
-                            <tr 
+                            <tr
                                 key={"row_" + this.grid_image_names.indexOf(row_image_names)}
                                 id={"row_" + this.grid_image_names.indexOf(row_image_names)}
                             >
                                 {row_image_names.map(image_name => (
                                     <td key={image_name}>
                                         <MultiClassGridImage
-                                            image={this.images[image_name]} 
-                                            image_name={image_name} 
+                                            image={this.images[image_name]}
+                                            image_name={image_name}
                                             classes={this.classes}
                                             image_stack={
                                                 this.getImageStackByName(image_name)
@@ -451,7 +455,7 @@ class MultiClassGrid extends Component {
                         ))}
                     </tbody>
                 </table>
-            </div>       
+            </div>
         )
     }
 
