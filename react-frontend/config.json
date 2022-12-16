@@ -1,5 +1,5 @@
 {
-    "name": "QASM App",
+    "name": "Multi-Class App",
     "app": "s3",
     "bucket": "sentera-rogues-data",
     "components": [
@@ -8,6 +8,7 @@
         },
         {
             "component": "multiclassgrid",
+            "display_name": "Multi-Class Grid",
             "grid_width": 2,
             "classes": { 
                 "plant_type": { 
