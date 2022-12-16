@@ -82,10 +82,14 @@ export function update_all_overlays() {
  * @returns {string} url for new window
  */
 export function get_new_window_url(window, new_path) {
-    let rmv = window.location.href.split("/").slice(-1);
-    if (rmv[0] === "") {
-        return window.location.href + new_path;
-    } else {
-        return window.location.href.replace(rmv, new_path);
-    }
+    // let rmv = window.location.href.split("/").slice(-1);
+    // if (rmv[0] === "") {
+    //     return window.location.href + new_path;
+    // } else {
+    //     return window.location.href.replace(rmv, new_path);
+    // }
+    
+    // Memory Router in the .exe can break, so instead of going
+    // to a relative path just always nav to the index.html
+    return window.location.href; 
 }
