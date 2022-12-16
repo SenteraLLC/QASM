@@ -12,7 +12,7 @@ const { function_names } = require("../../public/electron_constants.js");
 class MultiClassGrid extends Component {
     images = {};
     image_names = [];
-    grid_width = 2;
+    grid_width = 1;
     grid_image_names = [];
     src = "";
     classes = {};
@@ -30,7 +30,7 @@ class MultiClassGrid extends Component {
         
         // Initialize props
         this.QASM         = props.QASM
-        this.grid_width   = props.grid_width || 2;
+        this.grid_width   = props.grid_width || 1;
         this.classes      = props.classes
         this.src          = props.src
         
@@ -170,10 +170,10 @@ class MultiClassGrid extends Component {
         for (let i=0; i < this.image_names.length; i++) {
             let image_name = this.image_names[i];
             Object.keys(this.classes).map(class_type => (
-                this.classes[class_type].map(class_data => {
-                    if (document.getElementById(image_name + "_" + class_data.class_value).checked) 
+                this.classes[class_type].class_values.map(class_val => {
+                    if (document.getElementById(image_name + "_" + class_val).checked) 
                     { 
-                        this.labels[image_name] = class_data.class_value;
+                        this.labels[image_name] = class_val;
                     }
                     return null;
                 }
