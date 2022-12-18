@@ -531,7 +531,7 @@ class S3Browser extends Component {
 
     /**
      * Given a path, this will return an array of each path along the path. For example "root/folder1/folder2/file"
-     * would return ["root", "root/folder1", "root/folder1/folder2", "root/folder1/folder2/file"]
+     * would return ["root/", "root/folder1/", "root/folder1/folder2/", "root/folder1/folder2/file"]
      * 
      * @param {string} path 
      * @return {string[]} 
@@ -543,21 +543,20 @@ class S3Browser extends Component {
         let paths = []
 
         for ( let idx = 0; idx < path_segments.length; idx++ ) {
-            let current_path = "";
-            for ( let inner_idx = 0; inner_idx <= idx; inner_idx++ ) {
-                current_path += path_segments[inner_idx]
+            if ( idx === 0 ) {
+                paths.push(path_segments[0] + "/")
             }
-            paths.push(current_path)
+            else {
+                paths.push(paths[idx - 1] + path_segments[idx] + "/")
+            }
         }
-        console.log("Built paths", paths)
+        return paths
     }
 
 
     getNavigationInfo() {
         let navigation_info = []
         const full_path_segments = this.buildPaths(this.path)
-
-        console.log(this.cashe)
         
         try {
             // The bucket will always be displayed, so add that first.
@@ -567,10 +566,10 @@ class S3Browser extends Component {
                 "files": this.cashe[""].files
             })
 
-            // Add the rest of the 
+            // Add the rest of the segments
             for ( let idx = 0; idx < full_path_segments.length; idx++ ) {
                 navigation_info.push({
-                    "name": full_path_segments[idx],
+                    "name": full_path_segments[idx].split("/")[full_path_segments[idx].split("/").length - 2],
                     "folders": this.cashe[full_path_segments[idx]].folders,
                     "files": this.cashe[full_path_segments[idx]].files
                 })
@@ -579,13 +578,11 @@ class S3Browser extends Component {
         catch {
             console.log("getNavInfo Failed")
         }
-
-        console.log(navigation_info, "This is the nav info")
+        return navigation_info
     }
 
 
     render() {
-        this.getNavigationInfo()
         return (
             <div className="S3Browser">
                 <h2>S3 Browser: {this.QASM.s3_bucket}</h2>
@@ -642,7 +639,7 @@ class S3Browser extends Component {
                         </div>
                         <div className="path-display-inner">
                             {this.path_segments_children.length >= 1 && 
-                                this.path_segments_children.map((segment, index) => (
+                                this.getNavigationInfo().map((segment, index) => (
                                     <div className="path-segment" key={segment.name}>
                                         <button 
                                             className="segment-name"
@@ -731,6 +728,11 @@ class S3Browser extends Component {
     async componentDidMount() { 
         try {
             this.path_segments_children = await this.getPathSegmentsChildren();
+            // Update cache
+            this.cashe[""] = {
+                "folders": this.folders,
+                "files": this.files
+            }
             this.forceUpdate();
         } catch(error) {
             console.error(error);
