@@ -556,7 +556,8 @@ class S3Browser extends Component {
 
     getNavigationInfo() {
         let navigation_info = []
-        const full_path_segments = this.buildPaths(this.path)
+        const path_segments = this.getPathSegments(this.path);
+        const full_path_segments = this.buildPaths(this.path);
         
         try {
             // The bucket will always be displayed, so add that first.
@@ -569,7 +570,7 @@ class S3Browser extends Component {
             // Add the rest of the segments
             for ( let idx = 0; idx < full_path_segments.length; idx++ ) {
                 navigation_info.push({
-                    "name": full_path_segments[idx].split("/")[full_path_segments[idx].split("/").length - 2],
+                    "name": path_segments[idx],
                     "folders": this.cashe[full_path_segments[idx]].folders,
                     "files": this.cashe[full_path_segments[idx]].files
                 })
