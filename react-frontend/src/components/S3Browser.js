@@ -8,7 +8,6 @@ const { s3_browser_modes } = require("../QASM/constants.js");
 
 class S3Browser extends Component {
     component_updater = 0;
-    path_segments_children = [];
     redo_stack = [];
     cached_folder_structure = {};
     cashe = {};
@@ -44,7 +43,6 @@ class S3Browser extends Component {
         this.updateDisplayMode       = this.updateDisplayMode.bind(this);
         this.setS3Path               = this.setS3Path.bind(this);
         this.readS3Link              = this.readS3Link.bind(this);
-        this.getPathSegmentsChildren = this.getPathSegmentsChildren.bind(this);
         this.createPath              = this.createPath.bind(this);
         this.handleKeyPress          = this.handleKeyPress.bind(this);
         this.goForward               = this.goForward.bind(this);
@@ -426,16 +424,6 @@ class S3Browser extends Component {
         document.getElementById("s3-item-holder").className = this.getDisplayMode();
     }
 
-    /**
-     * Call the backend to get all the children of each folder along a path
-     * 
-     * @returns {string[][]} Returns an array of string arrays. Each string array contains all of the children of a folder segment
-     */
-    async getPathSegmentsChildren() {
-        const data = await this.QASM.call_backend(window, function_names.GET_CASCADING_DIR_CHILDREN, this.path);
-        return data.data;
-    }
-
 
     async createPath(final_segment, depth, cascade=false) {
         // If the depth is negative, route to the root folder
@@ -639,27 +627,25 @@ class S3Browser extends Component {
                             </button>
                         </div>
                         <div className="path-display-inner">
-                            {this.path_segments_children.length >= 1 && 
-                                this.getNavigationInfo().map((segment, index) => (
-                                    <div className="path-segment" key={segment.name}>
-                                        <button 
-                                            className="segment-name"
-                                            onClick={() => this.createPath(segment.name, index - 1)}>
-                                            {segment.name === "" ? this.QASM.s3_bucket : segment.name}
-                                        </button>
-                                            {segment.folders.length !== 0 &&
-                                                <Dropdown
-                                                    items={segment.folders}
-                                                    callback={(segment) => this.createPath(
-                                                        segment, 
-                                                        index, 
-                                                        document.querySelector('#cascade-checkbox').checked
-                                                    )}
-                                                />
-                                            }
-                                    </div>
-                                ))
-                            }
+                            {this.getNavigationInfo().map((segment, index) => (
+                                <div className="path-segment" key={segment.name}>
+                                    <button 
+                                        className="segment-name"
+                                        onClick={() => this.createPath(segment.name, index - 1)}>
+                                        {segment.name === "" ? this.QASM.s3_bucket : segment.name}
+                                    </button>
+                                        {segment.folders.length !== 0 &&
+                                            <Dropdown
+                                                items={segment.folders}
+                                                callback={(segment) => this.createPath(
+                                                    segment, 
+                                                    index, 
+                                                    document.querySelector('#cascade-checkbox').checked
+                                                )}
+                                            />
+                                        }
+                                </div>
+                            ))}
                         </div>
                     </div>
                 </header>
@@ -728,7 +714,6 @@ class S3Browser extends Component {
 
     async componentDidMount() { 
         try {
-            this.path_segments_children = await this.getPathSegmentsChildren();
             // Update cache
             this.cashe[""] = {
                 "folders": this.folders,
