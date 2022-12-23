@@ -546,7 +546,7 @@ class S3Browser extends Component {
             // The bucket will always be displayed, so add that first.
             navigation_info.push({
                 "name": "",
-                "folders": this.cashe[""].folders,
+                "folders": this.cashe[""].folders.map(folder => folder.slice(0, -1)), // Remove the final character
                 "files": this.cashe[""].files
             })
 
@@ -554,8 +554,14 @@ class S3Browser extends Component {
             for ( let idx = 0; idx < full_path_segments.length; idx++ ) {
                 navigation_info.push({
                     "name": path_segments[idx],
-                    "folders": this.cashe[full_path_segments[idx]].folders,
-                    "files": this.cashe[full_path_segments[idx]].files
+                    "folders": this.cashe[full_path_segments[idx]].folders.map(folder => {
+                        const segments = folder.split("/");
+                        return segments[segments.length - 2];
+                    }),
+                    "files": this.cashe[full_path_segments[idx]].files.map(file => {
+                        const segments = file.split("/");
+                        return segments[segments.length - 1];
+                    })
                 })
             }
         } 
@@ -567,9 +573,7 @@ class S3Browser extends Component {
 
 
     render() {
-        console.log("parents stack", this.parents)
-        console.log("redo", this.redo_stack)
-        console.log(this.path)
+        console.log(this.getNavigationInfo(), "Nav Info")
         return (
             <div className="S3Browser">
                 <h2>S3 Browser: {this.QASM.s3_bucket}</h2>
