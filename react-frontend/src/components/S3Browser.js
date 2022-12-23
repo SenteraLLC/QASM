@@ -60,7 +60,7 @@ class S3Browser extends Component {
         this.path = path;
         this.folders = []
         this.files = []
-            
+
         // Populate parent stack
         this.parents = [""]
         let folders = path.split("/").slice(0, -2);
@@ -68,7 +68,7 @@ class S3Browser extends Component {
             this.parents.push(this.parents[i] + folders[i] + "/");
         }
         
-        this.changePath({"folder": path}).then(() => {
+        this.changePath(path).then(() => {
             this.parents.pop(); // Remove starting path from parent stack
         });
     }
@@ -220,138 +220,133 @@ class S3Browser extends Component {
         }
     }
 
-
     /**
-     * Change the active path to a new folder
-     * and populate its folders and files 
+     * Navigates to a given s3 folder.
      * 
-     * @param {Object} kwargs {
-     *  {string} folder: Folder to change the path to, 
-     *  {Boolean} flush_redo_stack: Whether or not to reset the redo stack, 
-     *  {Boolean} add_to_parents: Whether or not to add the previous path to the parent stack
-     * }
+     * @param {string} folder String of the path for the folder we want to navigate to
+     * @returns {boolean} Returns true if the change succeeded, returns false if the change failed
      */
-    async changePath(kwargs) {
-        const folder = kwargs.folder;
-        let flush_redo_stack = kwargs.flush_redo_stack;
-        let add_to_parents = kwargs.add_to_parents;
-
-        if (folder === undefined) {
-            console.error("changePath must be given a path");
-            return;
-        }
-        
-        if (flush_redo_stack === undefined) {
-            // Set default
-            flush_redo_stack = true;
-        }
-
-        if (add_to_parents === undefined) {
-            // Set default
-            add_to_parents = true;
-        }
-
-
+    async setFolder(folder) {
+        console.log("setFolder", folder)
+        // First check if this folder has been saved in the cashe
         if (this.cashe[folder] !== undefined) {
             // Update the browser with the cashed folders and files
-            this.folders = this.cashe[folder].folders
-            this.files = this.cashe[folder].files
-            this.path = folder
-
-            this.setState({
-                path: this.path
-            })
-
-            // Redo button should not add to parents
-            if (add_to_parents) {
-                this.parents.push(this.path);
-            }
-            
-            // redo_stack should be flushed if this method isn't being called by goBack or goForward methods
-            if (flush_redo_stack) {
-                this.redo_stack = [];
-            }
-
-            // Fill in the path link with the new path
-            document.getElementById("s3-link").value = this.path;
-
-            return true
-        }
-
-        try {
-            // Call the backend to get the folder's children folders and files
-            let response = await this.QASM.call_backend(window, function_names.OPEN_S3_FOLDER, folder);
-
-            // Update the browser's folders, files, and path
-            this.folders = response.folders;
-            this.files = response.files;
+            this.folders = this.cashe[folder].folders;
+            this.files = this.cashe[folder].files;
             this.path = folder;
-            
+
             this.setState({
                 path: this.path
             });
 
-            // Add the folders and files to the cashe so we don't have to call the backend again for this folder
-            this.addToCache(folder, this.folders, this.files);
-
-            // redo_stack should be flushed if this method isn't being called by goBack or goForward methods
-            if (flush_redo_stack) {
-                this.redo_stack = [];
-            }
-
-            // Redo button should not add to parents
-            if (add_to_parents) {
-                this.parents.push(this.path);
-            }
-            
             // Fill in the path link with the new path
             document.getElementById("s3-link").value = this.path;
-    
-            console.log("Finished changing path")
-            return true
-        } catch {
-            console.log("Failed to load " + folder);
-            return false
         }
-    }
+        // If the cashe is undefined then try to get the information from the backend
+        else {
+            try {
+                // Call the backend to get the folder's children folders and files
+                let response = await this.QASM.call_backend(window, function_names.OPEN_S3_FOLDER, folder);
 
+                // Update the browser's folders, files, and path
+                this.folders = response.folders;
+                this.files = response.files;
+                this.path = folder;
+                
+                this.setState({
+                    path: this.path
+                });
 
-    /**
-     * Go up one folder level and populate the folders and files.
-     */
-    async goBack() {
-        // Add the current folder to the redo stack
-        this.redo_stack.push(this.path);
+                // Add the folders and files to the cashe so we don't have to call the backend again for this folder
+                this.addToCache(folder, this.folders, this.files);
+            } 
+            catch {
+                console.log("Failed to load " + folder);
 
-        let folder = this.parents.pop();
-        if (this.parents.length > 0) {
-            folder += folder.endsWith("/") ? "" : "/" // Add trailing slash if not present
+                // setFolder failed
+                console
+                return false
+            }
         }
+        // Fill in the path link with the new path
+        document.getElementById("s3-link").value = this.path;
+
+        console.log("Finished changing path");
         
-        // Change the path and record if the change was successful
-        let success = this.changePath({
-            "folder": folder,
-            "flush_redo_stack": false,
-            "add_to_parents": false
-        })
+        // setFolder succeeded
+        return true;
+    }
 
-        // If changing the path wasn't successful then we need to undo the changes we made to
-        // the undo and parents stack
-        if (!success) {
-            this.redo_stack.pop();
-            this.parents.push(folder)
+
+    /**
+     * Changes the active path to a new folder and populate its folders and files.
+     * 
+     * @param {string} folder String of what folder we want to navigate to
+     */
+    async changePath(folder) {
+        // Get the current path and save it since setFolder will change what this.path is
+        const current_path = this.path;
+
+        // Try to setFolder with the given folder
+        const success = this.setFolder(folder)
+
+        // If changing the folder was a success, then handle updating the parents and redo stack
+        if (success) {
+            // Add the folder we just navigated away from to the top of the the parents stack
+            this.parents.push(current_path);
+
+            // Reset the redo stack;
+            this.redo_stack = [];
+        }
+    }
+
+
+    /**
+     * Navigate to the folder on top of the parents stack.
+     */
+    goBack() {
+        // Get the folder we'll be navigating to from the top of the parents stack
+        const new_path = this.parents.pop();
+
+        console.log(new_path, "This is the parents.pop path")
+        
+        // Get the current path and save it since setFolder will change what this.path is
+        const current_path = this.path;
+
+        // Try to set the folder
+        const success = this.setFolder(new_path);
+
+        // If the change was successful then add the folder we navigated away from to the redo stack
+        if (success) {
+            this.redo_stack.push(current_path);
+        }
+        // If the change failed, then add the folder we tried to navigate to back to the parents stack
+        else {
+            this.parents.push(new_path);
         }
     }
 
     /**
-     * Navigates to the folder on the top of the redo_stack.
+     * Navigates to the folder on top of the redo_stack.
      */
     goForward() {
-        this.changePath({
-            "folder": this.redo_stack.pop(),
-            "flush_redo_stack": false,
-            "add_to_parents": true
-        })
+        // Get the folder we'll be navigating to from the top of the redo stack
+        const new_path = this.redo_stack.pop();
+
+        // Get the current path and save it since setFolder will change what this.path is
+        const current_path = this.path;
+
+        // Try to set the folder  
+        const success = this.setFolder(new_path);
+
+        // If the change was successful then add the folder we navigated away from to the redo stack
+        if (success) {
+            this.parents.push(current_path);
+        }
+        // If the change failed, then add the folder we tried to navigate to back to the redo stack
+        else {
+            this.redo_stack.push(new_path);
+        }
     }
 
 
@@ -428,7 +423,7 @@ class S3Browser extends Component {
     async createPath(final_segment, depth, cascade=false) {
         // If the depth is negative, route to the root folder
         if (depth === -1) {
-            this.changePath({"folder": ""});
+            this.changePath("");
             return
         }
 
@@ -460,13 +455,13 @@ class S3Browser extends Component {
 
             // Check if making the cascaded path results in a valid folder
             if (folders.length !== 0 || files.length !== 0) {
-                this.changePath({"folder": cascaded_path})
-                return
+                this.changePath(cascaded_path);
+                return;
             }
         }
 
         // Navigate to path
-        this.changePath({"folder": path})
+        this.changePath(path);
     }
 
     /**
@@ -572,6 +567,9 @@ class S3Browser extends Component {
 
 
     render() {
+        console.log("parents stack", this.parents)
+        console.log("redo", this.redo_stack)
+        console.log(this.path)
         return (
             <div className="S3Browser">
                 <h2>S3 Browser: {this.QASM.s3_bucket}</h2>
@@ -651,7 +649,7 @@ class S3Browser extends Component {
                 </header>
                 <div className={this.getDisplayMode() + " content"} id="s3-item-holder">
                     {this.folders.map(folder_name => (
-                        <div onClick={e => this.changePath({"folder": folder_name})} key={folder_name} className="clickable">
+                        <div onClick={e => this.changePath(folder_name)} key={folder_name} className="clickable">
                             <S3Folder
                                 path={folder_name}/>  
                         </div>
