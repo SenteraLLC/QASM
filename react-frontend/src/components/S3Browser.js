@@ -224,26 +224,27 @@ class S3Browser extends Component {
                 this.setS3Path(link);
             }
             else {
+                // Call the backend to get all of the missing folder data
                 let promise = Promise.resolve(this.QASM.call_backend(window, function_names.GET_CASCADING_DIR_CHILDREN, link))
-                this.setS3Path(link)
-                promise.then((data) => {
-                    // Add the data we recieved to the cashe
-                    console.log("Promise resolved. Data:", data.data)
 
+                // Set the path anyway
+                this.setS3Path(link)
+
+                // When the backend call resolves add the folder data to the cashe so the header can dispaly it
+                promise.then((data) => {
+                    // Add data to the cashe
                     this.addCascadeDirToCashe(data.data)
 
-                    console.log(this.cashe)
-
+                    // Force an update so that the header loads with the new data
                     this.forceUpdate();
                 }).catch((error) => {
-                    console.error(error)
-                    console.log("inside error")
+                    console.error("Couldn't recieve folder data", error)
                 })
             }
         }
     }
 
-    
+
     /**
      * Adds data recieved from QASM.call_backend(window, function_names.GET_CASCADING_DIR_CHILDREN, link) to 
      * the cashe.
@@ -319,8 +320,6 @@ class S3Browser extends Component {
         }
         // Fill in the path link with the new path
         document.getElementById("s3-link").value = this.path;
-
-        console.log("Finished changing path");
         
         // setFolder succeeded
         return true;
@@ -470,6 +469,7 @@ class S3Browser extends Component {
 
 
     async createPath(final_segment, depth, cascade=false) {
+        console.log("Create path called")
         // If the depth is negative, route to the root folder
         if (depth === -1) {
             this.changePath("");
@@ -505,8 +505,32 @@ class S3Browser extends Component {
             // Check if making the cascaded path results in a valid folder
             if (folders.length !== 0 || files.length !== 0) {
                 this.changePath(cascaded_path);
+
+                // If the cascaded path is undefined in the cashe, then that means that we have to call the backend to fill
+                // in missing folder data
+                console.log(this.cashe[cascaded_path], "this is the cascaded path in cashe")
+                if (this.cashe[cascaded_path] === undefined) {
+                    // Ask the backend for the folder data
+                    let promise = Promise.resolve(this.QASM.call_backend(window, function_names.GET_CASCADING_DIR_CHILDREN, cascaded_path))
+        
+                    // When the backend call resolves add the folder data to the cashe so the header can dispaly it
+                    promise.then((data) => {
+                        // Add data to the cashe
+                        this.addCascadeDirToCashe(data.data)
+    
+                        console.log("DATA", data)
+                        console.log("CASHE", this.cashe)
+        
+                        // Force an update so that the header loads with the new data
+                        this.forceUpdate();
+                    }).catch((error) => {
+                        console.error("Couldn't recieve folder data", error)
+                    })
+                }
+
                 return;
             }
+
         }
 
         // Navigate to path
@@ -622,7 +646,6 @@ class S3Browser extends Component {
 
 
     render() {
-        console.log(this.getNavigationInfo(), "Nav Info")
         return (
             <div className="S3Browser">
                 <h2>S3 Browser: {this.QASM.s3_bucket}</h2>
