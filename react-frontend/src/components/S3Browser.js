@@ -33,21 +33,22 @@ class S3Browser extends Component {
         };
 
         // Bind functions
-        this.selectFolder            = this.selectFolder.bind(this);
-        this.changePath              = this.changePath.bind(this);
-        this.goBack                  = this.goBack.bind(this);
-        this.getFolders              = this.getFolders.bind(this);
-        this.selectFile              = this.selectFile.bind(this);
-        this.createFile              = this.createFile.bind(this);
-        this.getDisplayMode          = this.getDisplayMode.bind(this);
-        this.updateDisplayMode       = this.updateDisplayMode.bind(this);
-        this.setS3Path               = this.setS3Path.bind(this);
-        this.readS3Link              = this.readS3Link.bind(this);
-        this.createPath              = this.createPath.bind(this);
-        this.handleKeyPress          = this.handleKeyPress.bind(this);
-        this.goForward               = this.goForward.bind(this);
-        this.addCache = this.addToCache.bind(this)
-        this.getNavigationInfo = this.getNavigationInfo.bind(this);
+        this.selectFolder         = this.selectFolder.bind(this);
+        this.changePath           = this.changePath.bind(this);
+        this.goBack               = this.goBack.bind(this);
+        this.getFolders           = this.getFolders.bind(this);
+        this.selectFile           = this.selectFile.bind(this);
+        this.createFile           = this.createFile.bind(this);
+        this.getDisplayMode       = this.getDisplayMode.bind(this);
+        this.updateDisplayMode    = this.updateDisplayMode.bind(this);
+        this.setS3Path            = this.setS3Path.bind(this);
+        this.readS3Link           = this.readS3Link.bind(this);
+        this.createPath           = this.createPath.bind(this);
+        this.handleKeyPress       = this.handleKeyPress.bind(this);
+        this.goForward            = this.goForward.bind(this);
+        this.addCache             = this.addToCache.bind(this)
+        this.getNavigationInfo    = this.getNavigationInfo.bind(this);
+        this.addCascadeDirToCashe = this.addCascadeDirToCashe.bind(this);
     }
 
 
@@ -216,9 +217,57 @@ class S3Browser extends Component {
         /* eslint-disable */
         // Prompt user to confirm, then save
         if (confirm("Go to path ' " + link + " ' ?")) {
-            this.setS3Path(link);
+
+            // Check to see if this path is already in the cashe
+            if (this.cashe[link] !== undefined) {
+                // If it is we can assume that the paths leading up to it are also probably in the cashe
+                this.setS3Path(link);
+            }
+            else {
+                let promise = Promise.resolve(this.QASM.call_backend(window, function_names.GET_CASCADING_DIR_CHILDREN, link))
+                this.setS3Path(link)
+                promise.then((data) => {
+                    // Add the data we recieved to the cashe
+                    console.log("Promise resolved. Data:", data.data)
+
+                    this.addCascadeDirToCashe(data.data)
+
+                    console.log(this.cashe)
+
+                    this.forceUpdate();
+                }).catch((error) => {
+                    console.error(error)
+                    console.log("inside error")
+                })
+            }
         }
     }
+
+    
+    /**
+     * Adds data recieved from QASM.call_backend(window, function_names.GET_CASCADING_DIR_CHILDREN, link) to 
+     * the cashe.
+     * 
+     * @param data [{name: string, files: string[], folders: string[]}, ... ]
+     */
+    addCascadeDirToCashe(data) {
+        // The names in the data object are only their reletive name, while the cashe requires the full path name, so 
+        // create a variable to hold the path info.
+        let previous_folder = "";
+
+        // let idx = 1. This is because the first element of data will always be the root folder which will always
+        // be populated by this point
+        for ( let idx = 1; idx < data.length; idx++ ) {
+            // Create the full path name from the previous folder name
+            let current_folder = previous_folder + data[idx].name + "/";
+
+            // Add this folder's folders and files to the cashe
+            this.addToCache(current_folder, data[idx].folders, data[idx].files);
+
+            previous_folder = current_folder
+        }
+    }
+
 
     /**
      * Navigates to a given s3 folder.
