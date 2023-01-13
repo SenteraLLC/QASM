@@ -24,7 +24,9 @@ class S3Browser extends Component {
             this.path = "" 
             this.folders = this.QASM.folders
             this.files   = this.QASM.files
+            console.log("path is null in constructor")
         } else {
+            console.log("path is not null. Path:", this.path)
             this.setS3Path(this.path);
         }
 
@@ -71,6 +73,20 @@ class S3Browser extends Component {
         
         this.changePath(path).then(() => {
             this.parents.pop(); // Remove starting path from parent stack
+
+            // Call the backend to get each successive folder's child folders and files to populate the header
+            let promise = Promise.resolve(this.QASM.call_backend(window, function_names.GET_CASCADING_DIR_CHILDREN, path));
+
+            // When the backend call resolves add the folder data to the cashe so the header can display it
+            promise.then((data) => {
+                // Add data to the cashe
+                this.addCascadeDirToCashe(data.data)
+
+                // Force an update so that the header loads with the new data
+                this.forceUpdate();
+            }).catch((error) => {
+                console.error("Couldn't recieve folder data", error)
+            })
         });
     }
 
@@ -234,7 +250,7 @@ class S3Browser extends Component {
                 // Set the path anyway
                 this.setS3Path(link)
 
-                // When the backend call resolves add the folder data to the cashe so the header can dispaly it
+                // When the backend call resolves add the folder data to the cashe so the header can display it
                 promise.then((data) => {
                     // Add data to the cashe
                     this.addCascadeDirToCashe(data.data)
@@ -292,9 +308,6 @@ class S3Browser extends Component {
             this.setState({
                 path: this.path
             });
-
-            // Fill in the path link with the new path
-            document.getElementById("s3-link").value = this.path;
         }
         // If the cashe is undefined then try to get the information from the backend
         else {
