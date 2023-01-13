@@ -47,6 +47,10 @@ div.menu a.Link {
   text-align: center;
 }
 
+div.menu a.Link.hidden {
+  padding: 0;
+}
+
 div.menu a.Link:hover {
   background-color: #636363;
   color: #D4D4D4;

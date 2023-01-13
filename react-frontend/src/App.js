@@ -86,23 +86,25 @@ class App extends Component {
           <a href='/' id="menu-logo">
             <img src={icon} alt="Logo" />
           </a>
-          {this.components.map(component => (
+          <div className="link-holder" >
+            {this.components.map(component => (
+              <Link 
+                className="Link"
+                to={component.path}
+                key={component.path}> 
+                <h2>
+                  {component.display_name === undefined 
+                  ? component.component
+                  : component.display_name}
+                </h2>
+              </Link>
+            ))}
             <Link 
-              className="Link"
-              to={component.path}
-              key={component.path}> 
-              <h2>
-                {component.display_name === undefined 
-                ? component.component
-                : component.display_name}
-              </h2>
-            </Link>
-          ))}
-          <Link 
-              id="s3browser-link"
-              className=" Link hidden"
-              to="S3Browser"
-              key="S3Browser"/>
+                id="s3browser-link"
+                className=" Link hidden"
+                to="S3Browser"
+                key="S3Browser"/>
+          </div>
         </div>
         <Routes>
           {this.componentList.map((component, idx) => (
