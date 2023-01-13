@@ -59,11 +59,11 @@ class S3Browser extends Component {
      */
     setS3Path(path) {
         this.path = path;
-        this.folders = []
-        this.files = []
+        this.folders = [];
+        this.files = [];
 
         // Populate parent stack
-        this.parents = [""]
+        this.parents = [""];
         let folders = path.split("/").slice(0, -2);
         for (let i=0; i < folders.length; i++) {
             this.parents.push(this.parents[i] + folders[i] + "/");
@@ -188,16 +188,16 @@ class S3Browser extends Component {
                 throw new Error("Trying to create image with unknown file type.");
         }
 
-        const new_filename_input = document.getElementById("new-filename")
+        const new_filename_input = document.getElementById("new-filename");
         let new_filename = new_filename_input.value;
 
         // Make sure the filename isn't blank
         if (new_filename === "") {
             // TODO: Show an alert if the user trys to save without a filename
             // The built-in javascript alert() was causing a weird bug with electron
-            console.warn("No filename provided")
+            console.warn("No filename provided");
             new_filename_input.focus();
-            return
+            return;
         }
 
         new_filename = new_filename.replace(" ", "_").split('.')[0]; // Space -> underscore, remove extension
@@ -378,6 +378,7 @@ class S3Browser extends Component {
         }
     }
 
+
     /**
      * Navigates to the folder on top of the redo_stack.
      */
@@ -512,34 +513,29 @@ class S3Browser extends Component {
 
                 // If the cascaded path is undefined in the cashe, then that means that we have to call the backend to fill
                 // in missing folder data
-                console.log(this.cashe[cascaded_path], "this is the cascaded path in cashe")
                 if (this.cashe[cascaded_path] === undefined) {
                     // Ask the backend for the folder data
-                    let promise = Promise.resolve(this.QASM.call_backend(window, function_names.GET_CASCADING_DIR_CHILDREN, cascaded_path))
+                    let promise = Promise.resolve(this.QASM.call_backend(window, function_names.GET_CASCADING_DIR_CHILDREN, cascaded_path));
         
                     // When the backend call resolves add the folder data to the cashe so the header can dispaly it
                     promise.then((data) => {
                         // Add data to the cashe
-                        this.addCascadeDirToCashe(data.data)
-    
-                        console.log("DATA", data)
-                        console.log("CASHE", this.cashe)
+                        this.addCascadeDirToCashe(data.data);
         
                         // Force an update so that the header loads with the new data
                         this.forceUpdate();
                     }).catch((error) => {
-                        console.error("Couldn't recieve folder data", error)
+                        console.error("Couldn't recieve folder data", error);
                     })
                 }
-
                 return;
             }
-
         }
 
         // Navigate to path
         this.changePath(path);
     }
+
 
     /**
      * Handles key presses when focus is on the s3path input.
@@ -547,10 +543,11 @@ class S3Browser extends Component {
      * @param {string} key String saying what key was pressed
      */
     handleKeyPress(key) {
-        if (key !== "Enter") return
+        if (key !== "Enter") return;
 
-        this.readS3Link()
+        this.readS3Link();
     }
+
 
     /**
      * Ask the user if they want to close the window. If they say yes, then close the window.
@@ -560,13 +557,20 @@ class S3Browser extends Component {
             window.close()
         }
     }
-       
-    
+
+
+    /**
+     * Uses the base folder as a key to add the folders and files to the cashe.
+     * 
+     * @param {string} base_folder Parent folder name
+     * @param {string[]} folders Array of children folders
+     * @param {string[]} files Array of children files
+     */
     addToCache(base_folder, folders, files) {
         this.cashe[base_folder] = {};
 
-        this.cashe[base_folder]["folders"] = folders
-        this.cashe[base_folder]["files"] = files
+        this.cashe[base_folder]["folders"] = folders;
+        this.cashe[base_folder]["files"] = files;
     }
 
 
@@ -598,24 +602,29 @@ class S3Browser extends Component {
      */
     buildPaths(path) {
         // Get an array of each segment
-        const path_segments = this.getPathSegments(path)
+        const path_segments = this.getPathSegments(path);
 
-        let paths = []
+        let paths = [];
 
         for ( let idx = 0; idx < path_segments.length; idx++ ) {
             if ( idx === 0 ) {
-                paths.push(path_segments[0] + "/")
+                paths.push(path_segments[0] + "/");
             }
             else {
-                paths.push(paths[idx - 1] + path_segments[idx] + "/")
+                paths.push(paths[idx - 1] + path_segments[idx] + "/");
             }
         }
-        return paths
+        return paths;
     }
 
-
+    /**
+     * Builds and returns an array of objects that contains the name, child files, and child folders
+     * of each successive segment to the current folder.
+     * 
+     * @returns [{name: string}, files: string[], folders: string[]}, ... ] for each segment in the heading nav bar
+     */
     getNavigationInfo() {
-        let navigation_info = []
+        let navigation_info = [];
         const path_segments = this.getPathSegments(this.path);
         const full_path_segments = this.buildPaths(this.path);
         
@@ -643,9 +652,9 @@ class S3Browser extends Component {
             }
         } 
         catch {
-            console.log("getNavInfo Failed")
+            console.log("getNavInfo Failed");
         }
-        return navigation_info
+        return navigation_info;
     }
 
 
