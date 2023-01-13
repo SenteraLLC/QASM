@@ -79,26 +79,30 @@ class S3Browser extends Component {
      * Check that current folder has images, then send folder path to the main window.
      */
     selectFolder() {
-        let images_present = false;
-        for (let file of this.files) {
-            let ext = file.split('.').pop()
-            if (ext in image_types) {
-                images_present = true;
-                break;
+        // Verify presence of images in folder
+        if (this.mode === s3_browser_modes.SELECT_IMG_DIRECTORY) {
+            let images_present = false;
+            for (let file of this.files) {
+                let ext = file.split('.').pop()
+                if (ext in image_types) {
+                    images_present = true;
+                    break;
+                }
+            }
+            
+            if (!images_present) {
+                alert("No images found in folder " + this.path);
+                return;
             }
         }
-        
-        if (images_present) {
-            let data = {
-                success: true,
-                path: this.path,
-            }
-            // Send data back to parent window
-            window.opener.postMessage(data, '*');
-            window.close();
-        } else {
-            alert("No images found in folder " + this.path);
+
+        let data = {
+            success: true,
+            path: this.path,
         }
+        // Send data back to parent window
+        window.opener.postMessage(data, '*');
+        window.close();
     }
     
 
