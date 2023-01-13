@@ -28,9 +28,13 @@ div.menu #menu-logo img {
 }
 
 div.menu div.link-holder {
-  flex: 1;
   display: flex;
+  flex: 1;
   flex-wrap: wrap;
+  justify-content: center;
+
+  /* Sets the margin to get smaller as the window gets smaller */
+  margin-right: calc(0.08 * 100%);
 }
 
 div.menu a.Link {
