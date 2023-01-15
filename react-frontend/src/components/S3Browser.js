@@ -34,6 +34,10 @@ class S3Browser extends Component {
             path: this.path
         };
 
+        // Load user display settings
+        this.loadSettings()
+        
+
         // Bind functions
         this.selectFolder         = this.selectFolder.bind(this);
         this.changePath           = this.changePath.bind(this);
@@ -51,6 +55,8 @@ class S3Browser extends Component {
         this.addCache             = this.addToCache.bind(this)
         this.getNavigationInfo    = this.getNavigationInfo.bind(this);
         this.addCascadeDirToCashe = this.addCascadeDirToCashe.bind(this);
+        this.saveSettings         = this.saveSettings.bind(this);
+        this.loadSettings         = this.loadSettings.bind(this);
     }
 
 
@@ -483,6 +489,9 @@ class S3Browser extends Component {
      */
     updateDisplayMode() {
         document.getElementById("s3-item-holder").className = this.getDisplayMode();
+
+        // Save the new settings
+        this.saveSettings();
     }
 
 
@@ -669,6 +678,38 @@ class S3Browser extends Component {
         }
         return navigation_info;
     }
+    
+
+    /**
+     * Saves the user settings on local storage so that diffrent S3Browser instances will have 
+     * the same settings for the same user.
+     */
+    saveSettings() {
+        const settings = {
+            "cascade": document.querySelector('#cascade-checkbox').checked,
+            "display": document.querySelector("input[name='display']:checked").value,
+            "size": document.querySelector("input[name='display-size']:checked").value
+        }
+
+        window.localStorage.setItem('settings', JSON.stringify(settings));
+    }
+
+
+    /**
+     * Loads the user settings from local storage.
+     */
+    loadSettings() {
+        this.settings = JSON.parse(window.localStorage.getItem('settings'));
+
+        // If the user settings are null set defaults
+        if (this.settings === null) {
+            this.settings = {
+                "cascade": false,
+                "display": "grid",
+                "size": "medium"
+            }
+        }
+    }
 
 
     render() {
@@ -680,31 +721,60 @@ class S3Browser extends Component {
                         <fieldset className="directory-display-mode" onChange={this.updateDisplayMode}>
                             <legend>Display</legend>
                             <div>
-                                <input type="radio" id="grid-display" name="display" value="grid" defaultChecked />
+                                <input 
+                                    type="radio" 
+                                    id="grid-display" 
+                                    name="display" 
+                                    value="grid" 
+                                    defaultChecked={this.settings.display==="grid"} />
                                 <label htmlFor="grid-display">Grid</label>
                             </div>
                             <div>
-                                <input type="radio" id="list-display" name="display" value="list" />
+                                <input 
+                                    type="radio" 
+                                    id="list-display" 
+                                    name="display" 
+                                    value="list" 
+                                    defaultChecked={this.settings.display==="list"} />
                                 <label htmlFor="list-display">List</label>
                             </div>
                         </fieldset>
                         <fieldset className="directory-display-size" onChange={this.updateDisplayMode}>
                             <legend>Size</legend>
                             <div>
-                                <input type="radio" id="display-small" name="display-size" value="small" />
+                                <input 
+                                    type="radio" 
+                                    id="display-small" 
+                                    name="display-size" 
+                                    value="small" 
+                                    defaultChecked={this.settings.size==="small"} />
                                 <label htmlFor="display-small">Small</label>
                             </div>
                             <div>
-                                <input type="radio" id="display-medium" name="display-size" value="medium" defaultChecked />
+                                <input 
+                                    type="radio" 
+                                    id="display-medium" 
+                                    name="display-size" 
+                                    value="medium" 
+                                    defaultChecked={this.settings.size==="medium"} />
                                 <label htmlFor="display-medium">Medium</label>
                             </div>
                             <div>
-                                <input type="radio" id="display-large" name="display-size" value="large" />
+                                <input 
+                                    type="radio" 
+                                    id="display-large" 
+                                    name="display-size" 
+                                    value="large" 
+                                    defaultChecked={this.settings.size==="large"} />
                                 <label htmlFor="display-large">Large</label>
                             </div>
                         </fieldset>
                         <div className="cascade">
-                            <input type="checkbox" id="cascade-checkbox"/>
+                            <input 
+                                type="checkbox" 
+                                id="cascade-checkbox" 
+                                onChange={this.saveSettings} 
+                                defaultChecked={this.settings.cascade}/>
                             <label
                                 htmlFor="cascade-checkbox">
                                 Cascade
