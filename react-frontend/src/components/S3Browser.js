@@ -24,9 +24,7 @@ class S3Browser extends Component {
             this.path = "" 
             this.folders = this.QASM.folders
             this.files   = this.QASM.files
-            console.log("path is null in constructor")
         } else {
-            console.log("path is not null. Path:", this.path)
             this.setS3Path(this.path);
         }
 
@@ -303,7 +301,6 @@ class S3Browser extends Component {
      * @returns {boolean} Returns true if the change succeeded, returns false if the change failed
      */
     async setFolder(folder) {
-        console.log("setFolder", folder)
         // First check if this folder has been saved in the cashe
         if (this.cashe[folder] !== undefined) {
             // Update the browser with the cashed folders and files
@@ -334,10 +331,9 @@ class S3Browser extends Component {
                 this.addToCache(folder, this.folders, this.files);
             } 
             catch {
+                // setFolder failed
                 console.log("Failed to load " + folder);
 
-                // setFolder failed
-                console
                 return false
             }
         }
@@ -378,8 +374,6 @@ class S3Browser extends Component {
     goBack() {
         // Get the folder we'll be navigating to from the top of the parents stack
         const new_path = this.parents.pop();
-
-        console.log(new_path, "This is the parents.pop path")
         
         // Get the current path and save it since setFolder will change what this.path is
         const current_path = this.path;
@@ -444,7 +438,6 @@ class S3Browser extends Component {
 
             // Get all the contents of the folder and return all the folders it contains
             const response = await this.QASM.call_backend(window, "openS3folder", final_path);
-            console.log(response.folders, "response.folders");
             return response.folders;
         }
         catch {
@@ -494,9 +487,16 @@ class S3Browser extends Component {
         this.saveSettings();
     }
 
-
+    /**
+     * Creates the full path string to navigate to when navigating with the header buttons. If cascade is true,
+     * it will try to create a valid path with just the final_segment being replaced. If it can't create a valid
+     * path, then it will create a path without cascading.
+     * 
+     * @param {string} final_segment The final segment in the path being created
+     * @param {number} depth The depth in the path the final segment is
+     * @param {boolean} cascade Whether or not to cascade to the same depth as the current folder
+     */
     async createPath(final_segment, depth, cascade=false) {
-        console.log("Create path called")
         // If the depth is negative, route to the root folder
         if (depth === -1) {
             this.changePath("");
@@ -678,7 +678,7 @@ class S3Browser extends Component {
         }
         return navigation_info;
     }
-    
+
 
     /**
      * Saves the user settings on local storage so that diffrent S3Browser instances will have 
