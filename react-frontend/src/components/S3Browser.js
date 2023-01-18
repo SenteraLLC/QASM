@@ -424,17 +424,15 @@ class S3Browser extends Component {
         let style, size;
 
         if (document.querySelector("input[name='display']:checked") === null) {
-            style = "grid";  // Default
-        }
-        else {
+            style = this.settings.display; // Default "grid" set in loadSettings()
+        } else {
             // Currently checked display style radio button
             style = document.querySelector("input[name='display']:checked").value;
         }
 
         if (document.querySelector("input[name='display-size']:checked") === null) {
-            size = "medium"; // Default
-        }
-        else {
+            size = this.settings.size; // Default "medium" set in loadSettings()
+        } else {
             // Currently checked size radio button
             size = document.querySelector("input[name='display-size']:checked").value;
         }
@@ -811,14 +809,15 @@ class S3Browser extends Component {
                             type="text"
                             onKeyDown={(e) => this.handleKeyPress(e.key)}
                         />
-                        {this.mode === s3_browser_modes.SELECT_DIRECTORY && 
+                        {/* `[].includes(x)` acts similar to python's `x in []` */}
+                        {[s3_browser_modes.SELECT_DIRECTORY, s3_browser_modes.SELECT_IMG_DIRECTORY].includes(this.mode) && 
                             <button
                                 onClick={this.selectFolder}
                                 className="select-button button">
                                 Select Current Directory
                             </button>
                         }
-                        {(this.mode === s3_browser_modes.SAVE_JSON || this.mode === s3_browser_modes.SAVE_IMAGE) &&
+                        {[s3_browser_modes.SAVE_JSON, s3_browser_modes.SAVE_IMAGE].includes(this.mode) &&
                             <button
                                 onClick={() => this.createFile(this.mode)}
                                 className="button">
@@ -835,20 +834,6 @@ class S3Browser extends Component {
             </div>
         )
     }
-
-
-    // async componentDidMount() { 
-    //     try {
-    //         // Update cache
-    //         this.cache[""] = {
-    //             "folders": this.folders,
-    //             "files": this.files
-    //         }
-    //         this.forceUpdate();
-    //     } catch(error) {
-    //         console.error(error);
-    //     }
-    // }
 }
 
 export default S3Browser;
