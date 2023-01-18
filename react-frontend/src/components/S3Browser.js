@@ -10,7 +10,7 @@ class S3Browser extends Component {
     component_updater = 0;
     redo_stack = [];
     cached_folder_structure = {};
-    cashe = {};
+    cache = {};
 
     constructor(props) {
         super(props);
@@ -52,7 +52,7 @@ class S3Browser extends Component {
         this.goForward            = this.goForward.bind(this);
         this.addCache             = this.addToCache.bind(this)
         this.getNavigationInfo    = this.getNavigationInfo.bind(this);
-        this.addCascadeDirToCashe = this.addCascadeDirToCashe.bind(this);
+        this.addCascadeDirToCache = this.addCascadeDirToCache.bind(this);
         this.saveSettings         = this.saveSettings.bind(this);
         this.loadSettings         = this.loadSettings.bind(this);
     }
@@ -81,10 +81,10 @@ class S3Browser extends Component {
             // Call the backend to get each successive folder's child folders and files to populate the header
             let promise = Promise.resolve(this.QASM.call_backend(window, function_names.GET_CASCADING_DIR_CHILDREN, path));
 
-            // When the backend call resolves add the folder data to the cashe so the header can display it
+            // When the backend call resolves add the folder data to the cache so the header can display it
             promise.then((data) => {
-                // Add data to the cashe
-                this.addCascadeDirToCashe(data.data)
+                // Add data to the cache
+                this.addCascadeDirToCache(data.data)
 
                 // Force an update so that the header loads with the new data
                 this.forceUpdate();
@@ -242,9 +242,9 @@ class S3Browser extends Component {
         // Prompt user to confirm, then save
         if (confirm("Go to path ' " + link + " ' ?")) {
 
-            // Check to see if this path is already in the cashe
-            if (this.cashe[link] !== undefined) {
-                // If it is we can assume that the paths leading up to it are also probably in the cashe
+            // Check to see if this path is already in the cache
+            if (this.cache[link] !== undefined) {
+                // If it is we can assume that the paths leading up to it are also probably in the cache
                 this.setS3Path(link);
             }
             else {
@@ -254,10 +254,10 @@ class S3Browser extends Component {
                 // Set the path anyway
                 this.setS3Path(link)
 
-                // When the backend call resolves add the folder data to the cashe so the header can display it
+                // When the backend call resolves add the folder data to the cache so the header can display it
                 promise.then((data) => {
-                    // Add data to the cashe
-                    this.addCascadeDirToCashe(data.data)
+                    // Add data to the cache
+                    this.addCascadeDirToCache(data.data)
 
                     // Force an update so that the header loads with the new data
                     this.forceUpdate();
@@ -271,12 +271,12 @@ class S3Browser extends Component {
 
     /**
      * Adds data recieved from QASM.call_backend(window, function_names.GET_CASCADING_DIR_CHILDREN, link) to 
-     * the cashe.
+     * the cache.
      * 
      * @param data [{name: string, files: string[], folders: string[]}, ... ]
      */
-    addCascadeDirToCashe(data) {
-        // The names in the data object are only their reletive name, while the cashe requires the full path name, so 
+    addCascadeDirToCache(data) {
+        // The names in the data object are only their reletive name, while the cache requires the full path name, so 
         // create a variable to hold the path info.
         let previous_folder = "";
 
@@ -286,7 +286,7 @@ class S3Browser extends Component {
             // Create the full path name from the previous folder name
             let current_folder = previous_folder + data[idx].name + "/";
 
-            // Add this folder's folders and files to the cashe
+            // Add this folder's folders and files to the cache
             this.addToCache(current_folder, data[idx].folders, data[idx].files);
 
             previous_folder = current_folder
@@ -301,18 +301,18 @@ class S3Browser extends Component {
      * @returns {boolean} Returns true if the change succeeded, returns false if the change failed
      */
     async setFolder(folder) {
-        // First check if this folder has been saved in the cashe
-        if (this.cashe[folder] !== undefined) {
-            // Update the browser with the cashed folders and files
-            this.folders = this.cashe[folder].folders;
-            this.files = this.cashe[folder].files;
+        // First check if this folder has been saved in the cache
+        if (this.cache[folder] !== undefined) {
+            // Update the browser with the cached folders and files
+            this.folders = this.cache[folder].folders;
+            this.files = this.cache[folder].files;
             this.path = folder;
 
             this.setState({
                 path: this.path
             });
         }
-        // If the cashe is undefined then try to get the information from the backend
+        // If the cache is undefined then try to get the information from the backend
         else {
             try {
                 // Call the backend to get the folder's children folders and files
@@ -327,7 +327,7 @@ class S3Browser extends Component {
                     path: this.path
                 });
 
-                // Add the folders and files to the cashe so we don't have to call the backend again for this folder
+                // Add the folders and files to the cache so we don't have to call the backend again for this folder
                 this.addToCache(folder, this.folders, this.files);
             } 
             catch {
@@ -533,16 +533,16 @@ class S3Browser extends Component {
             if (folders.length !== 0 || files.length !== 0) {
                 this.changePath(cascaded_path);
 
-                // If the cascaded path is undefined in the cashe, then that means that we have to call the backend to fill
+                // If the cascaded path is undefined in the cache, then that means that we have to call the backend to fill
                 // in missing folder data
-                if (this.cashe[cascaded_path] === undefined) {
+                if (this.cache[cascaded_path] === undefined) {
                     // Ask the backend for the folder data
                     let promise = Promise.resolve(this.QASM.call_backend(window, function_names.GET_CASCADING_DIR_CHILDREN, cascaded_path));
         
-                    // When the backend call resolves add the folder data to the cashe so the header can dispaly it
+                    // When the backend call resolves add the folder data to the cache so the header can dispaly it
                     promise.then((data) => {
-                        // Add data to the cashe
-                        this.addCascadeDirToCashe(data.data);
+                        // Add data to the cache
+                        this.addCascadeDirTocache(data.data);
         
                         // Force an update so that the header loads with the new data
                         this.forceUpdate();
@@ -582,17 +582,17 @@ class S3Browser extends Component {
 
 
     /**
-     * Uses the base folder as a key to add the folders and files to the cashe.
+     * Uses the base folder as a key to add the folders and files to the cache.
      * 
      * @param {string} base_folder Parent folder name
      * @param {string[]} folders Array of children folders
      * @param {string[]} files Array of children files
      */
     addToCache(base_folder, folders, files) {
-        this.cashe[base_folder] = {};
+        this.cache[base_folder] = {};
 
-        this.cashe[base_folder]["folders"] = folders;
-        this.cashe[base_folder]["files"] = files;
+        this.cache[base_folder]["folders"] = folders;
+        this.cache[base_folder]["files"] = files;
     }
 
 
@@ -654,19 +654,19 @@ class S3Browser extends Component {
             // The bucket will always be displayed, so add that first.
             navigation_info.push({
                 "name": "",
-                "folders": this.cashe[""].folders.map(folder => folder.slice(0, -1)), // Remove the final character
-                "files": this.cashe[""].files
+                "folders": this.cache[""].folders.map(folder => folder.slice(0, -1)), // Remove the final character
+                "files": this.cache[""].files
             })
 
             // Add the rest of the segments
             for ( let idx = 0; idx < full_path_segments.length; idx++ ) {
                 navigation_info.push({
                     "name": path_segments[idx],
-                    "folders": this.cashe[full_path_segments[idx]].folders.map(folder => {
+                    "folders": this.cache[full_path_segments[idx]].folders.map(folder => {
                         const segments = folder.split("/");
                         return segments[segments.length - 2];
                     }),
-                    "files": this.cashe[full_path_segments[idx]].files.map(file => {
+                    "files": this.cache[full_path_segments[idx]].files.map(file => {
                         const segments = file.split("/");
                         return segments[segments.length - 1];
                     })
@@ -885,7 +885,7 @@ class S3Browser extends Component {
     async componentDidMount() { 
         try {
             // Update cache
-            this.cashe[""] = {
+            this.cache[""] = {
                 "folders": this.folders,
                 "files": this.files
             }
