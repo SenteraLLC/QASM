@@ -5,13 +5,13 @@ import S3File from "./S3File.js";
 import "../css/S3Browser.css";
 const { image_types, function_names } = require("../../public/electron_constants.js");
 const { s3_browser_modes } = require("../QASM/constants.js");
-const BASE_PATH = ""
+const BASE_PATH = "" // Key used to represent the root folder of the bucket
 
 class S3Browser extends Component {
     component_updater = 0;
     redo_stack = [];
     cached_folder_structure = {};
-
+    cache = {};
     constructor(props) {
         super(props);
         
@@ -19,17 +19,12 @@ class S3Browser extends Component {
         this.mode    = window.S3_BROWSER_MODE // Set by window opener
         this.path    = window.START_FOLDER
         this.parents = props.parents || [] // Stack of parent folders
-        
+        this.addToCache(BASE_PATH, this.QASM.folders, this.QASM.files); // Always populate bucket in cache
+
         if (this.path == null) { // Starting at bucket level
             this.path = BASE_PATH
             this.folders = this.QASM.folders
             this.files   = this.QASM.files
-            this.cache = {
-                [this.path]: {
-                    "folders": this.folders,
-                    "files": this.files
-                }
-            }
         } else { // Starting at some folder depth
             this.setS3Path(this.path);
         }
@@ -81,8 +76,10 @@ class S3Browser extends Component {
             this.parents.push(this.parents[i] + folders[i] + "/");
         }
         
+        // let folder = this.parents.pop() // Remove starting path from parent stack
+        // console.log("starting folder", folder)
+        console.log("path", path)
         this.changePath(path).then(() => {
-            this.parents.pop(); // Remove starting path from parent stack
 
             // Call the backend to get each successive folder's child folders and files to populate the header
             let promise = Promise.resolve(this.QASM.call_backend(window, function_names.GET_CASCADING_DIR_CHILDREN, path));
@@ -282,20 +279,16 @@ class S3Browser extends Component {
      * @param data [{name: string, files: string[], folders: string[]}, ... ]
      */
     addCascadeDirToCache(data) {
-        // The names in the data object are only their reletive name, while the cache requires the full path name, so 
-        // create a variable to hold the path info.
-        let previous_folder = "";
+        console.log("data from lambda", data)
 
         // let idx = 1. This is because the first element of data will always be the root folder which will always
         // be populated by this point
         for ( let idx = 1; idx < data.length; idx++ ) {
             // Create the full path name from the previous folder name
-            let current_folder = previous_folder + data[idx].name + "/";
+            // let current_folder = previous_folder + data[idx].name + "/";
 
             // Add this folder's folders and files to the cache
-            this.addToCache(current_folder, data[idx].folders, data[idx].files);
-
-            previous_folder = current_folder
+            this.addToCache(data[idx].name, data[idx].folders, data[idx].files);
         }
     }
 
@@ -308,7 +301,8 @@ class S3Browser extends Component {
      */
     async setFolder(folder) {
         // First check if this folder has been saved in the cache
-        if (this.cache[folder] !== undefined) {
+        if (folder in this.cache) {
+            console.log(folder + " found in cache")
             // Update the browser with the cached folders and files
             this.folders = this.cache[folder].folders;
             this.files = this.cache[folder].files;
@@ -320,6 +314,7 @@ class S3Browser extends Component {
         }
         // If the cache is undefined then try to get the information from the backend
         else {
+            console.log(folder + " NOT found in cache")
             try {
                 // Call the backend to get the folder's children folders and files
                 let response = await this.QASM.call_backend(window, function_names.OPEN_S3_FOLDER, folder);
@@ -337,17 +332,14 @@ class S3Browser extends Component {
                 this.addToCache(folder, this.folders, this.files);
             } 
             catch {
-                // setFolder failed
-                console.log("Failed to load " + folder);
-
+                console.log("Failed to load " + folder); // setFolder failed
                 return false
             }
         }
         // Fill in the path link with the new path
         document.getElementById("s3-link").value = this.path;
         
-        // setFolder succeeded
-        return true;
+        return true; // setFolder succeeded
     }
 
 
@@ -548,7 +540,7 @@ class S3Browser extends Component {
                     // When the backend call resolves add the folder data to the cache so the header can dispaly it
                     promise.then((data) => {
                         // Add data to the cache
-                        this.addCascadeDirTocache(data.data);
+                        this.addCascadeDirToCache(data.data);
         
                         // Force an update so that the header loads with the new data
                         this.forceUpdate();
@@ -595,10 +587,10 @@ class S3Browser extends Component {
      * @param {string[]} files Array of children files
      */
     addToCache(base_folder, folders, files) {
-        this.cache[base_folder] = {};
-
-        this.cache[base_folder]["folders"] = folders;
-        this.cache[base_folder]["files"] = files;
+        this.cache[base_folder] = {
+            "folders": folders,
+            "files": files,
+        };
     }
 
 
