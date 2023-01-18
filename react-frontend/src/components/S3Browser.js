@@ -54,6 +54,7 @@ class S3Browser extends Component {
         this.addCache             = this.addToCache.bind(this)
         this.getNavigationInfo    = this.getNavigationInfo.bind(this);
         this.addCascadeDirToCache = this.addCascadeDirToCache.bind(this);
+        this.getCascadeData       = this.getCascadeData.bind(this);
         this.saveSettings         = this.saveSettings.bind(this);
         this.loadSettings         = this.loadSettings.bind(this);
     }
@@ -64,7 +65,7 @@ class S3Browser extends Component {
      * 
      * @param {string} path s3 path
      */
-    setS3Path(path) {
+    async setS3Path(path) {
         this.path = path;
         this.folders = [];
         this.files = [];
@@ -76,25 +77,8 @@ class S3Browser extends Component {
             this.parents.push(this.parents[i] + folders[i] + "/");
         }
         
-        // let folder = this.parents.pop() // Remove starting path from parent stack
-        // console.log("starting folder", folder)
-        console.log("path", path)
-        this.changePath(path).then(() => {
-
-            // Call the backend to get each successive folder's child folders and files to populate the header
-            let promise = Promise.resolve(this.QASM.call_backend(window, function_names.GET_CASCADING_DIR_CHILDREN, path));
-
-            // When the backend call resolves add the folder data to the cache so the header can display it
-            promise.then((data) => {
-                // Add data to the cache
-                this.addCascadeDirToCache(data.data)
-
-                // Force an update so that the header loads with the new data
-                this.forceUpdate();
-            }).catch((error) => {
-                console.error("Couldn't recieve folder data", error)
-            })
-        });
+        await this.changePath(path);
+        await this.getCascadeData(path);
     }
 
 
@@ -244,33 +228,27 @@ class S3Browser extends Component {
         /* eslint-disable */
         // Prompt user to confirm, then save
         if (confirm("Go to path ' " + link + " ' ?")) {
-
-            // Check to see if this path is already in the cache
-            if (this.cache[link] !== undefined) {
-                // If it is we can assume that the paths leading up to it are also probably in the cache
-                this.setS3Path(link);
-            }
-            else {
-                // Call the backend to get all of the missing folder data
-                let promise = Promise.resolve(this.QASM.call_backend(window, function_names.GET_CASCADING_DIR_CHILDREN, link))
-
-                // Set the path anyway
-                this.setS3Path(link)
-
-                // When the backend call resolves add the folder data to the cache so the header can display it
-                promise.then((data) => {
-                    // Add data to the cache
-                    this.addCascadeDirToCache(data.data)
-
-                    // Force an update so that the header loads with the new data
-                    this.forceUpdate();
-                }).catch((error) => {
-                    console.error("Couldn't recieve folder data", error)
-                })
-            }
+            this.setS3Path(link);
         }
     }
 
+    /**
+     * Get folder and file data from all the cascading folders and load them into the cache.
+     */
+    async getCascadeData(path) {
+        try {
+            // Ask the backend for the folder data
+            let data = await this.QASM.call_backend(window, function_names.GET_CASCADING_DIR_CHILDREN, path);
+            
+            // Add data to the cache
+            this.addCascadeDirToCache(data.data);
+
+            // Force an update so that the header loads with the new data
+            this.forceUpdate();
+        } catch (error) {
+            console.error("Couldn't recieve folder data", error);
+        }
+    }
 
     /**
      * Adds data recieved from QASM.call_backend(window, function_names.GET_CASCADING_DIR_CHILDREN, link) to 
@@ -279,19 +257,11 @@ class S3Browser extends Component {
      * @param data [{name: string, files: string[], folders: string[]}, ... ]
      */
     addCascadeDirToCache(data) {
-        console.log("data from lambda", data)
-
-        // let idx = 1. This is because the first element of data will always be the root folder which will always
-        // be populated by this point
-        for ( let idx = 1; idx < data.length; idx++ ) {
-            // Create the full path name from the previous folder name
-            // let current_folder = previous_folder + data[idx].name + "/";
-
+        for (let folder of data) {
             // Add this folder's folders and files to the cache
-            this.addToCache(data[idx].name, data[idx].folders, data[idx].files);
+            this.addToCache(folder.name, folder.folders, folder.files);
         }
     }
-
 
     /**
      * Navigates to a given s3 folder.
@@ -302,7 +272,6 @@ class S3Browser extends Component {
     async setFolder(folder) {
         // First check if this folder has been saved in the cache
         if (folder in this.cache) {
-            console.log(folder + " found in cache")
             // Update the browser with the cached folders and files
             this.folders = this.cache[folder].folders;
             this.files = this.cache[folder].files;
@@ -314,7 +283,6 @@ class S3Browser extends Component {
         }
         // If the cache is undefined then try to get the information from the backend
         else {
-            console.log(folder + " NOT found in cache")
             try {
                 // Call the backend to get the folder's children folders and files
                 let response = await this.QASM.call_backend(window, function_names.OPEN_S3_FOLDER, folder);
@@ -533,20 +501,8 @@ class S3Browser extends Component {
 
                 // If the cascaded path is undefined in the cache, then that means that we have to call the backend to fill
                 // in missing folder data
-                if (this.cache[cascaded_path] === undefined) {
-                    // Ask the backend for the folder data
-                    let promise = Promise.resolve(this.QASM.call_backend(window, function_names.GET_CASCADING_DIR_CHILDREN, cascaded_path));
-        
-                    // When the backend call resolves add the folder data to the cache so the header can dispaly it
-                    promise.then((data) => {
-                        // Add data to the cache
-                        this.addCascadeDirToCache(data.data);
-        
-                        // Force an update so that the header loads with the new data
-                        this.forceUpdate();
-                    }).catch((error) => {
-                        console.error("Couldn't recieve folder data", error);
-                    })
+                if (!(cascaded_path in this.cache)) {
+                    await this.getCascadeData(cascaded_path);
                 }
                 return;
             }
