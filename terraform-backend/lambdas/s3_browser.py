@@ -1,5 +1,3 @@
-from distutils.log import error
-from multiprocessing.connection import Client
 import boto3
 import json
 import os
@@ -47,22 +45,12 @@ def get_cascading_dir_children(event, context):
     ret = []
     for segment in full_segments:
         files, folders = get_folder_content(bucket_name, segment)
-        try:
-            name = segment.split("/")[-2]
-        except:
-            name = ""
-        
-        modified_folders = []
-        for folder in folders:
-            try:
-                modified_folders.append(folder.split("/")[-2])
-            except ValueError:
-                print(ValueError)
-            
+
+        # name and folders are FULL paths    
         ret.append({
-            "name": name,
+            "name": segment,
             "files": files,
-            "folders": modified_folders
+            "folders": folders
         })
 
     return get_return_block_with_cors({"data": ret})
@@ -163,3 +151,18 @@ def load_labels(event, context):
     file_content = content_object.get()['Body'].read().decode('utf-8')
     labels = json.loads(file_content)
     return get_return_block_with_cors({"labels": labels})
+
+
+if __name__ == "__main__":
+    test = {
+        "body": json.dumps({
+            "bucket": "stand-qa-data",
+            "prefix": "mfstand/2022/1051-Thobontle/AckermannJWSP1B2023/010223T181100/RGB/"
+        })
+    }
+    ret = get_cascading_dir_children(test, None)
+    data = json.loads(ret['body'])['data'] # list
+    for item in data:
+        print(item["name"])
+        # print(item["folders"])
+    # print(json.loads(ret['body'])['data'][0].keys())
