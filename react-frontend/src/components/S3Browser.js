@@ -5,12 +5,12 @@ import S3File from "./S3File.js";
 import "../css/S3Browser.css";
 const { image_types, function_names } = require("../../public/electron_constants.js");
 const { s3_browser_modes } = require("../QASM/constants.js");
+const BASE_PATH = ""
 
 class S3Browser extends Component {
     component_updater = 0;
     redo_stack = [];
     cached_folder_structure = {};
-    cache = {};
 
     constructor(props) {
         super(props);
@@ -20,11 +20,17 @@ class S3Browser extends Component {
         this.path    = window.START_FOLDER
         this.parents = props.parents || [] // Stack of parent folders
         
-        if (this.path == null) {
-            this.path = "" 
+        if (this.path == null) { // Starting at bucket level
+            this.path = BASE_PATH
             this.folders = this.QASM.folders
             this.files   = this.QASM.files
-        } else {
+            this.cache = {
+                [this.path]: {
+                    "folders": this.folders,
+                    "files": this.files
+                }
+            }
+        } else { // Starting at some folder depth
             this.setS3Path(this.path);
         }
 
@@ -69,7 +75,7 @@ class S3Browser extends Component {
         this.files = [];
 
         // Populate parent stack
-        this.parents = [""];
+        this.parents = [BASE_PATH];
         let folders = path.split("/").slice(0, -2);
         for (let i=0; i < folders.length; i++) {
             this.parents.push(this.parents[i] + folders[i] + "/");
@@ -499,7 +505,7 @@ class S3Browser extends Component {
     async createPath(final_segment, depth, cascade=false) {
         // If the depth is negative, route to the root folder
         if (depth === -1) {
-            this.changePath("");
+            this.changePath(BASE_PATH);
             return
         }
 
@@ -651,11 +657,12 @@ class S3Browser extends Component {
         const full_path_segments = this.buildPaths(this.path);
         
         try {
+            console.log(JSON.parse(JSON.stringify(this.cache)), "cache")
             // The bucket will always be displayed, so add that first.
             navigation_info.push({
-                "name": "",
-                "folders": this.cache[""].folders.map(folder => folder.slice(0, -1)), // Remove the final character
-                "files": this.cache[""].files
+                "name": BASE_PATH,
+                "folders": this.cache[BASE_PATH].folders.map(folder => folder.slice(0, -1)), // Remove the final character
+                "files": this.cache[BASE_PATH].files
             })
 
             // Add the rest of the segments
@@ -802,7 +809,7 @@ class S3Browser extends Component {
                                     <button 
                                         className="segment-name"
                                         onClick={() => this.createPath(segment.name, index - 1)}>
-                                        {segment.name === "" ? this.QASM.s3_bucket : segment.name}
+                                        {segment.name === BASE_PATH ? this.QASM.s3_bucket : segment.name}
                                     </button>
                                         {segment.folders.length !== 0 &&
                                             <Dropdown
@@ -882,18 +889,18 @@ class S3Browser extends Component {
     }
 
 
-    async componentDidMount() { 
-        try {
-            // Update cache
-            this.cache[""] = {
-                "folders": this.folders,
-                "files": this.files
-            }
-            this.forceUpdate();
-        } catch(error) {
-            console.error(error);
-        }
-    }
+    // async componentDidMount() { 
+    //     try {
+    //         // Update cache
+    //         this.cache[""] = {
+    //             "folders": this.folders,
+    //             "files": this.files
+    //         }
+    //         this.forceUpdate();
+    //     } catch(error) {
+    //         console.error(error);
+    //     }
+    // }
 }
 
 export default S3Browser;
