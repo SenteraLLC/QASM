@@ -1,6 +1,6 @@
 {
-  "name": "multi-class-app",
-  "version": "0.13.1",
+  "name": "qasm-app",
+  "version": "0.12.0",
   "private": true,
   "proxy": "http://localhost:3000",
   "homepage": "./",
@@ -59,7 +59,7 @@
     ]
   },
   "build": {
-    "productName": "Multi-Class App",
+    "productName": "QASM App",
     "win": {
       "target": "NSIS",
       "icon": "public/icon.png"

@@ -6,7 +6,7 @@ import bs4
 ENV_KEY = "REACT_APP_QASM_MODE"
 REQUIRED_QASM_KEYS = ["app", "components"]
 REQUIRED_S3_KEYS = ["bucket"]
-QASM_COMPONENTS = ["home", "multiclassgrid", "grid", "binaryeditor", "imagelabeler"]
+QASM_COMPONENTS = ["home", "grid", "binaryeditor", "imagelabeler"]
 QASM_MODES = ["local", "s3"]
 RUN_MODES = ["dev", "build-exe"]
 APP_NAME_KEY = "name"
@@ -48,8 +48,7 @@ def main():
     will_break = False
     for component in config["components"]:
         if component["component"] not in QASM_COMPONENTS:
-            print(f'{component["component"]} is an unrecognized component. Use only the following: {QASM_COMPONENTS}')
-
+            print("{} is an unrecognized component. Use only the following: {}".format(component["component"], QASM_COMPONENTS))
             will_break = True
     if will_break:
         return
@@ -74,13 +73,13 @@ def main():
             f.seek(0)
             f.write(str(soup))
             f.truncate()
-
+    
     app = config["app"]
     if (app in QASM_MODES):
         if (app == "s3" and any(key not in config for key in REQUIRED_S3_KEYS)):
             print(f"Missing one or more required keys for {app} app: {REQUIRED_S3_KEYS}")
             return
-
+            
         print(f"Setup successful, starting {app} app in {args.mode} mode...")
         subprocess.run(f"npm run {args.mode}", shell=True)
     else:
