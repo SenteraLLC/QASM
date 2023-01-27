@@ -232,6 +232,7 @@ class S3Browser extends Component {
         }
     }
 
+    
     /**
      * Get folder and file data from all the cascading folders and load them into the cache.
      */
@@ -250,6 +251,7 @@ class S3Browser extends Component {
         }
     }
 
+
     /**
      * Adds data recieved from QASM.call_backend(window, function_names.GET_CASCADING_DIR_CHILDREN, link) to 
      * the cache.
@@ -262,6 +264,7 @@ class S3Browser extends Component {
             this.addToCache(folder.name, folder.folders, folder.files);
         }
     }
+
 
     /**
      * Navigates to a given s3 folder.
@@ -451,6 +454,7 @@ class S3Browser extends Component {
         this.saveSettings();
     }
 
+
     /**
      * Creates the full path string to navigate to when navigating with the header buttons. If cascade is true,
      * it will try to create a valid path with just the final_segment being replaced. If it can't create a valid
@@ -590,6 +594,7 @@ class S3Browser extends Component {
         }
         return paths;
     }
+
 
     /**
      * Builds and returns an array of objects that contains the name, child files, and child folders
