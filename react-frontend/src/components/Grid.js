@@ -326,7 +326,7 @@ class Grid extends Component {
     async loadLabels() {
         // Load in previous labels
         let labels = await this.QASM.call_backend(window, function_names.LOAD_LABELS, this.src);
-        this.labels = this.initLabels(labels)
+        this.labels = this.initLabels(labels);
         console.log(this.labels);
         
         if (Object.keys(this.labels).length > 0) {
