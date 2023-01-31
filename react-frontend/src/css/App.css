@@ -8,23 +8,33 @@ body {
 }
 
 div.menu {
+  display: flex;
   background-color: lightgray;
   color: #888;  /*Colors box shadow */
   box-shadow: 0 0 0.3em 0.05em;
   display: flex;
-  justify-content: center;
+  justify-content: left;
   align-items: center;
   position: relative;
 }
 
 div.menu #menu-logo {
-  position: absolute;
-  left: 1em;
   max-height: 50px;
+  margin: 0 1em;
 }
 
 div.menu #menu-logo img {
   max-height: 50px;
+}
+
+div.menu div.link-holder {
+  display: flex;
+  flex: 1;
+  flex-wrap: wrap;
+  justify-content: center;
+
+  /* Sets the margin to get smaller as the window gets smaller */
+  margin-right: calc(0.08 * 100%);
 }
 
 div.menu a.Link {
@@ -35,6 +45,10 @@ div.menu a.Link {
   padding: 0 1em;
   text-decoration: none;
   text-align: center;
+}
+
+div.menu a.Link.hidden {
+  padding: 0;
 }
 
 div.menu a.Link:hover {

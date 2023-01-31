@@ -1,4 +1,3 @@
-from multiprocessing.connection import Client
 import boto3
 import json
 import os
@@ -11,9 +10,56 @@ def open_dir(event, context):
     body = json.loads(event["body"])
     bucket_name = body["bucket"]
     prefix = body["prefix"]
+
+    files, folders = get_folder_content(bucket_name, prefix)
+
+    ret = {
+        "files": files,
+        "folders": folders
+    }
+    return get_return_block_with_cors(ret)
+
+
+def get_cascading_dir_children(event, context):
+    """Get all the children folders for all segments in an S3 path."""
+    body = json.loads(event["body"])
+    bucket_name = body["bucket"]
+    prefix = body["prefix"]
+
+    # Create an array from the S3 path string
+    folder_array = prefix.split("/")
+
+    full_segments = []
+
+    # For every segment concatanate all segments up until it with "/" as a seperator
+    for idx in range(len(folder_array)):
+        new_path = ""
+        for j in range(idx):
+            if new_path == "":
+                new_path = folder_array[0] + "/"
+            else:
+                new_path = new_path + folder_array[j] + "/"
+
+        full_segments.append(new_path)
+
+    ret = []
+    for segment in full_segments:
+        files, folders = get_folder_content(bucket_name, segment)
+
+        # name and folders are FULL paths    
+        ret.append({
+            "name": segment,
+            "files": files,
+            "folders": folders
+        })
+
+    return get_return_block_with_cors({"data": ret})
+
+
+def get_folder_content(bucket_name, prefix) -> tuple:
+    """Get a tuple containing an array of a path's children files and folders."""
     s3 = boto3.client("s3")
-    print(prefix)
-    if prefix is None:
+    if (prefix is None) or (prefix == ""):
         response = s3.list_objects_v2(Bucket=bucket_name, Delimiter="/")
         if 'Contents' in response:
             files = [obj['Key'] for obj in response['Contents']]
@@ -26,6 +72,7 @@ def open_dir(event, context):
             folders = []
     else:
         response = s3.list_objects_v2(Bucket=bucket_name, Prefix=prefix, Delimiter="/")
+
         if 'Contents' in response:
             files = [obj['Key'] for obj in response['Contents'] if obj['Key'] != prefix]
         else:
@@ -35,11 +82,8 @@ def open_dir(event, context):
             folders = [fld["Prefix"] for fld in response["CommonPrefixes"]]
         else:
             folders = []
-    ret = {
-        "files": files,
-        "folders": folders
-    }
-    return get_return_block_with_cors(ret)
+
+    return (files, folders)
 
 
 def get_signed_urls_in_folder(event, context):
@@ -107,3 +151,18 @@ def load_labels(event, context):
     file_content = content_object.get()['Body'].read().decode('utf-8')
     labels = json.loads(file_content)
     return get_return_block_with_cors({"labels": labels})
+
+
+if __name__ == "__main__":
+    test = {
+        "body": json.dumps({
+            "bucket": "stand-qa-data",
+            "prefix": "mfstand/2022/1051-Thobontle/AckermannJWSP1B2023/010223T181100/RGB/"
+        })
+    }
+    ret = get_cascading_dir_children(test, None)
+    data = json.loads(ret['body'])['data'] # list
+    for item in data:
+        print(item["name"])
+        # print(item["folders"])
+    # print(json.loads(ret['body'])['data'][0].keys())

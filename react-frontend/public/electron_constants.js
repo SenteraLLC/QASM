@@ -13,6 +13,7 @@ exports.function_names = {
     SAVE_JSON_FILE: "saveJsonFile",
     SAVE_JSON_TO_PATH: "saveJsonToPath",
     SAVE_IMAGE: "saveImage",
+    GET_CASCADING_DIR_CHILDREN: "getCascadingChildren",
     OPEN_S3_FOLDER: "openS3Folder",
     LOAD_JSON: "loadJson",
 }
