@@ -1,0 +1,173 @@
+div.S3Browser {
+    margin: 0 1em;
+}
+
+div.S3Browser div.clickable {
+    cursor: pointer;
+    border: 1px solid rgba(0, 0, 0, 0);
+}
+
+div.S3Browser div.clickable:hover {
+    background-color: rgba(0,200,255, 0.15);
+    border: 1px solid rgba(0,200,255, 0.2);
+}
+
+div.S3Browser #s3-item-holder {
+    margin-top: 1em;
+}
+
+
+/* --------- Header styling --------- */
+
+div.S3Browser header label, 
+div.S3Browser header input, 
+div.S3Browser header button {
+    cursor: pointer;
+}
+
+div.S3Browser header button:disabled,
+div.S3Browser header button[disabled] {
+    cursor: default;
+}
+
+div.S3Browser header div.options {
+    margin: 0 -1em;
+    border: 1px solid rgba(0, 0, 0, 0.05);
+    padding: 0.25em 1em;
+    display: flex;
+    justify-content: flex-start;
+    align-items: stretch;
+    background-color: rgba(0, 0, 0, 0.04)
+}
+
+div.S3Browser header div.options > * {
+    margin: 0 2px 2px;
+}
+
+div.S3Browser header div.options fieldset {
+    text-align: left;
+    min-width: 4em;
+}
+
+div.S3Browser header div.options fieldset input {
+    margin-left: 0;
+}
+
+div.S3Browser header div.path-display {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    margin-top: 0.1em;
+}
+
+div.S3Browser header div.path-display div.nav-buttons button.nav-button {
+    margin: 0 0.25em;
+    padding: 0;
+    border: none;
+    background-color: rgba(0, 0, 0, 0);
+    font-size: x-large;
+    transition-timing-function: ease-in;
+    transition-duration: 1s;
+}
+
+div.S3Browser div.path-display div.nav-buttons header button.nav-button.disabled-button {
+    transition-duration: 0s;
+}
+
+div.S3Browser header div.path-display div.nav-buttons button.nav-button.not-disabled-button:hover {
+    color: rgb(69, 179, 224);
+}
+
+div.S3Browser header div.path-display div.path-display-inner {
+    font-size: small;
+    text-align: left;
+    border: 1px solid rgba(119, 136, 153, 0.3);
+}
+
+div.S3Browser header div.path-display div.path-display-inner:empty {
+    border: 1px solid rgba(0, 0, 0, 0);
+}
+
+div.S3Browser header div.path-segment {
+    display: inline-flex;
+    align-content: stretch;
+    align-items: stretch;
+}
+
+div.S3Browser header div.path-segment > * {
+    border: 1px solid rgba(0, 0, 0, 0);
+}
+
+div.S3Browser header div.path-segment button.segment-name {
+    display: inline;
+    margin: 0;
+    padding: 0.45em 0.5em;
+    background-color: rgba(0, 0, 0, 0);
+}
+
+div.S3Browser header div.path-segment div.Dropdown button.toggle-display {
+    background-color: rgba(0, 0, 0, 0);
+    border: none;
+}
+
+div.S3Browser header div.path-segment:hover > * {
+    background-color: rgba(0, 200, 255, 0.15) !important;
+    border: 1px solid rgba(0, 200, 255, 0.20) !important;
+}
+
+
+/* --------- Content styling --------- */
+div.S3Browser div.content {
+    margin-bottom: 6em;
+}
+
+div.S3Browser:has(input#new-filename) div.content {
+    /* When input#new-filename is present we need to account for the greater
+    size of the footer by adding more margin to the content */
+    margin-bottom: 8em;
+}
+
+
+/* --------- Grid styling --------- */
+
+div.S3Browser div.grid {
+    display: flex;
+    gap: 1em 0.5em;
+    justify-content: flex-start;
+    flex-wrap: wrap;
+}
+
+
+/* --------- Footer styling --------- */
+
+div.footer {
+    position: fixed;
+    bottom: 0;
+    width: calc(100% - 2em);
+    left: 0;
+    padding: 1em;
+    background-color: rgb(235, 235, 235);
+}
+
+div.footer div.main-footer-content {
+    display: flex;
+    align-items: center;
+    gap: 1em;
+    text-align: right;
+}
+
+div.footer div.main-footer-content input#s3-link {
+    flex-grow: 1;
+}
+
+div.footer div.new-filename-container {
+    display: flex;
+    margin-bottom: 1em;
+}
+
+div.footer div.new-filename-container label {
+    margin-right: 1em;
+}
+
+div.footer input#new-filename {
+    flex: 1;
+}

@@ -5,18 +5,19 @@ const { s3_browser_modes } = require("./constants.js");
 
 // Export like this so static site works idk why
 const function_handlers = {
-    [function_names.SAVE_BINARY_DIRECTORY]:   saveBinaryDirectory,
-    [function_names.LOAD_LABELS]:             handleLoadLabels,
-    [function_names.LOAD_IMAGE]:              handleLoadImage,
-    [function_names.LOAD_IMAGES]:             handleLoadImages,
-    [function_names.OPEN_DIR]:                handleOpenDir,
-    [function_names.OPEN_IMG_DIR]:            handleOpenImgDir,
-    [function_names.OPEN_IMG]:                handleLoadImage,
-    [function_names.SAVE_IMAGE]:              handleSaveImage,
-    [function_names.LOAD_JSON]:               handleLoadJson,
-    [function_names.SAVE_JSON_FILE]:          handleSaveJSON,
-    [function_names.SAVE_JSON_TO_PATH]:       handleSaveJSONtoPath,
-    [function_names.OPEN_S3_FOLDER]:          handleOpenS3Folder,
+    [function_names.SAVE_BINARY_DIRECTORY]:      saveBinaryDirectory,
+    [function_names.LOAD_LABELS]:                handleLoadLabels,
+    [function_names.LOAD_IMAGE]:                 handleLoadImage,
+    [function_names.LOAD_IMAGES]:                handleLoadImages,
+    [function_names.OPEN_DIR]:                   handleOpenDir,
+    [function_names.OPEN_IMG_DIR]:               handleOpenImgDir,
+    [function_names.OPEN_IMG]:                   handleLoadImage,
+    [function_names.SAVE_IMAGE]:                 handleSaveImage,
+    [function_names.LOAD_JSON]:                  handleLoadJson,
+    [function_names.SAVE_JSON_FILE]:             handleSaveJSON,
+    [function_names.SAVE_JSON_TO_PATH]:          handleSaveJSONtoPath,
+    [function_names.OPEN_S3_FOLDER]:             handleOpenS3Folder,
+    [function_names.GET_CASCADING_DIR_CHILDREN]: getS3FolderChildren,
 }
 export { function_handlers }
 
@@ -247,6 +248,22 @@ async function handleOpenS3Folder(QASM, data, window) {
     }
     return await api_consolidator_error_handler(params, "open_dir");
 }
+
+/**
+ * 
+ * @param {Object} QASM Qasm object
+ * @param {*} data {}
+ * @param {*} window window
+ * @returns {string} ECS response message
+ */
+async function getS3FolderChildren(QASM, data, window) {
+    const params = {
+        "bucket": QASM.s3_bucket,
+        "prefix": data
+    }
+    return await api_consolidator_error_handler(params, "get_cascading_dir_children");
+}
+
 
 /**
  * 
