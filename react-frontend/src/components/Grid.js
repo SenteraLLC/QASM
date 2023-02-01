@@ -1,6 +1,7 @@
 import { Component } from 'react';
 import GridImage from "./GridImage.js";
 import Legend from "./Legend.js";
+import Dropdown from './Dropdown.js';
 import x_overlay from "../icons/x.svg";
 import x_overlay_red from "../icons/x_red.svg";
 import x_overlay_yellow from "../icons/x_yellow.svg";
@@ -51,7 +52,8 @@ class Grid extends Component {
     grid_width = 2;
     grid_image_names = [];
     src = "";
-    classes = [];
+    classes = []; // Array of {"class_name": <string>, "svg_overlay": <string>}
+    class_names = []; // Array of all "class_name" values from the classes array
     component_updater = 0;
     image_stack = []; 
     hover_image_id = null;
@@ -72,6 +74,7 @@ class Grid extends Component {
         this.grid_width   = props.grid_width || 2;
         this.classes      = props.classes    || this.default_classes
         this.src          = props.src
+        this.class_names  = this.classes.map(class_info => class_info.class_name)
         
         this.labels = this.initLabels();
         this.state = {
@@ -101,6 +104,7 @@ class Grid extends Component {
         this.autoScroll          = this.autoScroll.bind(this);
         this.initOverlays        = this.initOverlays.bind(this);
         this.initEventListeners  = this.initEventListeners.bind(this);
+        this.changeGridFilter    = this.changeGridFilter.bind(this);
     }
 
 
@@ -404,6 +408,17 @@ class Grid extends Component {
 
 
     /**
+     * Change the filtered class and put it at the top
+     * 
+     * @param {string} class_name 
+     *  
+     */
+    changeGridFilter(class_name) {
+        console.log(class_name);
+    }
+
+
+    /**
      * Get an array of image layers for an image
      * 
      * @param {string} image_name image name
@@ -490,6 +505,13 @@ class Grid extends Component {
                             Select Directory
                         </button>
                         <div className="change-grid-width-container">
+                            <label>
+                                Filter By Class:
+                            </label>
+                            <Dropdown
+                                items={this.class_names}
+                                callback={(selected_class_name) => this.changeGridFilter(selected_class_name)}
+                            />
                             <label htmlFor="change-grid-width-og">
                                 Grid Width:
                             </label>
@@ -503,6 +525,7 @@ class Grid extends Component {
                                 max={99}
                                 onChange={this.changeGridWidth}>
                             </input>
+                            
                         </div>
                     </div>
                     <div className={this.images_shown ? "controls-container" : "hidden"}>
@@ -517,6 +540,13 @@ class Grid extends Component {
                             Add Image Layer
                         </button>
                         <div className="change-grid-width-container">
+                            <label>
+                                Filter By Class:
+                            </label>
+                            <Dropdown
+                                items={this.class_names}
+                                callback={(selected_class_name) => this.changeGridFilter(selected_class_name)}
+                            />
                             <label htmlFor="change-grid-width-new">
                                 Grid Width:
                             </label>
