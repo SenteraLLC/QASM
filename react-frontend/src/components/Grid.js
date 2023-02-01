@@ -352,7 +352,7 @@ class Grid extends Component {
      * load in all the images.
      */
     async selectImageDir() {
-        let dir_path = await this.QASM.call_backend(window, function_names.OPEN_DIR);
+        let dir_path = await this.QASM.call_backend(window, function_names.OPEN_IMG_DIR);
         if (dir_path !== undefined) {
             if (this.src !== dir_path) {
                 this.image_stack = []; // Clear image stack on new directory load
@@ -375,7 +375,7 @@ class Grid extends Component {
      */
     async addImageLayer() {
         // Prompt user to select directory
-        let dir_path = await this.QASM.call_backend(window, function_names.OPEN_DIR, this.src);
+        let dir_path = await this.QASM.call_backend(window, function_names.OPEN_IMG_DIR, this.src);
         console.log(dir_path);
 
         // Load images and add them to the image stack

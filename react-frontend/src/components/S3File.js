@@ -1,5 +1,6 @@
 import { Component } from 'react';
 import file_icon from "../../public/file.png";
+import "../css/S3File.css";
 
 class S3File extends Component {
     constructor(props) {
