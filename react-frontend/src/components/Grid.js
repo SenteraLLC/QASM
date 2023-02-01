@@ -47,7 +47,10 @@ const OVERLAYS = {
 }
 
 /*eslint-disable*/
-const NO_FILTER = "no filter";
+const FILTER_MODES = {
+    "no_filter": "no filter",
+    "group_by_class": "group by class",
+}
 
 class Grid extends Component {
     images = {};
@@ -243,22 +246,43 @@ class Grid extends Component {
      * Organize the images into rows
      */
     gridSetup() {
-        // Sort image names with the filtered class first
-        if (this.filtered_class_name !== null) {
-            let filtered = [];
-            let unfiltered = [];
-            for (let image_name of this.image_names) {
-                // If image is of the filtered class, store in filtered array
-                if (image_name in this.labels && this.labels[image_name].class === this.filtered_class_name) {
-                    filtered.push(image_name);
-                } else {
-                    unfiltered.push(image_name);
+        // Handle filtering
+        switch (this.filtered_class_name) {
+            case FILTER_MODES.no_filter:
+                this.image_names.sort(); // Sort to undo any lingering filters
+                break;
+            case FILTER_MODES.group_by_class:
+                // Group classes together in the same order as they appear in the config
+                let ret = [];
+                for (let class_name of this.class_names) {
+                    let class_image_names = []
+                    for (let image_name of this.image_names) {
+                        // Get all images for a given class
+                        if (image_name in this.labels && this.labels[image_name].class === class_name) {
+                            class_image_names.push(image_name);
+                        }
+                    }
+                    console.log(class_name, class_image_names);
+                    // Sort before concat into ret
+                    ret = ret.concat(class_image_names.sort());
                 }
-            }
-            // Concatanate together with filtered in front
-            this.image_names = filtered.sort().concat(unfiltered.sort());
-        } else {
-            this.image_names.sort(); // Sort to undo any lingering filters
+                this.image_names = ret;
+                break;
+            default: 
+                // Sort image names with the filtered class first
+                let filtered = [];
+                let unfiltered = [];
+                for (let image_name of this.image_names) {
+                    // If image is of the filtered class, store in filtered array
+                    if (image_name in this.labels && this.labels[image_name].class === this.filtered_class_name) {
+                        filtered.push(image_name);
+                    } else {
+                        unfiltered.push(image_name);
+                    }
+                }
+                // Concatanate together with filtered in front
+                this.image_names = filtered.sort().concat(unfiltered.sort());
+                break;
         }
 
         // Divide grid based on the grid width prop
@@ -437,8 +461,7 @@ class Grid extends Component {
      */
     changeGridFilter(class_name) {
         console.log(class_name);
-        // Set filtered_class_name to null to "turn off" the filter
-        class_name === NO_FILTER ? this.filtered_class_name = null : this.filtered_class_name = class_name;
+        this.filtered_class_name = class_name;
         this.updateLocalLabels(); // Update current labels
         this.gridSetup(); // Reformat grid
         this.updateState(); // Update page
@@ -536,7 +559,7 @@ class Grid extends Component {
                                 Filter By Class:
                             </label>
                             <Dropdown
-                                items={[...this.class_names, NO_FILTER]}
+                                items={[...Object.values(FILTER_MODES), ...this.class_names]}
                                 callback={(selected_class_name) => this.changeGridFilter(selected_class_name)}
                             />
                             <label htmlFor="change-grid-width-og">
@@ -571,7 +594,7 @@ class Grid extends Component {
                                 Filter By Class:
                             </label>
                             <Dropdown
-                                items={[...this.class_names, NO_FILTER]}
+                                items={[...Object.values(FILTER_MODES), ...this.class_names]}
                                 callback={(selected_class_name) => this.changeGridFilter(selected_class_name)}
                             />
                             <label htmlFor="change-grid-width-new">
