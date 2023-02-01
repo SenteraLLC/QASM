@@ -52,7 +52,6 @@ class Grid extends Component {
     grid_image_names = [];
     src = "";
     classes = [];
-    labels = {};   
     component_updater = 0;
     image_stack = []; 
     hover_image_id = null;
@@ -74,6 +73,7 @@ class Grid extends Component {
         this.classes      = props.classes    || this.default_classes
         this.src          = props.src
         
+        this.labels = this.initLabels();
         this.state = {
             labels: this.labels,
             src: this.src,
@@ -87,6 +87,7 @@ class Grid extends Component {
 
         // Bind functions
         this.loadImages          = this.loadImages.bind(this);
+        this.initLabels          = this.initLabels.bind(this);
         this.saveLabels          = this.saveLabels.bind(this);
         this.loadLabels          = this.loadLabels.bind(this);
         this.clearAll            = this.clearAll.bind(this);
@@ -260,7 +261,7 @@ class Grid extends Component {
      */
     updateLocalLabels() {
         // Get state of each GridImage
-        this.labels = {};
+        this.labels = this.initLabels(); // Gen new object w/datetime
         for (let i=0; i < this.image_names.length; i++) {
             let image_name = this.image_names[i];
             let class_name = document.getElementById(image_name).classList[1];
@@ -268,6 +269,37 @@ class Grid extends Component {
                 "class": class_name
             }
         }
+    }
+
+
+    /**
+     * Create a new labels object with current metadata
+     * (datetime, app name, app version), or add these 
+     * fields to an existing labels object if they don't exist 
+     * already.
+     * 
+     * @param {Object} labels existing labels object
+     * @returns {Object} labels
+     */
+    initLabels(labels = null) {
+        if (labels === null) {
+            // Create new labels
+            labels = {}
+        }
+        
+        if (!("name" in labels)) {
+            labels["name"] = this.QASM.config["name"];
+        }
+
+        if (!("version" in labels)) {
+            labels["version"] = this.QASM.config["version"];
+        }
+
+        if (!("datetime" in labels)) {
+            labels["datetime"] = new Date().toLocaleString();
+        }
+
+        return labels;
     }
 
 
@@ -293,7 +325,8 @@ class Grid extends Component {
      */
     async loadLabels() {
         // Load in previous labels
-        this.labels = await this.QASM.call_backend(window, function_names.LOAD_LABELS, this.src);
+        let labels = await this.QASM.call_backend(window, function_names.LOAD_LABELS, this.src);
+        this.labels = this.initLabels(labels);
         console.log(this.labels);
         
         if (Object.keys(this.labels).length > 0) {
@@ -309,7 +342,7 @@ class Grid extends Component {
      */
     clearAll() {
         // Set all classes to the default
-        this.labels = {};
+        this.labels = this.initLabels();
         this.updateState();
     }
 
