@@ -46,6 +46,9 @@ const OVERLAYS = {
     }
 }
 
+/*eslint-disable*/
+const NO_FILTER = "no filter";
+
 class Grid extends Component {
     images = {};
     image_names = [];
@@ -434,7 +437,8 @@ class Grid extends Component {
      */
     changeGridFilter(class_name) {
         console.log(class_name);
-        this.filtered_class_name = class_name;
+        // Set filtered_class_name to null to "turn off" the filter
+        class_name === NO_FILTER ? this.filtered_class_name = null : this.filtered_class_name = class_name;
         this.updateLocalLabels(); // Update current labels
         this.gridSetup(); // Reformat grid
         this.updateState(); // Update page
@@ -532,7 +536,7 @@ class Grid extends Component {
                                 Filter By Class:
                             </label>
                             <Dropdown
-                                items={this.class_names}
+                                items={[...this.class_names, NO_FILTER]}
                                 callback={(selected_class_name) => this.changeGridFilter(selected_class_name)}
                             />
                             <label htmlFor="change-grid-width-og">
@@ -567,7 +571,7 @@ class Grid extends Component {
                                 Filter By Class:
                             </label>
                             <Dropdown
-                                items={this.class_names}
+                                items={[...this.class_names, NO_FILTER]}
                                 callback={(selected_class_name) => this.changeGridFilter(selected_class_name)}
                             />
                             <label htmlFor="change-grid-width-new">
