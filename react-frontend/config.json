@@ -21,6 +21,42 @@
             ]
         },
         {
+            "component": "multiclassgrid",
+            "display_name": "Multi-Class Grid",
+            "grid_width": 2,
+            "classes": { 
+                "plant_type": { 
+                    "selector_type": "radio",
+                    "class_values": [ 
+                        "Normal",
+                        "Delay Rogue",
+                        "Hybrid Rogue",
+                        "Mix Rogue"
+                    ],
+                    "default": "Normal"
+                },
+                "week": { 
+                    "selector_type": "checkbox", 
+                    "class_values": [ 
+                        "Week 1",
+                        "Week 2",
+                        "Week 3",
+                        "Week 4",
+                        "Week 5"
+                    ]
+                },
+                "stake_color": { 
+                    "selector_type": "checkbox",
+                    "class_values": [ 
+                        "Yellow",
+                        "White",
+                        "Red"
+                    ]
+
+                } 
+            }
+        },
+        {
             "component": "binaryeditor",
             "display_name": "Binary Editor",
             "mode": "s3directory",

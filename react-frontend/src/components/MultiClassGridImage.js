@@ -97,7 +97,7 @@ class MultiClassGridImage extends Component {
                                             onChange={this.changeClass}
                                             checked={this.state[class_type] === class_val}
                                         ></input>
-                                        <label for={this.image_name + "_" + class_val}>{class_val}</label>
+                                        <label htmlFor={this.image_name + "_" + class_val}>{class_val}</label>
                                     </div>
                                 ))}
                             </div>
@@ -116,7 +116,7 @@ class MultiClassGridImage extends Component {
                                             onChange={this.changeClass}
                                             checked={this.state[class_type] === class_val}
                                         ></input>
-                                        <label for={this.image_name + "_" + class_val}>{class_val}</label>
+                                        <label htmlFor={this.image_name + "_" + class_val}>{class_val}</label>
                                     </div>
                                 ))}
                             </div>
@@ -128,10 +128,6 @@ class MultiClassGridImage extends Component {
                 })}
             </div>
         )
-    }
-
-    componentDidUpdate() {
-
     }
 }
 
