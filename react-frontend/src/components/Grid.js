@@ -46,7 +46,6 @@ const OVERLAYS = {
     }
 }
 
-/*eslint-disable*/
 const FILTER_MODES = {
     "no_filter": "no filter",
     "group_by_class": "group by class",
