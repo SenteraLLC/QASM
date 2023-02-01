@@ -25,6 +25,14 @@ locals {
             base_name = "save-image"
             handler = "s3_browser.save_image"
         },
+        {
+            base_name = "get-cascading-dir-children"
+            handler = "s3_browser.get_cascading_dir_children"
+        },
+        {
+            base_name = "get-folder-content"
+            handler = "s3_browser.get_folder_content"
+        },
 
         # ECS Lambdas
         {
