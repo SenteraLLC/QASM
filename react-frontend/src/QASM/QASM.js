@@ -9,11 +9,13 @@ export class QASM {
      * app mode in the config
      * 
      * @param {Object} config QASM config object
+     * @param {Object} package_json package.json object w/version, app name, etc.
      * @returns {Object} QASM Object
      */
-    static create(config) {
+    static create(config, package_json) {
+        config["version"] = package_json["version"]; // Get version from package.json
         return new this.subClasses[config.app](config)
-    } 
+    }
 }
 
 export class QASM_s3 extends QASM {
