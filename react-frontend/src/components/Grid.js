@@ -54,6 +54,7 @@ class Grid extends Component {
     src = "";
     classes = []; // Array of {"class_name": <string>, "svg_overlay": <string>}
     class_names = []; // Array of all "class_name" values from the classes array
+    filtered_class_name = null;
     component_updater = 0;
     image_stack = []; 
     hover_image_id = null;
@@ -239,6 +240,24 @@ class Grid extends Component {
      * Organize the images into rows
      */
     gridSetup() {
+        // Sort image names with the filtered class first
+        if (this.filtered_class_name !== null) {
+            let filtered = [];
+            let unfiltered = [];
+            for (let image_name of this.image_names) {
+                // If image is of the filtered class, store in filtered array
+                if (image_name in this.labels && this.labels[image_name].class === this.filtered_class_name) {
+                    filtered.push(image_name);
+                } else {
+                    unfiltered.push(image_name);
+                }
+            }
+            // Concatanate together with filtered in front
+            this.image_names = filtered.sort().concat(unfiltered.sort());
+        } else {
+            this.image_names.sort(); // Sort to undo any lingering filters
+        }
+
         // Divide grid based on the grid width prop
         let cur_im;
         let grid_counter = 0;
@@ -415,6 +434,10 @@ class Grid extends Component {
      */
     changeGridFilter(class_name) {
         console.log(class_name);
+        this.filtered_class_name = class_name;
+        this.updateLocalLabels(); // Update current labels
+        this.gridSetup(); // Reformat grid
+        this.updateState(); // Update page
     }
 
 
