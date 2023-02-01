@@ -30,6 +30,7 @@ div.Grid div.change-grid-width-container {
 
 div.Grid div.change-grid-width-container label {
     margin-right: 0.5em;
+    margin-left: 1em;
 }
 
 div.Grid table {
