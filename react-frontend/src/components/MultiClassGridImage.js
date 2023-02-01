@@ -20,12 +20,15 @@ class MultiClassGridImage extends Component {
         this.image_name = props.image_name;
         this.classes = props.classes;
         this.image_stack = props.image_stack;
+        this.default_classes = props.default_classes;
 
         // Use state to store current class
         // First class_value in each class_type
         this.state = {};
         for (let class_type in this.classes) {
-            if ("default" in this.classes[class_type]) {
+            if (this.default_classes !== null && class_type in this.default_classes) {
+                this.state[class_type] = this.default_classes[class_type];
+            } else if ("default" in this.classes[class_type]) {
                 this.state[class_type] = this.classes[class_type]["default"];
             }
         }
@@ -86,7 +89,7 @@ class MultiClassGridImage extends Component {
                 {Object.keys(this.classes).map(class_type => {
                     if (this.classes[class_type].selector_type === "radio") {
                         return (
-                            <div style={{ "float": "left" }}>
+                            <div style={{ "float": "left" }} key={class_type}>
                                 <p>{class_type}</p>
                                 {this.classes[class_type].class_values.map(class_val => (
                                     <div>
@@ -105,7 +108,7 @@ class MultiClassGridImage extends Component {
                     }
                     else if (this.classes[class_type].selector_type === "checkbox") {
                         return (
-                            <div style={{ "float": "left" }}>
+                            <div style={{ "float": "left" }} key={class_type}>
                                 <p>{class_type}</p>
                                 {this.classes[class_type].class_values.map(class_val => (
                                     <div>
