@@ -1,5 +1,5 @@
 {
-  "name": "qasm-app",
+  "name": "multi-class-app",
   "version": "0.15.0",
   "private": true,
   "proxy": "http://localhost:3000",
@@ -61,7 +61,7 @@
     ]
   },
   "build": {
-    "productName": "QASM App",
+    "productName": "Multi-Class App",
     "win": {
       "target": "NSIS",
       "icon": "public/icon.png"
