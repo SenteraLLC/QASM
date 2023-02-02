@@ -13,12 +13,12 @@ import {Link, MemoryRouter, Route, Routes} from "react-router-dom";
 
 // Link keys to components
 const COMPONENT_KEYS = {
-  "grid":          (props) => {return <Grid {...props}/>},
-  "multiclassgrid":(props) => {return <MultiClassGrid {...props}/>},
-  "home":          (props) => {return <Home {...props}/>},
-  "binaryeditor":  (props) => {return <BinaryEditors {...props}/>},
-  "S3Browser":     (props) => {return <S3Browser {...props}/>},
-  "imagelabeler":  (props) => {return <ImageLabeler {...props}/>},
+  "grid":           (props) => {return <Grid {...props}/>},
+  "multiclassgrid": (props) => {return <MultiClassGrid {...props}/>},
+  "home":           (props) => {return <Home {...props}/>},
+  "binaryeditor":   (props) => {return <BinaryEditors {...props}/>},
+  "S3Browser":      (props) => {return <S3Browser {...props}/>},
+  "imagelabeler":   (props) => {return <ImageLabeler {...props}/>},
 }
 
 class App extends Component {

@@ -53,6 +53,16 @@ This will build an app based on the specifications found in ``react-frontend/con
                     - ``"white"`` white
                     - ``"green"`` green
 
+    - ``"multiclassgrid"`` Configuration ``<Object>``:
+        - ``"grid_width": <Number>`` Default number of images to show per row
+        - ``"classes": <Array>``
+            - ``<string>: <Object>`` class type with class details object
+                - ``"class_values": <Array[string]>`` (Required) List of class values within the class type
+                - ``"selector_type": <string>`` (Required) Method of selecting between class values in app
+                    - ``"radio"`` Radio buttons
+                    - ``"checkbox"`` checkboxes
+                - ``"default": <string>`` (Optional) Default class value for this class type. Must be one of the class_values.
+
     - ``"imagelabeler"`` Configuration ``<Object>``:
          - ``"image_dir": <string>`` (Optional) Path to directory of images
          - ``"anno_dir": <string>`` (Optional) Path to directory of labels/annotations
