@@ -4,6 +4,7 @@ import MultiClassGridImage from "./MultiClassGridImage.js";
 import Dropdown from './Dropdown.js';
 import $ from "jquery";
 import "../css/Grid.css";
+import "../css/MultiClassGrid.css";
 const { update_all_overlays } = require("../QASM/utils.js");
 const { function_names } = require("../../public/electron_constants.js");
 
@@ -459,7 +460,7 @@ class MultiClassGrid extends Component {
     render() {
         return (
             <div className="Grid" key={this.component_updater}>
-                <div className="header-container">
+                <div className="header-container multi-grid">
                     {/* <Legend
                         classes={this.classes}
                     /> */}
