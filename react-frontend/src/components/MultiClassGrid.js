@@ -1,6 +1,7 @@
 // Grid labeler that supports multiple classes via checkboxes
 import { Component } from 'react';
 import MultiClassGridImage from "./MultiClassGridImage.js";
+import Dropdown from './Dropdown.js';
 import $ from "jquery";
 import "../css/Grid.css";
 const { update_all_overlays } = require("../QASM/utils.js");
@@ -9,13 +10,19 @@ const { function_names } = require("../../public/electron_constants.js");
 // TODO: Combine this with Grid, and/or add to app as a seperate component. 
 // TODO: Move functions common w/Grid to a utils file
 
+const FILTER_MODES = {
+    "no_filter": "no filter",
+    // "group_by_class": "group by class", // Not supported for multi-class
+}
+
 class MultiClassGrid extends Component {
     images = {};
     image_names = [];
     grid_width = 1;
     grid_image_names = [];
     src = "";
-    classes = {};
+    classes = {}; // {<string class_type>: {"selector_type": <string>, "class_values": [<string>], "default": <string> }}
+    class_types = [];
     component_updater = 0;
     image_stack = [];
     hover_image_id = null;
@@ -23,6 +30,8 @@ class MultiClassGrid extends Component {
     images_shown = false;
     update_success = false;
     allow_next_scroll = false;
+    filtered_class_type = FILTER_MODES.no_filter; // high level 
+    filtered_class_value = FILTER_MODES.no_filter; // selected value within a class type
 
     constructor(props) {
         super(props);
@@ -33,6 +42,7 @@ class MultiClassGrid extends Component {
         this.classes = props.classes
         this.src = props.src
 
+        this.class_types = Object.keys(this.classes); // For easy access
         this.labels = this.initLabels();
         this.state = {
             labels: this.labels,
@@ -141,6 +151,31 @@ class MultiClassGrid extends Component {
      * Organize the images into rows
      */
     gridSetup() {
+        // Handle filtering
+        switch (this.filtered_class_type) {
+            case FILTER_MODES.no_filter:
+                this.image_names.sort(); // Sort to undo any lingering filters
+                this.filtered_class_value = null; // Reset
+                break;
+            case FILTER_MODES.group_by_class:
+                // TODO: Think of a way to do this...
+            default: 
+                // Sort image names with the filtered class first
+                let filtered = [];
+                let unfiltered = [];
+                for (let image_name of this.image_names) {
+                    // If image is of the filtered class, store in filtered array
+                    if (image_name in this.labels && this.labels[image_name][this.filtered_class_type] === this.filtered_class_value) {
+                        filtered.push(image_name);
+                    } else {
+                        unfiltered.push(image_name);
+                    }
+                }
+                // Concatanate together with filtered in front
+                this.image_names = filtered.sort().concat(unfiltered.sort());
+                break;
+        }
+
         // Divide grid based on the grid width prop
         let cur_im;
         let grid_counter = 0;
@@ -247,6 +282,7 @@ class MultiClassGrid extends Component {
         console.log(this.labels);
 
         if (Object.keys(this.labels).length > 0) {
+            this.gridSetup();
             this.updateState(); // Update state to rerender page
         } else {
             console.log("Prevented loading empty labels.");
@@ -317,6 +353,33 @@ class MultiClassGrid extends Component {
         this.updateLocalLabels(); // Store current labels
         this.gridSetup(); // Reformat grid
         this.updateState(); // Update page
+    }
+
+
+    /**
+     * Change the filtered class value and put it at the top
+     * 
+     * @param {string} class_value 
+     *  
+     */
+     changeGridFilter(class_value) {
+        console.log(class_value);
+        this.filtered_class_value = class_value;
+        this.updateLocalLabels(); // Update current labels
+        this.gridSetup(); // Reformat grid
+        this.updateState(); // Update page
+    }
+
+    /**
+     * Set this.filtered_class_type as class_type
+     * 
+     * @param {string} class_type 
+     */
+    changeFilteredClassType(class_type) {
+        this.filtered_class_type = class_type;
+        this.updateLocalLabels();
+        this.gridSetup();
+        this.updateState();
     }
 
 
@@ -407,6 +470,24 @@ class MultiClassGrid extends Component {
                             Select Directory
                         </button>
                         <div className="change-grid-width-container">
+                            <label>
+                                Filter By Class Type: {this.filtered_class_type}
+                            </label>
+                            <Dropdown
+                                items={[...Object.values(FILTER_MODES), ...this.class_types]}
+                                callback={(selected_class_type) => this.changeFilteredClassType(selected_class_type)}
+                            />
+                            {!(Object.values(FILTER_MODES).includes(this.filtered_class_type)) &&
+                                <div>
+                                    <label>
+                                        Filter By Class Value: {this.filtered_class_value}
+                                    </label>
+                                    <Dropdown
+                                        items={[...this.classes[this.filtered_class_type].class_values]}
+                                        callback={(selected_class_value) => this.changeGridFilter(selected_class_value)}
+                                    />
+                                </div>
+                            }
                             <label htmlFor="change-grid-width-og">
                                 Grid Width:
                             </label>
@@ -434,6 +515,24 @@ class MultiClassGrid extends Component {
                             Add Image Layer
                         </button>
                         <div className="change-grid-width-container">
+                            <label>
+                                Filter By Class Type: {this.filtered_class_type}
+                            </label>
+                            <Dropdown
+                                items={[...Object.values(FILTER_MODES), ...this.class_types]}
+                                callback={(selected_class_type) => this.changeFilteredClassType(selected_class_type)}
+                            />
+                            {!(Object.values(FILTER_MODES).includes(this.filtered_class_type)) &&
+                                <div>
+                                    <label>
+                                        Filter By Class Value: {this.filtered_class_value}
+                                    </label>
+                                    <Dropdown
+                                        items={[...this.classes[this.filtered_class_type].class_values]}
+                                        callback={(selected_class_value) => this.changeGridFilter(selected_class_value)}
+                                    />
+                                </div>
+                            }
                             <label htmlFor="change-grid-width-new">
                                 Grid Width:
                             </label>
@@ -480,6 +579,11 @@ class MultiClassGrid extends Component {
                                             classes={this.classes}
                                             image_stack={
                                                 this.getImageStackByName(image_name)
+                                            }
+                                            default_classes={
+                                                image_name in this.labels 
+                                                    ? this.labels[image_name] 
+                                                    : null
                                             }
                                         />
                                     </td>
