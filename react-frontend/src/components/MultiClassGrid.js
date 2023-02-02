@@ -31,7 +31,7 @@ class MultiClassGrid extends Component {
     update_success = false;
     allow_next_scroll = false;
     filtered_class_type = FILTER_MODES.no_filter; // high level 
-    filtered_class_value = null; // selected value within a class type
+    filtered_class_value = FILTER_MODES.no_filter; // selected value within a class type
 
     constructor(props) {
         super(props);
@@ -155,6 +155,7 @@ class MultiClassGrid extends Component {
         switch (this.filtered_class_type) {
             case FILTER_MODES.no_filter:
                 this.image_names.sort(); // Sort to undo any lingering filters
+                this.filtered_class_value = null; // Reset
                 break;
             case FILTER_MODES.group_by_class:
                 // TODO: Think of a way to do this...
@@ -281,6 +282,7 @@ class MultiClassGrid extends Component {
         console.log(this.labels);
 
         if (Object.keys(this.labels).length > 0) {
+            this.gridSetup();
             this.updateState(); // Update state to rerender page
         } else {
             console.log("Prevented loading empty labels.");
@@ -469,7 +471,7 @@ class MultiClassGrid extends Component {
                         </button>
                         <div className="change-grid-width-container">
                             <label>
-                                Filter By Class Type:
+                                Filter By Class Type: {this.filtered_class_type}
                             </label>
                             <Dropdown
                                 items={[...Object.values(FILTER_MODES), ...this.class_types]}
@@ -478,7 +480,7 @@ class MultiClassGrid extends Component {
                             {!(Object.values(FILTER_MODES).includes(this.filtered_class_type)) &&
                                 <div>
                                     <label>
-                                        Filter By Class Value:
+                                        Filter By Class Value: {this.filtered_class_value}
                                     </label>
                                     <Dropdown
                                         items={[...this.classes[this.filtered_class_type].class_values]}
@@ -514,7 +516,7 @@ class MultiClassGrid extends Component {
                         </button>
                         <div className="change-grid-width-container">
                             <label>
-                                Filter By Class Type:
+                                Filter By Class Type: {this.filtered_class_type}
                             </label>
                             <Dropdown
                                 items={[...Object.values(FILTER_MODES), ...this.class_types]}
@@ -523,7 +525,7 @@ class MultiClassGrid extends Component {
                             {!(Object.values(FILTER_MODES).includes(this.filtered_class_type)) &&
                                 <div>
                                     <label>
-                                        Filter By Class Value:
+                                        Filter By Class Value: {this.filtered_class_value}
                                     </label>
                                     <Dropdown
                                         items={[...this.classes[this.filtered_class_type].class_values]}

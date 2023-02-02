@@ -379,6 +379,7 @@ class Grid extends Component {
         console.log(this.labels);
         
         if (Object.keys(this.labels).length > 0) {
+            this.gridSetup();
             this.updateState(); // Update state to rerender page
         } else {
             console.log("Prevented loading empty labels.");
