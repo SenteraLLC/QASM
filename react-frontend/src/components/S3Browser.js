@@ -673,7 +673,6 @@ class S3Browser extends Component {
     render() {
         return (
             <div className="S3Browser">
-                <h2>S3 Browser: {this.QASM.s3_bucket}</h2>
                 <header>
                     <div className="options">
                         <fieldset className="directory-display-mode" onChange={this.updateDisplayMode}>

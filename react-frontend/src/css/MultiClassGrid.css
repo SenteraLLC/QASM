@@ -1,0 +1,13 @@
+div.Grid div.header-container.multi-grid {
+    display: block;
+}
+
+div.Grid div.header-container.multi-grid div.controls-container {
+    justify-content: center;
+}
+
+/* Button must be direct child to not affect the dropdown */
+div.Grid div.header-container.multi-grid div.controls-container > button {
+    max-width: 30em;
+    min-height: 3em;
+}
