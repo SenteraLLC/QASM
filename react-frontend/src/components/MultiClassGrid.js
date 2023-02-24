@@ -411,6 +411,7 @@ class MultiClassGrid extends Component {
         // childNodes of image holder div = image layers
 
         let layers = document.getElementById(hover_image_id).firstChild.childNodes;
+        // layers[0] is the image, layers[n] is image_stack[n-1]
         for (let idx = 0; idx < layers.length; idx++) {
             let layer = layers[idx];
             // Skip overlays and hidden images
@@ -424,7 +425,7 @@ class MultiClassGrid extends Component {
             // Change next hidden image to shown
             if (idx + 1 === layers.length) {
                 // If we're at the last layer, turn on the og image
-                layers[1].classList.remove("hidden");
+                layers[0].classList.remove("hidden");
             } else {
                 // Un-hide next image
                 layers[idx + 1].classList.remove("hidden");
