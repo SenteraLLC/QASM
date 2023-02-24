@@ -495,6 +495,7 @@ class Grid extends Component {
         // childNodes of image holder div = image layers
 
         let layers = document.getElementById(hover_image_id).firstChild.childNodes;
+        // layers[0] is the overlay, layers[1] is the image, layers[n] is image_stack[n-2]
         for (let idx = 0; idx < layers.length; idx++) {
             let layer = layers[idx];
             // Skip overlays and hidden images
