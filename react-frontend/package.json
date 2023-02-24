@@ -1,6 +1,6 @@
 {
-  "name": "multi-class-app",
-  "version": "0.15.0",
+  "name": "qasm-app",
+  "version": "0.15.1",
   "private": true,
   "proxy": "http://localhost:3000",
   "homepage": "./",
