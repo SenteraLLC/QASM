@@ -60,8 +60,11 @@ This will build an app based on the specifications found in ``react-frontend/con
                 - ``"class_values": <Array[string]>`` (Required) List of class values within the class type
                 - ``"selector_type": <string>`` (Required) Method of selecting between class values in app
                     - ``"radio"`` Radio buttons
-                    - ``"checkbox"`` checkboxes
+                    - ``"checkbox"`` Checkboxes
                 - ``"default": <string>`` (Optional) Default class value for this class type. Must be one of the class_values.
+                - ``"class_colors": <Object>`` (Optional) Text colors used in the class selector
+                    - ``<string>: <string>`` The key must be one of the class_values. The value must be a valid css color (name or hexcode).
+                        - Ex: to make the class_value `"Normal"` appear in blue text, ``"Normal": "blue"``
 
     - ``"imagelabeler"`` Configuration ``<Object>``:
          - ``"image_dir": <string>`` (Optional) Path to directory of images
