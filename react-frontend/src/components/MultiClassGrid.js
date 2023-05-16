@@ -112,8 +112,9 @@ class MultiClassGrid extends Component {
                 this.changeImage(this.hover_image_id);
             }
 
-            if (this.hover_row_id !== null && e.key === "n") {
-                autoScroll(this, this.hover_row_id);
+            if (this.hover_row_id !== null) {
+                // n for next, h for previous
+                autoScroll(this, this.hover_row_id, e.key);
             }
         });
     }
