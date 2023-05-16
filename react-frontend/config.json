@@ -29,6 +29,10 @@
                     },
                     "class_overlays": true
                 }
+            },
+            "label_filenames": {
+                "Staked": "staked_rogues.json",
+                "Unstaked": "assumed_rogues.json"
             }
         },
         {

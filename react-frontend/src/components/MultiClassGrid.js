@@ -33,6 +33,7 @@ class MultiClassGrid extends Component {
     allow_next_scroll = false;
     filtered_class_type = FILTER_MODES.no_filter; // high level 
     filtered_class_value = FILTER_MODES.no_filter; // selected value within a class type
+    label_filenames = undefined;
 
     constructor(props) {
         super(props);
@@ -41,8 +42,7 @@ class MultiClassGrid extends Component {
         this.QASM = props.QASM
         this.grid_width = props.grid_width || 1;
         this.classes = props.classes
-
-        console.log(this.classes)
+        this.label_filenames = props.label_filenames || undefined;
         
         // TEMP HACK TO SPEED DEVELOPMENT
         this.src = props.src || "Farmer City 2022/Strip Trial/Planting 1/Videos/6-21/Row 1b, 6a/3840x2160@120fps/Pass A/DS Splits/DS 002/bottom Raw Images/";
@@ -144,12 +144,12 @@ class MultiClassGrid extends Component {
      * Load images from the current source directory
      */
     async loadImages() {
-        console.log("Src: " + this.src);
         this.images = await this.QASM.call_backend(window, function_names.LOAD_IMAGES, this.src);
         this.image_names = Object.keys(this.images).sort();
-        console.log(this.images);
         this.gridSetup();
         this.clearAll();
+        // Set the images shown to true now that the images are shown
+        this.images_shown = true;
     }
 
 
@@ -265,13 +265,16 @@ class MultiClassGrid extends Component {
     /**
      * Scrape the page for the current labels
      * and prompt the user to specify where to save them.
+     * 
+     * @param {string} filename filename to save labels to
      */
-    async saveLabels() {
+    async saveLabels(filename = "") {
         this.updateLocalLabels();
 
         let params = {
             labels: this.labels,
             path: this.src,
+            filename: filename,
         }
 
         await this.QASM.call_backend(window, function_names.SAVE_JSON_FILE, params);
@@ -319,9 +322,6 @@ class MultiClassGrid extends Component {
             }
             this.src = dir_path;
             await this.loadImages();
-
-            // Set the images shown to true now that the images are shown
-            this.images_shown = true;
             this.updateState();
         } else {
             console.log("Prevented loading invalid directory.");
@@ -542,7 +542,7 @@ class MultiClassGrid extends Component {
                             Load Labels
                         </button>
                         <button
-                            onClick={this.saveLabels}
+                            onClick={() => this.saveLabels("")}
                             className="button">
                             Save Labels
                         </button>
@@ -551,6 +551,15 @@ class MultiClassGrid extends Component {
                             className="button">
                             Clear All Labels
                         </button>
+                        <div className="label-filename-container">
+                            {this.label_filenames !== undefined && Object.keys(this.label_filenames).map((button_name, i) => (
+                                <button
+                                    onClick={() => this.saveLabels(this.label_filenames[button_name])}
+                                    className="button">
+                                    {"Save " + button_name + " Labels"}
+                                </button>
+                            ))}
+                        </div>
                     </div>
                 </div>
                 <table id="Grid-table">
