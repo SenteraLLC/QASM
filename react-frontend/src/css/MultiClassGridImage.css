@@ -57,7 +57,7 @@ p.class-type {
     position:absolute;
     width:100%;
     height:10%;
-    background-color: var(--background);
+    background-color: var(--background); /* set using style.setPropetry("background", <color>) */
 }
 
 .class-overlay:before{

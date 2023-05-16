@@ -312,7 +312,7 @@ class MultiClassGrid extends Component {
      * load in all the images.
      */
     async selectImageDir() {
-        let dir_path = await this.QASM.call_backend(window, function_names.OPEN_DIR);
+        let dir_path = await this.QASM.call_backend(window, function_names.OPEN_DIR, this.src);
         if (dir_path !== undefined) {
             if (this.src !== dir_path) {
                 this.image_stack = []; // Clear image stack on new directory load
