@@ -1,6 +1,6 @@
 // Description: This component is used to display an image with multiple classes, to be labeled via checkboxes.
 import { Component } from 'react';
-import "../css/GridImage.css";
+import "../css/MultiClassGridImage.css";
 
 class MultiClassGridImage extends Component {
     image = "";
@@ -65,7 +65,7 @@ class MultiClassGridImage extends Component {
 
         return (
             <div
-                className={"GridImage " + this.state.class + show_overlay}
+                className={"MultiClassGridImage " + this.state.class + show_overlay}
                 id={this.image_name}
             >
                 <div>
@@ -86,49 +86,51 @@ class MultiClassGridImage extends Component {
                     ))}
                 </div>
                 <p className="image-name">{this.image_name}</p>
-                {Object.keys(this.classes).map(class_type => {
-                    if (this.classes[class_type].selector_type === "radio") {
-                        return (
-                            <div style={{ "float": "left" }} key={class_type}>
-                                <p>{class_type}</p>
-                                {this.classes[class_type].class_values.map(class_val => (
-                                    <div>
-                                        <input
-                                            type="radio"
-                                            name={this.image_name + "_" + class_type}
-                                            id={this.image_name + "_" + class_val}
-                                            onChange={this.changeClass}
-                                            checked={this.state[class_type] === class_val}
-                                        ></input>
-                                        <label htmlFor={this.image_name + "_" + class_val}>{class_val}</label>
-                                    </div>
-                                ))}
-                            </div>
+                <div className="class-selector-holder">
+                    {Object.keys(this.classes).map(class_type => {
+                        if (this.classes[class_type].selector_type === "radio") {
+                            return (
+                                <div className="class-selector" key={class_type}>
+                                    <p>{class_type}</p>
+                                    {this.classes[class_type].class_values.map(class_val => (
+                                        <div>
+                                            <input
+                                                type="radio"
+                                                name={this.image_name + "_" + class_type}
+                                                id={this.image_name + "_" + class_val}
+                                                onChange={this.changeClass}
+                                                checked={this.state[class_type] === class_val}
+                                            ></input>
+                                            <label htmlFor={this.image_name + "_" + class_val}>{class_val}</label>
+                                        </div>
+                                    ))}
+                                </div>
+                            )
+                        }
+                        else if (this.classes[class_type].selector_type === "checkbox") {
+                            return (
+                                <div className="class-selector" key={class_type}>
+                                    <p>{class_type}</p>
+                                    {this.classes[class_type].class_values.map(class_val => (
+                                        <div>
+                                            <input
+                                                type="checkbox"
+                                                name={this.image_name + "_" + class_type}
+                                                id={this.image_name + "_" + class_val}
+                                                onChange={this.changeClass}
+                                                checked={this.state[class_type] === class_val}
+                                            ></input>
+                                            <label htmlFor={this.image_name + "_" + class_val}>{class_val}</label>
+                                        </div>
+                                    ))}
+                                </div>
+                            )
+                        }
+                        return ( 
+                            <p>pp</p>
                         )
-                    }
-                    else if (this.classes[class_type].selector_type === "checkbox") {
-                        return (
-                            <div style={{ "float": "left" }} key={class_type}>
-                                <p>{class_type}</p>
-                                {this.classes[class_type].class_values.map(class_val => (
-                                    <div>
-                                        <input
-                                            type="checkbox"
-                                            name={this.image_name + "_" + class_type}
-                                            id={this.image_name + "_" + class_val}
-                                            onChange={this.changeClass}
-                                            checked={this.state[class_type] === class_val}
-                                        ></input>
-                                        <label htmlFor={this.image_name + "_" + class_val}>{class_val}</label>
-                                    </div>
-                                ))}
-                            </div>
-                        )
-                    }
-                    return ( 
-                        <p>pp</p>
-                    )
-                })}
+                    })}
+                </div>
             </div>
         )
     }
