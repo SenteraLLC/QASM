@@ -37,3 +37,32 @@ p.class-type {
 .hidden {
     display: none;
 }
+
+.image-holder {
+    position: relative;
+}
+
+.class-overlay {
+    bottom: 0;
+    width:40%;
+    height:40%;
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.class-overlay:before, .class-overlay:after{
+    content:'';
+    position:absolute;
+    width:100%;
+    height:10%;
+    background-color: var(--background);
+}
+
+.class-overlay:before{
+    transform:rotate(45deg);
+}
+.class-overlay:after{
+    transform:rotate(-45deg);
+}

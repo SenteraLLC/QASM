@@ -26,7 +26,8 @@
                         "Hybrid Rogue": "white",
                         "Hybrid Low Rogue": "yellow",
                         "Other": "blue"
-                    }
+                    },
+                    "class_overlays": true
                 }
             }
         },
