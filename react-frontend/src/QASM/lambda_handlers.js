@@ -36,6 +36,7 @@ async function handleSaveJSON(QASM, data, window) {
     let popup = window.open(url, "S3 Browser");
     popup.S3_BROWSER_MODE = s3_browser_modes.SAVE_JSON;
     popup.START_FOLDER = data.path;
+    popup.DEFAULT_FILENAME = data.filename;
 
     return new Promise(resolve => window.onmessage = async (e) => {
         try {

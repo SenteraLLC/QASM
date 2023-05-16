@@ -159,7 +159,7 @@ class MultiClassGridImage extends Component {
                                 <div className="class-selector" key={class_type}>
                                     <p className="class-type">{class_type}</p>
                                     {this.classes[class_type].class_values.map(class_val => (
-                                        <div style={{
+                                        <div key={class_val} style={{
                                             color: // If class_colors is defined for this class_type and class_val, use that color
                                                 "class_colors" in this.classes[class_type] && class_val in this.classes[class_type]["class_colors"]
                                                     ? this.classes[class_type]["class_colors"][class_val]
@@ -185,7 +185,7 @@ class MultiClassGridImage extends Component {
                                 <div className="class-selector" key={class_type}>
                                     <p>{class_type}</p>
                                     {this.classes[class_type].class_values.map(class_val => (
-                                        <div>
+                                        <div key={class_val}>
                                             <input
                                                 type="checkbox"
                                                 name={this.image_name + "_" + class_type}
