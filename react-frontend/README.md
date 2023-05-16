@@ -65,6 +65,7 @@ This will build an app based on the specifications found in ``react-frontend/con
                 - ``"class_colors": <Object>`` (Optional) Text colors used in the class selector
                     - ``<string>: <string>`` The key must be one of the class_values. The value must be a valid css color (name or hexcode).
                         - Ex: to make the class_value `"Normal"` appear in blue text, ``"Normal": "blue"``
+                - ``"class_overlays": <boolean>`` (Optional) Whether to have an "X" appear in the bottom left of every class that has an assigned `class_color`
 
     - ``"imagelabeler"`` Configuration ``<Object>``:
          - ``"image_dir": <string>`` (Optional) Path to directory of images
