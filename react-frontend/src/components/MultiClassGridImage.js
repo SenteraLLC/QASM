@@ -14,6 +14,7 @@ class MultiClassGridImage extends Component {
             "class_colors": {
                 class_value: string, a color
             }
+            "class_overlays": boolean
         }
      */
     classes = {};
@@ -44,6 +45,8 @@ class MultiClassGridImage extends Component {
 
         // Bind functions
         this.changeClass = this.changeClass.bind(this);
+        this.setOverlayColor = this.setOverlayColor.bind(this);
+        this.useClassOverlays = this.useClassOverlays.bind(this);
     }
 
     /**
@@ -55,6 +58,14 @@ class MultiClassGridImage extends Component {
             for (let class_val of this.classes[class_type].class_values) {
                 if (document.getElementById(this.image_name + "_" + class_val).checked) {
                     new_state[class_type] = class_val;
+
+                    if (this.useClassOverlays(class_type, class_val)) {
+                        // Set overlay color if class_colors is defined for this class_type and class_val
+                        this.setOverlayColor(this.classes[class_type]["class_colors"][class_val]);
+                    } else {
+                        // Turn off the overlay
+                        this.setOverlayColor("transparent");
+                    }
                 }
                 else if (this.state[class_type] === class_val) {
                     delete this.state[class_type]
@@ -64,6 +75,52 @@ class MultiClassGridImage extends Component {
 
         this.setState(new_state);
     }
+
+
+    /**
+     * Loop through all classes and update the overlay color if needed
+     */
+    refreshAllOverlays() {
+        for (let class_type in this.classes) {
+            let class_val = this.state[class_type];
+            
+            // Set overlay color if needed
+            if (this.useClassOverlays(class_type, class_val)) {
+                this.setOverlayColor(this.classes[class_type]["class_colors"][class_val]);
+            }
+        }
+    }
+
+
+    /**
+     * Check if a class_type and class_val should have an overlay
+     * 
+     * @param {string} class_type class type
+     * @param {string} class_val class value
+     * @returns boolean, true if the class_type should have an overlay
+     */
+    useClassOverlays(class_type, class_val) {
+        if (
+            "class_overlays" in this.classes[class_type] && 
+            "class_colors" in this.classes[class_type] &&
+            class_val in this.classes[class_type]["class_colors"]
+        ) {
+            return this.classes[class_type]["class_overlays"]
+        }
+        return false;
+    }
+
+
+    /**
+     * Change the overlay color
+     * 
+     * @param {string} color valid css color
+     */
+    setOverlayColor(color) {
+        let class_overlay = document.getElementById(this.image_name + "-class-overlay")
+        class_overlay.style.setProperty("--background", color);
+    }
+
 
     render() {
 
@@ -75,7 +132,7 @@ class MultiClassGridImage extends Component {
                 className={"MultiClassGridImage " + this.state.class + show_overlay}
                 id={this.image_name}
             >
-                <div>
+                <div className="image-holder">
                     <img
                         src={this.image}
                         alt={this.image_name}
@@ -91,6 +148,8 @@ class MultiClassGridImage extends Component {
                             className="hidden hover-target">
                         </img>
                     ))}
+                    {/* TODO: support more than one class overlay at once */}
+                    <div className="class-overlay" id={this.image_name + "-class-overlay"}></div>
                 </div>
                 <p className="image-name">{this.image_name}</p>
                 <div className="class-selector-holder">
@@ -147,6 +206,10 @@ class MultiClassGridImage extends Component {
                 </div>
             </div>
         )
+    }
+
+    componentDidMount() {
+        this.refreshAllOverlays();
     }
 }
 
