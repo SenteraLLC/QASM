@@ -9,7 +9,7 @@
         {
             "component": "multiclassgrid",
             "display_name": "Multi-Class Grid",
-            "grid_width": 1,
+            "grid_width": 2,
             "classes": { 
                 "plant_type": { 
                     "selector_type": "radio",
@@ -17,11 +17,29 @@
                         "Normal",
                         "Delay Rogue",
                         "Hybrid Rogue",
-                        "Hybrid Low Rogue",
-                        "Other"
+                        "Mix Rogue"
                     ],
                     "default": "Normal"
-                }
+                },
+                "week": { 
+                    "selector_type": "checkbox", 
+                    "class_values": [ 
+                        "Week 1",
+                        "Week 2",
+                        "Week 3",
+                        "Week 4",
+                        "Week 5"
+                    ]
+                },
+                "stake_color": { 
+                    "selector_type": "checkbox",
+                    "class_values": [ 
+                        "Yellow",
+                        "White",
+                        "Red"
+                    ]
+
+                } 
             }
         },
         {
