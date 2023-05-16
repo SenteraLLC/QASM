@@ -41,7 +41,12 @@ class MultiClassGrid extends Component {
         this.QASM = props.QASM
         this.grid_width = props.grid_width || 1;
         this.classes = props.classes
-        this.src = props.src
+
+        console.log(this.classes)
+        
+        // TEMP HACK TO SPEED DEVELOPMENT
+        this.src = props.src || "Farmer City 2022/Strip Trial/Planting 1/Videos/6-21/Row 1b, 6a/3840x2160@120fps/Pass A/DS Splits/DS 002/bottom Raw Images/";
+        this.loadImages();
 
         this.class_types = Object.keys(this.classes); // For easy access
         this.labels = this.initLabels();

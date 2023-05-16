@@ -7,7 +7,14 @@ class MultiClassGridImage extends Component {
     image_name = "";
     /**
      * Key: class_type
-     * Value: [{class_value: string}]
+     * Value: {
+     *      "selector_type": string, "radio" or "checkbox"
+            "class_values": [string],
+            "default": string,
+            "class_colors": {
+                class_value: string, a color
+            }
+        }
      */
     classes = {};
     image_stack = [];
@@ -91,9 +98,16 @@ class MultiClassGridImage extends Component {
                         if (this.classes[class_type].selector_type === "radio") {
                             return (
                                 <div className="class-selector" key={class_type}>
-                                    <p>{class_type}</p>
+                                    <p className="class-type">{class_type}</p>
                                     {this.classes[class_type].class_values.map(class_val => (
-                                        <div>
+                                        <div style={{
+                                            color: // If class_colors is defined for this class_type and class_val, use that color
+                                                "class_colors" in this.classes[class_type] && class_val in this.classes[class_type]["class_colors"]
+                                                    ? this.classes[class_type]["class_colors"][class_val]
+                                                    : "black",
+                                            display: "inline-block",
+                                            padding: "0px 5px",
+                                        }}>
                                             <input
                                                 type="radio"
                                                 name={this.image_name + "_" + class_type}
