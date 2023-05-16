@@ -1,4 +1,4 @@
-// Utils
+// ####GENERAL UTILS####
 
 /**
  * Takes in a string and removes all non valid html id/class characters.

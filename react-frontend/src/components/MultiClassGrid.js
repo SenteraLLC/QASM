@@ -2,10 +2,10 @@
 import { Component } from 'react';
 import MultiClassGridImage from "./MultiClassGridImage.js";
 import Dropdown from './Dropdown.js';
-import $ from "jquery";
 import "../css/Grid.css";
 import "../css/MultiClassGrid.css";
 const { update_all_overlays } = require("../QASM/utils.js");
+const { autoScroll } = require("../QASM/grid_utils.js");
 const { function_names } = require("../../public/electron_constants.js");
 
 // TODO: Combine this with Grid, and/or add to app as a seperate component. 
@@ -67,7 +67,6 @@ class MultiClassGrid extends Component {
         this.addImageLayer = this.addImageLayer.bind(this);
         this.getImageStackByName = this.getImageStackByName.bind(this);
         this.changeImage = this.changeImage.bind(this);
-        this.autoScroll = this.autoScroll.bind(this);
         this.initEventListeners = this.initEventListeners.bind(this);
     }
 
@@ -114,7 +113,7 @@ class MultiClassGrid extends Component {
             }
 
             if (this.hover_row_id !== null && e.key === "n") {
-                this.autoScroll(this.hover_row_id);
+                autoScroll(this, this.hover_row_id);
             }
         });
     }
@@ -432,28 +431,6 @@ class MultiClassGrid extends Component {
             }
             // Done
             break;
-        }
-    }
-
-
-    /**
-     * Scroll page to the next row 
-     * 
-     * @param {string} hover_row_id id of the current row
-     */
-    autoScroll(hover_row_id) {
-        // Scroll to next row
-        $(document).scrollTop($("#" + hover_row_id).next().offset().top);
-        // Set next row as hovered for consecutive navigation
-        this.hover_row_id = $("#" + hover_row_id).next()[0].id;
-
-        // Set next image as hovered
-        if (this.hover_image_id != null) {
-            let row = parseInt(hover_row_id.slice(4)); // Row index
-            let col = this.grid_image_names[row].indexOf(this.hover_image_id) // Col
-            row = parseInt(this.hover_row_id.slice(4)); // New row index
-            this.hover_image_id = this.grid_image_names[row][col]; // Set new image as hovered
-            this.allow_next_scroll = true; // Override scroll protection
         }
     }
 
