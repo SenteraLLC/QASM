@@ -523,6 +523,9 @@ class Grid extends Component {
         return (
             <div className="Grid" key={this.component_updater}>
                 <div className="header-container">
+                    {this.src !== "" &&
+                        <h2>{this.src}</h2>
+                    }
                     <Legend
                         classes={this.classes}
                     />
