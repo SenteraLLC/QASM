@@ -4,7 +4,7 @@ import MultiClassGridImage from "./MultiClassGridImage.js";
 import Dropdown from './Dropdown.js';
 import "../css/Grid.css";
 import "../css/MultiClassGrid.css";
-const { update_all_overlays } = require("../QASM/utils.js");
+const { update_all_overlays, getOneFolderUp } = require("../QASM/utils.js");
 const { autoScroll } = require("../QASM/grid_utils.js");
 const { function_names } = require("../../public/electron_constants.js");
 
@@ -270,10 +270,10 @@ class MultiClassGrid extends Component {
      */
     async saveLabels(filename = "") {
         this.updateLocalLabels();
-
         let params = {
             labels: this.labels,
-            path: this.src,
+            // Start one folder up from the current directory
+            path: getOneFolderUp(this.src),
             filename: filename,
         }
 
@@ -287,7 +287,12 @@ class MultiClassGrid extends Component {
      */
     async loadLabels() {
         // Load in previous labels
-        let labels = await this.QASM.call_backend(window, function_names.LOAD_LABELS, this.src);
+        let labels = await this.QASM.call_backend(
+            window, 
+            function_names.LOAD_LABELS, 
+            // Start one folder up from the current directory
+            getOneFolderUp(this.src),
+        );
         this.labels = this.initLabels(labels);
         console.log(this.labels);
 
@@ -555,7 +560,8 @@ class MultiClassGrid extends Component {
                             {this.label_filenames !== undefined && Object.keys(this.label_filenames).map((button_name, i) => (
                                 <button
                                     onClick={() => this.saveLabels(this.label_filenames[button_name])}
-                                    className="button">
+                                    className="button"
+                                    key={button_name}>
                                     {"Save " + button_name + " Labels"}
                                 </button>
                             ))}
