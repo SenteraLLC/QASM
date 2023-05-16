@@ -20,7 +20,13 @@
                         "Hybrid Low Rogue",
                         "Other"
                     ],
-                    "default": "Normal"
+                    "default": "Normal",
+                    "class_colors": {
+                        "Delay Rogue": "darkorange",
+                        "Hybrid Rogue": "white",
+                        "Hybrid Low Rogue": "yellow",
+                        "Other": "blue"
+                    }
                 }
             }
         },

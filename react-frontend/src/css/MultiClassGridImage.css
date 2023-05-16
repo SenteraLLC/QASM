@@ -9,6 +9,7 @@
 
 .class-selector {
     display: inline-block;
+    background-color: lightgray;
 }
 
 img {
@@ -27,6 +28,10 @@ img.overlay {
 
 p.image-name {
     word-break: break-all;
+}
+
+p.class-type {
+    color: black;
 }
 
 .hidden {
