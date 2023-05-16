@@ -160,6 +160,7 @@ class MultiClassGrid extends Component {
                 break;
             case FILTER_MODES.group_by_class:
                 // TODO: Think of a way to do this...
+                break;
             default: 
                 // Sort image names with the filtered class first
                 let filtered = [];
@@ -443,6 +444,9 @@ class MultiClassGrid extends Component {
                     {/* <Legend
                         classes={this.classes}
                     /> */}
+                    {this.src !== "" &&
+                        <h2>{this.src}</h2>
+                    }
                     <div className={this.images_shown ? "hidden" : "controls-container"}>
                         <button
                             onClick={this.selectImageDir}
