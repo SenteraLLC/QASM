@@ -66,8 +66,9 @@ This will build an app based on the specifications found in ``react-frontend/con
                     - ``<string>: <string>`` The key must be one of the class_values. The value must be a valid css color (name or hexcode).
                         - Ex: to make the class_value `"Normal"` appear in blue text, ``"Normal": "blue"``
                 - ``"class_overlays": <boolean>`` (Optional) Whether to have an "X" appear in the bottom left of every class that has an assigned `class_color`
-                - ``"label_filenames": <Object>`` (Optional) Define custom buttons that will allowing saving to a custom filename.
+                - ``"label_savenames": <Object>`` (Optional) Define custom buttons that will allowing saving to a custom filename.
                     - ``<string>: <string>`` Where the key is the name that will appear on the button and the value is the filename.
+                - ``"label_loadnames": <Array[string]>`` (Optional) An ordered list of filenames to automatically try and load. Will search one folder above the current directory.
 
     - ``"imagelabeler"`` Configuration ``<Object>``:
          - ``"image_dir": <string>`` (Optional) Path to directory of images
