@@ -119,7 +119,8 @@ async function handleLoadLabels(QASM, data, window) {
     let popup = window.open(url, "S3 Browser");
     // TODO: different mode for loading/saving?
     popup.S3_BROWSER_MODE = s3_browser_modes.SELECT_JSON; 
-    popup.START_FOLDER = data;
+    popup.START_FOLDER = data.path;
+    popup.LOADNAMES = data.loadnames;
 
     return new Promise(resolve => window.onmessage = async (e) => {
         try {

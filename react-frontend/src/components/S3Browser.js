@@ -15,11 +15,12 @@ class S3Browser extends Component {
     constructor(props) {
         super(props);
         
-        this.QASM    = props.QASM
-        this.mode    = window.S3_BROWSER_MODE // Set by window opener
-        this.path    = window.START_FOLDER
-        this.default_savename = window.DEFAULT_SAVENAME
-        this.parents = props.parents || [] // Stack of parent folders
+        this.QASM    = props.QASM;
+        this.mode    = window.S3_BROWSER_MODE; // Set by window opener
+        this.path    = window.START_FOLDER;
+        this.default_savename = window.DEFAULT_SAVENAME;
+        this.loadnames = window.LOADNAMES;
+        this.parents = props.parents || []; // Stack of parent folders
         this.addToCache(BASE_PATH, this.QASM.folders, this.QASM.files); // Always populate bucket in cache
 
         if (this.path == null) { // Starting at bucket level
@@ -35,8 +36,7 @@ class S3Browser extends Component {
         };
 
         // Load user display settings
-        this.loadSettings()
-        
+        this.loadSettings();
 
         // Bind functions
         this.selectFolder         = this.selectFolder.bind(this);
@@ -58,6 +58,39 @@ class S3Browser extends Component {
         this.getCascadeData       = this.getCascadeData.bind(this);
         this.saveSettings         = this.saveSettings.bind(this);
         this.loadSettings         = this.loadSettings.bind(this);
+        this.autoLoadLabels       = this.autoLoadLabels.bind(this);
+    }
+
+
+    /**
+     * Try and match this.loadnames to the current files in the browser.
+     * If a match is found, then load that file.
+     * 
+     */
+    autoLoadLabels() {
+        if (this.loadnames !== undefined && this.loadnames !== null) {
+            switch(this.mode) {
+                case s3_browser_modes.SELECT_JSON:
+                    let filenames = []
+                    for (let file of this.files) {
+                        // Get just the file's name without the whole path
+                        filenames.push(file.split(/[\\/]/).pop())
+                    }
+                    for (let name of this.loadnames) {
+                        if (filenames.includes(name)) {
+                            console.log(this.files[filenames.indexOf(name)]);
+                            if(this.selectFile(this.files[filenames.indexOf(name)])) {
+                                // On success, break out of the loop
+                                break;
+                            }
+                        }
+                    }
+                    break;
+                default:
+                    break;
+            }
+
+        }   
     }
 
 
@@ -80,6 +113,9 @@ class S3Browser extends Component {
         
         await this.changePath(path);
         await this.getCascadeData(path);
+
+        // Try and auto load labels
+        this.autoLoadLabels();
     }
 
 
@@ -119,6 +155,8 @@ class S3Browser extends Component {
      * then send the filepath to the main window.
      * 
      * @param {string} file filename
+     * @param {boolean} seek_confirmation whether or not to ask for confirmation before selecting
+     * @returns {boolean} true if the file was selected, false if the file was not selected
      */
     selectFile(file, seek_confirmation = true) {
         // Exclude SELECT_DIRECTORY mode from selecting files
@@ -133,7 +171,7 @@ class S3Browser extends Component {
                 case s3_browser_modes.SAVE_JSON:
                     if (ext.toLowerCase() !== "json") {
                         alert("Selected file not of type json.");
-                        return;
+                        return false;
                     }
                     break;
 
@@ -142,7 +180,7 @@ class S3Browser extends Component {
                     // Alert user and return early if file extension isn't in image_types
                     if (!(ext in image_types)) {
                         alert("Selected file does not have supported image extension.");
-                        return;
+                        return false;
                     }
                     else {
                         console.log("Clicked on an image")
@@ -151,14 +189,22 @@ class S3Browser extends Component {
 
                 default:
                     alert("Unsupported mode: " + this.mode);
-                    return;
+                    return false;
             }
 
             // Ask for confirmation if confirmation is requested and in a saving mode
             if (seek_confirmation && (this.mode === s3_browser_modes.SAVE_IMAGE || this.mode === s3_browser_modes.SAVE_JSON)) {
                 // If we don't recieve an affermative answer return early
                 if (!window.confirm("Are you sure you want to overwrite " + file + "?")) {
-                    return;
+                    return false;
+                }
+            }
+
+            // Ask for confirmation if confirmation is requested and in a loading mode
+            if (seek_confirmation && (this.mode === s3_browser_modes.SELECT_JSON)) {
+                // If we don't recieve an affermative answer return early
+                if (!window.confirm("Load data from " + file + "?")) {
+                    return false;
                 }
             }
 
@@ -170,6 +216,7 @@ class S3Browser extends Component {
             // Send data back to parent window
             window.opener.postMessage(data, '*');
             window.close();
+            return true;
         }
     }
 

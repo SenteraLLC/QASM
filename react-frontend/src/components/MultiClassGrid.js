@@ -33,16 +33,18 @@ class MultiClassGrid extends Component {
     allow_next_scroll = false;
     filtered_class_type = FILTER_MODES.no_filter; // high level 
     filtered_class_value = FILTER_MODES.no_filter; // selected value within a class type
-    label_savenames = undefined;
+    label_savenames = undefined; // {<string button_name>: <string savename>, ...}
+    label_loadnames = undefined; // [<string loadname1>, <string loadname2>, ...]
 
     constructor(props) {
         super(props);
 
         // Initialize props
-        this.QASM = props.QASM
+        this.QASM = props.QASM;
         this.grid_width = props.grid_width || 1;
-        this.classes = props.classes
+        this.classes = props.classes;
         this.label_savenames = props.label_savenames || undefined;
+        this.label_loadnames = props.label_loadnames || undefined;
         
         // TEMP HACK TO SPEED DEVELOPMENT
         this.src = props.src || "Farmer City 2022/Strip Trial/Planting 1/Videos/6-21/Row 1b, 6a/3840x2160@120fps/Pass A/DS Splits/DS 002/bottom Raw Images/";
@@ -285,14 +287,16 @@ class MultiClassGrid extends Component {
      * Prompt user to select a file with labels
      * and load them in.
      */
-    async loadLabels() {
-        // Load in previous labels
-        let labels = await this.QASM.call_backend(
-            window, 
-            function_names.LOAD_LABELS, 
+    async loadLabels(loadnames = undefined) {
+        let params = {
             // Start one folder up from the current directory
-            getOneFolderUp(this.src),
-        );
+            path: getOneFolderUp(this.src),
+            // Try and load a specific file if loadnames is defined
+            loadnames: this.label_loadnames,
+        }
+
+        // Load in previous labels
+        let labels = await this.QASM.call_backend(window, function_names.LOAD_LABELS, params);
         this.labels = this.initLabels(labels);
         console.log(this.labels);
 
