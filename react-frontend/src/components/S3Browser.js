@@ -112,10 +112,7 @@ class S3Browser extends Component {
         }
         
         await this.changePath(path);
-        await this.getCascadeData(path);
-
-        // Try and auto load labels
-        this.autoLoadLabels();
+        await this.getCascadeData(path);    
     }
 
 
@@ -355,6 +352,9 @@ class S3Browser extends Component {
                 return false
             }
         }
+
+        this.autoLoadLabels(); // Try and auto load labels
+
         // Fill in the path link with the new path
         document.getElementById("s3-link").value = this.path;
         
