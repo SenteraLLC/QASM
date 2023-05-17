@@ -123,3 +123,14 @@ export function getOneFolderUp(file_path) {
     // Then we add one to keep the trailing slash.
     return file_path.substring(0, charPos(file_path, "/").splice(-2)[0]+1);
 }
+
+
+/**
+ * Get the current folder name from a file path.
+ * 
+ * @param {string} file_path file path with trailing slash 
+ * @returns current folder name
+ */
+export function getCurrentFolder(file_path) {
+    return file_path.split("/").slice(-2)[0]
+}
