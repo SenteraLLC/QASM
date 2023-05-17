@@ -69,6 +69,7 @@ This will build an app based on the specifications found in ``react-frontend/con
                 - ``"label_savenames": <Object>`` (Optional) Define custom buttons that will allowing saving to a custom filename.
                     - ``<string>: <string>`` Where the key is the name that will appear on the button and the value is the filename.
                 - ``"label_loadnames": <Array[string]>`` (Optional) An ordered list of filenames to automatically try and load. Will search one folder above the current directory.
+                - ``"autoload_labels_on_dir_select": <boolean>`` (Optional) Whether to try and autoload labels after each new directory selection. Default is false. Can also be changed in app via the checkbox "Autoload Labels on Directory Select".
 
     - ``"imagelabeler"`` Configuration ``<Object>``:
          - ``"image_dir": <string>`` (Optional) Path to directory of images
