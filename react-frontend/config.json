@@ -39,7 +39,8 @@
                 "unstaked_rogues.json",
                 "assumed_rogues.json",
                 "unfiltered_rogues.json"
-            ]
+            ],
+            "autoload_labels_on_dir_select": false
         },
         {
             "component": "binaryeditor",
