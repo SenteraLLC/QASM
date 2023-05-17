@@ -4,7 +4,7 @@ import MultiClassGridImage from "./MultiClassGridImage.js";
 import Dropdown from './Dropdown.js';
 import "../css/Grid.css";
 import "../css/MultiClassGrid.css";
-const { update_all_overlays, getOneFolderUp } = require("../QASM/utils.js");
+const { update_all_overlays, getOneFolderUp, getCurrentFolder } = require("../QASM/utils.js");
 const { autoScroll } = require("../QASM/grid_utils.js");
 const { function_names } = require("../../public/electron_constants.js");
 
@@ -81,6 +81,8 @@ class MultiClassGrid extends Component {
         this.autoLoadLabels = this.autoLoadLabels.bind(this);
         this.changeAutoLoadOnDirSelect = this.changeAutoLoadOnDirSelect.bind(this);
         this.autoLoadImageLayers = this.autoLoadImageLayers.bind(this);
+        this.loadImageDir = this.loadImageDir.bind(this);
+        this.loadNextDir = this.loadNextDir.bind(this);
     }
 
 
@@ -345,18 +347,53 @@ class MultiClassGrid extends Component {
     async selectImageDir() {
         let dir_path = await this.QASM.call_backend(window, function_names.OPEN_DIR, this.src);
         if (dir_path !== undefined) {
-            if (this.src !== dir_path) {
-                this.image_stack = []; // Clear image stack on new directory load
-            }
             this.src = dir_path;
+            await this.loadImageDir();
+        } else {
+            console.log("Prevented loading invalid directory.");
+        }
+    }
+
+
+    /**
+     * Load images from the current source directory,
+     * and try and autoload labels and image layers.
+     */
+    async loadImageDir() {
+        if (this.src !== undefined) {
+            this.image_stack = []; // Clear image stack on new directory load
             if (this.autoload_labels_on_dir_select) {
                 this.autoLoadLabels(); // Try and autoload labels
             }
             this.autoLoadImageLayers(); // Try and autoload image layers
             await this.loadImages();
             this.updateState();
+        }
+    }
+
+
+    /**
+     * Load the next directory
+     *  
+     */
+    async loadNextDir() {
+        let current_folder = getCurrentFolder(this.src); // Current folder name, without full path
+        let current_dir = getOneFolderUp(this.src); // One folder up
+        let root_dir = getOneFolderUp(getOneFolderUp(this.src)); // Two folders up
+
+        // Get all folders in root_dir
+        let response = await this.QASM.call_backend(window, function_names.OPEN_S3_FOLDER, root_dir);
+        let folders = response.folders.sort();
+
+        // Get index of current folder
+        let current_folder_idx = folders.indexOf(current_dir);
+        if (current_folder_idx + 1 === folders.length) {
+            alert("No more directories to load.");
+            return;
         } else {
-            console.log("Prevented loading invalid directory.");
+            // Start at the next dir in root_dir, with the same current image folder name
+            this.src = folders[current_folder_idx + 1] + current_folder + "/";
+            await this.loadImageDir();
         }
     }
 
@@ -384,7 +421,7 @@ class MultiClassGrid extends Component {
     async autoLoadImageLayers() {
         if (this.image_layer_folder_names !== undefined) {
             let root_dir = getOneFolderUp(this.src);
-            let current_folder = this.src.split("/").slice(-2)[0]
+            let current_folder = getCurrentFolder(this.src)
             for (let folder_name of this.image_layer_folder_names) {
                 
                 if (folder_name !== current_folder) {
@@ -561,6 +598,11 @@ class MultiClassGrid extends Component {
                             onClick={this.selectImageDir}
                             className="button">
                             Select Directory
+                        </button>
+                        <button
+                            onClick={this.loadNextDir}
+                            className="button">
+                            Next Directory
                         </button>
                         <button
                             onClick={this.addImageLayer}
