@@ -617,11 +617,14 @@ class MultiClassGrid extends Component {
                             className="button">
                             Load Labels
                         </button>
-                        <button
-                            onClick={this.saveLabels}
-                            className="button">
-                            Save Labels
-                        </button>
+                        {this.label_loadnames === undefined &&
+                            /* Hide normal save button when custom ones are present */
+                            <button
+                                onClick={this.saveLabels}
+                                className="button">
+                                Save Labels
+                            </button>
+                        }
                         <button
                             onClick={this.clearAll}
                             className="button">
