@@ -18,7 +18,7 @@ class S3Browser extends Component {
         this.QASM    = props.QASM
         this.mode    = window.S3_BROWSER_MODE // Set by window opener
         this.path    = window.START_FOLDER
-        this.default_filename = window.DEFAULT_FILENAME
+        this.default_savename = window.DEFAULT_SAVENAME
         this.parents = props.parents || [] // Stack of parent folders
         this.addToCache(BASE_PATH, this.QASM.folders, this.QASM.files); // Always populate bucket in cache
 
@@ -801,7 +801,7 @@ class S3Browser extends Component {
                             <input
                                 id="new-filename"
                                 type="text"
-                                value={this.default_filename}
+                                value={this.default_savename}
                                 onKeyDown={(e) => this.handleKeyPress(e.key)}
                             />
                         </div>

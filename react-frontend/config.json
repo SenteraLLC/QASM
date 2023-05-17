@@ -30,10 +30,16 @@
                     "class_overlays": true
                 }
             },
-            "label_filenames": {
+            "label_savenames": {
                 "Staked": "staked_rogues.json",
                 "Unstaked": "assumed_rogues.json"
-            }
+            },
+            "label_loadnames": [
+                "staked_rogues.json",
+                "unstaked_rogues.json",
+                "assumed_rogues.json",
+                "unfiltered_rogues.json"
+            ]
         },
         {
             "component": "binaryeditor",

@@ -27,7 +27,7 @@ export { function_handlers }
  * and then save the labels.
  * 
  * @param {Object} QASM QASM object
- * @param {Object} data {labels: {}, path: ""}
+ * @param {Object} data {labels: {}, path: "", savename: ""}
  * @param {*} window window
  * @returns {string} result
  */
@@ -36,7 +36,7 @@ async function handleSaveJSON(QASM, data, window) {
     let popup = window.open(url, "S3 Browser");
     popup.S3_BROWSER_MODE = s3_browser_modes.SAVE_JSON;
     popup.START_FOLDER = data.path;
-    popup.DEFAULT_FILENAME = data.filename;
+    popup.DEFAULT_SAVENAME = data.savename;
 
     return new Promise(resolve => window.onmessage = async (e) => {
         try {
