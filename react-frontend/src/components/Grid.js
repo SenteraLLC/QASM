@@ -373,8 +373,11 @@ class Grid extends Component {
      * and load them in.
      */
     async loadLabels() {
+        let params = {
+            path: this.src,
+        }
         // Load in previous labels
-        let labels = await this.QASM.call_backend(window, function_names.LOAD_LABELS, this.src);
+        let labels = await this.QASM.call_backend(window, function_names.LOAD_LABELS, params);
         this.labels = this.initLabels(labels);
         console.log(this.labels);
         
