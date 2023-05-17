@@ -33,7 +33,7 @@ class MultiClassGrid extends Component {
     allow_next_scroll = false;
     filtered_class_type = FILTER_MODES.no_filter; // high level 
     filtered_class_value = FILTER_MODES.no_filter; // selected value within a class type
-    label_filenames = undefined;
+    label_savenames = undefined;
 
     constructor(props) {
         super(props);
@@ -42,7 +42,7 @@ class MultiClassGrid extends Component {
         this.QASM = props.QASM
         this.grid_width = props.grid_width || 1;
         this.classes = props.classes
-        this.label_filenames = props.label_filenames || undefined;
+        this.label_savenames = props.label_savenames || undefined;
         
         // TEMP HACK TO SPEED DEVELOPMENT
         this.src = props.src || "Farmer City 2022/Strip Trial/Planting 1/Videos/6-21/Row 1b, 6a/3840x2160@120fps/Pass A/DS Splits/DS 002/bottom Raw Images/";
@@ -266,15 +266,15 @@ class MultiClassGrid extends Component {
      * Scrape the page for the current labels
      * and prompt the user to specify where to save them.
      * 
-     * @param {string} filename filename to save labels to
+     * @param {string} savename filename to save labels to
      */
-    async saveLabels(filename = "") {
+    async saveLabels(savename = "") {
         this.updateLocalLabels();
         let params = {
             labels: this.labels,
             // Start one folder up from the current directory
             path: getOneFolderUp(this.src),
-            filename: filename,
+            savename: savename,
         }
 
         await this.QASM.call_backend(window, function_names.SAVE_JSON_FILE, params);
@@ -547,7 +547,7 @@ class MultiClassGrid extends Component {
                             Load Labels
                         </button>
                         <button
-                            onClick={() => this.saveLabels("")}
+                            onClick={this.saveLabels}
                             className="button">
                             Save Labels
                         </button>
@@ -557,9 +557,9 @@ class MultiClassGrid extends Component {
                             Clear All Labels
                         </button>
                         <div className="label-filename-container">
-                            {this.label_filenames !== undefined && Object.keys(this.label_filenames).map((button_name, i) => (
+                            {this.label_savenames !== undefined && Object.keys(this.label_savenames).map((button_name, i) => (
                                 <button
-                                    onClick={() => this.saveLabels(this.label_filenames[button_name])}
+                                    onClick={() => this.saveLabels(this.label_savenames[button_name])}
                                     className="button"
                                     key={button_name}>
                                     {"Save " + button_name + " Labels"}
