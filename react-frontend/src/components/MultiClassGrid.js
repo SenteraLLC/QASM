@@ -36,6 +36,8 @@ class MultiClassGrid extends Component {
     label_savenames = undefined; // {<string button_name>: <string savename>, ...}
     label_loadnames = undefined; // [<string loadname1>, <string loadname2>, ...]
     image_layer_folder_names = undefined; // [<string folder_name1>, <string folder_name2>, ...]
+    // Store the folder names in all the directories we've loaded
+    next_dir_cache = {}; // [<string root_folder_name>: Array[<string foldernames>]]
 
     constructor(props) {
         super(props);
@@ -381,9 +383,18 @@ class MultiClassGrid extends Component {
         let current_dir = getOneFolderUp(this.src); // One folder up
         let root_dir = getOneFolderUp(getOneFolderUp(this.src)); // Two folders up
 
-        // Get all folders in root_dir
-        let response = await this.QASM.call_backend(window, function_names.OPEN_S3_FOLDER, root_dir);
-        let folders = response.folders.sort();
+        let folders;
+        if (root_dir in this.next_dir_cache) {
+            // If we have folder info cached, use it
+            folders = this.next_dir_cache[root_dir]
+        } else {
+            // Else get all folders in root_dir and add to cache
+            let response = await this.QASM.call_backend(window, function_names.OPEN_S3_FOLDER, root_dir);
+            folders = response.folders.sort();
+            this.next_dir_cache[root_dir] = folders;
+            console.log("Caching folders in ", root_dir);
+        }
+        
 
         // Get index of current folder
         let current_folder_idx = folders.indexOf(current_dir);
@@ -413,8 +424,8 @@ class MultiClassGrid extends Component {
             console.log("Prevent adding empty layer.");
         } else {
             this.image_stack.push(image_layer);
+            console.log(this.image_stack);
         }
-        console.log(this.image_stack);
         this.updateState();
     }
 
