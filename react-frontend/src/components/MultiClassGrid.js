@@ -45,6 +45,7 @@ class MultiClassGrid extends Component {
         this.classes = props.classes;
         this.label_savenames = props.label_savenames || undefined;
         this.label_loadnames = props.label_loadnames || undefined;
+        this.autoload_labels_on_dir_select = props.autoload_labels_on_dir_select || false;
         
         // TEMP HACK TO SPEED DEVELOPMENT
         this.src = props.src || "Farmer City 2022/Strip Trial/Planting 1/Videos/6-21/Row 1b, 6a/3840x2160@120fps/Pass A/DS Splits/DS 002/bottom Raw Images/";
@@ -75,6 +76,8 @@ class MultiClassGrid extends Component {
         this.getImageStackByName = this.getImageStackByName.bind(this);
         this.changeImage = this.changeImage.bind(this);
         this.initEventListeners = this.initEventListeners.bind(this);
+        this.autoLoadLabels = this.autoLoadLabels.bind(this);
+        this.changeAutoLoadOnDirSelect = this.changeAutoLoadOnDirSelect.bind(this);
     }
 
 
@@ -310,6 +313,19 @@ class MultiClassGrid extends Component {
 
 
     /**
+     * Try and auto-load labels if we have loadnames
+     */
+    async autoLoadLabels() {
+        if (this.label_loadnames !== undefined) {
+            // Wait for previous window to close
+            setTimeout(() => {
+                this.loadLabels();
+            }, 1000)
+        }
+    }
+
+
+    /**
      * Clear all the current labels
      */
     clearAll() {
@@ -330,6 +346,9 @@ class MultiClassGrid extends Component {
                 this.image_stack = []; // Clear image stack on new directory load
             }
             this.src = dir_path;
+            if (this.autoload_labels_on_dir_select) {
+                this.autoLoadLabels(); // Try and autoload labels
+            }
             await this.loadImages();
             this.updateState();
         } else {
@@ -451,6 +470,15 @@ class MultiClassGrid extends Component {
     }
 
 
+    /**
+     * Negate autoload_labels_on_dir_select
+     */
+    changeAutoLoadOnDirSelect() {
+        this.autoload_labels_on_dir_select = !this.autoload_labels_on_dir_select;
+        this.updateState();
+    }
+
+
     render() {
         return (
             <div className="Grid" key={this.component_updater}>
@@ -544,6 +572,18 @@ class MultiClassGrid extends Component {
                                 max={99}
                                 onChange={this.changeGridWidth}>
                             </input>
+                        </div>
+                        <div className="change-grid-width-container">
+                            <label>
+                                Autoload Labels on Directory Select:
+                            </label>
+                            <input
+                                type="checkbox"
+                                name={"autoload_labels_on_dir_select"}
+                                id={"autoload_labels_on_dir_select"}
+                                onChange={this.changeAutoLoadOnDirSelect}
+                                checked={this.autoload_labels_on_dir_select}
+                            ></input>
                         </div>
                         <button
                             onClick={this.loadLabels}
