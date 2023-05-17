@@ -35,6 +35,7 @@ class MultiClassGrid extends Component {
     filtered_class_value = FILTER_MODES.no_filter; // selected value within a class type
     label_savenames = undefined; // {<string button_name>: <string savename>, ...}
     label_loadnames = undefined; // [<string loadname1>, <string loadname2>, ...]
+    image_layer_folder_names = undefined; // [<string folder_name1>, <string folder_name2>, ...]
 
     constructor(props) {
         super(props);
@@ -46,6 +47,7 @@ class MultiClassGrid extends Component {
         this.label_savenames = props.label_savenames || undefined;
         this.label_loadnames = props.label_loadnames || undefined;
         this.autoload_labels_on_dir_select = props.autoload_labels_on_dir_select || false;
+        this.image_layer_folder_names = props.image_layer_folder_names || undefined;
         
         // TEMP HACK TO SPEED DEVELOPMENT
         this.src = props.src || "Farmer City 2022/Strip Trial/Planting 1/Videos/6-21/Row 1b, 6a/3840x2160@120fps/Pass A/DS Splits/DS 002/bottom Raw Images/";
@@ -78,6 +80,7 @@ class MultiClassGrid extends Component {
         this.initEventListeners = this.initEventListeners.bind(this);
         this.autoLoadLabels = this.autoLoadLabels.bind(this);
         this.changeAutoLoadOnDirSelect = this.changeAutoLoadOnDirSelect.bind(this);
+        this.autoLoadImageLayers = this.autoLoadImageLayers.bind(this);
     }
 
 
@@ -349,6 +352,7 @@ class MultiClassGrid extends Component {
             if (this.autoload_labels_on_dir_select) {
                 this.autoLoadLabels(); // Try and autoload labels
             }
+            this.autoLoadImageLayers(); // Try and autoload image layers
             await this.loadImages();
             this.updateState();
         } else {
@@ -375,6 +379,28 @@ class MultiClassGrid extends Component {
         }
         console.log(this.image_stack);
         this.updateState();
+    }
+
+    async autoLoadImageLayers() {
+        if (this.image_layer_folder_names !== undefined) {
+            let root_dir = getOneFolderUp(this.src);
+            let current_folder = this.src.split("/").slice(-2)[0]
+            for (let folder_name of this.image_layer_folder_names) {
+                
+                if (folder_name !== current_folder) {
+                    // Load images and add them to the image stack
+                    let image_layer = await this.QASM.call_backend(window, function_names.LOAD_IMAGES, root_dir + folder_name + "/");
+                    if (Object.keys(image_layer).length === 0) {
+                        console.log("Prevent adding empty layer.");
+                    } else {
+                        this.image_stack.push(image_layer);
+                    }
+                    console.log(this.image_stack);
+                }
+            }
+
+            this.updateState();
+        }
     }
 
 
@@ -445,7 +471,7 @@ class MultiClassGrid extends Component {
         // childNodes of image holder div = image layers
 
         let layers = document.getElementById(hover_image_id).firstChild.childNodes;
-        // layers[0] is the image, layers[n] is image_stack[n-1]
+        // layers[0] is the image, layers[n] is image_stack[n-1], layers[layers.length-1] is the class-overlay
         for (let idx = 0; idx < layers.length; idx++) {
             let layer = layers[idx];
             // Skip overlays and hidden images
@@ -457,7 +483,8 @@ class MultiClassGrid extends Component {
             layer.classList.add("hidden");
 
             // Change next hidden image to shown
-            if (idx + 1 === layers.length) {
+            if (idx + 1 === layers.length - 1) {
+                // Last index is the class-overlay
                 // If we're at the last layer, turn on the og image
                 layers[0].classList.remove("hidden");
             } else {

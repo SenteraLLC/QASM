@@ -1,5 +1,5 @@
 {
-    "name": "Multi-Class App",
+    "name": "Multi-Class App Spring 2023",
     "app": "s3",
     "bucket": "sentera-rogues-data",
     "components": [
@@ -36,11 +36,23 @@
             },
             "label_loadnames": [
                 "staked_rogues.json",
+                "staked-rogues.json",
                 "unstaked_rogues.json",
+                "unstaked-rogues.json",
                 "assumed_rogues.json",
-                "unfiltered_rogues.json"
+                "assumed-rogues.json",
+                "unfiltered_rogues.json",
+                "unfiltered-rogues.json"
             ],
-            "autoload_labels_on_dir_select": false
+            "autoload_labels_on_dir_select": false,
+            "image_layer_folder_names": [
+                "bottom", 
+                "bottom Raw Images",
+                "nadir",
+                "nadir Raw Images",
+                "oblique",
+                "oblique Raw Images"
+            ]
         },
         {
             "component": "binaryeditor",
