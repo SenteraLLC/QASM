@@ -46,12 +46,21 @@
             ],
             "autoload_labels_on_dir_select": false,
             "image_layer_folder_names": [
-                "bottom", 
-                "bottom Raw Images",
-                "nadir",
-                "nadir Raw Images",
-                "oblique",
-                "oblique Raw Images"
+                [
+                    "bottom_thumbnails",
+                    "nadir_thumbnails",
+                    "oblique_thumbnails"
+                ],
+                [
+                    "bottom",
+                    "nadir",
+                    "oblique"
+                ],
+                [
+                    "bottom Raw Images",
+                    "nadir Raw Images",
+                    "oblique Raw Images"
+                ]
             ]
         },
         {
