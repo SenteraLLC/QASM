@@ -70,7 +70,7 @@ This will build an app based on the specifications found in ``react-frontend/con
                     - ``<string>: <string>`` Where the key is the name that will appear on the button and the value is the filename.
                 - ``"label_loadnames": <Array[string]>`` (Optional) An ordered list of filenames to automatically try and load. Will search one folder above the current directory.
                 - ``"autoload_labels_on_dir_select": <boolean>`` (Optional) Whether to try and autoload labels after each new directory selection. Default is false. Can also be changed in app via the checkbox "Autoload Labels on Directory Select".
-                - ``"image_layer_folder_names": Array[Array[<string>], ...]``: (Optional) Ordered list of folder names of image layers to automatically try and load when a directory is selected. Supports having multiple anticipated folder names. Eg, for an input shown below, the first set of `_thumbnails` layers will try and load, and if any of them are not present, it will instead load the next Array of folders. If the name of the current directory is a substring of any of the layer names, that layer will not be added.
+                - ``"image_layer_folder_names": Array[Array[<string>], ...]``: (Optional) Ordered list of folder names of image layers to automatically try and load when a directory is selected. Supports having multiple anticipated folder names. Eg, for an input shown below, the first set of `_thumbnails` layers will try and load, and if any of them are not present, it will instead load the next Array of folders.
                     ```js
                     "image_layer_folder_names": [
                         [
