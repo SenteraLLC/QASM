@@ -35,7 +35,7 @@ class MultiClassGrid extends Component {
     filtered_class_value = FILTER_MODES.no_filter; // selected value within a class type
     label_savenames = undefined; // {<string button_name>: <string savename>, ...}
     label_loadnames = undefined; // [<string loadname1>, <string loadname2>, ...]
-    image_layer_folder_names = undefined; // [<string folder_name1>, <string folder_name2>, ...]
+    image_layer_folder_names = undefined; // [Array[<string>], ...]
     // Store the folder names in all the directories we've loaded
     next_dir_cache = {}; // [<string root_folder_name>: Array[<string foldernames>]]
 
@@ -433,17 +433,28 @@ class MultiClassGrid extends Component {
         if (this.image_layer_folder_names !== undefined) {
             let root_dir = getOneFolderUp(this.src);
             let current_folder = getCurrentFolder(this.src)
-            for (let folder_name of this.image_layer_folder_names) {
-                
-                if (folder_name !== current_folder) {
-                    // Load images and add them to the image stack
-                    let image_layer = await this.QASM.call_backend(window, function_names.LOAD_IMAGES, root_dir + folder_name + "/");
-                    if (Object.keys(image_layer).length === 0) {
-                        console.log("Prevent adding empty layer.");
-                    } else {
-                        this.image_stack.push(image_layer);
+            let n_layers = this.image_layer_folder_names[0].length; // Number of layers to load
+            for (let folder_name_group of this.image_layer_folder_names) {
+                // Try each group of folder names in order, skipping
+                // any that result in empty layers
+                for (let folder_name of folder_name_group) {
+                    // Don't add current folder as a layer
+                    if (folder_name !== current_folder) {
+                        // Load images and add them to the image stack
+                        let image_layer = await this.QASM.call_backend(window, function_names.LOAD_IMAGES, root_dir + folder_name + "/");
+                        if (Object.keys(image_layer).length === 0) {
+                            console.log("Prevent adding empty layer, skipping to next folder group.");
+                            this.image_stack = []; // Clear image stack to allow next group to try and load
+                            break;
+                        } else {
+                            this.image_stack.push(image_layer);
+                        }
+                        console.log(this.image_stack);
                     }
-                    console.log(this.image_stack);
+                }
+                // If we have the correct number of layers, we're done
+                if (this.image_stack.length === n_layers) {
+                    break;
                 }
             }
 
