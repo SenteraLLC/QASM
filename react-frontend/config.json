@@ -47,9 +47,9 @@
             "autoload_labels_on_dir_select": false,
             "image_layer_folder_names": [
                 [
-                    "bottom_thumbnails",
-                    "nadir_thumbnails",
-                    "oblique_thumbnails"
+                    "bottom Thumbnails",
+                    "nadir Thumbnails",
+                    "oblique Thumbnails"
                 ],
                 [
                     "bottom",
