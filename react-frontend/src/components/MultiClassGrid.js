@@ -435,7 +435,7 @@ class MultiClassGrid extends Component {
                 // any that result in empty layers
                 for (let folder_name of folder_name_group) {
                     // Don't add current folder as a layer
-                    if (folder_name.incluse(current_folder)) {
+                    if (folder_name.includes(current_folder)) {
                         // Load images and add them to the image stack
                         let image_layer = await this.QASM.call_backend(window, function_names.LOAD_IMAGES, root_dir + folder_name + "/");
                         if (Object.keys(image_layer).length === 0) {
