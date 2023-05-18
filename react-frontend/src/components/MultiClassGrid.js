@@ -435,12 +435,15 @@ class MultiClassGrid extends Component {
                 // any that result in empty layers
                 for (let folder_name of folder_name_group) {
                     // Don't add current folder as a layer
-                    if (folder_name !== current_folder) {
+                    if (folder_name === current_folder) {
+                        n_layers--; // We need one fewer layer
+                    } else {
                         // Load images and add them to the image stack
                         let image_layer = await this.QASM.call_backend(window, function_names.LOAD_IMAGES, root_dir + folder_name + "/");
                         if (Object.keys(image_layer).length === 0) {
                             console.log("Prevent adding empty layer, skipping to next folder group.");
                             this.image_stack = []; // Clear image stack to allow next group to try and load
+                            n_layers = this.image_layer_folder_names[0].length; // Reset n_layers
                             break;
                         } else {
                             this.image_stack.push(image_layer);
