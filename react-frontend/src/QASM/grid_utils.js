@@ -11,20 +11,23 @@ import $ from "jquery";
  * @param {string} key current keypress
  */
 export function autoScroll(component, hover_row_id, key) {
+    let keypress = false;
     if (key === "n") {
         // Scroll to next row
         $(document).scrollTop($("#" + hover_row_id).next().offset().top);
         // Set next row as hovered for consecutive navigation
         component.hover_row_id = $("#" + hover_row_id).next()[0].id;
+        keypress = true;
     } else if (key === "h") {
         // Scroll to previous row
         $(document).scrollTop($("#" + hover_row_id).prev().offset().top);
         // Set previous row as hovered for consecutive navigation
         component.hover_row_id = $("#" + hover_row_id).prev()[0].id;
+        keypress = true;
     }
 
     // Set new image as hovered
-    if (component.hover_image_id != null) {
+    if (keypress && component.hover_image_id !== null) {
         let row = parseInt(hover_row_id.slice(4)); // Row index
         let col = component.grid_image_names[row].indexOf(component.hover_image_id) // Col
         row = parseInt(component.hover_row_id.slice(4)); // New row index
