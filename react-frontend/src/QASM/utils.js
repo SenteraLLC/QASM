@@ -95,21 +95,6 @@ export function get_new_window_url(window, new_path) {
 }
 
 
-/**
- * Find all positions of a character in a string.
- * 
- * @param {string} str string to search
- * @param {string} char character to find
- * @returns Array of indices of char in str
- */
-export function charPos(str, char) {
-    return str
-           .split("")
-           .map((c, i) => { if (c === char) return i; })
-           .filter((v) => { return v >= 0; });
-  }
-  
-
   /**
    * Get the file path one folder up.
    * 
@@ -117,11 +102,8 @@ export function charPos(str, char) {
    * @returns file path one folder up
    */
 export function getOneFolderUp(file_path) {
-    // Start at one folder level higher than the current directory
-    // charPos finds all instances of a character in a string, then we take the second to last one
-    // to get the second to last slash, which is the one before the current directory.
-    // Then we add one to keep the trailing slash.
-    return file_path.substring(0, charPos(file_path, "/").splice(-2)[0]+1);
+    // Returns everything before the second to last "/". Then add an additional "/" to make it a path
+    return /(.*)(?:\/[^\/]*){2}$/gm.exec(file_path) + "/"
 }
 
 
