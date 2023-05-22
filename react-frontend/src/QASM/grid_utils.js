@@ -12,18 +12,24 @@ import $ from "jquery";
  */
 export function autoScroll(component, hover_row_id, key) {
     let keypress = false;
-    if (key === "n") {
-        // Scroll to next row
-        $(document).scrollTop($("#" + hover_row_id).next().offset().top);
-        // Set next row as hovered for consecutive navigation
-        component.hover_row_id = $("#" + hover_row_id).next()[0].id;
-        keypress = true;
-    } else if (key === "h") {
-        // Scroll to previous row
-        $(document).scrollTop($("#" + hover_row_id).prev().offset().top);
-        // Set previous row as hovered for consecutive navigation
-        component.hover_row_id = $("#" + hover_row_id).prev()[0].id;
-        keypress = true;
+    switch (key) {
+        case "n":
+            // Scroll to next row
+            $(document).scrollTop($("#" + hover_row_id).next().offset().top);
+            // Set next row as hovered for consecutive navigation
+            component.hover_row_id = $("#" + hover_row_id).next()[0].id;
+            keypress = true;
+            break;
+
+        case "h":
+            // Scroll to previous row
+            $(document).scrollTop($("#" + hover_row_id).prev().offset().top);
+            // Set previous row as hovered for consecutive navigation
+            component.hover_row_id = $("#" + hover_row_id).prev()[0].id;
+            keypress = true;
+            break;
+        default:
+            break;
     }
 
     // Set new image as hovered
