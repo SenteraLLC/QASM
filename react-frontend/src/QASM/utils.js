@@ -103,7 +103,8 @@ export function get_new_window_url(window, new_path) {
    */
 export function getOneFolderUp(file_path) {
     // Returns everything before the second to last "/". Then add an additional "/" to make it a path
-    return /(.*)(?:\/[^\/]*){2}$/gm.exec(file_path) + "/"
+    // the regex returns an array, and what we want is the first capture group
+    return /((?:.|\s)*)(?:\/[^\/]*){2}$/gm.exec(file_path)[1] + "/"
 }
 
 
