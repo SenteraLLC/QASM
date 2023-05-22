@@ -1,5 +1,5 @@
 {
-    "name": "Multi-Class App",
+    "name": "Multi-Class App Spring 2023",
     "app": "s3",
     "bucket": "sentera-rogues-data",
     "components": [
@@ -9,7 +9,7 @@
         {
             "component": "multiclassgrid",
             "display_name": "Multi-Class Grid",
-            "grid_width": 2,
+            "grid_width": 1,
             "classes": { 
                 "plant_type": { 
                     "selector_type": "radio",
@@ -17,30 +17,51 @@
                         "Normal",
                         "Delay Rogue",
                         "Hybrid Rogue",
-                        "Mix Rogue"
+                        "Hybrid Low Rogue",
+                        "Other"
                     ],
-                    "default": "Normal"
-                },
-                "week": { 
-                    "selector_type": "checkbox", 
-                    "class_values": [ 
-                        "Week 1",
-                        "Week 2",
-                        "Week 3",
-                        "Week 4",
-                        "Week 5"
-                    ]
-                },
-                "stake_color": { 
-                    "selector_type": "checkbox",
-                    "class_values": [ 
-                        "Yellow",
-                        "White",
-                        "Red"
-                    ]
-
-                } 
-            }
+                    "default": "Normal",
+                    "class_colors": {
+                        "Delay Rogue": "darkorange",
+                        "Hybrid Rogue": "white",
+                        "Hybrid Low Rogue": "yellow",
+                        "Other": "blue"
+                    },
+                    "class_overlays": true
+                }
+            },
+            "label_savenames": {
+                "Staked": "staked_rogues.json",
+                "Unstaked": "assumed_rogues.json"
+            },
+            "label_loadnames": [
+                "staked_rogues.json",
+                "staked-rogues.json",
+                "unstaked_rogues.json",
+                "unstaked-rogues.json",
+                "assumed_rogues.json",
+                "assumed-rogues.json",
+                "unfiltered_rogues.json",
+                "unfiltered-rogues.json"
+            ],
+            "autoload_labels_on_dir_select": false,
+            "image_layer_folder_names": [
+                [
+                    "bottom Thumbnails",
+                    "nadir Thumbnails",
+                    "oblique Thumbnails"
+                ],
+                [
+                    "bottom",
+                    "nadir",
+                    "oblique"
+                ],
+                [
+                    "bottom Raw Images",
+                    "nadir Raw Images",
+                    "oblique Raw Images"
+                ]
+            ]
         },
         {
             "component": "binaryeditor",
