@@ -3,21 +3,21 @@
     padding: 0.5em;
 }
 
-.class-selector-holder {
+.MultiClassGridImage .class-selector-holder {
     margin: auto;
 }
 
-.class-selector {
+.MultiClassGridImage .class-selector {
     display: inline-block;
     background-color: lightgray;
 }
 
-img {
+.MultiClassGridImage img {
     max-width: 100%;
     max-height: 100%;
 }
 
-img.overlay {
+.MultiClassGridImage img.overlay {
     position: absolute;
     left: 0;
     right: 0;
@@ -26,23 +26,23 @@ img.overlay {
     z-index: 1;
 }
 
-p.image-name {
+.MultiClassGridImage p.image-name {
     word-break: break-all;
 }
 
-p.class-type {
+.MultiClassGridImage p.class-type {
     color: black;
 }
 
-.hidden {
+.MultiClassGridImage .hidden {
     display: none;
 }
 
-.image-holder {
+.MultiClassGridImage .image-holder {
     position: relative;
 }
 
-.class-overlay {
+.MultiClassGridImage .class-overlay {
     bottom: 0;
     width:40%;
     height:40%;
@@ -52,7 +52,7 @@ p.class-type {
     justify-content: space-between;
 }
 
-.class-overlay:before, .class-overlay:after{
+.MultiClassGridImage .class-overlay:before, .class-overlay:after{
     content:'';
     position:absolute;
     width:100%;
@@ -60,9 +60,9 @@ p.class-type {
     background-color: var(--background); /* set using style.setPropetry("background", <color>) */
 }
 
-.class-overlay:before{
+.MultiClassGridImage .class-overlay:before{
     transform:rotate(45deg);
 }
-.class-overlay:after{
+.MultiClassGridImage .class-overlay:after{
     transform:rotate(-45deg);
 }
