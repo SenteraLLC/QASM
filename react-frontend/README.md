@@ -60,8 +60,32 @@ This will build an app based on the specifications found in ``react-frontend/con
                 - ``"class_values": <Array[string]>`` (Required) List of class values within the class type
                 - ``"selector_type": <string>`` (Required) Method of selecting between class values in app
                     - ``"radio"`` Radio buttons
-                    - ``"checkbox"`` checkboxes
+                    - ``"checkbox"`` Checkboxes
                 - ``"default": <string>`` (Optional) Default class value for this class type. Must be one of the class_values.
+                - ``"class_colors": <Object>`` (Optional) Text colors used in the class selector
+                    - ``<string>: <string>`` The key must be one of the class_values. The value must be a valid css color (name or hexcode).
+                        - Ex: to make the class_value `"Normal"` appear in blue text, ``"Normal": "blue"``
+                - ``"class_overlays": <boolean>`` (Optional) Whether to have an "X" appear in the bottom left of every class that has an assigned `class_color`
+                - ``"label_savenames": <Object>`` (Optional) Define custom buttons that will allowing saving to a custom filename.
+                    - ``<string>: <string>`` Where the key is the name that will appear on the button and the value is the filename.
+                - ``"label_loadnames": <Array[string]>`` (Optional) An ordered list of filenames to automatically try and load. Will search one folder above the current directory.
+                - ``"autoload_labels_on_dir_select": <boolean>`` (Optional) Whether to try and autoload labels after each new directory selection. Default is false. Can also be changed in app via the checkbox "Autoload Labels on Directory Select".
+                - ``"image_layer_folder_names": Array[Array[<string>], ...]``: (Optional) Ordered list of folder names of image layers to automatically try and load when a directory is selected. Supports having multiple anticipated folder names. Eg, for an input shown below, the first set of `_thumbnails` layers will try and load, and if any of them are not present, it will instead load the next Array of folders.
+                    ```js
+                    "image_layer_folder_names": [
+                        [
+                            "bottom_thumbnails",
+                            "nadir_thumbnails",
+                            "oblique_thumbnails"
+                        ],
+                        [
+                            "bottom",
+                            "nadir",
+                            "oblique"
+                        ]
+                    ]
+                    ```
+                
 
     - ``"imagelabeler"`` Configuration ``<Object>``:
          - ``"image_dir": <string>`` (Optional) Path to directory of images

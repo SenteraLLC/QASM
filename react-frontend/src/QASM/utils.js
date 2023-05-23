@@ -1,4 +1,4 @@
-// Utils
+// ####GENERAL UTILS####
 
 /**
  * Takes in a string and removes all non valid html id/class characters.
@@ -92,4 +92,28 @@ export function get_new_window_url(window, new_path) {
     // Memory Router in the .exe can break, so instead of going
     // to a relative path just always nav to the index.html
     return window.location.href;
+}
+
+
+  /**
+   * Get the file path one folder up.
+   * 
+   * @param {string} file_path file path with trailing slash
+   * @returns file path one folder up
+   */
+export function getOneFolderUp(file_path) {
+    // Returns everything before the second to last "/". Then add an additional "/" to make it a path
+    // the regex returns an array, and what we want is the first capture group
+    return /((?:.|\s)*)(?:\/[^\/]*){2}$/gm.exec(file_path)[1] + "/"
+}
+
+
+/**
+ * Get the current folder name from a file path.
+ * 
+ * @param {string} file_path file path with trailing slash 
+ * @returns current folder name
+ */
+export function getCurrentFolder(file_path) {
+    return file_path.split("/").slice(-2)[0]
 }
