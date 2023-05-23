@@ -22,6 +22,8 @@ exports.function_handlers = {
 }
 
 
+// TODO: update functionality to start in the current directory
+
 /**
  * Initialize all ipc handlers listed in electron_utils.js
  * 

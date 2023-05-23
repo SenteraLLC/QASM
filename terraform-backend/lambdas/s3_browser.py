@@ -157,12 +157,15 @@ if __name__ == "__main__":
     test = {
         "body": json.dumps({
             "bucket": "stand-qa-data",
-            "prefix": "mfstand/2022/1051-Thobontle/AckermannJWSP1B2023/010223T181100/RGB/"
+            "prefix": "mfstand/2022/1051-Thobontle/AckermannJWSP1B2023/010223T181100/"
         })
     }
-    ret = get_cascading_dir_children(test, None)
-    data = json.loads(ret['body'])['data'] # list
-    for item in data:
-        print(item["name"])
+    # ret = get_cascading_dir_children(test, None)
+    # data = json.loads(ret['body'])['data'] # list
+    # for item in data:
+    #     print(item["name"])
         # print(item["folders"])
     # print(json.loads(ret['body'])['data'][0].keys())
+    ret = open_dir(test, None)
+    print(ret)
+    # print(json.loads(ret['body'])['data'])
