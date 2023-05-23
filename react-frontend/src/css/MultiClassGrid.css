@@ -7,7 +7,21 @@ div.Grid div.header-container.multi-grid div.controls-container {
 }
 
 /* Button must be direct child to not affect the dropdown */
-div.Grid div.header-container.multi-grid div.controls-container > button {
+div.Grid div.header-container.multi-grid div.controls-container > button, div.label-filename-container > button {
     max-width: 30em;
     min-height: 3em;
+}
+
+div.Grid div.label-filename-container {
+    width: 100%;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.5em;
+    margin-top: 0.5em;
+}
+
+div.Grid div.label-filename-container > * {
+    flex: 1;
+    flex-basis: auto;
 }

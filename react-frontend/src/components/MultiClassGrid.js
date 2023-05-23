@@ -2,10 +2,10 @@
 import { Component } from 'react';
 import MultiClassGridImage from "./MultiClassGridImage.js";
 import Dropdown from './Dropdown.js';
-import $ from "jquery";
 import "../css/Grid.css";
 import "../css/MultiClassGrid.css";
-const { update_all_overlays } = require("../QASM/utils.js");
+const { update_all_overlays, getOneFolderUp, getCurrentFolder } = require("../QASM/utils.js");
+const { autoScroll } = require("../QASM/grid_utils.js");
 const { function_names } = require("../../public/electron_constants.js");
 
 // TODO: Combine this with Grid, and/or add to app as a seperate component. 
@@ -33,15 +33,23 @@ class MultiClassGrid extends Component {
     allow_next_scroll = false;
     filtered_class_type = FILTER_MODES.no_filter; // high level 
     filtered_class_value = FILTER_MODES.no_filter; // selected value within a class type
+    label_savenames = undefined; // {<string button_name>: <string savename>, ...}
+    label_loadnames = undefined; // [<string loadname1>, <string loadname2>, ...]
+    image_layer_folder_names = undefined; // [Array[<string>], ...]
+    // Store the folder names in all the directories we've loaded
+    next_dir_cache = {}; // [<string root_folder_name>: Array[<string foldernames>]]
 
     constructor(props) {
         super(props);
 
         // Initialize props
-        this.QASM = props.QASM
+        this.QASM = props.QASM;
         this.grid_width = props.grid_width || 1;
-        this.classes = props.classes
-        this.src = props.src
+        this.classes = props.classes;
+        this.label_savenames = props.label_savenames || undefined;
+        this.label_loadnames = props.label_loadnames || undefined;
+        this.autoload_labels_on_dir_select = props.autoload_labels_on_dir_select || false;
+        this.image_layer_folder_names = props.image_layer_folder_names || undefined;
 
         this.class_types = Object.keys(this.classes); // For easy access
         this.labels = this.initLabels();
@@ -67,8 +75,12 @@ class MultiClassGrid extends Component {
         this.addImageLayer = this.addImageLayer.bind(this);
         this.getImageStackByName = this.getImageStackByName.bind(this);
         this.changeImage = this.changeImage.bind(this);
-        this.autoScroll = this.autoScroll.bind(this);
         this.initEventListeners = this.initEventListeners.bind(this);
+        this.autoLoadLabels = this.autoLoadLabels.bind(this);
+        this.changeAutoLoadOnDirSelect = this.changeAutoLoadOnDirSelect.bind(this);
+        this.autoLoadImageLayers = this.autoLoadImageLayers.bind(this);
+        this.loadImageDir = this.loadImageDir.bind(this);
+        this.loadNextDir = this.loadNextDir.bind(this);
     }
 
 
@@ -113,8 +125,9 @@ class MultiClassGrid extends Component {
                 this.changeImage(this.hover_image_id);
             }
 
-            if (this.hover_row_id !== null && e.key === "n") {
-                this.autoScroll(this.hover_row_id);
+            if (this.hover_row_id !== null) {
+                // n for next, h for previous
+                autoScroll(this, this.hover_row_id, e.key);
             }
         });
     }
@@ -139,12 +152,12 @@ class MultiClassGrid extends Component {
      * Load images from the current source directory
      */
     async loadImages() {
-        console.log("Src: " + this.src);
         this.images = await this.QASM.call_backend(window, function_names.LOAD_IMAGES, this.src);
         this.image_names = Object.keys(this.images).sort();
-        console.log(this.images);
         this.gridSetup();
         this.clearAll();
+        // Set the images shown to true now that the images are shown
+        this.images_shown = true;
     }
 
 
@@ -160,6 +173,7 @@ class MultiClassGrid extends Component {
                 break;
             case FILTER_MODES.group_by_class:
                 // TODO: Think of a way to do this...
+                break;
             default: 
                 // Sort image names with the filtered class first
                 let filtered = [];
@@ -259,13 +273,16 @@ class MultiClassGrid extends Component {
     /**
      * Scrape the page for the current labels
      * and prompt the user to specify where to save them.
+     * 
+     * @param {string} savename filename to save labels to
      */
-    async saveLabels() {
+    async saveLabels(savename = "") {
         this.updateLocalLabels();
-
         let params = {
             labels: this.labels,
-            path: this.src,
+            // Start one folder up from the current directory
+            path: getOneFolderUp(this.src),
+            savename: savename,
         }
 
         await this.QASM.call_backend(window, function_names.SAVE_JSON_FILE, params);
@@ -276,9 +293,16 @@ class MultiClassGrid extends Component {
      * Prompt user to select a file with labels
      * and load them in.
      */
-    async loadLabels() {
+    async loadLabels(loadnames = undefined) {
+        let params = {
+            // Start one folder up from the current directory
+            path: getOneFolderUp(this.src),
+            // Try and load a specific file if loadnames is defined
+            loadnames: this.label_loadnames,
+        }
+
         // Load in previous labels
-        let labels = await this.QASM.call_backend(window, function_names.LOAD_LABELS, this.src);
+        let labels = await this.QASM.call_backend(window, function_names.LOAD_LABELS, params);
         this.labels = this.initLabels(labels);
         console.log(this.labels);
 
@@ -287,6 +311,19 @@ class MultiClassGrid extends Component {
             this.updateState(); // Update state to rerender page
         } else {
             console.log("Prevented loading empty labels.");
+        }
+    }
+
+
+    /**
+     * Try and auto-load labels if we have loadnames
+     */
+    async autoLoadLabels() {
+        if (this.label_loadnames !== undefined) {
+            // Wait for previous window to close
+            setTimeout(() => {
+                this.loadLabels();
+            }, 1000)
         }
     }
 
@@ -306,19 +343,64 @@ class MultiClassGrid extends Component {
      * load in all the images.
      */
     async selectImageDir() {
-        let dir_path = await this.QASM.call_backend(window, function_names.OPEN_DIR);
+        let dir_path = await this.QASM.call_backend(window, function_names.OPEN_DIR, this.src);
         if (dir_path !== undefined) {
-            if (this.src !== dir_path) {
-                this.image_stack = []; // Clear image stack on new directory load
-            }
             this.src = dir_path;
-            await this.loadImages();
-
-            // Set the images shown to true now that the images are shown
-            this.images_shown = true;
-            this.updateState();
+            await this.loadImageDir();
         } else {
             console.log("Prevented loading invalid directory.");
+        }
+    }
+
+
+    /**
+     * Load images from the current source directory,
+     * and try and autoload labels and image layers.
+     */
+    async loadImageDir() {
+        if (this.src !== undefined) {
+            this.image_stack = []; // Clear image stack on new directory load
+            if (this.autoload_labels_on_dir_select) {
+                this.autoLoadLabels(); // Try and autoload labels
+            }
+            this.autoLoadImageLayers(); // Try and autoload image layers
+            await this.loadImages();
+            this.updateState();
+        }
+    }
+
+
+    /**
+     * Load the next directory
+     *  
+     */
+    async loadNextDir() {
+        let current_folder = getCurrentFolder(this.src); // Current folder name, without full path
+        let current_dir = getOneFolderUp(this.src); // One folder up
+        let root_dir = getOneFolderUp(getOneFolderUp(this.src)); // Two folders up
+
+        let folders;
+        if (root_dir in this.next_dir_cache) {
+            // If we have folder info cached, use it
+            folders = this.next_dir_cache[root_dir]
+        } else {
+            // Else get all folders in root_dir and add to cache
+            let response = await this.QASM.call_backend(window, function_names.OPEN_S3_FOLDER, root_dir);
+            folders = response.folders.sort();
+            this.next_dir_cache[root_dir] = folders;
+            console.log("Caching folders in ", root_dir);
+        }
+        
+
+        // Get index of current folder
+        let current_folder_idx = folders.indexOf(current_dir);
+        if (current_folder_idx + 1 === folders.length) {
+            alert("No more directories to load.");
+            return;
+        } else {
+            // Start at the next dir in root_dir, with the same current image folder name
+            this.src = folders[current_folder_idx + 1] + current_folder + "/";
+            await this.loadImageDir();
         }
     }
 
@@ -338,9 +420,45 @@ class MultiClassGrid extends Component {
             console.log("Prevent adding empty layer.");
         } else {
             this.image_stack.push(image_layer);
+            console.log(this.image_stack);
         }
-        console.log(this.image_stack);
         this.updateState();
+    }
+
+    async autoLoadImageLayers() {
+        if (this.image_layer_folder_names !== undefined) {
+            let root_dir = getOneFolderUp(this.src);
+            let current_folder = getCurrentFolder(this.src)
+            let n_layers = this.image_layer_folder_names[0].length; // Number of layers to load
+            for (let folder_name_group of this.image_layer_folder_names) {
+                // Try each group of folder names in order, skipping
+                // any that result in empty layers
+                for (let folder_name of folder_name_group) {
+                    // Don't add current folder as a layer
+                    if (folder_name === current_folder) {
+                        n_layers--; // We need one fewer layer
+                    } else {
+                        // Load images and add them to the image stack
+                        let image_layer = await this.QASM.call_backend(window, function_names.LOAD_IMAGES, root_dir + folder_name + "/");
+                        if (Object.keys(image_layer).length === 0) {
+                            console.log("Prevent adding empty layer, skipping to next folder group.");
+                            this.image_stack = []; // Clear image stack to allow next group to try and load
+                            n_layers = this.image_layer_folder_names[0].length; // Reset n_layers
+                            break;
+                        } else {
+                            this.image_stack.push(image_layer);
+                        }
+                        console.log(this.image_stack);
+                    }
+                }
+                // If we have the correct number of layers, we're done
+                if (this.image_stack.length === n_layers) {
+                    break;
+                }
+            }
+
+            this.updateState();
+        }
     }
 
 
@@ -411,7 +529,7 @@ class MultiClassGrid extends Component {
         // childNodes of image holder div = image layers
 
         let layers = document.getElementById(hover_image_id).firstChild.childNodes;
-        // layers[0] is the image, layers[n] is image_stack[n-1]
+        // layers[0] is the image, layers[n] is image_stack[n-1], layers[layers.length-1] is the class-overlay
         for (let idx = 0; idx < layers.length; idx++) {
             let layer = layers[idx];
             // Skip overlays and hidden images
@@ -423,7 +541,8 @@ class MultiClassGrid extends Component {
             layer.classList.add("hidden");
 
             // Change next hidden image to shown
-            if (idx + 1 === layers.length) {
+            if (idx + 1 === layers.length - 1) {
+                // Last index is the class-overlay
                 // If we're at the last layer, turn on the og image
                 layers[0].classList.remove("hidden");
             } else {
@@ -437,24 +556,11 @@ class MultiClassGrid extends Component {
 
 
     /**
-     * Scroll page to the next row 
-     * 
-     * @param {string} hover_row_id id of the current row
+     * Negate autoload_labels_on_dir_select
      */
-    autoScroll(hover_row_id) {
-        // Scroll to next row
-        $(document).scrollTop($("#" + hover_row_id).next().offset().top);
-        // Set next row as hovered for consecutive navigation
-        this.hover_row_id = $("#" + hover_row_id).next()[0].id;
-
-        // Set next image as hovered
-        if (this.hover_image_id != null) {
-            let row = parseInt(hover_row_id.slice(4)); // Row index
-            let col = this.grid_image_names[row].indexOf(this.hover_image_id) // Col
-            row = parseInt(this.hover_row_id.slice(4)); // New row index
-            this.hover_image_id = this.grid_image_names[row][col]; // Set new image as hovered
-            this.allow_next_scroll = true; // Override scroll protection
-        }
+    changeAutoLoadOnDirSelect() {
+        this.autoload_labels_on_dir_select = !this.autoload_labels_on_dir_select;
+        this.updateState();
     }
 
 
@@ -465,6 +571,9 @@ class MultiClassGrid extends Component {
                     {/* <Legend
                         classes={this.classes}
                     /> */}
+                    {this.src !== "" &&
+                        <h2>{this.src}</h2>
+                    }
                     <div className={this.images_shown ? "hidden" : "controls-container"}>
                         <button
                             onClick={this.selectImageDir}
@@ -512,6 +621,11 @@ class MultiClassGrid extends Component {
                             Select Directory
                         </button>
                         <button
+                            onClick={this.loadNextDir}
+                            className="button">
+                            Next Directory
+                        </button>
+                        <button
                             onClick={this.addImageLayer}
                             className="button">
                             Add Image Layer
@@ -549,21 +663,46 @@ class MultiClassGrid extends Component {
                                 onChange={this.changeGridWidth}>
                             </input>
                         </div>
+                        <div className="change-grid-width-container">
+                            <label>
+                                Autoload Labels on Directory Select:
+                            </label>
+                            <input
+                                type="checkbox"
+                                name={"autoload_labels_on_dir_select"}
+                                id={"autoload_labels_on_dir_select"}
+                                onChange={this.changeAutoLoadOnDirSelect}
+                                checked={this.autoload_labels_on_dir_select}
+                            ></input>
+                        </div>
                         <button
                             onClick={this.loadLabels}
                             className="button">
                             Load Labels
                         </button>
-                        <button
-                            onClick={this.saveLabels}
-                            className="button">
-                            Save Labels
-                        </button>
+                        {this.label_loadnames === undefined &&
+                            /* Hide normal save button when custom ones are present */
+                            <button
+                                onClick={this.saveLabels}
+                                className="button">
+                                Save Labels
+                            </button>
+                        }
                         <button
                             onClick={this.clearAll}
                             className="button">
                             Clear All Labels
                         </button>
+                        <div className="label-filename-container">
+                            {this.label_savenames !== undefined && Object.keys(this.label_savenames).map((button_name, i) => (
+                                <button
+                                    onClick={() => this.saveLabels(this.label_savenames[button_name])}
+                                    className="button"
+                                    key={button_name}>
+                                    {"Save " + button_name + " Labels"}
+                                </button>
+                            ))}
+                        </div>
                     </div>
                 </div>
                 <table id="Grid-table">
