@@ -1,7 +1,6 @@
 output "ecs_cluster_name" { 
     value = var.ecs_cluster_name
 }
-
 output "task_name" {
     value = "${terraform.workspace}-qasm-${var.base_name}-task"
 }
