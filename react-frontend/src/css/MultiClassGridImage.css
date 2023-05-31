@@ -1,0 +1,68 @@
+.MultiClassGridImage {
+    position: relative;
+    padding: 0.5em;
+}
+
+.MultiClassGridImage .class-selector-holder {
+    margin: auto;
+}
+
+.MultiClassGridImage .class-selector {
+    display: inline-block;
+    background-color: lightgray;
+}
+
+.MultiClassGridImage img {
+    max-width: 100%;
+    max-height: 100%;
+}
+
+.MultiClassGridImage img.overlay {
+    position: absolute;
+    left: 0;
+    right: 0;
+    margin: auto;
+    filter: opacity(0);
+    z-index: 1;
+}
+
+.MultiClassGridImage p.image-name {
+    word-break: break-all;
+}
+
+.MultiClassGridImage p.class-type {
+    color: black;
+}
+
+.MultiClassGridImage .hidden {
+    display: none;
+}
+
+.MultiClassGridImage .image-holder {
+    position: relative;
+}
+
+.MultiClassGridImage .class-overlay {
+    bottom: 0;
+    width:40%;
+    height:40%;
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.MultiClassGridImage .class-overlay:before, .class-overlay:after{
+    content:'';
+    position:absolute;
+    width:100%;
+    height:10%;
+    background-color: var(--background); /* set using style.setPropetry("background", <color>) */
+}
+
+.MultiClassGridImage .class-overlay:before{
+    transform:rotate(45deg);
+}
+.MultiClassGridImage .class-overlay:after{
+    transform:rotate(-45deg);
+}
