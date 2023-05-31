@@ -41,10 +41,18 @@ def get_all_signed_urls_in_folder(bucket_name, folder_path, s3_client=None):
     if not folder_path.endswith("/"):
         folder_path += "/"
     result = client.list_objects(Bucket=bucket_name, Prefix=folder_path, Delimiter="/")
-    return {
-        str(Path(str(o.get("Key")).split("/")[-1]).with_suffix("")): # Filename w/o ext
-        get_signed_url(
-            bucket_name, folder_path, str(o.get("Key")).split("/")[-1], s3_client
-        )
-        for o in result.get("Contents") if str(o.get("Key")) != folder_path
-    }
+    if result.get("Contents"):
+        return {
+            str(Path(str(o.get("Key")).split("/")[-1]).with_suffix("")): # Filename w/o ext
+            get_signed_url(
+                bucket_name, folder_path, str(o.get("Key")).split("/")[-1], s3_client
+            )
+            for o in result.get("Contents") if str(o.get("Key")) != folder_path
+        }
+    else:
+        print(f"No contents found in {folder_path}.")
+        return {}
+
+if __name__ == "__main__":
+    res = get_all_signed_urls_in_folder("sentera-rogues-data", "Farmer City 2022/Strip Trial/Planting 1/Videos/6-21/Row 1b, 6a/3840x2160@120fps/Pass A/DS Splits/DS 002/oblique Raw Images/")
+    print(len(res))
