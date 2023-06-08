@@ -493,7 +493,6 @@ class MultiClassGrid extends Component {
         }
         // Store checkbox value
         this.filtered_class_checkbox_values[class_value] = checked;
-        console.log(this.filtered_class_checkbox_values);
         this.updateLocalLabels(); // Update current labels
         this.gridSetup(); // Reformat grid
         this.updateState(); // Update page
@@ -506,12 +505,13 @@ class MultiClassGrid extends Component {
      */
     changeFilteredClassType(class_type) {
         this.filtered_class_type = class_type;
-        // Reset filtered class checkbox values to start unchecked
-        this.filtered_class_checkbox_values = {}
-        for (let class_value of this.classes[this.filtered_class_type].class_values) {
-            this.filtered_class_checkbox_values[class_value] = false;
+        if (this.class_types.includes(class_type)) {
+            // Reset filtered class checkbox values to start unchecked
+            this.filtered_class_checkbox_values = {}
+            for (let class_value of this.classes[this.filtered_class_type].class_values) {
+                this.filtered_class_checkbox_values[class_value] = false;
+            }
         }
-        console.log(this.filtered_class_checkbox_values);
         this.updateLocalLabels();
         this.gridSetup();
         this.updateState();
