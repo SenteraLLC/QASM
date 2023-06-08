@@ -32,7 +32,8 @@ class MultiClassGrid extends Component {
     update_success = false;
     allow_next_scroll = false;
     filtered_class_type = FILTER_MODES.no_filter; // high level 
-    filtered_class_value = FILTER_MODES.no_filter; // selected value within a class type
+    filtered_class_values = [FILTER_MODES.no_filter]; // selected value within a class type
+    filtered_class_checkbox_values = []; // checkbox values for the current filtered class values
     label_savenames = undefined; // {<string button_name>: <string savename>, ...}
     label_loadnames = undefined; // [<string loadname1>, <string loadname2>, ...]
     image_layer_folder_names = undefined; // [Array[<string>], ...]
@@ -169,7 +170,7 @@ class MultiClassGrid extends Component {
         switch (this.filtered_class_type) {
             case FILTER_MODES.no_filter:
                 this.image_names.sort(); // Sort to undo any lingering filters
-                this.filtered_class_value = null; // Reset
+                this.filtered_class_values = []; // Reset
                 break;
             case FILTER_MODES.group_by_class:
                 // TODO: Think of a way to do this...
@@ -177,13 +178,14 @@ class MultiClassGrid extends Component {
             default: 
                 // Sort image names with the filtered class first
                 let filtered = [];
-                let unfiltered = [];
+                let unfiltered = JSON.parse(JSON.stringify(this.image_names)); // Deep copy
                 for (let image_name of this.image_names) {
                     // If image is of the filtered class, store in filtered array
-                    if (image_name in this.labels && this.labels[image_name][this.filtered_class_type] === this.filtered_class_value) {
-                        filtered.push(image_name);
-                    } else {
-                        unfiltered.push(image_name);
+                    for (let filtered_class_value of this.filtered_class_values) {
+                        if (image_name in this.labels && this.labels[image_name][this.filtered_class_type] === filtered_class_value) {
+                            filtered.push(image_name);
+                            unfiltered.splice(unfiltered.indexOf(image_name), 1); // Remove from unfiltered array
+                        } 
                     }
                 }
                 // Concatanate together with filtered in front
@@ -481,9 +483,17 @@ class MultiClassGrid extends Component {
      * @param {string} class_value 
      *  
      */
-     changeGridFilter(class_value) {
-        console.log(class_value);
-        this.filtered_class_value = class_value;
+     changeGridFilter(class_value, checked) {
+        if (checked) {
+            // Add to filtered class values
+            this.filtered_class_values.push(class_value);
+        } else {
+            // Remove from filtered class values
+            this.filtered_class_values.splice(this.filtered_class_values.indexOf(class_value), 1);
+        }
+        // Store checkbox value
+        this.filtered_class_checkbox_values[class_value] = checked;
+        console.log(this.filtered_class_checkbox_values);
         this.updateLocalLabels(); // Update current labels
         this.gridSetup(); // Reformat grid
         this.updateState(); // Update page
@@ -496,6 +506,12 @@ class MultiClassGrid extends Component {
      */
     changeFilteredClassType(class_type) {
         this.filtered_class_type = class_type;
+        // Reset filtered class checkbox values to start unchecked
+        this.filtered_class_checkbox_values = {}
+        for (let class_value of this.classes[this.filtered_class_type].class_values) {
+            this.filtered_class_checkbox_values[class_value] = false;
+        }
+        console.log(this.filtered_class_checkbox_values);
         this.updateLocalLabels();
         this.gridSetup();
         this.updateState();
@@ -591,11 +607,13 @@ class MultiClassGrid extends Component {
                             {!(Object.values(FILTER_MODES).includes(this.filtered_class_type)) &&
                                 <div>
                                     <label>
-                                        Filter By Class Value: {this.filtered_class_value}
+                                        Filter By Class Value:
                                     </label>
                                     <Dropdown
                                         items={[...this.classes[this.filtered_class_type].class_values]}
-                                        callback={(selected_class_value) => this.changeGridFilter(selected_class_value)}
+                                        callback={(selected_class_value, checked) => this.changeGridFilter(selected_class_value, checked)}
+                                        dropdown_content_type={"checkbox"}
+                                        checkbox_default_values={this.filtered_class_checkbox_values}
                                     />
                                 </div>
                             }
@@ -638,14 +656,16 @@ class MultiClassGrid extends Component {
                                 items={[...Object.values(FILTER_MODES), ...this.class_types]}
                                 callback={(selected_class_type) => this.changeFilteredClassType(selected_class_type)}
                             />
-                            {!(Object.values(FILTER_MODES).includes(this.filtered_class_type)) &&
+                             {!(Object.values(FILTER_MODES).includes(this.filtered_class_type)) &&
                                 <div>
                                     <label>
-                                        Filter By Class Value: {this.filtered_class_value}
+                                        Filter By Class Value:
                                     </label>
                                     <Dropdown
                                         items={[...this.classes[this.filtered_class_type].class_values]}
-                                        callback={(selected_class_value) => this.changeGridFilter(selected_class_value)}
+                                        callback={(selected_class_value, checked) => this.changeGridFilter(selected_class_value, checked)}
+                                        dropdown_content_type={"checkbox"}
+                                        checkbox_default_values={this.filtered_class_checkbox_values}
                                     />
                                 </div>
                             }
