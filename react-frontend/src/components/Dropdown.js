@@ -5,15 +5,21 @@ class Dropdown extends Component {
     invalid = false;
     invalid_props = [];
     rotate = false;
+    DROPDOWN_CONTENT_TYPES = {
+        BUTTON: "button",
+        CHECKBOX: "checkbox",
+    }
 
     constructor(props) {
         super(props);
 
-        this.items              = props.items;             // Required
-        this.callback           = props.callback;          // Required
-        this.style              = props.style;             // Optional
-        this.display_text       = props.display_text;      // Optional
-        this.currently_selected = props.currently_selected // Optional {text: String, disable: Boolean}
+        this.items                   = props.items;                  // Required
+        this.callback                = props.callback;               // Required
+        this.style                   = props.style;                  // Optional
+        this.display_text            = props.display_text;           // Optional
+        this.currently_selected      = props.currently_selected      // Optional {text: String, disable: Boolean}
+        this.dropdown_content_type   = props.dropdown_content_type   // Optional
+        this.checkbox_default_values = props.checkbox_default_values // Optional
 
         this.makeID                 = this.makeID.bind(this);
         this.ensureDropdownOnscreen = this.ensureDropdownOnscreen.bind(this);
@@ -56,6 +62,15 @@ class Dropdown extends Component {
                 this.invalid_props.push("currently_selected.disable");
                 this.invalid = true;
             }
+        }
+
+        // If dropdown_content_type wasn't given, set a default
+        if (this.dropdown_content_type === undefined) {
+            this.dropdown_content_type = "button";
+        } else if (!(Object.values(this.DROPDOWN_CONTENT_TYPES).includes(this.dropdown_content_type))) {
+            // If it was given ensure it has the required fields
+            this.invalid_props.push("dropdown_content_type");
+            this.invalid = true;
         }
     }
 
@@ -108,7 +123,8 @@ class Dropdown extends Component {
                     {this.display_text}
                 </button>
                 <div className="dropdown-content" id={this.makeID(this.items)}>
-                    {this.items.map(option => (
+                    {/* Button */}
+                    {this.dropdown_content_type === this.DROPDOWN_CONTENT_TYPES.BUTTON && this.items.map(option => (
                         <button 
                             onClick={() => this.callback(option)}
                             key={option}
@@ -116,6 +132,24 @@ class Dropdown extends Component {
                             style={{fontWeight: this.currently_selected.text === option ? "bold" : "normal"}}>
                             {option}
                         </button>
+                    ))}
+                    {/* Checkbox */}
+                    {this.dropdown_content_type === this.DROPDOWN_CONTENT_TYPES.CHECKBOX && this.items.map(option => (
+                        <div
+                            key={option}
+                            className="checkbox-container">
+                            <input
+                                type="checkbox"
+                                id={option}
+                                defaultChecked={option in this.checkbox_default_values && this.checkbox_default_values[option]}
+                                onChange={(event) => this.callback(option, event.target.checked)}
+                                disable={((this.currently_selected.text === option) && (this.disable).toString()).toString()}
+                                style={{fontWeight: this.currently_selected.text === option ? "bold" : "normal"}}>
+                            </input>
+                            <label htmlFor={option}>
+                                {option}
+                            </label>
+                        </div>
                     ))}
                 </div>
             </div>
