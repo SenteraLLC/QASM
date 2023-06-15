@@ -145,6 +145,8 @@ class MultiClassGrid extends Component {
             labels: this.labels,
             src: this.src,
         });
+
+        // Force page to update
         this.component_updater++;
     }
 
@@ -531,6 +533,11 @@ class MultiClassGrid extends Component {
     toggleImageHidden(image_name, hidden = undefined) {
         // Get the MultiClassGridImage container div
         let image = document.getElementById(image_name);
+        if (image === undefined || image === null) {
+            // Image not found
+            return;
+        }
+
         if (hidden === undefined) {
             // Toggle hidden class
             if (image.classList.contains("hidden")) {
@@ -805,6 +812,8 @@ class MultiClassGrid extends Component {
         setInterval(() => {
             if (!this.update_success) {
                 this.update_success = update_all_overlays();
+                // Update filters (hidden class) on images
+                this.filterImages();
             }
         }, 1000)
     }
@@ -812,6 +821,8 @@ class MultiClassGrid extends Component {
     componentDidUpdate() {
         // Update overlays
         this.update_success = update_all_overlays();
+        // Update filters (hidden class) on images
+        this.filterImages();
     }
 }
 
