@@ -32,7 +32,7 @@ class MultiClassGrid extends Component {
     update_success = false;
     allow_next_scroll = false;
     filtered_class_type = FILTER_MODES.no_filter; // high level 
-    filtered_class_values = [FILTER_MODES.no_filter]; // selected value within a class type
+    filtered_class_values = []; // selected value within a class type
     filtered_class_checkbox_values = []; // checkbox values for the current filtered class values
     label_savenames = undefined; // {<string button_name>: <string savename>, ...}
     label_loadnames = undefined; // [<string loadname1>, <string loadname2>, ...]
@@ -82,6 +82,8 @@ class MultiClassGrid extends Component {
         this.autoLoadImageLayers = this.autoLoadImageLayers.bind(this);
         this.loadImageDir = this.loadImageDir.bind(this);
         this.loadNextDir = this.loadNextDir.bind(this);
+        this.filterImages = this.filterImages.bind(this);
+        this.toggleImageHidden = this.toggleImageHidden.bind(this);
     }
 
 
@@ -134,8 +136,6 @@ class MultiClassGrid extends Component {
     }
 
 
-
-
     /**
      * Update the state variables and force
      * the page to update.
@@ -166,33 +166,7 @@ class MultiClassGrid extends Component {
      * Organize the images into rows
      */
     gridSetup() {
-        // Handle filtering
-        switch (this.filtered_class_type) {
-            case FILTER_MODES.no_filter:
-                this.image_names.sort(); // Sort to undo any lingering filters
-                this.filtered_class_values = []; // Reset
-                break;
-            case FILTER_MODES.group_by_class:
-                // TODO: Think of a way to do this...
-                break;
-            default: 
-                // Sort image names with the filtered class first
-                let filtered = [];
-                let unfiltered = JSON.parse(JSON.stringify(this.image_names)); // Deep copy
-                for (let image_name of this.image_names) {
-                    // If image is of the filtered class, store in filtered array
-                    for (let filtered_class_value of this.filtered_class_values) {
-                        if (image_name in this.labels && this.labels[image_name][this.filtered_class_type] === filtered_class_value) {
-                            filtered.push(image_name);
-                            unfiltered.splice(unfiltered.indexOf(image_name), 1); // Remove from unfiltered array
-                        } 
-                    }
-                }
-                // Concatanate together with filtered in front
-                this.image_names = filtered.sort().concat(unfiltered.sort());
-                break;
-        }
-
+        this.image_names.sort(); // Sort to undo any lingering filters
         // Divide grid based on the grid width prop
         let cur_im;
         let grid_counter = 0;
@@ -427,6 +401,10 @@ class MultiClassGrid extends Component {
         this.updateState();
     }
 
+
+    /**
+     * Try and auto-load image layers if we have image_layer_folder_names
+     */
     async autoLoadImageLayers() {
         if (this.image_layer_folder_names !== undefined) {
             let root_dir = getOneFolderUp(this.src);
@@ -494,9 +472,9 @@ class MultiClassGrid extends Component {
         // Store checkbox value
         this.filtered_class_checkbox_values[class_value] = checked;
         this.updateLocalLabels(); // Update current labels
-        this.gridSetup(); // Reformat grid
-        this.updateState(); // Update page
+        this.filterImages();
     }
+
 
     /**
      * Set this.filtered_class_type as class_type
@@ -513,8 +491,61 @@ class MultiClassGrid extends Component {
             }
         }
         this.updateLocalLabels();
-        this.gridSetup();
         this.updateState();
+    }
+
+    filterImages() {
+        // Toggle hidden class on images that don't match the filter
+        for (let image_name of this.image_names) {
+            switch (this.filtered_class_type) {
+                case FILTER_MODES.no_filter:
+                    // Show all images
+                    this.toggleImageHidden(image_name, false);
+                    break;
+                default:
+                    // If the filtered_class_values array is empty, show all images
+                    if (this.filtered_class_values.length === 0) {
+                        this.toggleImageHidden(image_name, false);
+                    } else if (
+                        !(image_name in this.labels) || // Hide images with no labels
+                        !(this.filtered_class_values.includes(this.labels[image_name][this.filtered_class_type])) // Hide images that don't match any filtered class value
+                    ) {
+                        // Hide images that don't match the filter
+                        this.toggleImageHidden(image_name, true);
+                    } else {
+                        // Show images that match the filter
+                        this.toggleImageHidden(image_name, false);
+                    }
+            }
+        }
+}
+
+
+    /**
+     * Toggle (hide or show) a MultiClassGridImage,
+     * or set it to hidden if hidden is defined.
+     * 
+     * @param {string} image_name 
+     * @param {boolean} hidden
+     */
+    toggleImageHidden(image_name, hidden = undefined) {
+        // Get the MultiClassGridImage container div
+        let image = document.getElementById(image_name);
+        if (hidden === undefined) {
+            // Toggle hidden class
+            if (image.classList.contains("hidden")) {
+                image.classList.remove("hidden");
+            } else {
+                image.classList.add("hidden");
+            }
+        } else {
+            // Set hidden class
+            if (hidden && !image.classList.contains("hidden")) {
+                image.classList.add("hidden");
+            } else if (!hidden && image.classList.contains("hidden")) {
+                image.classList.remove("hidden");
+            }
+        }
     }
 
 
@@ -630,6 +661,18 @@ class MultiClassGrid extends Component {
                                 max={99}
                                 onChange={this.changeGridWidth}>
                             </input>
+                        </div>
+                        <div className="change-grid-width-container">
+                            <label>
+                                Autoload Labels on Directory Select:
+                            </label>
+                            <input
+                                type="checkbox"
+                                name={"autoload_labels_on_dir_select"}
+                                id={"autoload_labels_on_dir_select"}
+                                onChange={this.changeAutoLoadOnDirSelect}
+                                checked={this.autoload_labels_on_dir_select}
+                            ></input>
                         </div>
                     </div>
                     <div className={this.images_shown ? "controls-container" : "hidden"}>
