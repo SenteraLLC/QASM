@@ -38,6 +38,23 @@ data "aws_iam_policy" "ecs_task_execution_role" {
     arn = "arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy"
 }
 
+resource "aws_iam_policy" "function_logging_policy" {
+  name   = "function-logging-policy"
+  policy = jsonencode({
+    "Version" : "2012-10-17",
+    "Statement" : [
+      {
+        Action : [
+          "logs:CreateLogStream",
+          "logs:PutLogEvents"
+        ],
+        Effect : "Allow",
+        Resource : "arn:aws:logs:*:*:*"
+      }
+    ]
+  })
+}
+
 
 # IAM Roles
 resource "aws_iam_role" "qasm_lambda_exec_role" {
@@ -75,4 +92,9 @@ resource "aws_iam_role_policy_attachment" "_2" {
 resource "aws_iam_role_policy_attachment" "_3" {
     role = aws_iam_role.qasm_lambda_exec_role.name 
     policy_arn = data.aws_iam_policy.ecs_task_execution_role.arn
+}
+
+resource "aws_iam_role_policy_attachment" "function_logging_policy_attachment" {
+  role = aws_iam_role.qasm_lambda_exec_role.id
+  policy_arn = aws_iam_policy.function_logging_policy.arn
 }
