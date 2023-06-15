@@ -12,20 +12,54 @@ import $ from "jquery";
  */
 export function autoScroll(component, hover_row_id, key) {
     let keypress = false;
+    let row_not_found = true;
     switch (key) {
         case "n":
+            let jquery_next_row = $("#" + hover_row_id); // Start at current row
+            let next_row;
+            while (row_not_found) {
+                // Try the next row
+                jquery_next_row = jquery_next_row.next();
+                next_row = document.getElementById(jquery_next_row.attr("id"))
+                // Each row is a tr element with td children
+                for (let td of next_row.children) {
+                    // Each td contains a MultiClassGridImage
+                    // if any image is NOT hidden, we can scroll to it
+                    if (!td.children[0].classList.contains("hidden")) {
+                        // We found a row to scroll to
+                        row_not_found = false;
+                        break;
+                    }
+                }
+            }
             // Scroll to next row
-            $(document).scrollTop($("#" + hover_row_id).next().offset().top);
+            $(document).scrollTop(jquery_next_row.offset().top);
             // Set next row as hovered for consecutive navigation
-            component.hover_row_id = $("#" + hover_row_id).next()[0].id;
+            component.hover_row_id = jquery_next_row.attr("id");
             keypress = true;
             break;
-
         case "h":
-            // Scroll to previous row
-            $(document).scrollTop($("#" + hover_row_id).prev().offset().top);
+            let jquery_prev_row = $("#" + hover_row_id); // Start at current row
+            let prev_row;
+            while (row_not_found) {
+                // Try the previous row
+                jquery_prev_row = jquery_prev_row.prev();
+                prev_row = document.getElementById(jquery_prev_row.attr("id"))
+                // Each row is a tr element with td children
+                for (let td of prev_row.children) {
+                    // Each td contains a MultiClassGridImage
+                    // if any image is NOT hidden, we can scroll to it
+                    if (!td.children[0].classList.contains("hidden")) {
+                        // We found a row to scroll to
+                        row_not_found = false;
+                        break;
+                    }
+                }
+            }
+            // Scroll to next row
+            $(document).scrollTop(jquery_prev_row.offset().top);
             // Set previous row as hovered for consecutive navigation
-            component.hover_row_id = $("#" + hover_row_id).prev()[0].id;
+            component.hover_row_id = jquery_prev_row.attr("id");
             keypress = true;
             break;
         default:
