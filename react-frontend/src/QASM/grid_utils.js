@@ -46,3 +46,18 @@ export function autoScroll(component, hover_image_id, key) {
             break;
     }
 }
+
+
+/**
+ * Handle keypresses for the grid width input
+ * 
+ * @param {*} event on change event
+ * @param {*} component component that called this function: pass in `this`
+ * @param {*} document document object
+ */
+export function changeGridWidth(event, component, document) {
+    component.grid_width = event.target.value;
+
+    // Reformat the grid by changing the grid-table css
+    document.getElementById("grid-table").style.gridTemplateColumns = "repeat(" + component.grid_width + ", 1fr)";
+}

@@ -1,4 +1,4 @@
-import { Component } from 'react';
+import { Component, Fragment } from 'react';
 import GridImage from "./GridImage.js";
 import Legend from "./Legend.js";
 import Dropdown from './Dropdown.js';
@@ -13,7 +13,7 @@ import sparse from "../icons/sparse.svg";
 import field_edge from "../icons/field_edge.svg";
 import "../css/Grid.css";
 const { update_all_overlays } =  require("../QASM/utils.js");
-const { autoScroll } =  require("../QASM/grid_utils.js");
+const { autoScroll, changeGridWidth } =  require("../QASM/grid_utils.js");
 const { function_names } = require("../../public/electron_constants.js");
 
 const COLORS = {
@@ -63,7 +63,6 @@ class Grid extends Component {
     component_updater = 0;
     image_stack = []; 
     hover_image_id = null;
-    hover_row_id = null;
     images_shown = false;
     update_success = false;
     allow_next_scroll = false;
@@ -101,7 +100,6 @@ class Grid extends Component {
         this.loadLabels          = this.loadLabels.bind(this);
         this.clearAll            = this.clearAll.bind(this);
         this.selectImageDir      = this.selectImageDir.bind(this);
-        this.changeGridWidth     = this.changeGridWidth.bind(this);
         this.updateState         = this.updateState.bind(this);
         this.updateLocalLabels   = this.updateLocalLabels.bind(this);
         this.addImageLayer       = this.addImageLayer.bind(this);
@@ -126,11 +124,9 @@ class Grid extends Component {
                 // Every single hover-target will be inside of a div that's 
                 // inside of a div, that has the id that we're trying to select.
                 this.hover_image_id = e.target.parentNode.parentNode.id;
-                this.hover_row_id = e.target.parentNode.parentNode.parentNode.parentNode.id;
             } 
             else {
                 this.hover_image_id = null;
-                this.hover_row_id = null;
             }
         });
 
@@ -154,9 +150,9 @@ class Grid extends Component {
                 this.changeImage(this.hover_image_id);
             }
 
-            if (this.hover_row_id !== null ) {
+            if (this.hover_image_id !== null ) {
                 // n for next, h for previous
-                autoScroll(this, this.hover_row_id, e.key);
+                autoScroll(this, this.hover_image_id, e.key);
             }
         });
     }
@@ -441,19 +437,6 @@ class Grid extends Component {
         console.log(this.image_stack);
         this.updateState();
     }
-    
-
-    /**
-     * Change the grid width
-     * 
-     * @param {*} e event 
-     */
-    changeGridWidth(e) {
-        this.grid_width = e.target.value; // Get current grid width
-        this.updateLocalLabels(); // Store current labels
-        this.gridSetup(); // Reformat grid
-        this.updateState(); // Update page
-    }
 
 
     /**
@@ -552,12 +535,12 @@ class Grid extends Component {
                             <input 
                                 id="change-grid-width-og"
                                 type="number" 
-                                value={this.grid_width} 
+                                defaultValue={this.grid_width} 
                                 size={2} // Number of visible digits
                                 step={1} 
                                 min={1}
                                 max={99}
-                                onChange={this.changeGridWidth}>
+                                onChange={(event) => changeGridWidth(event, this, document)}>
                             </input>
                             
                         </div>
@@ -587,12 +570,12 @@ class Grid extends Component {
                             <input 
                                 id="change-grid-width-new"
                                 type="number" 
-                                value={this.grid_width} 
+                                defaultValue={this.grid_width} 
                                 size={2} // Number of visible digits
                                 step={1} 
                                 min={1}
                                 max={99}
-                                onChange={this.changeGridWidth}>
+                                onChange={(event) => changeGridWidth(event, this, document)}>
                             </input>
                         </div>
                         <button 
@@ -612,34 +595,27 @@ class Grid extends Component {
                         </button>
                     </div>
                 </div>
-                <table id="Grid-table">
-                    <tbody>
-                        {this.grid_image_names.map(row_image_names => (
-                            <tr 
-                                key={"row_" + this.grid_image_names.indexOf(row_image_names)}
-                                id={"row_" + this.grid_image_names.indexOf(row_image_names)}
-                            >
-                                {row_image_names.map(image_name => (
-                                    <td key={image_name}>
-                                        <GridImage
-                                            image={this.images[image_name]} 
-                                            image_name={image_name} 
-                                            classes={this.classes}
-                                            default_class={
-                                                image_name in this.labels 
-                                                    ? this.labels[image_name]["class"] 
-                                                    : this.classes[0].class_name
-                                            }
-                                            image_stack={
-                                                this.getImageStackByName(image_name)
-                                            }
-                                        />
-                                    </td>
-                                ))}
-                            </tr>
-                        ))}
-                    </tbody>
-                </table>
+                <div id="grid-table" style={{display:"grid", gridTemplateColumns: "repeat(" + this.grid_width + ",1fr)" }}>
+                    {this.image_names.map(image_name => (
+                        // Use Fragment so React doesn't complain about not having a key,
+                        // but we don't want to add a div to the DOM
+                        <Fragment key={image_name}>
+                            <GridImage
+                                image={this.images[image_name]} 
+                                image_name={image_name} 
+                                classes={this.classes}
+                                default_class={
+                                    image_name in this.labels 
+                                        ? this.labels[image_name]["class"] 
+                                        : this.classes[0].class_name
+                                }
+                                image_stack={
+                                    this.getImageStackByName(image_name)
+                                }
+                            />
+                        </Fragment>
+                    ))}
+                </div>
             </div>       
         )
     }
