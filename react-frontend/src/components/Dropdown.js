@@ -106,7 +106,6 @@ class Dropdown extends Component {
         }
     }
 
-
     render() {
         if (this.invalid) {
             return (
@@ -140,15 +139,22 @@ class Dropdown extends Component {
                             className="checkbox-container">
                             <input
                                 type="checkbox"
-                                id={option}
+                                id={option + "-checkbox"}
                                 defaultChecked={option in this.checkbox_default_values && this.checkbox_default_values[option]}
                                 onChange={(event) => this.callback(option, event.target.checked)}
                                 disable={((this.currently_selected.text === option) && (this.disable).toString()).toString()}
-                                style={{fontWeight: this.currently_selected.text === option ? "bold" : "normal"}}>
+                            >
                             </input>
-                            <label htmlFor={option}>
+                            <button 
+                                // This button is used as a label for the checkbox, since htmlFor wasn't working
+                                // TODO: make the button toggle the checkbox
+                                className="checkbox-label"
+                                key={option}
+                                disable={((this.currently_selected.text === option) && (this.disable).toString()).toString()}
+                                style={{fontWeight: this.currently_selected.text === option ? "bold" : "normal"}}
+                            >
                                 {option}
-                            </label>
+                            </button>
                         </div>
                     ))}
                 </div>

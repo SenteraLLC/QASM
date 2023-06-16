@@ -439,7 +439,9 @@ class MultiClassGrid extends Component {
      changeGridFilter(class_value, checked) {
         if (checked) {
             // Add to filtered class values
-            this.filtered_class_values.push(class_value);
+            if (!this.filtered_class_values.includes(class_value)) {
+                this.filtered_class_values.push(class_value);
+            }
         } else {
             // Remove from filtered class values
             this.filtered_class_values.splice(this.filtered_class_values.indexOf(class_value), 1);
