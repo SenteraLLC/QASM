@@ -27,7 +27,6 @@ class MultiClassGrid extends Component {
     component_updater = 0;
     image_stack = [];
     hover_image_id = null;
-    hover_row_id = null;
     images_shown = false;
     update_success = false;
     allow_next_scroll = false;
@@ -104,11 +103,8 @@ class MultiClassGrid extends Component {
                 // Every single hover-target will be inside of a div that's 
                 // inside of a div, that has the id that we're trying to select.
                 this.hover_image_id = e.target.parentNode.parentNode.id;
-                this.hover_row_id = e.target.parentNode.parentNode.parentNode.parentNode.id;
-            }
-            else {
+            } else {
                 this.hover_image_id = null;
-                this.hover_row_id = null;
             }
         });
 
@@ -132,9 +128,9 @@ class MultiClassGrid extends Component {
                 this.changeImage(this.hover_image_id);
             }
 
-            if (this.hover_row_id !== null) {
+            if (this.hover_image_id !== null) {
                 // n for next, h for previous
-                autoScroll(this, this.hover_row_id, e.key);
+                autoScroll(this, this.hover_image_id, e.key);
             }
         });
     }
