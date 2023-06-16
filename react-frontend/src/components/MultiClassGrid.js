@@ -5,7 +5,7 @@ import Dropdown from './Dropdown.js';
 import "../css/Grid.css";
 import "../css/MultiClassGrid.css";
 const { update_all_overlays, getOneFolderUp, getCurrentFolder } = require("../QASM/utils.js");
-const { autoScroll } = require("../QASM/grid_utils.js");
+const { autoScroll, changeGridWidth } = require("../QASM/grid_utils.js");
 const { function_names } = require("../../public/electron_constants.js");
 
 // TODO: Combine this with Grid, and/or add to app as a seperate component. 
@@ -73,7 +73,6 @@ class MultiClassGrid extends Component {
         this.loadLabels = this.loadLabels.bind(this);
         this.clearAll = this.clearAll.bind(this);
         this.selectImageDir = this.selectImageDir.bind(this);
-        this.changeGridWidth = this.changeGridWidth.bind(this);
         this.updateState = this.updateState.bind(this);
         this.updateLocalLabels = this.updateLocalLabels.bind(this);
         this.addImageLayer = this.addImageLayer.bind(this);
@@ -417,20 +416,6 @@ class MultiClassGrid extends Component {
 
 
     /**
-     * Change the grid width
-     * 
-     * @param {*} e event 
-     */
-    changeGridWidth(e) {
-        this.grid_width = e.target.value; // Get current grid width
-        this.updateLocalLabels(); // Store current labels
-        
-        // Reformat the grid by changing the grid-table css
-        document.getElementById("grid-table").style.gridTemplateColumns = "repeat(" + this.grid_width + ", 1fr)";
-    }
-
-
-    /**
      * Change the filtered class value and put it at the top
      * 
      * @param {string} class_value 
@@ -636,12 +621,12 @@ class MultiClassGrid extends Component {
                             <input
                                 id="change-grid-width-og"
                                 type="number"
-                                value={this.grid_width}
+                                defaultValue={this.grid_width}
                                 size={2} // Number of visible digits
                                 step={1}
                                 min={1}
                                 max={99}
-                                onChange={this.changeGridWidth}>
+                                onChange={(event) => changeGridWidth(event, this, document)}>
                             </input>
                         </div>
                         <div className="change-grid-width-container">
@@ -705,7 +690,7 @@ class MultiClassGrid extends Component {
                                 step={1}
                                 min={1}
                                 max={99}
-                                onChange={this.changeGridWidth}>
+                                onChange={(event) => changeGridWidth(event, this, document)}>
                             </input>
                         </div>
                         <div className="change-grid-width-container">
