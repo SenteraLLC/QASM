@@ -1,5 +1,5 @@
 // Grid labeler that supports multiple classes via checkboxes
-import { Component } from 'react';
+import { Component, Fragment } from 'react';
 import MultiClassGridImage from "./MultiClassGridImage.js";
 import Dropdown from './Dropdown.js';
 import "../css/Grid.css";
@@ -62,6 +62,10 @@ class MultiClassGrid extends Component {
 
         // Attach event listeners
         this.initEventListeners();
+
+        // Hack for dev
+        this.src = "Foundation Field 2 (Dennis Zuber)/Videos/7-08/Row 1, 16/3840x2160@120fps/Pass A/DS Splits/DS 000/bottom Raw Images/"
+        this.loadImageDir();
 
         // Bind functions
         this.loadImages = this.loadImages.bind(this);
@@ -157,36 +161,9 @@ class MultiClassGrid extends Component {
     async loadImages() {
         this.images = await this.QASM.call_backend(window, function_names.LOAD_IMAGES, this.src);
         this.image_names = Object.keys(this.images).sort();
-        this.gridSetup();
         this.clearAll();
         // Set the images shown to true now that the images are shown
         this.images_shown = true;
-    }
-
-
-    /**
-     * Organize the images into rows
-     */
-    gridSetup() {
-        this.image_names.sort(); // Sort to undo any lingering filters
-        // Divide grid based on the grid width prop
-        let cur_im;
-        let grid_counter = 0;
-        let row_imgs = [];
-        this.grid_image_names = [];
-        for (let i = 0; i < this.image_names.length; i++) {
-            cur_im = this.image_names[i];
-
-            // Add to grid
-            if (grid_counter >= this.grid_width) {
-                this.grid_image_names.push(row_imgs);
-                grid_counter = 0;
-                row_imgs = [];
-            }
-            grid_counter++;
-            row_imgs.push(cur_im);
-        }
-        this.grid_image_names.push(row_imgs);
     }
 
 
@@ -285,7 +262,6 @@ class MultiClassGrid extends Component {
         console.log(this.labels);
 
         if (Object.keys(this.labels).length > 0) {
-            this.gridSetup();
             this.updateState(); // Update state to rerender page
         } else {
             console.log("Prevented loading empty labels.");
@@ -452,8 +428,9 @@ class MultiClassGrid extends Component {
     changeGridWidth(e) {
         this.grid_width = e.target.value; // Get current grid width
         this.updateLocalLabels(); // Store current labels
-        this.gridSetup(); // Reformat grid
-        this.updateState(); // Update page
+        
+        // Reformat the grid by changing the grid-table css
+        document.getElementById("grid-table").style.gridTemplateColumns = "repeat(" + this.grid_width + ", 1fr)";
     }
 
 
@@ -725,7 +702,7 @@ class MultiClassGrid extends Component {
                             <input
                                 id="change-grid-width-new"
                                 type="number"
-                                value={this.grid_width}
+                                defaultValue={this.grid_width}
                                 size={2} // Number of visible digits
                                 step={1}
                                 min={1}
@@ -775,34 +752,27 @@ class MultiClassGrid extends Component {
                         </div>
                     </div>
                 </div>
-                <table id="Grid-table">
-                    <tbody>
-                        {this.grid_image_names.map(row_image_names => (
-                            <tr
-                                key={"row_" + this.grid_image_names.indexOf(row_image_names)}
-                                id={"row_" + this.grid_image_names.indexOf(row_image_names)}
-                            >
-                                {row_image_names.map(image_name => (
-                                    <td key={image_name}>
-                                        <MultiClassGridImage
-                                            image={this.images[image_name]}
-                                            image_name={image_name}
-                                            classes={this.classes}
-                                            image_stack={
-                                                this.getImageStackByName(image_name)
-                                            }
-                                            default_classes={
-                                                image_name in this.labels 
-                                                    ? this.labels[image_name] 
-                                                    : null
-                                            }
-                                        />
-                                    </td>
-                                ))}
-                            </tr>
-                        ))}
-                    </tbody>
-                </table>
+                <div id="grid-table" style={{display:"grid", gridTemplateColumns: "repeat(" + this.grid_width + ",1fr)" }}>
+                    {this.image_names.map(image_name => (
+                        // Use Fragment so React doesn't complain about not having a key,
+                        // but we don't want to add a div to the DOM
+                        <Fragment key={image_name}>
+                            <MultiClassGridImage
+                                image={this.images[image_name]}
+                                image_name={image_name}
+                                classes={this.classes}
+                                image_stack={
+                                    this.getImageStackByName(image_name)
+                                }
+                                default_classes={
+                                    image_name in this.labels 
+                                        ? this.labels[image_name] 
+                                        : null
+                                }
+                            />
+                        </Fragment>
+                    ))}
+                </div>
             </div>
         )
     }
