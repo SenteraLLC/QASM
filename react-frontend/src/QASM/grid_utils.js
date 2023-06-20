@@ -1,5 +1,6 @@
 // ####GRID UTILS####
 import $ from "jquery";
+const { function_names } = require("../../public/electron_constants.js");
 
 // TODO: keyboard shortcuts in config and loaded somewhere
 
@@ -130,4 +131,19 @@ export function changeImage(document, hover_image_id) {
         // Done
         break;
     }
+}
+
+
+/**
+ * Load images from the current source directory
+ * 
+ * @param {*} window window object
+ * @param {*} component component that called this function: pass in `this`
+ */
+export async function loadImages(window, component) {
+    component.images = await component.QASM.call_backend(window, function_names.LOAD_IMAGES, component.src);
+    component.image_names = Object.keys(component.images).sort();
+    component.clearAll();
+    // Set the images shown to true now that the images are shown
+    component.images_shown = true;
 }
