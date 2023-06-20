@@ -12,7 +12,7 @@ import sparse from "../icons/sparse.svg";
 import field_edge from "../icons/field_edge.svg";
 import "../css/Grid.css";
 const { update_all_overlays } =  require("../QASM/utils.js");
-const { autoScroll, changeGridWidth, toggleImageHidden, changeImage, loadImages, initLabels, loadLabels, saveLabels, clearAllLabels, addImageLayer } =  require("../QASM/grid_utils.js");
+const { autoScroll, changeGridWidth, toggleImageHidden, changeImage, loadImages, initLabels, loadLabels, saveLabels, clearAllLabels, addImageLayer, getImageStackByName } =  require("../QASM/grid_utils.js");
 const { function_names } = require("../../public/electron_constants.js");
 
 const COLORS = {
@@ -102,7 +102,6 @@ class Grid extends Component {
         this.selectImageDir      = this.selectImageDir.bind(this);
         this.updateState         = this.updateState.bind(this);
         this.updateLocalLabels   = this.updateLocalLabels.bind(this);
-        this.getImageStackByName = this.getImageStackByName.bind(this);
         this.initOverlays        = this.initOverlays.bind(this);
         this.initEventListeners  = this.initEventListeners.bind(this);
         this.changeGridFilter    = this.changeGridFilter.bind(this);
@@ -292,23 +291,6 @@ class Grid extends Component {
     }
 
 
-    /**
-     * Get an array of image layers for an image
-     * 
-     * @param {string} image_name image name
-     * @returns {Array} image stack; array of images
-     */
-    getImageStackByName(image_name) {
-        let image_stack = [];
-        for (let image_layer of this.image_stack) {
-            if (image_name in image_layer) {
-                image_stack.push(image_layer[image_name]);
-            }
-        }
-        return(image_stack);
-    }
-
-
     render() {
         return (
             <div className="Grid" key={this.component_updater}>
@@ -415,7 +397,7 @@ class Grid extends Component {
                                         : this.classes[0].class_name
                                 }
                                 image_stack={
-                                    this.getImageStackByName(image_name)
+                                    getImageStackByName(this, image_name)
                                 }
                             />
                         </Fragment>

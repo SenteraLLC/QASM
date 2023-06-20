@@ -283,3 +283,21 @@ export async function addImageLayer(window, component) {
     }
     component.updateState();
 }
+
+
+/**
+ * Get an array of image layers for an image
+ * 
+ * @param {*} component component that called this function: pass in `this`
+ * @param {string} image_name image name
+ * @returns {Array} image stack; array of images
+ */
+export function getImageStackByName(component, image_name) {
+    let image_stack = [];
+    for (let image_layer of component.image_stack) {
+        if (image_name in image_layer) {
+            image_stack.push(image_layer[image_name]);
+        }
+    }
+    return (image_stack);
+}
