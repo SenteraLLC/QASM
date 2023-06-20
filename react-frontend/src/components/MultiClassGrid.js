@@ -1,11 +1,10 @@
-// Grid labeler that supports multiple classes via checkboxes
+// Grid labeler that supports multiple classes
 import { Component, Fragment } from 'react';
 import MultiClassGridImage from "./MultiClassGridImage.js";
 import Dropdown from './Dropdown.js';
 import "../css/Grid.css";
-// import "../css/MultiClassGrid.css";
 const { update_all_overlays } = require("../QASM/utils.js");
-const { FILTER_MODES, updateState, initProps, initEventListeners, changeGridWidth, toggleImageHidden, initLabels, loadLabels, saveLabels, clearAllLabels, addImageLayer, getImageStackByName, loadImageDir, selectImageDir, loadNextDir } = require("../QASM/grid_utils.js");
+const { FILTER_MODES, updateState, initProps, initEventListeners, changeGridWidth, toggleImageHidden, initLabels, loadLabels, changeAutoLoadOnDirSelect, saveLabels, clearAllLabels, addImageLayer, getImageStackByName, loadImageDir, selectImageDir, loadNextDir } = require("../QASM/grid_utils.js");
 
 class MultiClassGrid extends Component {
     constructor(props) {
@@ -23,7 +22,6 @@ class MultiClassGrid extends Component {
 
         // Bind functions
         this.updateLocalLabels = this.updateLocalLabels.bind(this);
-        this.changeAutoLoadOnDirSelect = this.changeAutoLoadOnDirSelect.bind(this);
         this.filterImages = this.filterImages.bind(this);
         this.changeGridFilter = this.changeGridFilter.bind(this);
     }
@@ -125,15 +123,6 @@ class MultiClassGrid extends Component {
     }
 
 
-    /**
-     * Negate autoload_labels_on_dir_select
-     */
-    changeAutoLoadOnDirSelect() {
-        this.autoload_labels_on_dir_select = !this.autoload_labels_on_dir_select;
-        updateState(this);
-    }
-
-
     render() {
         return (
             <div className="Grid" key={this.component_updater}>
@@ -193,7 +182,7 @@ class MultiClassGrid extends Component {
                                 type="checkbox"
                                 name={"autoload_labels_on_dir_select"}
                                 id={"autoload_labels_on_dir_select"}
-                                onChange={this.changeAutoLoadOnDirSelect}
+                                onChange={() => changeAutoLoadOnDirSelect(this)}
                                 checked={this.autoload_labels_on_dir_select}
                             ></input>
                         </div>
@@ -257,7 +246,7 @@ class MultiClassGrid extends Component {
                                 type="checkbox"
                                 name={"autoload_labels_on_dir_select"}
                                 id={"autoload_labels_on_dir_select"}
-                                onChange={this.changeAutoLoadOnDirSelect}
+                                onChange={() => changeAutoLoadOnDirSelect(this)}
                                 checked={this.autoload_labels_on_dir_select}
                             ></input>
                         </div>

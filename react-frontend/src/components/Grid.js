@@ -12,7 +12,7 @@ import sparse from "../icons/sparse.svg";
 import field_edge from "../icons/field_edge.svg";
 import "../css/Grid.css";
 const { update_all_overlays } =  require("../QASM/utils.js");
-const { FILTER_MODES, initProps, initEventListeners, changeGridWidth, toggleImageHidden, loadImages, initLabels, loadLabels, saveLabels, clearAllLabels, addImageLayer, getImageStackByName, selectImageDir} =  require("../QASM/grid_utils.js");
+const { FILTER_MODES, initProps, initEventListeners, changeGridWidth, toggleImageHidden, loadImages, initLabels, loadLabels, changeAutoLoadOnDirSelect, saveLabels, clearAllLabels, addImageLayer, getImageStackByName, selectImageDir} =  require("../QASM/grid_utils.js");
 
 const COLORS = {
     "default": "default",
@@ -209,7 +209,18 @@ class Grid extends Component {
                                 max={99}
                                 onChange={(event) => changeGridWidth(event, this, document)}>
                             </input>
-                            
+                        </div>
+                        <div className="change-grid-width-container">
+                            <label>
+                                Autoload Labels on Directory Select:
+                            </label>
+                            <input
+                                type="checkbox"
+                                name={"autoload_labels_on_dir_select"}
+                                id={"autoload_labels_on_dir_select"}
+                                onChange={() => changeAutoLoadOnDirSelect(this)}
+                                checked={this.autoload_labels_on_dir_select}
+                            ></input>
                         </div>
                     </div>
                     <div className={this.images_shown ? "controls-container" : "hidden"}>
@@ -244,6 +255,18 @@ class Grid extends Component {
                                 max={99}
                                 onChange={(event) => changeGridWidth(event, this, document)}>
                             </input>
+                        </div>
+                        <div className="change-grid-width-container">
+                            <label>
+                                Autoload Labels on Directory Select:
+                            </label>
+                            <input
+                                type="checkbox"
+                                name={"autoload_labels_on_dir_select"}
+                                id={"autoload_labels_on_dir_select"}
+                                onChange={() => changeAutoLoadOnDirSelect(this)}
+                                checked={this.autoload_labels_on_dir_select}
+                            ></input>
                         </div>
                         <button 
                             onClick={() => loadLabels(window, this, this.label_loadnames)} 
