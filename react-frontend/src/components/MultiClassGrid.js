@@ -5,7 +5,7 @@ import Dropdown from './Dropdown.js';
 import "../css/Grid.css";
 // import "../css/MultiClassGrid.css";
 const { update_all_overlays, getOneFolderUp, getCurrentFolder } = require("../QASM/utils.js");
-const { autoScroll, changeGridWidth, toggleImageHidden, changeImage, loadImages, initLabels, loadLabels, saveLabels, autoLoadLabels, clearAllLabels, addImageLayer } = require("../QASM/grid_utils.js");
+const { autoScroll, changeGridWidth, toggleImageHidden, changeImage, loadImages, initLabels, loadLabels, saveLabels, autoLoadLabels, clearAllLabels, addImageLayer, getImageStackByName } = require("../QASM/grid_utils.js");
 const { function_names } = require("../../public/electron_constants.js");
 
 // TODO: Combine this with Grid, and/or add to app as a seperate component. 
@@ -70,7 +70,6 @@ class MultiClassGrid extends Component {
         this.selectImageDir = this.selectImageDir.bind(this);
         this.updateState = this.updateState.bind(this);
         this.updateLocalLabels = this.updateLocalLabels.bind(this);
-        this.getImageStackByName = this.getImageStackByName.bind(this);
         this.initEventListeners = this.initEventListeners.bind(this);
         this.changeAutoLoadOnDirSelect = this.changeAutoLoadOnDirSelect.bind(this);
         this.autoLoadImageLayers = this.autoLoadImageLayers.bind(this);
@@ -345,23 +344,6 @@ class MultiClassGrid extends Component {
 
 
     /**
-     * Get an array of image layers for an image
-     * 
-     * @param {string} image_name image name
-     * @returns {Array} image stack; array of images
-     */
-    getImageStackByName(image_name) {
-        let image_stack = [];
-        for (let image_layer of this.image_stack) {
-            if (image_name in image_layer) {
-                image_stack.push(image_layer[image_name]);
-            }
-        }
-        return (image_stack);
-    }
-
-
-    /**
      * Negate autoload_labels_on_dir_select
      */
     changeAutoLoadOnDirSelect() {
@@ -537,7 +519,7 @@ class MultiClassGrid extends Component {
                                 image_name={image_name}
                                 classes={this.classes}
                                 image_stack={
-                                    this.getImageStackByName(image_name)
+                                    getImageStackByName(this, image_name)
                                 }
                                 default_classes={
                                     image_name in this.labels 
