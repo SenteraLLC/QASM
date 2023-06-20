@@ -12,7 +12,7 @@ import sparse from "../icons/sparse.svg";
 import field_edge from "../icons/field_edge.svg";
 import "../css/Grid.css";
 const { update_all_overlays } =  require("../QASM/utils.js");
-const { initEventListeners, changeGridWidth, toggleImageHidden, loadImages, initLabels, loadLabels, saveLabels, clearAllLabels, addImageLayer, getImageStackByName, selectImageDir} =  require("../QASM/grid_utils.js");
+const { FILTER_MODES, initProps, initEventListeners, changeGridWidth, toggleImageHidden, loadImages, initLabels, loadLabels, saveLabels, clearAllLabels, addImageLayer, getImageStackByName, selectImageDir} =  require("../QASM/grid_utils.js");
 
 const COLORS = {
     "default": "default",
@@ -44,49 +44,12 @@ const OVERLAYS = {
     }
 }
 
-const FILTER_MODES = {
-    "no_filter": "no filter",
-    // "group_by_class": "group by class", TODO: Reimplement using new grid logic
-}
-
 class Grid extends Component {
-    images = {};
-    image_names = [];
-    grid_width = 2;
-    src = "";
-    classes = []; // Array of {"class_name": <string>, "svg_overlay": <string>}
-    class_names = []; // Array of all "class_name" values from the classes array
-    filtered_class_name = null;
-    component_updater = 0;
-    image_stack = []; 
-    hover_image_id = null;
-    images_shown = false;
-    update_success = false;
-    allow_next_scroll = false;
-    default_classes = [
-        {"class_name": "plant", "svg_overlay": null}, 
-        {"class_name": "rogue", "svg_overlay": "x_overlay"},
-    ];
-    label_loadnames = undefined; // [<string loadname1>, <string loadname2>, ...]
-
     constructor(props) {
         super(props);
         
         // Initialize props
-        this.QASM            = props.QASM
-        this.grid_width      = props.grid_width || 2;
-        this.classes         = props.classes    || this.default_classes
-        this.src             = props.src
-        this.class_names     = this.classes.map(class_info => class_info.class_name)
-        this.label_loadnames = props.label_loadnames || undefined;
-        this.autoload_labels_on_dir_select = props.autoload_labels_on_dir_select || false;
-        this.image_layer_folder_names = props.image_layer_folder_names || undefined;
-        
-        this.labels = initLabels(this);
-        this.state = {
-            labels: this.labels,
-            src: this.src,
-        };
+        initProps(this, props);
         
         // Get overlay info
         this.initOverlays();
