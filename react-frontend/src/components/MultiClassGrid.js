@@ -5,7 +5,7 @@ import Dropdown from './Dropdown.js';
 import "../css/Grid.css";
 // import "../css/MultiClassGrid.css";
 const { update_all_overlays, getOneFolderUp, getCurrentFolder } = require("../QASM/utils.js");
-const { autoScroll, changeGridWidth, toggleImageHidden, changeImage, loadImages, initLabels, loadLabels, saveLabels, autoLoadLabels, clearAllLabels } = require("../QASM/grid_utils.js");
+const { autoScroll, changeGridWidth, toggleImageHidden, changeImage, loadImages, initLabels, loadLabels, saveLabels, autoLoadLabels, clearAllLabels, addImageLayer } = require("../QASM/grid_utils.js");
 const { function_names } = require("../../public/electron_constants.js");
 
 // TODO: Combine this with Grid, and/or add to app as a seperate component. 
@@ -70,7 +70,6 @@ class MultiClassGrid extends Component {
         this.selectImageDir = this.selectImageDir.bind(this);
         this.updateState = this.updateState.bind(this);
         this.updateLocalLabels = this.updateLocalLabels.bind(this);
-        this.addImageLayer = this.addImageLayer.bind(this);
         this.getImageStackByName = this.getImageStackByName.bind(this);
         this.initEventListeners = this.initEventListeners.bind(this);
         this.changeAutoLoadOnDirSelect = this.changeAutoLoadOnDirSelect.bind(this);
@@ -233,27 +232,6 @@ class MultiClassGrid extends Component {
             this.src = folders[current_folder_idx + 1] + current_folder + "/";
             await this.loadImageDir();
         }
-    }
-
-
-    /**
-     * Prompt user to select a directory
-     * and push all the images onto the image stack
-     */
-    async addImageLayer() {
-        // Prompt user to select directory
-        let dir_path = await this.QASM.call_backend(window, function_names.OPEN_DIR, this.src);
-        console.log(dir_path);
-
-        // Load images and add them to the image stack
-        let image_layer = await this.QASM.call_backend(window, function_names.LOAD_IMAGES, dir_path);
-        if (Object.keys(image_layer).length === 0) {
-            console.log("Prevent adding empty layer.");
-        } else {
-            this.image_stack.push(image_layer);
-            console.log(this.image_stack);
-        }
-        this.updateState();
     }
 
 
@@ -468,7 +446,7 @@ class MultiClassGrid extends Component {
                             Next Directory
                         </button>
                         <button
-                            onClick={this.addImageLayer}
+                            onClick={() => addImageLayer(window, this)}
                             className="button">
                             Add Image Layer
                         </button>
