@@ -209,3 +209,25 @@ export async function loadLabels(window, component, loadnames = undefined) {
         console.log("Prevented loading empty labels.");
     }
 }
+
+
+/**
+ * Scrape the page for the current labels
+ * and prompt the user to specify where to save them.
+ * 
+ * @param {*} window window object
+ * @param {*} component component that called this function: pass in `this`
+ * @param {string} savename filename to save labels to
+ */
+export async function saveLabels(window, component, savename = "") {
+    // Use label format of the current page
+    component.updateLocalLabels();
+    let params = {
+        labels: component.labels,
+        // Start one folder up from the current directory
+        path: getOneFolderUp(component.src),
+        savename: savename,
+    }
+
+    await component.QASM.call_backend(window, function_names.SAVE_JSON_FILE, params);
+}
