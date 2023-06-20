@@ -3,9 +3,9 @@ import { Component, Fragment } from 'react';
 import MultiClassGridImage from "./MultiClassGridImage.js";
 import Dropdown from './Dropdown.js';
 import "../css/Grid.css";
-import "../css/MultiClassGrid.css";
+// import "../css/MultiClassGrid.css";
 const { update_all_overlays, getOneFolderUp, getCurrentFolder } = require("../QASM/utils.js");
-const { autoScroll, changeGridWidth } = require("../QASM/grid_utils.js");
+const { autoScroll, changeGridWidth, toggleImageHidden } = require("../QASM/grid_utils.js");
 const { function_names } = require("../../public/electron_constants.js");
 
 // TODO: Combine this with Grid, and/or add to app as a seperate component. 
@@ -85,7 +85,6 @@ class MultiClassGrid extends Component {
         this.loadImageDir = this.loadImageDir.bind(this);
         this.loadNextDir = this.loadNextDir.bind(this);
         this.filterImages = this.filterImages.bind(this);
-        this.toggleImageHidden = this.toggleImageHidden.bind(this);
     }
 
 
@@ -456,61 +455,29 @@ class MultiClassGrid extends Component {
         this.updateState();
     }
 
+
     filterImages() {
         // Toggle hidden class on images that don't match the filter
         for (let image_name of this.image_names) {
             switch (this.filtered_class_type) {
                 case FILTER_MODES.no_filter:
                     // Show all images
-                    this.toggleImageHidden(image_name, false);
+                    toggleImageHidden(document, image_name, false);
                     break;
                 default:
                     // If the filtered_class_values array is empty, show all images
                     if (this.filtered_class_values.length === 0) {
-                        this.toggleImageHidden(image_name, false);
+                        toggleImageHidden(document, image_name, false);
                     } else if (
                         !(image_name in this.labels) || // Hide images with no labels
                         !(this.filtered_class_values.includes(this.labels[image_name][this.filtered_class_type])) // Hide images that don't match any filtered class value
                     ) {
                         // Hide images that don't match the filter
-                        this.toggleImageHidden(image_name, true);
+                        toggleImageHidden(document, image_name, true);
                     } else {
                         // Show images that match the filter
-                        this.toggleImageHidden(image_name, false);
+                        toggleImageHidden(document, image_name, false);
                     }
-            }
-        }
-}
-
-
-    /**
-     * Toggle (hide or show) a MultiClassGridImage,
-     * or set it to hidden if hidden is defined.
-     * 
-     * @param {string} image_name 
-     * @param {boolean} hidden
-     */
-    toggleImageHidden(image_name, hidden = undefined) {
-        // Get the MultiClassGridImage container div
-        let image = document.getElementById(image_name);
-        if (image === undefined || image === null) {
-            // Image not found
-            return;
-        }
-
-        if (hidden === undefined) {
-            // Toggle hidden class
-            if (image.classList.contains("hidden")) {
-                image.classList.remove("hidden");
-            } else {
-                image.classList.add("hidden");
-            }
-        } else {
-            // Set hidden class
-            if (hidden && !image.classList.contains("hidden")) {
-                image.classList.add("hidden");
-            } else if (!hidden && image.classList.contains("hidden")) {
-                image.classList.remove("hidden");
             }
         }
     }
@@ -581,7 +548,7 @@ class MultiClassGrid extends Component {
     render() {
         return (
             <div className="Grid" key={this.component_updater}>
-                <div className="header-container multi-grid">
+                <div className="header-container">
                     {/* <Legend
                         classes={this.classes}
                     /> */}
