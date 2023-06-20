@@ -427,6 +427,16 @@ export async function autoLoadLabels(window, component) {
     }
 }
 
+/**
+ * Negate component.autoload_labels_on_dir_select
+ * 
+ * @param {*} component component that called this function: pass in `this`
+ */
+export function changeAutoLoadOnDirSelect(component) {
+    component.autoload_labels_on_dir_select = !component.autoload_labels_on_dir_select;
+    updateState(component);
+}
+
 
 /**
  * Scrape the page for the current labels
