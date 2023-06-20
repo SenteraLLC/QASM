@@ -259,3 +259,27 @@ export function clearAllLabels(component) {
     component.labels = initLabels(component);
     component.updateState();
 }
+
+
+/**
+ * Prompt user to select a directory
+ * and push all the images onto the image stack
+ * 
+ * @param {*} window window object
+ * @param {*} component component that called this function: pass in `this`
+ */
+export async function addImageLayer(window, component) {
+    // Prompt user to select directory
+    let dir_path = await component.QASM.call_backend(window, function_names.OPEN_DIR, component.src);
+    console.log(dir_path);
+
+    // Load images and add them to the image stack
+    let image_layer = await component.QASM.call_backend(window, function_names.LOAD_IMAGES, dir_path);
+    if (Object.keys(image_layer).length === 0) {
+        console.log("Prevent adding empty layer.");
+    } else {
+        component.image_stack.push(image_layer);
+        console.log(component.image_stack);
+    }
+    component.updateState();
+}

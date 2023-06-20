@@ -12,7 +12,7 @@ import sparse from "../icons/sparse.svg";
 import field_edge from "../icons/field_edge.svg";
 import "../css/Grid.css";
 const { update_all_overlays } =  require("../QASM/utils.js");
-const { autoScroll, changeGridWidth, toggleImageHidden, changeImage, loadImages, initLabels, loadLabels, saveLabels, clearAllLabels } =  require("../QASM/grid_utils.js");
+const { autoScroll, changeGridWidth, toggleImageHidden, changeImage, loadImages, initLabels, loadLabels, saveLabels, clearAllLabels, addImageLayer } =  require("../QASM/grid_utils.js");
 const { function_names } = require("../../public/electron_constants.js");
 
 const COLORS = {
@@ -80,6 +80,7 @@ class Grid extends Component {
         this.src             = props.src
         this.class_names     = this.classes.map(class_info => class_info.class_name)
         this.label_loadnames = props.label_loadnames || undefined;
+        this.autoload_labels_on_dir_select = props.autoload_labels_on_dir_select || false;
         
         this.labels = initLabels(this);
         this.state = {
@@ -101,7 +102,6 @@ class Grid extends Component {
         this.selectImageDir      = this.selectImageDir.bind(this);
         this.updateState         = this.updateState.bind(this);
         this.updateLocalLabels   = this.updateLocalLabels.bind(this);
-        this.addImageLayer       = this.addImageLayer.bind(this);
         this.getImageStackByName = this.getImageStackByName.bind(this);
         this.initOverlays        = this.initOverlays.bind(this);
         this.initEventListeners  = this.initEventListeners.bind(this);
@@ -259,27 +259,6 @@ class Grid extends Component {
 
 
     /**
-     * Prompt user to select a directory
-     * and push all the images onto the image stack
-     */
-    async addImageLayer() {
-        // Prompt user to select directory
-        let dir_path = await this.QASM.call_backend(window, function_names.OPEN_IMG_DIR, this.src);
-        console.log(dir_path);
-
-        // Load images and add them to the image stack
-        let image_layer = await this.QASM.call_backend(window, function_names.LOAD_IMAGES, dir_path);
-        if (Object.keys(image_layer).length === 0) {
-            console.log("Prevent adding empty layer.");
-        } else {
-            this.image_stack.push(image_layer);
-        }   
-        console.log(this.image_stack);
-        this.updateState();
-    }
-
-
-    /**
      * Change the filtered class and put it at the top
      * 
      * @param {string} class_name 
@@ -378,7 +357,7 @@ class Grid extends Component {
                             Select Directory
                         </button>
                         <button 
-                            onClick={this.addImageLayer}
+                            onClick={() => addImageLayer(window, this)}
                             className="button">
                             Add Image Layer
                         </button>
