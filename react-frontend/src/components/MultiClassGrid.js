@@ -5,7 +5,7 @@ import Dropdown from './Dropdown.js';
 import "../css/Grid.css";
 // import "../css/MultiClassGrid.css";
 const { update_all_overlays } = require("../QASM/utils.js");
-const { initEventListeners, changeGridWidth, toggleImageHidden, initLabels, loadLabels, saveLabels, clearAllLabels, addImageLayer, getImageStackByName, loadImageDir, selectImageDir, loadNextDir } = require("../QASM/grid_utils.js");
+const { updateState, initEventListeners, changeGridWidth, toggleImageHidden, initLabels, loadLabels, saveLabels, clearAllLabels, addImageLayer, getImageStackByName, loadImageDir, selectImageDir, loadNextDir } = require("../QASM/grid_utils.js");
 
 // TODO: Combine this with Grid, and/or add to app as a seperate component. 
 // TODO: Move functions common w/Grid to a utils file
@@ -66,25 +66,9 @@ class MultiClassGrid extends Component {
         loadImageDir(window, this);
 
         // Bind functions
-        this.updateState = this.updateState.bind(this);
         this.updateLocalLabels = this.updateLocalLabels.bind(this);
         this.changeAutoLoadOnDirSelect = this.changeAutoLoadOnDirSelect.bind(this);
         this.filterImages = this.filterImages.bind(this);
-    }
-
-
-    /**
-     * Update the state variables and force
-     * the page to update.
-     */
-    updateState() {
-        this.setState({
-            labels: this.labels,
-            src: this.src,
-        });
-
-        // Force page to update
-        this.component_updater++;
     }
 
 
@@ -153,7 +137,7 @@ class MultiClassGrid extends Component {
             }
         }
         this.updateLocalLabels();
-        this.updateState();
+        updateState(this);
     }
 
 
@@ -189,7 +173,7 @@ class MultiClassGrid extends Component {
      */
     changeAutoLoadOnDirSelect() {
         this.autoload_labels_on_dir_select = !this.autoload_labels_on_dir_select;
-        this.updateState();
+        updateState(this);
     }
 
 

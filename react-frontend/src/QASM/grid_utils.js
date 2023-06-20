@@ -6,6 +6,23 @@ const { function_names } = require("../../public/electron_constants.js");
 // TODO: keyboard shortcuts in config and loaded somewhere
 
 /**
+ * Update the state variables and force
+ * the page to update.
+ * 
+ * @param {*} component component that called this function: pass in `this`
+ */
+export function updateState(component) {
+    component.setState({
+        labels: component.labels,
+        src: component.src,
+    });
+
+    // Force page to update
+    component.component_updater++;
+}
+
+
+/**
  * Attach event listeners to the page.
  * 
  * @param {*} window window object
@@ -214,7 +231,7 @@ export async function loadImageDir(window, component) {
         }
         autoLoadImageLayers(window, component); // Try and autoload image layers
         await loadImages(window, component); // Load images
-        component.updateState();
+        updateState(component);
     }
 }
 
@@ -329,7 +346,7 @@ export async function loadLabels(window, component, loadnames = undefined) {
     console.log(component.labels);
 
     if (Object.keys(component.labels).length > 0) {
-        component.updateState(); // Update state to rerender page
+        updateState(component); // Update state to rerender page
     } else {
         console.log("Prevented loading empty labels.");
     }
@@ -382,7 +399,7 @@ export async function saveLabels(window, component, savename = "") {
 export function clearAllLabels(component) {
     // Set all classes to the default
     component.labels = initLabels(component);
-    component.updateState();
+    updateState(component);
 }
 
 
@@ -406,7 +423,7 @@ export async function addImageLayer(window, component) {
         component.image_stack.push(image_layer);
         console.log(component.image_stack);
     }
-    component.updateState();
+    updateState(component);
 }
 
 
@@ -466,6 +483,6 @@ export async function autoLoadImageLayers(window, component) {
             }
         }
 
-        component.updateState();
+        updateState(component);
     }
 }

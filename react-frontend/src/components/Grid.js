@@ -99,7 +99,6 @@ class Grid extends Component {
         loadImages(window, this);
 
         // Bind functions
-        this.updateState         = this.updateState.bind(this);
         this.updateLocalLabels   = this.updateLocalLabels.bind(this);
         this.initOverlays        = this.initOverlays.bind(this);
         this.changeGridFilter    = this.changeGridFilter.bind(this);
@@ -156,19 +155,6 @@ class Grid extends Component {
 
         // Append the newly created style tag to the documet head
         document_head.appendChild(style);
-    }
-
-
-    /**
-     * Update the state variables and force
-     * the page to update.
-     */
-    updateState() {
-        this.setState({
-            labels: this.labels,
-            src: this.src,
-        });
-        this.component_updater++;
     }
     
 
