@@ -4,9 +4,8 @@ import MultiClassGridImage from "./MultiClassGridImage.js";
 import Dropdown from './Dropdown.js';
 import "../css/Grid.css";
 // import "../css/MultiClassGrid.css";
-const { update_all_overlays, getOneFolderUp, getCurrentFolder } = require("../QASM/utils.js");
-const { autoScroll, changeGridWidth, toggleImageHidden, changeImage, initLabels, loadLabels, saveLabels, clearAllLabels, addImageLayer, getImageStackByName, loadImageDir, selectImageDir, loadNextDir } = require("../QASM/grid_utils.js");
-const { function_names } = require("../../public/electron_constants.js");
+const { update_all_overlays } = require("../QASM/utils.js");
+const { initEventListeners, changeGridWidth, toggleImageHidden, initLabels, loadLabels, saveLabels, clearAllLabels, addImageLayer, getImageStackByName, loadImageDir, selectImageDir, loadNextDir } = require("../QASM/grid_utils.js");
 
 // TODO: Combine this with Grid, and/or add to app as a seperate component. 
 // TODO: Move functions common w/Grid to a utils file
@@ -60,7 +59,7 @@ class MultiClassGrid extends Component {
 
 
         // Attach event listeners
-        this.initEventListeners();
+        initEventListeners(window, document, this);
 
         // Hack for dev
         this.src = "Foundation Field 2 (Dennis Zuber)/Videos/7-08/Row 1, 16/3840x2160@120fps/Pass A/DS Splits/DS 000/bottom Raw Images/"
@@ -69,55 +68,8 @@ class MultiClassGrid extends Component {
         // Bind functions
         this.updateState = this.updateState.bind(this);
         this.updateLocalLabels = this.updateLocalLabels.bind(this);
-        this.initEventListeners = this.initEventListeners.bind(this);
         this.changeAutoLoadOnDirSelect = this.changeAutoLoadOnDirSelect.bind(this);
         this.filterImages = this.filterImages.bind(this);
-    }
-
-
-    /**
-     * Attach event listeners to the page.
-     */
-    initEventListeners() {
-        // Update the overlays whenever the page size is changed
-        window.addEventListener("resize", update_all_overlays);
-
-        // Update which image is currently being hovered
-        document.addEventListener("mousemove", (e) => {
-            if (e.target.className.includes("hover-target")) {
-                // Every single hover-target will be inside of a div that's 
-                // inside of a div, that has the id that we're trying to select.
-                this.hover_image_id = e.target.parentNode.parentNode.id;
-            } else {
-                this.hover_image_id = null;
-            }
-        });
-
-        // Prevent weird behavior when scrolling
-        window.addEventListener("scroll", () => {
-            if (this.allow_next_scroll) {
-                this.allow_next_scroll = false;
-            } else {
-                this.hover_image_id = null;
-            }
-        });
-
-        // Keybinds
-        window.addEventListener("keydown", (e) => {
-            if (e.ctrlKey && e.key === "s") {
-                e.preventDefault();
-                saveLabels(window, this);
-            }
-
-            if (this.hover_image_id !== null && e.key === "b") {
-                changeImage(document, this.hover_image_id);
-            }
-
-            if (this.hover_image_id !== null) {
-                // n for next, h for previous
-                autoScroll(this, this.hover_image_id, e.key);
-            }
-        });
     }
 
 

@@ -1,9 +1,59 @@
 // ####GRID UTILS####
 import $ from "jquery";
-const { getOneFolderUp, getCurrentFolder } = require("./utils.js");
+const { update_all_overlays, getOneFolderUp, getCurrentFolder } = require("./utils.js");
 const { function_names } = require("../../public/electron_constants.js");
 
 // TODO: keyboard shortcuts in config and loaded somewhere
+
+/**
+ * Attach event listeners to the page.
+ * 
+ * @param {*} window window object
+ * @param {*} document document object
+ * @param {*} component component that called this function: pass in `this`
+ */
+export function initEventListeners(window, document, component) {
+    // Update the overlays whenever the page size is changed
+    window.addEventListener("resize", update_all_overlays);
+
+    // Update which image is currently being hovered
+    document.addEventListener("mousemove", (e) => {
+        if (e.target.className.includes("hover-target")) {
+            // Every single hover-target will be inside of a div that's 
+            // inside of a div, that has the id that we're trying to select.
+            component.hover_image_id = e.target.parentNode.parentNode.id;
+        } else {
+            component.hover_image_id = null;
+        }
+    });
+
+    // Prevent weird behavior when scrolling
+    window.addEventListener("scroll", () => {
+        if (component.allow_next_scroll) {
+            component.allow_next_scroll = false;
+        } else {
+            component.hover_image_id = null;
+        }
+    });
+
+    // Keybinds
+    window.addEventListener("keydown", (e) => {
+        if (e.ctrlKey && e.key === "s") {
+            e.preventDefault();
+            saveLabels(window, component);
+        }
+
+        if (component.hover_image_id !== null && e.key === "b") {
+            changeImage(document, component.hover_image_id);
+        }
+
+        if (component.hover_image_id !== null) {
+            // n for next, h for previous
+            autoScroll(component, component.hover_image_id, e.key);
+        }
+    });
+}
+
 
 /**
  * Scroll page to the next row 
