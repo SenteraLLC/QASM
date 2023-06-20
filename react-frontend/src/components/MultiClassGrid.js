@@ -5,7 +5,7 @@ import Dropdown from './Dropdown.js';
 import "../css/Grid.css";
 // import "../css/MultiClassGrid.css";
 const { update_all_overlays, getOneFolderUp, getCurrentFolder } = require("../QASM/utils.js");
-const { autoScroll, changeGridWidth, toggleImageHidden, changeImage, loadImages, initLabels, loadLabels } = require("../QASM/grid_utils.js");
+const { autoScroll, changeGridWidth, toggleImageHidden, changeImage, loadImages, initLabels, loadLabels, saveLabels } = require("../QASM/grid_utils.js");
 const { function_names } = require("../../public/electron_constants.js");
 
 // TODO: Combine this with Grid, and/or add to app as a seperate component. 
@@ -67,7 +67,6 @@ class MultiClassGrid extends Component {
         this.loadImageDir();
 
         // Bind functions
-        this.saveLabels = this.saveLabels.bind(this);
         this.clearAll = this.clearAll.bind(this);
         this.selectImageDir = this.selectImageDir.bind(this);
         this.updateState = this.updateState.bind(this);
@@ -115,7 +114,7 @@ class MultiClassGrid extends Component {
         window.addEventListener("keydown", (e) => {
             if (e.ctrlKey && e.key === "s") {
                 e.preventDefault();
-                this.saveLabels();
+                saveLabels(window, this);
             }
 
             if (this.hover_image_id !== null && e.key === "b") {
@@ -172,25 +171,6 @@ class MultiClassGrid extends Component {
             ))
 
         }
-    }
-
-
-    /**
-     * Scrape the page for the current labels
-     * and prompt the user to specify where to save them.
-     * 
-     * @param {string} savename filename to save labels to
-     */
-    async saveLabels(savename = "") {
-        this.updateLocalLabels();
-        let params = {
-            labels: this.labels,
-            // Start one folder up from the current directory
-            path: getOneFolderUp(this.src),
-            savename: savename,
-        }
-
-        await this.QASM.call_backend(window, function_names.SAVE_JSON_FILE, params);
     }
 
 
@@ -575,7 +555,7 @@ class MultiClassGrid extends Component {
                         {this.label_loadnames === undefined &&
                             /* Hide normal save button when custom ones are present */
                             <button
-                                onClick={this.saveLabels}
+                                onClick={() => saveLabels(window, this)}
                                 className="button">
                                 Save Labels
                             </button>
@@ -588,7 +568,7 @@ class MultiClassGrid extends Component {
                         <div className="label-filename-container">
                             {this.label_savenames !== undefined && Object.keys(this.label_savenames).map((button_name, i) => (
                                 <button
-                                    onClick={() => this.saveLabels(this.label_savenames[button_name])}
+                                    onClick={() => saveLabels(window, this, this.label_savenames[button_name])}
                                     className="button"
                                     key={button_name}>
                                     {"Save " + button_name + " Labels"}

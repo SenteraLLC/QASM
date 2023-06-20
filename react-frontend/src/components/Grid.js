@@ -12,7 +12,7 @@ import sparse from "../icons/sparse.svg";
 import field_edge from "../icons/field_edge.svg";
 import "../css/Grid.css";
 const { update_all_overlays } =  require("../QASM/utils.js");
-const { autoScroll, changeGridWidth, toggleImageHidden, changeImage, loadImages, initLabels, loadLabels } =  require("../QASM/grid_utils.js");
+const { autoScroll, changeGridWidth, toggleImageHidden, changeImage, loadImages, initLabels, loadLabels, saveLabels } =  require("../QASM/grid_utils.js");
 const { function_names } = require("../../public/electron_constants.js");
 
 const COLORS = {
@@ -98,7 +98,6 @@ class Grid extends Component {
         loadImages(window, this);
 
         // Bind functions
-        this.saveLabels          = this.saveLabels.bind(this);
         this.clearAll            = this.clearAll.bind(this);
         this.selectImageDir      = this.selectImageDir.bind(this);
         this.updateState         = this.updateState.bind(this);
@@ -143,7 +142,7 @@ class Grid extends Component {
         window.addEventListener("keydown", (e) => {
             if (e.ctrlKey && e.key === "s") {
                 e.preventDefault();
-                this.saveLabels();
+                saveLabels(window, this);
             }
 
             if (this.hover_image_id !== null && e.key === "b") {
@@ -237,22 +236,6 @@ class Grid extends Component {
                 "class": class_name
             }
         }
-    }
-
-
-    /**
-     * Scrape the page for the current labels
-     * and prompt the user to specify where to save them.
-     */
-    async saveLabels() {
-        this.updateLocalLabels();
-
-        let params = {
-            labels: this.labels,
-            path: this.src,
-        }
-
-        await this.QASM.call_backend(window, function_names.SAVE_JSON_FILE, params);
     }
 
     
@@ -438,7 +421,7 @@ class Grid extends Component {
                             Load Labels
                         </button>
                         <button 
-                            onClick={this.saveLabels} 
+                            onClick={() => saveLabels(window, this)} 
                             className="button">
                             Save Labels
                         </button>
