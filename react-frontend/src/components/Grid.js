@@ -12,7 +12,7 @@ import sparse from "../icons/sparse.svg";
 import field_edge from "../icons/field_edge.svg";
 import "../css/Grid.css";
 const { update_all_overlays } =  require("../QASM/utils.js");
-const { autoScroll, changeGridWidth, toggleImageHidden, changeImage, loadImages, initLabels, loadLabels, saveLabels } =  require("../QASM/grid_utils.js");
+const { autoScroll, changeGridWidth, toggleImageHidden, changeImage, loadImages, initLabels, loadLabels, saveLabels, clearAllLabels } =  require("../QASM/grid_utils.js");
 const { function_names } = require("../../public/electron_constants.js");
 
 const COLORS = {
@@ -98,7 +98,6 @@ class Grid extends Component {
         loadImages(window, this);
 
         // Bind functions
-        this.clearAll            = this.clearAll.bind(this);
         this.selectImageDir      = this.selectImageDir.bind(this);
         this.updateState         = this.updateState.bind(this);
         this.updateLocalLabels   = this.updateLocalLabels.bind(this);
@@ -236,16 +235,6 @@ class Grid extends Component {
                 "class": class_name
             }
         }
-    }
-
-    
-    /**
-     * Clear all the current labels
-     */
-    clearAll() {
-        // Set all classes to the default
-        this.labels = initLabels(this);
-        this.updateState();
     }
 
 
@@ -426,7 +415,7 @@ class Grid extends Component {
                             Save Labels
                         </button>
                         <button 
-                            onClick={this.clearAll} 
+                            onClick={() => clearAllLabels(this)} 
                             className="button">
                             Clear All Labels
                         </button>
