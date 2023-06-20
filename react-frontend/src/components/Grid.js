@@ -12,7 +12,7 @@ import sparse from "../icons/sparse.svg";
 import field_edge from "../icons/field_edge.svg";
 import "../css/Grid.css";
 const { update_all_overlays } =  require("../QASM/utils.js");
-const { autoScroll, changeGridWidth, toggleImageHidden, changeImage, loadImages } =  require("../QASM/grid_utils.js");
+const { autoScroll, changeGridWidth, toggleImageHidden, changeImage, loadImages, initLabels } =  require("../QASM/grid_utils.js");
 const { function_names } = require("../../public/electron_constants.js");
 
 const COLORS = {
@@ -79,7 +79,7 @@ class Grid extends Component {
         this.src          = props.src
         this.class_names  = this.classes.map(class_info => class_info.class_name)
         
-        this.labels = this.initLabels();
+        this.labels = initLabels(this);
         this.state = {
             labels: this.labels,
             src: this.src,
@@ -96,7 +96,6 @@ class Grid extends Component {
         loadImages(window, this);
 
         // Bind functions
-        this.initLabels          = this.initLabels.bind(this);
         this.saveLabels          = this.saveLabels.bind(this);
         this.loadLabels          = this.loadLabels.bind(this);
         this.clearAll            = this.clearAll.bind(this);
@@ -229,7 +228,7 @@ class Grid extends Component {
      */
     updateLocalLabels() {
         // Get state of each GridImage
-        this.labels = this.initLabels(); // Gen new object w/datetime
+        this.labels = initLabels(this); // Gen new object w/datetime
         for (let i=0; i < this.image_names.length; i++) {
             let image_name = this.image_names[i];
             let class_name = document.getElementById(image_name).classList[1];
@@ -237,37 +236,6 @@ class Grid extends Component {
                 "class": class_name
             }
         }
-    }
-
-
-    /**
-     * Create a new labels object with current metadata
-     * (datetime, app name, app version), or add these 
-     * fields to an existing labels object if they don't exist 
-     * already.
-     * 
-     * @param {Object} labels existing labels object
-     * @returns {Object} labels
-     */
-    initLabels(labels = null) {
-        if (labels === null) {
-            // Create new labels
-            labels = {}
-        }
-        
-        if (!("name" in labels)) {
-            labels["name"] = this.QASM.config["name"];
-        }
-
-        if (!("version" in labels)) {
-            labels["version"] = this.QASM.config["version"];
-        }
-
-        if (!("datetime" in labels)) {
-            labels["datetime"] = new Date().toLocaleString();
-        }
-
-        return labels;
     }
 
 
@@ -297,7 +265,7 @@ class Grid extends Component {
         }
         // Load in previous labels
         let labels = await this.QASM.call_backend(window, function_names.LOAD_LABELS, params);
-        this.labels = this.initLabels(labels);
+        this.labels = initLabels(this, labels);
         console.log(this.labels);
         
         if (Object.keys(this.labels).length > 0) {
@@ -313,7 +281,7 @@ class Grid extends Component {
      */
     clearAll() {
         // Set all classes to the default
-        this.labels = this.initLabels();
+        this.labels = initLabels(this);
         this.updateState();
     }
 
