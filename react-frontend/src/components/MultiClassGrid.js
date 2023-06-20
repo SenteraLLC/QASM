@@ -5,58 +5,14 @@ import Dropdown from './Dropdown.js';
 import "../css/Grid.css";
 // import "../css/MultiClassGrid.css";
 const { update_all_overlays } = require("../QASM/utils.js");
-const { updateState, initEventListeners, changeGridWidth, toggleImageHidden, initLabels, loadLabels, saveLabels, clearAllLabels, addImageLayer, getImageStackByName, loadImageDir, selectImageDir, loadNextDir } = require("../QASM/grid_utils.js");
-
-// TODO: Combine this with Grid, and/or add to app as a seperate component. 
-// TODO: Move functions common w/Grid to a utils file
-
-const FILTER_MODES = {
-    "no_filter": "no filter",
-    // "group_by_class": "group by class", // Not supported for multi-class
-}
+const { FILTER_MODES, updateState, initProps, initEventListeners, changeGridWidth, toggleImageHidden, initLabels, loadLabels, saveLabels, clearAllLabels, addImageLayer, getImageStackByName, loadImageDir, selectImageDir, loadNextDir } = require("../QASM/grid_utils.js");
 
 class MultiClassGrid extends Component {
-    images = {};
-    image_names = [];
-    grid_width = 1;
-    grid_image_names = [];
-    src = "";
-    classes = {}; // {<string class_type>: {"selector_type": <string>, "class_values": [<string>], "default": <string> }}
-    class_types = [];
-    component_updater = 0;
-    image_stack = [];
-    hover_image_id = null;
-    images_shown = false;
-    update_success = false;
-    allow_next_scroll = false;
-    filtered_class_type = FILTER_MODES.no_filter; // high level 
-    filtered_class_values = []; // selected value within a class type
-    filtered_class_checkbox_values = []; // checkbox values for the current filtered class values
-    label_savenames = undefined; // {<string button_name>: <string savename>, ...}
-    label_loadnames = undefined; // [<string loadname1>, <string loadname2>, ...]
-    image_layer_folder_names = undefined; // [Array[<string>], ...]
-    // Store the folder names in all the directories we've loaded
-    next_dir_cache = {}; // [<string root_folder_name>: Array[<string foldernames>]]
-
     constructor(props) {
         super(props);
 
         // Initialize props
-        this.QASM = props.QASM;
-        this.grid_width = props.grid_width || 1;
-        this.classes = props.classes;
-        this.label_savenames = props.label_savenames || undefined;
-        this.label_loadnames = props.label_loadnames || undefined;
-        this.autoload_labels_on_dir_select = props.autoload_labels_on_dir_select || false;
-        this.image_layer_folder_names = props.image_layer_folder_names || undefined;
-
-        this.class_types = Object.keys(this.classes); // For easy access
-        this.labels = initLabels(this);
-        this.state = {
-            labels: this.labels,
-            src: this.src,
-        };
-
+        initProps(this, props);
 
         // Attach event listeners
         initEventListeners(window, document, this);
@@ -69,6 +25,7 @@ class MultiClassGrid extends Component {
         this.updateLocalLabels = this.updateLocalLabels.bind(this);
         this.changeAutoLoadOnDirSelect = this.changeAutoLoadOnDirSelect.bind(this);
         this.filterImages = this.filterImages.bind(this);
+        this.changeGridFilter = this.changeGridFilter.bind(this);
     }
 
 

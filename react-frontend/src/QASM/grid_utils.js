@@ -3,6 +3,11 @@ import $ from "jquery";
 const { update_all_overlays, getOneFolderUp, getCurrentFolder } = require("./utils.js");
 const { function_names } = require("../../public/electron_constants.js");
 
+export const FILTER_MODES = {
+    "no_filter": "no filter",
+    // "group_by_class": "group by class", // TODO: implement
+}
+
 // TODO: keyboard shortcuts in config and loaded somewhere
 
 /**
@@ -19,6 +24,60 @@ export function updateState(component) {
 
     // Force page to update
     component.component_updater++;
+}
+
+
+/**
+ * Initialize the component props and state
+ * 
+ * @param {*} component component that called this function: pass in `this`
+ * @param {*} props component props
+ */
+export function initProps(component, props) {
+    component.images = {};
+    component.image_names = [];
+    component.class_types = [];
+    component.component_updater = 0;
+    component.image_stack = [];
+    component.hover_image_id = null;
+    component.images_shown = false;
+    component.update_success = false;
+    component.allow_next_scroll = false;
+    component.filtered_class_type = FILTER_MODES.no_filter; // high level 
+    component.filtered_class_values = []; // selected value within a class type
+    component.filtered_class_checkbox_values = []; // checkbox values for the current filtered class values
+    // Store the folder names in all the directories we've loaded
+    component.next_dir_cache = {}; // [<string root_folder_name>: Array[<string foldernames>]]
+
+    // Read props
+    component.QASM = props.QASM;
+    component.grid_width = props.grid_width || 1;
+    component.classes = props.classes; // {<string class_type>: {"selector_type": <string>, "class_values": [<string>], "default": <string> }}
+    component.label_savenames = props.label_savenames || undefined; // {<string button_name>: <string savename>, ...}
+    component.label_loadnames = props.label_loadnames || undefined; // [<string loadname1>, <string loadname2>, ...]
+    component.autoload_labels_on_dir_select = props.autoload_labels_on_dir_select || false;
+    component.image_layer_folder_names = props.image_layer_folder_names || undefined; // [Array[<string>], ...]
+    component.labels = initLabels(component);
+
+    // Initialize class_names (normal grid)
+    try {
+        component.class_names = component.classes.map(class_info => class_info.class_name)
+    } catch (error) {
+        console.log("WARNING: class_info not found in classes ", component.classes);
+    }
+
+    // Initialize class_types (multi-class grid)
+    try {
+        component.class_types = Object.keys(component.classes);
+    } catch (error) {
+        console.log("WARNING: `classes` are not in the expected structure: ", component.classes);
+    }
+    
+    // Initialize state
+    component.state = {
+        labels: component.labels,
+        src: component.src,
+    };
 }
 
 
