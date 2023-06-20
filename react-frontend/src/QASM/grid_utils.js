@@ -212,6 +212,22 @@ export async function loadLabels(window, component, loadnames = undefined) {
 
 
 /**
+ * Try and auto-load labels if we have loadnames. Requires component.label_loadnames to be defined.
+ * 
+ * @param {*} window window object
+ * @param {*} component component that called this function: pass in `this`
+ */
+export async function autoLoadLabels(window, component) {
+    if (component.label_loadnames !== undefined) {
+        // Wait for previous window to close
+        setTimeout(() => {
+            loadLabels(window, component, component.label_loadnames);
+        }, 1000)
+    }
+}
+
+
+/**
  * Scrape the page for the current labels
  * and prompt the user to specify where to save them.
  * 
