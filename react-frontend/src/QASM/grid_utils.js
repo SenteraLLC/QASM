@@ -188,6 +188,44 @@ export async function selectImageDir(window, component) {
 
 
 /**
+ * Load the next directory
+ * TODO: generalize for arbitrary directory structure
+ * Requires component.next_dir_cache to be defined.
+ * 
+ * @param {*} window window object
+ * @param {*} component component that called this function: pass in `this`  
+ */
+export async function loadNextDir(window, component) {
+    let current_folder = getCurrentFolder(component.src); // Current folder name, without full path
+    let current_dir = getOneFolderUp(component.src); // One folder up
+    let root_dir = getOneFolderUp(current_dir); // Two folders up
+
+    let folders;
+    if (root_dir in component.next_dir_cache) {
+        // If we have folder info cached, use it
+        folders = component.next_dir_cache[root_dir]
+    } else {
+        // Else get all folders in root_dir and add to cache
+        let response = await component.QASM.call_backend(window, function_names.OPEN_S3_FOLDER, root_dir);
+        folders = response.folders.sort();
+        component.next_dir_cache[root_dir] = folders;
+    }
+    
+
+    // Get index of current folder
+    let current_folder_idx = folders.indexOf(current_dir);
+    if (current_folder_idx + 1 === folders.length) {
+        alert("No more directories to load.");
+        return;
+    } else {
+        // Start at the next dir in root_dir, with the same current image folder name
+        component.src = folders[current_folder_idx + 1] + current_folder + "/";
+        await loadImageDir(window, component);
+    }
+}
+
+
+/**
      * Create a new labels object with current metadata
      * (datetime, app name, app version), or add these 
      * fields to an existing labels object if they don't exist 

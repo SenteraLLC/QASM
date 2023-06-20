@@ -5,7 +5,7 @@ import Dropdown from './Dropdown.js';
 import "../css/Grid.css";
 // import "../css/MultiClassGrid.css";
 const { update_all_overlays, getOneFolderUp, getCurrentFolder } = require("../QASM/utils.js");
-const { autoScroll, changeGridWidth, toggleImageHidden, changeImage, initLabels, loadLabels, saveLabels, clearAllLabels, addImageLayer, getImageStackByName, loadImageDir, selectImageDir } = require("../QASM/grid_utils.js");
+const { autoScroll, changeGridWidth, toggleImageHidden, changeImage, initLabels, loadLabels, saveLabels, clearAllLabels, addImageLayer, getImageStackByName, loadImageDir, selectImageDir, loadNextDir } = require("../QASM/grid_utils.js");
 const { function_names } = require("../../public/electron_constants.js");
 
 // TODO: Combine this with Grid, and/or add to app as a seperate component. 
@@ -71,7 +71,6 @@ class MultiClassGrid extends Component {
         this.updateLocalLabels = this.updateLocalLabels.bind(this);
         this.initEventListeners = this.initEventListeners.bind(this);
         this.changeAutoLoadOnDirSelect = this.changeAutoLoadOnDirSelect.bind(this);
-        this.loadNextDir = this.loadNextDir.bind(this);
         this.filterImages = this.filterImages.bind(this);
     }
 
@@ -160,41 +159,6 @@ class MultiClassGrid extends Component {
                 )
             ))
 
-        }
-    }
-
-
-    /**
-     * Load the next directory
-     *  
-     */
-    async loadNextDir() {
-        let current_folder = getCurrentFolder(this.src); // Current folder name, without full path
-        let current_dir = getOneFolderUp(this.src); // One folder up
-        let root_dir = getOneFolderUp(getOneFolderUp(this.src)); // Two folders up
-
-        let folders;
-        if (root_dir in this.next_dir_cache) {
-            // If we have folder info cached, use it
-            folders = this.next_dir_cache[root_dir]
-        } else {
-            // Else get all folders in root_dir and add to cache
-            let response = await this.QASM.call_backend(window, function_names.OPEN_S3_FOLDER, root_dir);
-            folders = response.folders.sort();
-            this.next_dir_cache[root_dir] = folders;
-            console.log("Caching folders in ", root_dir);
-        }
-        
-
-        // Get index of current folder
-        let current_folder_idx = folders.indexOf(current_dir);
-        if (current_folder_idx + 1 === folders.length) {
-            alert("No more directories to load.");
-            return;
-        } else {
-            // Start at the next dir in root_dir, with the same current image folder name
-            this.src = folders[current_folder_idx + 1] + current_folder + "/";
-            await loadImageDir(window, this);
         }
     }
 
@@ -348,7 +312,7 @@ class MultiClassGrid extends Component {
                             Select Directory
                         </button>
                         <button
-                            onClick={this.loadNextDir}
+                            onClick={() => loadNextDir(window, this)}
                             className="button">
                             Next Directory
                         </button>
