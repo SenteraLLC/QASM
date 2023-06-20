@@ -12,7 +12,7 @@ import sparse from "../icons/sparse.svg";
 import field_edge from "../icons/field_edge.svg";
 import "../css/Grid.css";
 const { update_all_overlays } =  require("../QASM/utils.js");
-const { autoScroll, changeGridWidth, toggleImageHidden, changeImage, loadImages, initLabels } =  require("../QASM/grid_utils.js");
+const { autoScroll, changeGridWidth, toggleImageHidden, changeImage, loadImages, initLabels, loadLabels } =  require("../QASM/grid_utils.js");
 const { function_names } = require("../../public/electron_constants.js");
 
 const COLORS = {
@@ -68,16 +68,18 @@ class Grid extends Component {
         {"class_name": "plant", "svg_overlay": null}, 
         {"class_name": "rogue", "svg_overlay": "x_overlay"},
     ];
+    label_loadnames = undefined; // [<string loadname1>, <string loadname2>, ...]
 
     constructor(props) {
         super(props);
         
         // Initialize props
-        this.QASM         = props.QASM
-        this.grid_width   = props.grid_width || 2;
-        this.classes      = props.classes    || this.default_classes
-        this.src          = props.src
-        this.class_names  = this.classes.map(class_info => class_info.class_name)
+        this.QASM            = props.QASM
+        this.grid_width      = props.grid_width || 2;
+        this.classes         = props.classes    || this.default_classes
+        this.src             = props.src
+        this.class_names     = this.classes.map(class_info => class_info.class_name)
+        this.label_loadnames = props.label_loadnames || undefined;
         
         this.labels = initLabels(this);
         this.state = {
@@ -97,7 +99,6 @@ class Grid extends Component {
 
         // Bind functions
         this.saveLabels          = this.saveLabels.bind(this);
-        this.loadLabels          = this.loadLabels.bind(this);
         this.clearAll            = this.clearAll.bind(this);
         this.selectImageDir      = this.selectImageDir.bind(this);
         this.updateState         = this.updateState.bind(this);
@@ -252,27 +253,6 @@ class Grid extends Component {
         }
 
         await this.QASM.call_backend(window, function_names.SAVE_JSON_FILE, params);
-    }
-
-
-    /**
-     * Prompt user to select a file with labels
-     * and load them in.
-     */
-    async loadLabels() {
-        let params = {
-            path: this.src,
-        }
-        // Load in previous labels
-        let labels = await this.QASM.call_backend(window, function_names.LOAD_LABELS, params);
-        this.labels = initLabels(this, labels);
-        console.log(this.labels);
-        
-        if (Object.keys(this.labels).length > 0) {
-            this.updateState(); // Update state to rerender page
-        } else {
-            console.log("Prevented loading empty labels.");
-        }
     }
 
     
@@ -453,7 +433,7 @@ class Grid extends Component {
                             </input>
                         </div>
                         <button 
-                            onClick={this.loadLabels} 
+                            onClick={() => loadLabels(window, this, this.label_loadnames)} 
                             className="button">
                             Load Labels
                         </button>

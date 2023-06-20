@@ -5,7 +5,7 @@ import Dropdown from './Dropdown.js';
 import "../css/Grid.css";
 // import "../css/MultiClassGrid.css";
 const { update_all_overlays, getOneFolderUp, getCurrentFolder } = require("../QASM/utils.js");
-const { autoScroll, changeGridWidth, toggleImageHidden, changeImage, loadImages, initLabels } = require("../QASM/grid_utils.js");
+const { autoScroll, changeGridWidth, toggleImageHidden, changeImage, loadImages, initLabels, loadLabels } = require("../QASM/grid_utils.js");
 const { function_names } = require("../../public/electron_constants.js");
 
 // TODO: Combine this with Grid, and/or add to app as a seperate component. 
@@ -68,7 +68,6 @@ class MultiClassGrid extends Component {
 
         // Bind functions
         this.saveLabels = this.saveLabels.bind(this);
-        this.loadLabels = this.loadLabels.bind(this);
         this.clearAll = this.clearAll.bind(this);
         this.selectImageDir = this.selectImageDir.bind(this);
         this.updateState = this.updateState.bind(this);
@@ -196,38 +195,13 @@ class MultiClassGrid extends Component {
 
 
     /**
-     * Prompt user to select a file with labels
-     * and load them in.
-     */
-    async loadLabels(loadnames = undefined) {
-        let params = {
-            // Start one folder up from the current directory
-            path: getOneFolderUp(this.src),
-            // Try and load a specific file if loadnames is defined
-            loadnames: this.label_loadnames,
-        }
-
-        // Load in previous labels
-        let labels = await this.QASM.call_backend(window, function_names.LOAD_LABELS, params);
-        this.labels = initLabels(this, labels);
-        console.log(this.labels);
-
-        if (Object.keys(this.labels).length > 0) {
-            this.updateState(); // Update state to rerender page
-        } else {
-            console.log("Prevented loading empty labels.");
-        }
-    }
-
-
-    /**
      * Try and auto-load labels if we have loadnames
      */
     async autoLoadLabels() {
         if (this.label_loadnames !== undefined) {
             // Wait for previous window to close
             setTimeout(() => {
-                this.loadLabels();
+                loadLabels(window, this, this.label_loadnames);
             }, 1000)
         }
     }
@@ -594,7 +568,7 @@ class MultiClassGrid extends Component {
                             ></input>
                         </div>
                         <button
-                            onClick={this.loadLabels}
+                            onClick={() => loadLabels(window, this, this.label_loadnames)}
                             className="button">
                             Load Labels
                         </button>
