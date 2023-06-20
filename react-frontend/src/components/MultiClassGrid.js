@@ -5,7 +5,7 @@ import Dropdown from './Dropdown.js';
 import "../css/Grid.css";
 // import "../css/MultiClassGrid.css";
 const { update_all_overlays, getOneFolderUp, getCurrentFolder } = require("../QASM/utils.js");
-const { autoScroll, changeGridWidth, toggleImageHidden, changeImage, loadImages, initLabels, loadLabels, saveLabels, autoLoadLabels, clearAllLabels, addImageLayer, getImageStackByName } = require("../QASM/grid_utils.js");
+const { autoScroll, changeGridWidth, toggleImageHidden, changeImage, initLabels, loadLabels, saveLabels, clearAllLabels, addImageLayer, getImageStackByName, loadImageDir, selectImageDir } = require("../QASM/grid_utils.js");
 const { function_names } = require("../../public/electron_constants.js");
 
 // TODO: Combine this with Grid, and/or add to app as a seperate component. 
@@ -64,16 +64,13 @@ class MultiClassGrid extends Component {
 
         // Hack for dev
         this.src = "Foundation Field 2 (Dennis Zuber)/Videos/7-08/Row 1, 16/3840x2160@120fps/Pass A/DS Splits/DS 000/bottom Raw Images/"
-        this.loadImageDir();
+        loadImageDir(window, this);
 
         // Bind functions
-        this.selectImageDir = this.selectImageDir.bind(this);
         this.updateState = this.updateState.bind(this);
         this.updateLocalLabels = this.updateLocalLabels.bind(this);
         this.initEventListeners = this.initEventListeners.bind(this);
         this.changeAutoLoadOnDirSelect = this.changeAutoLoadOnDirSelect.bind(this);
-        this.autoLoadImageLayers = this.autoLoadImageLayers.bind(this);
-        this.loadImageDir = this.loadImageDir.bind(this);
         this.loadNextDir = this.loadNextDir.bind(this);
         this.filterImages = this.filterImages.bind(this);
     }
@@ -168,38 +165,6 @@ class MultiClassGrid extends Component {
 
 
     /**
-     * Open a directory selection dialog and 
-     * load in all the images.
-     */
-    async selectImageDir() {
-        let dir_path = await this.QASM.call_backend(window, function_names.OPEN_DIR, this.src);
-        if (dir_path !== undefined) {
-            this.src = dir_path;
-            await this.loadImageDir();
-        } else {
-            console.log("Prevented loading invalid directory.");
-        }
-    }
-
-
-    /**
-     * Load images from the current source directory,
-     * and try and autoload labels and image layers.
-     */
-    async loadImageDir() {
-        if (this.src !== undefined) {
-            this.image_stack = []; // Clear image stack on new directory load
-            if (this.autoload_labels_on_dir_select) {
-                autoLoadLabels(window, this); // Try and autoload labels
-            }
-            this.autoLoadImageLayers(); // Try and autoload image layers
-            await loadImages(window, this); // Load images
-            this.updateState();
-        }
-    }
-
-
-    /**
      * Load the next directory
      *  
      */
@@ -229,47 +194,7 @@ class MultiClassGrid extends Component {
         } else {
             // Start at the next dir in root_dir, with the same current image folder name
             this.src = folders[current_folder_idx + 1] + current_folder + "/";
-            await this.loadImageDir();
-        }
-    }
-
-
-    /**
-     * Try and auto-load image layers if we have image_layer_folder_names
-     */
-    async autoLoadImageLayers() {
-        if (this.image_layer_folder_names !== undefined) {
-            let root_dir = getOneFolderUp(this.src);
-            let current_folder = getCurrentFolder(this.src)
-            let n_layers = this.image_layer_folder_names[0].length; // Number of layers to load
-            for (let folder_name_group of this.image_layer_folder_names) {
-                // Try each group of folder names in order, skipping
-                // any that result in empty layers
-                for (let folder_name of folder_name_group) {
-                    // Don't add current folder as a layer
-                    if (folder_name === current_folder) {
-                        n_layers--; // We need one fewer layer
-                    } else {
-                        // Load images and add them to the image stack
-                        let image_layer = await this.QASM.call_backend(window, function_names.LOAD_IMAGES, root_dir + folder_name + "/");
-                        if (Object.keys(image_layer).length === 0) {
-                            console.log("Prevent adding empty layer, skipping to next folder group.");
-                            this.image_stack = []; // Clear image stack to allow next group to try and load
-                            n_layers = this.image_layer_folder_names[0].length; // Reset n_layers
-                            break;
-                        } else {
-                            this.image_stack.push(image_layer);
-                        }
-                        console.log(this.image_stack);
-                    }
-                }
-                // If we have the correct number of layers, we're done
-                if (this.image_stack.length === n_layers) {
-                    break;
-                }
-            }
-
-            this.updateState();
+            await loadImageDir(window, this);
         }
     }
 
@@ -364,7 +289,7 @@ class MultiClassGrid extends Component {
                     }
                     <div className={this.images_shown ? "hidden" : "controls-container"}>
                         <button
-                            onClick={this.selectImageDir}
+                            onClick={() => selectImageDir(window, this)}
                             className="button">
                             Select Directory
                         </button>
@@ -418,7 +343,7 @@ class MultiClassGrid extends Component {
                     </div>
                     <div className={this.images_shown ? "controls-container" : "hidden"}>
                         <button
-                            onClick={this.selectImageDir}
+                            onClick={() => selectImageDir(window, this)}
                             className="button">
                             Select Directory
                         </button>

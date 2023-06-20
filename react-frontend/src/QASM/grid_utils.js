@@ -1,6 +1,6 @@
 // ####GRID UTILS####
 import $ from "jquery";
-const { getOneFolderUp } = require("./utils.js");
+const { getOneFolderUp, getCurrentFolder } = require("./utils.js");
 const { function_names } = require("../../public/electron_constants.js");
 
 // TODO: keyboard shortcuts in config and loaded somewhere
@@ -116,18 +116,15 @@ export function changeImage(document, hover_image_id) {
 
         // Change currently shown image to hidden
         layer.classList.add("hidden");
-        console.log("Hiding " + layer.id)
 
         // Change next hidden image to shown
         if (idx + 1 === layers.length - 1) {
             // Last index is the class-overlay
             // If we're at the last layer, turn on the og image
             layers[0].classList.remove("hidden");
-            console.log("Showing " + layers[0].id)
         } else {
             // Un-hide next image
             layers[idx + 1].classList.remove("hidden");
-            console.log("Showing " + layers[idx + 1].id)
         }
         // Done
         break;
@@ -147,6 +144,46 @@ export async function loadImages(window, component) {
     clearAllLabels(component);
     // Set the images shown to true now that the images are shown
     component.images_shown = true;
+}
+
+
+/**
+ * Load images from the current source directory,
+ * and try and autoload labels and image layers.
+ * Autoload requires autoload_labels_on_dir_select, component.label_loadnames,
+ * and component.image_layer_loadnames to be defined.
+ * 
+ * @param {*} window window object
+ * @param {*} component component that called this function: pass in `this`
+ */
+export async function loadImageDir(window, component) {
+    if (component.src !== undefined) {
+        component.image_stack = []; // Clear image stack on new directory load
+        if (component.autoload_labels_on_dir_select !== undefined && component.autoload_labels_on_dir_select) {
+            autoLoadLabels(window, component); // Try and autoload labels
+        }
+        autoLoadImageLayers(window, component); // Try and autoload image layers
+        await loadImages(window, component); // Load images
+        component.updateState();
+    }
+}
+
+
+/**
+ * Open a directory selection dialog and 
+ * load in all the images.
+ * 
+ * @param {*} window window object
+ * @param {*} component component that called this function: pass in `this`
+ */
+export async function selectImageDir(window, component) {
+    let dir_path = await component.QASM.call_backend(window, function_names.OPEN_DIR, component.src);
+    if (dir_path !== undefined) {
+        component.src = dir_path;
+        await loadImageDir(window, component);
+    } else {
+        console.log("Prevented loading invalid directory.");
+    }
 }
 
 
@@ -300,4 +337,47 @@ export function getImageStackByName(component, image_name) {
         }
     }
     return (image_stack);
+}
+
+
+/**
+ * Try and auto-load image layers if we have image_layer_folder_names
+ * 
+ * @param {*} window window object
+ * @param {*} component component that called this function: pass in `this`
+ */
+export async function autoLoadImageLayers(window, component) {
+    if (component.image_layer_folder_names !== undefined) {
+        let root_dir = getOneFolderUp(component.src);
+        let current_folder = getCurrentFolder(component.src)
+        let n_layers = component.image_layer_folder_names[0].length; // Number of layers to load
+        for (let folder_name_group of component.image_layer_folder_names) {
+            // Try each group of folder names in order, skipping
+            // any that result in empty layers
+            for (let folder_name of folder_name_group) {
+                // Don't add current folder as a layer
+                if (folder_name === current_folder) {
+                    n_layers--; // We need one fewer layer
+                } else {
+                    // Load images and add them to the image stack
+                    let image_layer = await component.QASM.call_backend(window, function_names.LOAD_IMAGES, root_dir + folder_name + "/");
+                    if (Object.keys(image_layer).length === 0) {
+                        console.log("Prevent adding empty layer, skipping to next folder group.");
+                        component.image_stack = []; // Clear image stack to allow next group to try and load
+                        n_layers = component.image_layer_folder_names[0].length; // Reset n_layers
+                        break;
+                    } else {
+                        component.image_stack.push(image_layer);
+                    }
+                    console.log(component.image_stack);
+                }
+            }
+            // If we have the correct number of layers, we're done
+            if (component.image_stack.length === n_layers) {
+                break;
+            }
+        }
+
+        component.updateState();
+    }
 }
