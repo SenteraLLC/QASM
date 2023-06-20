@@ -12,7 +12,7 @@ import sparse from "../icons/sparse.svg";
 import field_edge from "../icons/field_edge.svg";
 import "../css/Grid.css";
 const { update_all_overlays } =  require("../QASM/utils.js");
-const { autoScroll, changeGridWidth, toggleImageHidden, changeImage, loadImages, initLabels, loadLabels, saveLabels, clearAllLabels, addImageLayer, getImageStackByName, selectImageDir} =  require("../QASM/grid_utils.js");
+const { initEventListeners, changeGridWidth, toggleImageHidden, loadImages, initLabels, loadLabels, saveLabels, clearAllLabels, addImageLayer, getImageStackByName, selectImageDir} =  require("../QASM/grid_utils.js");
 
 const COLORS = {
     "default": "default",
@@ -92,7 +92,7 @@ class Grid extends Component {
         this.initOverlays();
 
         // Attach event listeners
-        this.initEventListeners();
+        initEventListeners(window, document, this);
 
         // Hack for dev
         this.src = "Foundation Field 2 (Dennis Zuber)/Videos/7-08/Row 1, 16/3840x2160@120fps/Pass A/DS Splits/DS 000/bottom Raw Images/"
@@ -102,55 +102,7 @@ class Grid extends Component {
         this.updateState         = this.updateState.bind(this);
         this.updateLocalLabels   = this.updateLocalLabels.bind(this);
         this.initOverlays        = this.initOverlays.bind(this);
-        this.initEventListeners  = this.initEventListeners.bind(this);
         this.changeGridFilter    = this.changeGridFilter.bind(this);
-    }
-
-
-    /**
-     * Attach event listeners to the page.
-     */
-    initEventListeners() {
-        // Update the overlays whenever the page size is changed
-        window.addEventListener("resize", update_all_overlays);
-
-        // Update which image is currently being hovered
-        document.addEventListener("mousemove", (e) => {
-            if (e.target.className.includes("hover-target")) {
-                // Every single hover-target will be inside of a div that's 
-                // inside of a div, that has the id that we're trying to select.
-                this.hover_image_id = e.target.parentNode.parentNode.id;
-            } 
-            else {
-                this.hover_image_id = null;
-            }
-        });
-
-        // Prevent weird behavior when scrolling
-        window.addEventListener("scroll", () => {
-            if (this.allow_next_scroll) {
-                this.allow_next_scroll = false;
-            } else {
-                this.hover_image_id = null;
-            }
-        }); 
-
-        // Keybinds
-        window.addEventListener("keydown", (e) => {
-            if (e.ctrlKey && e.key === "s") {
-                e.preventDefault();
-                saveLabels(window, this);
-            }
-
-            if (this.hover_image_id !== null && e.key === "b") {
-                changeImage(document, this.hover_image_id);
-            }
-
-            if (this.hover_image_id !== null ) {
-                // n for next, h for previous
-                autoScroll(this, this.hover_image_id, e.key);
-            }
-        });
     }
 
 
