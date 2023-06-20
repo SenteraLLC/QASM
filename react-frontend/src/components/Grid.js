@@ -12,7 +12,7 @@ import sparse from "../icons/sparse.svg";
 import field_edge from "../icons/field_edge.svg";
 import "../css/Grid.css";
 const { update_all_overlays } =  require("../QASM/utils.js");
-const { autoScroll, changeGridWidth, toggleImageHidden, changeImage } =  require("../QASM/grid_utils.js");
+const { autoScroll, changeGridWidth, toggleImageHidden, changeImage, loadImages } =  require("../QASM/grid_utils.js");
 const { function_names } = require("../../public/electron_constants.js");
 
 const COLORS = {
@@ -93,10 +93,9 @@ class Grid extends Component {
 
         // Hack for dev
         this.src = "Foundation Field 2 (Dennis Zuber)/Videos/7-08/Row 1, 16/3840x2160@120fps/Pass A/DS Splits/DS 000/bottom Raw Images/"
-        this.loadImages();
+        loadImages(window, this);
 
         // Bind functions
-        this.loadImages          = this.loadImages.bind(this);
         this.initLabels          = this.initLabels.bind(this);
         this.saveLabels          = this.saveLabels.bind(this);
         this.loadLabels          = this.loadLabels.bind(this);
@@ -223,19 +222,6 @@ class Grid extends Component {
         });
         this.component_updater++;
     }
-
-
-    /**
-     * Load images from the current source directory
-     */
-    async loadImages() {
-        console.log("Src: " + this.src);
-        this.images = await this.QASM.call_backend(window, function_names.LOAD_IMAGES, this.src);
-        this.image_names = Object.keys(this.images).sort();
-        this.clearAll();
-        // Set the images shown to true now that the images are shown
-        this.images_shown = true;
-    }
     
 
     /**
@@ -343,7 +329,7 @@ class Grid extends Component {
                 this.image_stack = []; // Clear image stack on new directory load
             }
             this.src = dir_path;
-            await this.loadImages();
+            await loadImages(window, this);
             
             this.updateState();
         } else {

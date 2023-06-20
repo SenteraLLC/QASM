@@ -5,7 +5,7 @@ import Dropdown from './Dropdown.js';
 import "../css/Grid.css";
 // import "../css/MultiClassGrid.css";
 const { update_all_overlays, getOneFolderUp, getCurrentFolder } = require("../QASM/utils.js");
-const { autoScroll, changeGridWidth, toggleImageHidden, changeImage } = require("../QASM/grid_utils.js");
+const { autoScroll, changeGridWidth, toggleImageHidden, changeImage, loadImages } = require("../QASM/grid_utils.js");
 const { function_names } = require("../../public/electron_constants.js");
 
 // TODO: Combine this with Grid, and/or add to app as a seperate component. 
@@ -67,7 +67,6 @@ class MultiClassGrid extends Component {
         this.loadImageDir();
 
         // Bind functions
-        this.loadImages = this.loadImages.bind(this);
         this.initLabels = this.initLabels.bind(this);
         this.saveLabels = this.saveLabels.bind(this);
         this.loadLabels = this.loadLabels.bind(this);
@@ -148,16 +147,7 @@ class MultiClassGrid extends Component {
     }
 
 
-    /**
-     * Load images from the current source directory
-     */
-    async loadImages() {
-        this.images = await this.QASM.call_backend(window, function_names.LOAD_IMAGES, this.src);
-        this.image_names = Object.keys(this.images).sort();
-        this.clearAll();
-        // Set the images shown to true now that the images are shown
-        this.images_shown = true;
-    }
+
 
 
     /**
@@ -311,7 +301,7 @@ class MultiClassGrid extends Component {
                 this.autoLoadLabels(); // Try and autoload labels
             }
             this.autoLoadImageLayers(); // Try and autoload image layers
-            await this.loadImages();
+            await loadImages(window, this); // Load images
             this.updateState();
         }
     }
