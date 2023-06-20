@@ -12,8 +12,7 @@ import sparse from "../icons/sparse.svg";
 import field_edge from "../icons/field_edge.svg";
 import "../css/Grid.css";
 const { update_all_overlays } =  require("../QASM/utils.js");
-const { autoScroll, changeGridWidth, toggleImageHidden, changeImage, loadImages, initLabels, loadLabels, saveLabels, clearAllLabels, addImageLayer, getImageStackByName } =  require("../QASM/grid_utils.js");
-const { function_names } = require("../../public/electron_constants.js");
+const { autoScroll, changeGridWidth, toggleImageHidden, changeImage, loadImages, initLabels, loadLabels, saveLabels, clearAllLabels, addImageLayer, getImageStackByName, selectImageDir} =  require("../QASM/grid_utils.js");
 
 const COLORS = {
     "default": "default",
@@ -81,6 +80,7 @@ class Grid extends Component {
         this.class_names     = this.classes.map(class_info => class_info.class_name)
         this.label_loadnames = props.label_loadnames || undefined;
         this.autoload_labels_on_dir_select = props.autoload_labels_on_dir_select || false;
+        this.image_layer_folder_names = props.image_layer_folder_names || undefined;
         
         this.labels = initLabels(this);
         this.state = {
@@ -99,7 +99,6 @@ class Grid extends Component {
         loadImages(window, this);
 
         // Bind functions
-        this.selectImageDir      = this.selectImageDir.bind(this);
         this.updateState         = this.updateState.bind(this);
         this.updateLocalLabels   = this.updateLocalLabels.bind(this);
         this.initOverlays        = this.initOverlays.bind(this);
@@ -238,26 +237,6 @@ class Grid extends Component {
 
 
     /**
-     * Open a directory selection dialog and 
-     * load in all the images.
-     */
-    async selectImageDir() {
-        let dir_path = await this.QASM.call_backend(window, function_names.OPEN_IMG_DIR);
-        if (dir_path !== undefined) {
-            if (this.src !== dir_path) {
-                this.image_stack = []; // Clear image stack on new directory load
-            }
-            this.src = dir_path;
-            await loadImages(window, this);
-            
-            this.updateState();
-        } else {
-            console.log("Prevented loading invalid directory.");
-        }
-    }
-
-
-    /**
      * Change the filtered class and put it at the top
      * 
      * @param {string} class_name 
@@ -304,7 +283,7 @@ class Grid extends Component {
                     /> */}
                     <div className={this.images_shown ? "hidden" : "controls-container"}>
                         <button
-                            onClick={this.selectImageDir}
+                            onClick={() => selectImageDir(window, this)}
                             className="button">
                             Select Directory
                         </button>
@@ -334,7 +313,7 @@ class Grid extends Component {
                     </div>
                     <div className={this.images_shown ? "controls-container" : "hidden"}>
                         <button
-                            onClick={this.selectImageDir}
+                            onClick={() => selectImageDir(window, this)}
                             className="button">
                             Select Directory
                         </button>
