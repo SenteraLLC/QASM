@@ -90,3 +90,44 @@ export function toggleImageHidden(document, image_name, hidden = undefined) {
         }
     }
 }
+
+
+/**
+ * Cycle through the image layers for an image
+ * 
+ * @param {*} document document object
+ * @param {string} hover_image_id id of the current image
+ */
+export function changeImage(document, hover_image_id) {
+    // firstChild = image holder div
+    // childNodes of image holder div = image layers
+
+    let layers = document.getElementById(hover_image_id).firstChild.childNodes;
+    console.log(layers);
+    // layers[0] is the image, layers[n] is image_stack[n-1], layers[layers.length-1] is the class-overlay
+    for (let idx = 0; idx < layers.length; idx++) {
+        let layer = layers[idx];
+        // Skip overlays and hidden images
+        if (layer.id.includes("overlay") || layer.classList.contains("hidden")) {
+            continue;
+        }
+
+        // Change currently shown image to hidden
+        layer.classList.add("hidden");
+        console.log("Hiding " + layer.id)
+
+        // Change next hidden image to shown
+        if (idx + 1 === layers.length - 1) {
+            // Last index is the class-overlay
+            // If we're at the last layer, turn on the og image
+            layers[0].classList.remove("hidden");
+            console.log("Showing " + layers[0].id)
+        } else {
+            // Un-hide next image
+            layers[idx + 1].classList.remove("hidden");
+            console.log("Showing " + layers[idx + 1].id)
+        }
+        // Done
+        break;
+    }
+}

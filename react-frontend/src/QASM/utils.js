@@ -29,7 +29,7 @@ export function update_all_overlays() {
     for (let current_overlay of all_overlays) {
         
         // Grab the current overlay's sibling image until image loads
-        let image = current_overlay.nextElementSibling;
+        let image = current_overlay.previousElementSibling;
         
         if (image.clientHeight === 0) {
             return false
