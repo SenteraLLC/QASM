@@ -1,5 +1,6 @@
 // ####GRID UTILS####
 import $ from "jquery";
+const { getOneFolderUp } = require("./utils.js");
 const { function_names } = require("../../public/electron_constants.js");
 
 // TODO: keyboard shortcuts in config and loaded somewhere
@@ -178,4 +179,33 @@ export function initLabels(component, labels = null) {
     }
 
     return labels;
+}
+
+
+/**
+ * Prompt user to select a file with labels
+ * and load them in.
+ * 
+ * @param {*} window window object
+ * @param {*} component component that called this function: pass in `this`
+ * @param {Array[string]} loadnames Array of filenames to try and autoload
+ */
+export async function loadLabels(window, component, loadnames = undefined) {
+    let params = {
+        // Start one folder up from the current directory
+        path: getOneFolderUp(component.src),
+        // Try and load a specific file if loadnames is defined
+        loadnames: loadnames,
+    }
+
+    // Open browser and load labels
+    let labels = await component.QASM.call_backend(window, function_names.LOAD_LABELS, params);
+    component.labels = initLabels(component, labels);
+    console.log(component.labels);
+
+    if (Object.keys(component.labels).length > 0) {
+        component.updateState(); // Update state to rerender page
+    } else {
+        console.log("Prevented loading empty labels.");
+    }
 }
