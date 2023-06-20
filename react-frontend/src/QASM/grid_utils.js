@@ -61,3 +61,32 @@ export function changeGridWidth(event, component, document) {
     // Reformat the grid by changing the grid-table css
     document.getElementById("grid-table").style.gridTemplateColumns = "repeat(" + component.grid_width + ", 1fr)";
 }
+
+
+/**
+ * Toggle (hide or show) a GridImage,
+ * or set it to hidden if hidden is defined.
+ * 
+ * @param {*} document document object
+ * @param {string} image_name 
+ * @param {boolean} hidden
+ */
+export function toggleImageHidden(document, image_name, hidden = undefined) {
+    // Get the MultiClassGridImage container div
+    let image = document.getElementById(image_name);
+    if (image === undefined || image === null) {
+        // Image not found
+        return;
+    }
+
+    if (hidden === undefined) {
+        image.classList.toggle("hidden");
+    } else {
+        // Set hidden class
+        if (hidden && !image.classList.contains("hidden")) {
+            image.classList.add("hidden");
+        } else if (!hidden && image.classList.contains("hidden")) {
+            image.classList.remove("hidden");
+        }
+    }
+}

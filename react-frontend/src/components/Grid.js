@@ -13,7 +13,7 @@ import sparse from "../icons/sparse.svg";
 import field_edge from "../icons/field_edge.svg";
 import "../css/Grid.css";
 const { update_all_overlays } =  require("../QASM/utils.js");
-const { autoScroll, changeGridWidth } =  require("../QASM/grid_utils.js");
+const { autoScroll, changeGridWidth, toggleImageHidden } =  require("../QASM/grid_utils.js");
 const { function_names } = require("../../public/electron_constants.js");
 
 const COLORS = {
@@ -48,14 +48,13 @@ const OVERLAYS = {
 
 const FILTER_MODES = {
     "no_filter": "no filter",
-    "group_by_class": "group by class",
+    // "group_by_class": "group by class", TODO: Reimplement using new grid logic
 }
 
 class Grid extends Component {
     images = {};
     image_names = [];
     grid_width = 2;
-    grid_image_names = [];
     src = "";
     classes = []; // Array of {"class_name": <string>, "svg_overlay": <string>}
     class_names = []; // Array of all "class_name" values from the classes array
@@ -231,75 +230,9 @@ class Grid extends Component {
         console.log("Src: " + this.src);
         this.images = await this.QASM.call_backend(window, function_names.LOAD_IMAGES, this.src);
         this.image_names = Object.keys(this.images).sort();
-        console.log(this.images);
-        this.gridSetup();
         this.clearAll();
     }
     
-
-    /**
-     * Organize the images into rows
-     */
-    gridSetup() {
-        // Handle filtering
-        switch (this.filtered_class_name) {
-            case FILTER_MODES.no_filter:
-                this.image_names.sort(); // Sort to undo any lingering filters
-                break;
-            case FILTER_MODES.group_by_class:
-                // Group classes together in the same order as they appear in the config
-                let ret = [];
-                for (let class_name of this.class_names) {
-                    let class_image_names = []
-                    for (let image_name of this.image_names) {
-                        // Get all images for a given class
-                        if (image_name in this.labels && this.labels[image_name].class === class_name) {
-                            class_image_names.push(image_name);
-                        }
-                    }
-                    console.log(class_name, class_image_names);
-                    // Sort before concat into ret
-                    ret = ret.concat(class_image_names.sort());
-                }
-                this.image_names = ret;
-                break;
-            default: 
-                // Sort image names with the filtered class first
-                let filtered = [];
-                let unfiltered = [];
-                for (let image_name of this.image_names) {
-                    // If image is of the filtered class, store in filtered array
-                    if (image_name in this.labels && this.labels[image_name].class === this.filtered_class_name) {
-                        filtered.push(image_name);
-                    } else {
-                        unfiltered.push(image_name);
-                    }
-                }
-                // Concatanate together with filtered in front
-                this.image_names = filtered.sort().concat(unfiltered.sort());
-                break;
-        }
-
-        // Divide grid based on the grid width prop
-        let cur_im;
-        let grid_counter = 0;
-        let row_imgs = [];
-        this.grid_image_names = [];
-        for (let i = 0; i < this.image_names.length; i++) {
-            cur_im = this.image_names[i];
-
-            // Add to grid
-            if (grid_counter >= this.grid_width) {
-                this.grid_image_names.push(row_imgs);
-                grid_counter = 0;
-                row_imgs = [];
-            }
-            grid_counter++;
-            row_imgs.push(cur_im);
-        }
-        this.grid_image_names.push(row_imgs);
-    }
-
 
     /**
      * Scrape the page for all the current labels
@@ -378,7 +311,6 @@ class Grid extends Component {
         console.log(this.labels);
         
         if (Object.keys(this.labels).length > 0) {
-            this.gridSetup();
             this.updateState(); // Update state to rerender page
         } else {
             console.log("Prevented loading empty labels.");
@@ -443,14 +375,33 @@ class Grid extends Component {
      * Change the filtered class and put it at the top
      * 
      * @param {string} class_name 
-     *  
      */
     changeGridFilter(class_name) {
-        console.log(class_name);
         this.filtered_class_name = class_name;
+        // Toggle hidden class on images that don't match the filter
+        for (let image_name of this.image_names) {
+            switch (this.filtered_class_name) {
+                case FILTER_MODES.no_filter:
+                    // Show all images
+                    toggleImageHidden(document, image_name, false);
+                    break;
+                default:
+                    if (this.filtered_class_name === null || this.filtered_class_name === undefined) {
+                        // Show all images if no filter is selected
+                        toggleImageHidden(document, image_name, false);
+                    } else if (
+                        !(image_name in this.labels) ||
+                        this.labels[image_name]["class"] !== this.filtered_class_name
+                    ) {
+                        // Hide images with no labels or that don't match the filter
+                        toggleImageHidden(document, image_name, true);
+                    } else if (this.labels[image_name]["class"] === this.filtered_class_name) {
+                        // Show images that match the filter
+                        toggleImageHidden(document, image_name, false);
+                    }
+            }
+        }
         this.updateLocalLabels(); // Update current labels
-        this.gridSetup(); // Reformat grid
-        this.updateState(); // Update page
     }
 
 
@@ -508,13 +459,13 @@ class Grid extends Component {
     render() {
         return (
             <div className="Grid" key={this.component_updater}>
-                <div className="header-container">
+                <div className="header-container multi-grid">
                     {this.src !== "" &&
                         <h2>{this.src}</h2>
                     }
-                    <Legend
+                    {/* <Legend
                         classes={this.classes}
-                    />
+                    /> */}
                     <div className={this.images_shown ? "hidden" : "controls-container"}>
                         <button
                             onClick={this.selectImageDir}
