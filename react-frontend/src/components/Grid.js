@@ -315,6 +315,8 @@ class Grid extends Component {
         setInterval(() => {
             if (!this.update_success) {
                 this.update_success = update_all_overlays();
+                // Update filters (hidden class) on images
+                this.changeGridFilter(this.filtered_class_name);
             }
         }, 1000)
     }
@@ -322,6 +324,8 @@ class Grid extends Component {
     componentDidUpdate() {
         // Update overlays
         this.update_success = update_all_overlays();
+        // Update filters (hidden class) on images
+        this.changeGridFilter(this.filtered_class_name);
     }
 }
 
