@@ -5,7 +5,7 @@ import Dropdown from './Dropdown.js';
 import "../css/Grid.css";
 // import "../css/MultiClassGrid.css";
 const { update_all_overlays, getOneFolderUp, getCurrentFolder } = require("../QASM/utils.js");
-const { autoScroll, changeGridWidth, toggleImageHidden, changeImage, loadImages, initLabels, loadLabels, saveLabels } = require("../QASM/grid_utils.js");
+const { autoScroll, changeGridWidth, toggleImageHidden, changeImage, loadImages, initLabels, loadLabels, saveLabels, autoLoadLabels } = require("../QASM/grid_utils.js");
 const { function_names } = require("../../public/electron_constants.js");
 
 // TODO: Combine this with Grid, and/or add to app as a seperate component. 
@@ -74,7 +74,6 @@ class MultiClassGrid extends Component {
         this.addImageLayer = this.addImageLayer.bind(this);
         this.getImageStackByName = this.getImageStackByName.bind(this);
         this.initEventListeners = this.initEventListeners.bind(this);
-        this.autoLoadLabels = this.autoLoadLabels.bind(this);
         this.changeAutoLoadOnDirSelect = this.changeAutoLoadOnDirSelect.bind(this);
         this.autoLoadImageLayers = this.autoLoadImageLayers.bind(this);
         this.loadImageDir = this.loadImageDir.bind(this);
@@ -144,9 +143,6 @@ class MultiClassGrid extends Component {
     }
 
 
-
-
-
     /**
      * Scrape the page for all the current labels
      */
@@ -170,19 +166,6 @@ class MultiClassGrid extends Component {
                 )
             ))
 
-        }
-    }
-
-
-    /**
-     * Try and auto-load labels if we have loadnames
-     */
-    async autoLoadLabels() {
-        if (this.label_loadnames !== undefined) {
-            // Wait for previous window to close
-            setTimeout(() => {
-                loadLabels(window, this, this.label_loadnames);
-            }, 1000)
         }
     }
 
@@ -220,7 +203,7 @@ class MultiClassGrid extends Component {
         if (this.src !== undefined) {
             this.image_stack = []; // Clear image stack on new directory load
             if (this.autoload_labels_on_dir_select) {
-                this.autoLoadLabels(); // Try and autoload labels
+                autoLoadLabels(window, this); // Try and autoload labels
             }
             this.autoLoadImageLayers(); // Try and autoload image layers
             await loadImages(window, this); // Load images
