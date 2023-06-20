@@ -5,7 +5,7 @@ import Dropdown from './Dropdown.js';
 import "../css/Grid.css";
 // import "../css/MultiClassGrid.css";
 const { update_all_overlays, getOneFolderUp, getCurrentFolder } = require("../QASM/utils.js");
-const { autoScroll, changeGridWidth, toggleImageHidden, changeImage, loadImages, initLabels, loadLabels, saveLabels, autoLoadLabels } = require("../QASM/grid_utils.js");
+const { autoScroll, changeGridWidth, toggleImageHidden, changeImage, loadImages, initLabels, loadLabels, saveLabels, autoLoadLabels, clearAllLabels } = require("../QASM/grid_utils.js");
 const { function_names } = require("../../public/electron_constants.js");
 
 // TODO: Combine this with Grid, and/or add to app as a seperate component. 
@@ -67,7 +67,6 @@ class MultiClassGrid extends Component {
         this.loadImageDir();
 
         // Bind functions
-        this.clearAll = this.clearAll.bind(this);
         this.selectImageDir = this.selectImageDir.bind(this);
         this.updateState = this.updateState.bind(this);
         this.updateLocalLabels = this.updateLocalLabels.bind(this);
@@ -167,16 +166,6 @@ class MultiClassGrid extends Component {
             ))
 
         }
-    }
-
-
-    /**
-     * Clear all the current labels
-     */
-    clearAll() {
-        // Set all classes to the default
-        this.labels = initLabels(this);
-        this.updateState();
     }
 
 
@@ -544,7 +533,7 @@ class MultiClassGrid extends Component {
                             </button>
                         }
                         <button
-                            onClick={this.clearAll}
+                            onClick={() => clearAllLabels(this)}
                             className="button">
                             Clear All Labels
                         </button>

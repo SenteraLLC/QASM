@@ -144,7 +144,7 @@ export function changeImage(document, hover_image_id) {
 export async function loadImages(window, component) {
     component.images = await component.QASM.call_backend(window, function_names.LOAD_IMAGES, component.src);
     component.image_names = Object.keys(component.images).sort();
-    component.clearAll();
+    clearAllLabels(component);
     // Set the images shown to true now that the images are shown
     component.images_shown = true;
 }
@@ -246,4 +246,16 @@ export async function saveLabels(window, component, savename = "") {
     }
 
     await component.QASM.call_backend(window, function_names.SAVE_JSON_FILE, params);
+}
+
+
+/**
+ * Clear all the current labels
+ * 
+ * @param {*} component component that called this function: pass in `this`
+ */
+export function clearAllLabels(component) {
+    // Set all classes to the default
+    component.labels = initLabels(component);
+    component.updateState();
 }
