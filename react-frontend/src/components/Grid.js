@@ -1,6 +1,5 @@
 import { Component, Fragment } from 'react';
 import GridImage from "./GridImage.js";
-import Legend from "./Legend.js";
 import Dropdown from './Dropdown.js';
 import x_overlay from "../icons/x.svg";
 import x_overlay_red from "../icons/x_red.svg";
@@ -13,7 +12,7 @@ import sparse from "../icons/sparse.svg";
 import field_edge from "../icons/field_edge.svg";
 import "../css/Grid.css";
 const { update_all_overlays } =  require("../QASM/utils.js");
-const { autoScroll, changeGridWidth, toggleImageHidden } =  require("../QASM/grid_utils.js");
+const { autoScroll, changeGridWidth, toggleImageHidden, changeImage } =  require("../QASM/grid_utils.js");
 const { function_names } = require("../../public/electron_constants.js");
 
 const COLORS = {
@@ -92,6 +91,10 @@ class Grid extends Component {
         // Attach event listeners
         this.initEventListeners();
 
+        // Hack for dev
+        this.src = "Foundation Field 2 (Dennis Zuber)/Videos/7-08/Row 1, 16/3840x2160@120fps/Pass A/DS Splits/DS 000/bottom Raw Images/"
+        this.loadImages();
+
         // Bind functions
         this.loadImages          = this.loadImages.bind(this);
         this.initLabels          = this.initLabels.bind(this);
@@ -103,7 +106,6 @@ class Grid extends Component {
         this.updateLocalLabels   = this.updateLocalLabels.bind(this);
         this.addImageLayer       = this.addImageLayer.bind(this);
         this.getImageStackByName = this.getImageStackByName.bind(this);
-        this.changeImage         = this.changeImage.bind(this);
         this.initOverlays        = this.initOverlays.bind(this);
         this.initEventListeners  = this.initEventListeners.bind(this);
         this.changeGridFilter    = this.changeGridFilter.bind(this);
@@ -146,7 +148,7 @@ class Grid extends Component {
             }
 
             if (this.hover_image_id !== null && e.key === "b") {
-                this.changeImage(this.hover_image_id);
+                changeImage(document, this.hover_image_id);
             }
 
             if (this.hover_image_id !== null ) {
@@ -231,6 +233,8 @@ class Grid extends Component {
         this.images = await this.QASM.call_backend(window, function_names.LOAD_IMAGES, this.src);
         this.image_names = Object.keys(this.images).sort();
         this.clearAll();
+        // Set the images shown to true now that the images are shown
+        this.images_shown = true;
     }
     
 
@@ -341,8 +345,6 @@ class Grid extends Component {
             this.src = dir_path;
             await this.loadImages();
             
-            // Set the images shown to true now that the images are shown
-            this.images_shown = true;
             this.updateState();
         } else {
             console.log("Prevented loading invalid directory.");
@@ -422,47 +424,14 @@ class Grid extends Component {
     }
 
 
-    /**
-     * Cycle through the image layers for an image
-     * 
-     * @param {string} hover_image_id id of the current image
-     */
-    changeImage(hover_image_id) {
-        // firstChild = image holder div
-        // childNodes of image holder div = image layers
-
-        let layers = document.getElementById(hover_image_id).firstChild.childNodes;
-        // layers[0] is the overlay, layers[1] is the image, layers[n] is image_stack[n-2]
-        for (let idx = 0; idx < layers.length; idx++) {
-            let layer = layers[idx];
-            // Skip overlays and hidden images
-            if (layer.id.includes("overlay") || layer.classList.contains("hidden")) {
-                continue;
-            }
-            
-            // Change currently shown image to hidden
-            layer.classList.add("hidden");
-
-            // Change next hidden image to shown
-            if (idx+1 === layers.length) {
-                // If we're at the last layer, turn on the og image
-                layers[1].classList.remove("hidden");
-            } else {
-                // Un-hide next image
-                layers[idx+1].classList.remove("hidden");
-            }
-            // Done
-            break;
-        }
-    }
-
     render() {
         return (
             <div className="Grid" key={this.component_updater}>
-                <div className="header-container multi-grid">
+                <div className="header-container">
                     {this.src !== "" &&
                         <h2>{this.src}</h2>
                     }
+                    {/* TODO: Reimplement so that it looks nice */}
                     {/* <Legend
                         classes={this.classes}
                     /> */}
