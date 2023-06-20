@@ -147,3 +147,35 @@ export async function loadImages(window, component) {
     // Set the images shown to true now that the images are shown
     component.images_shown = true;
 }
+
+
+/**
+     * Create a new labels object with current metadata
+     * (datetime, app name, app version), or add these 
+     * fields to an existing labels object if they don't exist 
+     * already.
+     * 
+     * @param {*} component component that called this function: pass in `this`
+     * @param {Object} labels existing labels object
+     * @returns {Object} labels
+     */
+export function initLabels(component, labels = null) {
+    if (labels === null) {
+        // Create new labels
+        labels = {}
+    }
+    
+    if (!("name" in labels)) {
+        labels["name"] = component.QASM.config["name"];
+    }
+
+    if (!("version" in labels)) {
+        labels["version"] = component.QASM.config["version"];
+    }
+
+    if (!("datetime" in labels)) {
+        labels["datetime"] = new Date().toLocaleString();
+    }
+
+    return labels;
+}

@@ -5,7 +5,7 @@ import Dropdown from './Dropdown.js';
 import "../css/Grid.css";
 // import "../css/MultiClassGrid.css";
 const { update_all_overlays, getOneFolderUp, getCurrentFolder } = require("../QASM/utils.js");
-const { autoScroll, changeGridWidth, toggleImageHidden, changeImage, loadImages } = require("../QASM/grid_utils.js");
+const { autoScroll, changeGridWidth, toggleImageHidden, changeImage, loadImages, initLabels } = require("../QASM/grid_utils.js");
 const { function_names } = require("../../public/electron_constants.js");
 
 // TODO: Combine this with Grid, and/or add to app as a seperate component. 
@@ -52,7 +52,7 @@ class MultiClassGrid extends Component {
         this.image_layer_folder_names = props.image_layer_folder_names || undefined;
 
         this.class_types = Object.keys(this.classes); // For easy access
-        this.labels = this.initLabels();
+        this.labels = initLabels(this);
         this.state = {
             labels: this.labels,
             src: this.src,
@@ -67,7 +67,6 @@ class MultiClassGrid extends Component {
         this.loadImageDir();
 
         // Bind functions
-        this.initLabels = this.initLabels.bind(this);
         this.saveLabels = this.saveLabels.bind(this);
         this.loadLabels = this.loadLabels.bind(this);
         this.clearAll = this.clearAll.bind(this);
@@ -155,7 +154,7 @@ class MultiClassGrid extends Component {
      */
     updateLocalLabels() {
         // Get state of each GridImage
-        this.labels = this.initLabels(); // Gen new object w/datetime
+        this.labels = initLabels(this); // Gen new object w/datetime
         for (let i = 0; i < this.image_names.length; i++) {
             let image_name = this.image_names[i];
             if (this.labels[image_name] === undefined) { this.labels[image_name] = {}; }
@@ -174,37 +173,6 @@ class MultiClassGrid extends Component {
             ))
 
         }
-    }
-
-    
-    /**
-     * Create a new labels object with current metadata
-     * (datetime, app name, app version), or add these 
-     * fields to an existing labels object if they don't exist 
-     * already.
-     * 
-     * @param {Object} labels existing labels object
-     * @returns {Object} labels
-     */
-     initLabels(labels = null) {
-        if (labels === null) {
-            // Create new labels
-            labels = {}
-        }
-        
-        if (!("name" in labels)) {
-            labels["name"] = this.QASM.config["name"];
-        }
-
-        if (!("version" in labels)) {
-            labels["version"] = this.QASM.config["version"];
-        }
-
-        if (!("datetime" in labels)) {
-            labels["datetime"] = new Date().toLocaleString();
-        }
-
-        return labels;
     }
 
 
@@ -241,7 +209,7 @@ class MultiClassGrid extends Component {
 
         // Load in previous labels
         let labels = await this.QASM.call_backend(window, function_names.LOAD_LABELS, params);
-        this.labels = this.initLabels(labels);
+        this.labels = initLabels(this, labels);
         console.log(this.labels);
 
         if (Object.keys(this.labels).length > 0) {
@@ -270,7 +238,7 @@ class MultiClassGrid extends Component {
      */
     clearAll() {
         // Set all classes to the default
-        this.labels = this.initLabels();
+        this.labels = initLabels(this);
         this.updateState();
     }
 
