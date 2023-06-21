@@ -68,12 +68,6 @@ class GridImage extends Component {
             >
                 <div>
                     <img 
-                        src={this.classes.find(x => x.class_name === this.state.class).svg_overlay} 
-                        className="overlay hover-target" 
-                        alt={this.image_name + " overlay"}
-                        id={this.image_name + "-overlay"}>
-                    </img>
-                    <img 
                         src={this.image} 
                         alt={this.image_name}
                         id={this.image_name + "-image"}
@@ -88,6 +82,12 @@ class GridImage extends Component {
                             className="hidden hover-target">
                         </img>
                     ))}
+                    <img 
+                        src={this.classes.find(x => x.class_name === this.state.class).svg_overlay} 
+                        className="overlay hover-target" 
+                        alt={this.image_name + " overlay"}
+                        id={this.image_name + "-overlay"}>
+                    </img>
                 </div>
                 <p className="image-name">{this.image_name}</p>
             </div>        

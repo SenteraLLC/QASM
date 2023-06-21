@@ -41,3 +41,11 @@ div.Dropdown div.dropdown-content > * {
 div.Dropdown div.dropdown-content > *:hover {
     background-color: #99bbee77;
 }
+
+.checkbox-label {
+    font-weight: normal;
+    text-align: left;
+    width: 90%;
+    border: none;
+    background-color: transparent;
+}
