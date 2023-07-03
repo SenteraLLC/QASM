@@ -1,7 +1,6 @@
 {
-    "name": "QASM App",
+    "name": "QASM Local App",
     "app": "local",
-    "bucket": "stand-qa-data",
     "components": [
         {
             "component": "home"
@@ -15,7 +14,7 @@
                     "svg_overlay": null
                 }, 
                 {
-                    "class_name": "rogue", 
+                    "class_name": "other", 
                     "svg_overlay": "x_overlay"
                 }
             ]
@@ -23,25 +22,23 @@
         {
             "component": "imagelabeler",
             "display_name": "Image Labeler",
-            "image_dir": "C:/Users/Trevor/Desktop/Sentera/QASM/RGB/",
-            "anno_dir": "C:/Users/Trevor/Desktop/Sentera/QASM/row_annotations/",
             "subtasks": {
                 "row_classification": {
                     "display_name": "Row Classification",
                     "classes": [
                         {
-                            "name": "Male",
+                            "name": "Blue",
                             "color": "blue",
                             "id": 10
                         },
                         {
-                            "name": "Female",
+                            "name": "White",
                             "color": "white",
                             "id": 11
                         }
                     ],
                     "allowed_modes": ["polyline"],
-                    "resume_from": "row_annotations"
+                    "resume_from": null
                 }
             }
         }

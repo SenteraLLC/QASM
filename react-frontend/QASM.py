@@ -1,6 +1,7 @@
 import json
 import argparse
 import subprocess
+import shutil
 import bs4
 
 ENV_KEY = "REACT_APP_QASM_MODE"
@@ -11,6 +12,7 @@ QASM_MODES = ["local", "s3"]
 RUN_MODES = ["dev", "build-exe"]
 APP_NAME_KEY = "name"
 PACKAGE_JSON_PATH = "./package.json"
+DEFAULT_INDEX_PATH = "./public/default-index.html"
 INDEX_PATH = "./public/index.html"
 CONFIG_DEST_PATH = "./config.json"
 DEFAULT_CONFIG_PATH = "./default-config.json"
@@ -72,7 +74,8 @@ def main():
             json.dump(package_json, f, indent=2)
             f.truncate()
 
-        # Edit index.html
+        # Create index.html
+        shutil.copyfile(DEFAULT_INDEX_PATH, INDEX_PATH)
         with open(INDEX_PATH, "r+") as f:
             txt = f.read()
             soup = bs4.BeautifulSoup(txt, "html.parser")
