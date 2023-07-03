@@ -92,16 +92,20 @@ class Ulabel extends Component {
         // key used to store the annotations in their json as the "resume_from" field. 
         // Here we use that key to put the actual annotations in the resume_from of
         // the subtask.
+        let resume_from_key;
         if (this.annotations != null) {
             for (let task in this.subtasks) {
                 if (this.subtasks[task]["resume_from"] !== null) {
-                    let resume_from_key = this.subtasks[task]["resume_from"]; // User defined key
-                    if (resume_from_key in this.annotations) {
-                        this.subtasks[task]["resume_from"] = this.annotations[resume_from_key];
+                    resume_from_key = this.subtasks[task]["resume_from"]; // User defined key
+                } else {
+                    resume_from_key = task; // Default to task key
+                }
 
-                        if (reload) { // On reload, ulabel is already running so we update in place
-                            this.ulabel.set_annotations(this.annotations[resume_from_key], task);
-                        }
+                if (resume_from_key in this.annotations) {
+                    this.subtasks[task]["resume_from"] = this.annotations[resume_from_key];
+
+                    if (reload) { // On reload, ulabel is already running so we update in place
+                        this.ulabel.set_annotations(this.annotations[resume_from_key], task);
                     }
                 }
             }

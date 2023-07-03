@@ -130,11 +130,14 @@ class ImageLabeler extends Component {
                 path: this.anno_filename,
             }
             console.log(annotations);
+            let resume_from_key
             for (let task in this.subtasks) {
                 if (this.subtasks[task]["resume_from"] !== null) {
-                    let resume_from_key = this.subtasks[task]["resume_from"]; // User defined key
-                    params.labels[resume_from_key] = annotations["annotations"][task];
+                    resume_from_key = this.subtasks[task]["resume_from"]; // User defined key
+                } else {
+                    resume_from_key = task
                 }
+                params.labels[resume_from_key] = annotations["annotations"][task];
             }           
 
             try {
