@@ -62,6 +62,12 @@
                     "oblique Raw Images"
                 ]
             ]
+        },
+        {
+            "component": "binaryeditor",
+            "display_name": "Binary Editor",
+            "mode": "s3directory",
+            "dilate_keybind": "w"
         }
     ]
 }
