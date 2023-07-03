@@ -4,7 +4,7 @@ import MultiClassGridImage from "./MultiClassGridImage.js";
 import Dropdown from './Dropdown.js';
 import "../css/Grid.css";
 const { update_all_overlays } = require("../QASM/utils.js");
-const { FILTER_MODES, updateState, initProps, initEventListeners, changeGridWidth, toggleImageHidden, initLabels, loadLabels, changeAutoLoadOnDirSelect, saveLabels, clearAllLabels, addImageLayer, getImageStackByName, loadImageDir, selectImageDir, loadNextDir } = require("../QASM/grid_utils.js");
+const { FILTER_MODES, updateState, initProps, initEventListeners, changeGridWidth, toggleImageHidden, initLabels, loadLabels, changeAutoLoadOnDirSelect, saveLabels, clearAllLabels, addImageLayer, getImageStackByName, selectImageDir, loadNextDir } = require("../QASM/grid_utils.js");
 
 class MultiClassGrid extends Component {
     constructor(props) {
@@ -15,10 +15,6 @@ class MultiClassGrid extends Component {
 
         // Attach event listeners
         initEventListeners(window, document, this);
-
-        // Hack for dev
-        this.src = "Foundation Field 2 (Dennis Zuber)/Videos/7-08/Row 1, 16/3840x2160@120fps/Pass A/DS Splits/DS 000/bottom Raw Images/"
-        loadImageDir(window, this);
 
         // Bind functions
         this.updateLocalLabels = this.updateLocalLabels.bind(this);
