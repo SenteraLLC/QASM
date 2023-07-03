@@ -18,6 +18,9 @@
 # production
 /build
 
+# Active config
+config.json
+
 # misc
 .DS_Store
 **/.env.*
