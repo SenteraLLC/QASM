@@ -31,7 +31,7 @@ Which will deposit the executable in ``react-frontend/dist``. Note that this wil
 ``react-frontend/config.json`` expects the following fields:
 
 - ``"app": <string>``
-    - ``"s3"`` for an app that pulls files from the specified s3 bucket (see below)
+    - ``"s3"`` for an app that runs using AWS Cloud resources managed by [Terraform](#terraform).
     - ``"local"`` for an app that runs using local files
 
 - ``"bucket": <string>``
@@ -42,7 +42,11 @@ Which will deposit the executable in ``react-frontend/dist``. Note that this wil
 
 - ``"components": <Array>`` Array of component config objects. Order of the components is the order they appear in the toolbar
     - Required for all components:
-        - ``"component": <string>`` Currently only "home", "grid", "imagelabeler", or "binaryeditor" are valid
+        - ``"component": <string>`` One of the following component names:
+            - ``"grid"`` for a grid of images, and the ability to label each image as a single class type
+            - ``"multiclassgrid"`` for a grid of images that supports multiple class types per image
+            - ``"imagelabeler"`` for a [ULabel](https://github.com/SenteraLLC/ulabel) image labeling tool
+            - ``"binaryeditor"`` for a binary image editor, where simple dilation and erosion operations can be performed
 
     - Optional for all components:
         - ``"display_name": <string>`` Change the navbar display name
@@ -104,8 +108,6 @@ Which will deposit the executable in ``react-frontend/dist``. Note that this wil
                 
 
     - ``"imagelabeler"`` Configuration ``<Object>``:
-         - ``"image_dir": <string>`` (Optional) Path to directory of images
-         - ``"anno_dir": <string>`` (Optional) Path to directory of labels/annotations
         - ``"subtasks": <Object>`` ULabel [subtasks](https://github.com/SenteraLLC/ulabel/blob/044c24072fe00a30b89e0f370fb8d4ddad28b59d/api_spec.md#subtasks) definition(s) 
             - ``<string>: <Object>`` Custom subtask name, followed by the subtask definition object
                 - ``"display_name": <string>`` Displayed subtask name
@@ -125,6 +127,8 @@ Which will deposit the executable in ``react-frontend/dist``. Note that this wil
                     - ``"global":`` A label to be applied to the entire series of frames
                     - ``"point":`` A keypoint within a single frame 
                 - ``"resume_from": <string>`` (Optional) Key used in annotation jsons. Used to load in annotations from the annotation directory (*Use `null` for no anno loading`*)
+        - ``"image_dir": <string>`` (Optional) Path to directory of images
+        - ``"anno_dir": <string>`` (Optional) Path to directory of labels or annotations
 
 
     - ``"binaryeditor"`` Configuration ``<Object>``:
