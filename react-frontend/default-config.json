@@ -1,67 +1,49 @@
 {
-    "name": "Multi-Class App Spring 2023",
+    "name": "QASM Demo",
     "app": "s3",
-    "bucket": "sentera-rogues-data",
+    "bucket": "qasm-demo",
     "components": [
         {
             "component": "home"
         },
         {
-            "component": "multiclassgrid",
-            "display_name": "Multi-Class Grid",
-            "grid_width": 1,
-            "classes": { 
-                "plant_type": { 
-                    "selector_type": "radio",
-                    "class_values": [ 
-                        "Normal",
-                        "Delay Rogue",
-                        "Hybrid Rogue",
-                        "Hybrid Low Rogue",
-                        "Other"
-                    ],
-                    "default": "Normal",
-                    "class_colors": {
-                        "Delay Rogue": "darkorange",
-                        "Hybrid Rogue": "white",
-                        "Hybrid Low Rogue": "yellow",
-                        "Other": "blue"
-                    },
-                    "class_overlays": true
+            "component": "grid",
+            "grid_width": 2,
+            "classes": [
+                {
+                    "class_name": "car", 
+                    "svg_overlay": null
+                }, 
+                {
+                    "class_name": "truck", 
+                    "svg_overlay": "x_overlay"
                 }
-            },
-            "label_savenames": {
-                "Staked": "staked_rogues.json",
-                "Unstaked": "assumed_rogues.json"
-            },
-            "label_loadnames": [
-                "staked_rogues.json",
-                "staked-rogues.json",
-                "unstaked_rogues.json",
-                "unstaked-rogues.json",
-                "assumed_rogues.json",
-                "assumed-rogues.json",
-                "unfiltered_rogues.json",
-                "unfiltered-rogues.json"
-            ],
-            "autoload_labels_on_dir_select": false,
-            "image_layer_folder_names": [
-                [
-                    "bottom Thumbnails",
-                    "nadir Thumbnails",
-                    "oblique Thumbnails"
-                ],
-                [
-                    "bottom",
-                    "nadir",
-                    "oblique"
-                ],
-                [
-                    "bottom Raw Images",
-                    "nadir Raw Images",
-                    "oblique Raw Images"
-                ]
             ]
+        },
+        {
+            "component": "imagelabeler",
+            "display_name": "Image Labeler",
+            "image_dir": "grid-data/demo-1/images/",
+            "anno_dir": "grid-data/demo-1/annotations/",
+            "subtasks": {
+                "car_parts": {
+                    "display_name": "Car Parts",
+                    "classes": [
+                        {
+                            "name": "Tire",
+                            "color": "blue",
+                            "id": 0
+                        },
+                        {
+                            "name": "Logo",
+                            "color": "white",
+                            "id": 1
+                        }
+                    ],
+                    "allowed_modes": ["polygon"],
+                    "resume_from": null
+                }
+            }
         },
         {
             "component": "binaryeditor",
