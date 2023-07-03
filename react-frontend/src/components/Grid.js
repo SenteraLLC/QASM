@@ -12,7 +12,7 @@ import sparse from "../icons/sparse.svg";
 import field_edge from "../icons/field_edge.svg";
 import "../css/Grid.css";
 const { update_all_overlays } =  require("../QASM/utils.js");
-const { FILTER_MODES, initProps, initEventListeners, changeGridWidth, toggleImageHidden, loadImages, initLabels, loadLabels, changeAutoLoadOnDirSelect, saveLabels, clearAllLabels, addImageLayer, getImageStackByName, selectImageDir} =  require("../QASM/grid_utils.js");
+const { FILTER_MODES, initProps, initEventListeners, changeGridWidth, toggleImageHidden, initLabels, loadLabels, changeAutoLoadOnDirSelect, saveLabels, clearAllLabels, addImageLayer, getImageStackByName, selectImageDir} =  require("../QASM/grid_utils.js");
 
 const COLORS = {
     "default": "default",
@@ -56,10 +56,6 @@ class Grid extends Component {
 
         // Attach event listeners
         initEventListeners(window, document, this);
-
-        // Hack for dev
-        this.src = "Foundation Field 2 (Dennis Zuber)/Videos/7-08/Row 1, 16/3840x2160@120fps/Pass A/DS Splits/DS 000/bottom Raw Images/"
-        loadImages(window, this);
 
         // Bind functions
         this.updateLocalLabels   = this.updateLocalLabels.bind(this);
