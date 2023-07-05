@@ -12,7 +12,7 @@ root.render(
   <>
     <App 
       QASM={await QASM.create(config, package_json).init()}
-      config={config} // TODO: also use cli config 
+      config={config}
     />
   </>
 );
