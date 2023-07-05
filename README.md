@@ -18,15 +18,19 @@ using React and Electron, with the ability to run customizable QA jobs locally o
 
         >> npm run qasm
 
-This will launch an app based on the specifications found in ``react-frontend/config.json``. Note that for any backend functionality that requires AWS, you will need to have your AWS credentials set up on your machine. See [here](https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-files.html) for more information. Additionally, you will need to deploy the backend to AWS using [Terraform](#terraform).
+    This will launch an app based on the specifications found in ``react-frontend/config.json`` if present, else it will copy ``react-frontend/default-config.json``, load it, and save it to ``react-frontend/config.json``. 
 
-To create a Windows executable of the current configuration, run
+    Note that for any backend functionality that requires AWS (ie running in `"s3"` mode), you will need to have AWS credentials set up on your machine. See [here](https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-files.html) for more information. 
+
+    Once your AWS credentials are set, you will need to deploy the backend to AWS using [Terraform](#terraform).
+
+4) To create a Windows executable of the current configuration, run
 
         >> npm run qasm-build
 
-Which will deposit the executable in ``react-frontend/dist``. Note that this will only work on Windows machines.
+    Which will deposit the executable in ``react-frontend/dist``. Note that this will only work on Windows machines.
 
-To run using a specific configuration file, use
+5) To run using a specific configuration file, use
 
         >> npm run qasm -- --config_path <path/to/config.json>
 
@@ -145,12 +149,14 @@ Terraform automatically takes our lambda code and deploys it to all the necessar
 
 Install Terraform (https://learn.hashicorp.com/tutorials/terraform/install-cli)
 
-Connect to an existing Terraform project
+Start a new project or connect to an existing Terraform project
 
         >> cd terraform-backend
         >> terraform init
 
-To prevent developer testing from interfering with active users, we utilize terraform 'workspaces' to keep development and production environments seperate.
+Note: Since S3 buckets are globally scoped (no two buckets can share the same name), you may need to change the bucket name in the terraform code. To do this, open the file ``terraform-backend/main.tf`` and change references to the bucket name ``qasm-lambdas`` to something unique.
+
+To prevent developer testing from interfering with active users, we can utilize terraform 'workspaces' to keep development and production environments seperate.
 
 To work in the development workspace, use
 
