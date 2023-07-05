@@ -56,7 +56,7 @@ class MultiClassGridImage extends Component {
         let new_state = {};
         for (let class_type in this.classes) {
             for (let class_val of this.classes[class_type].class_values) {
-                if (document.getElementById(this.image_name + "_" + class_val).checked) {
+                if (document.getElementById(this.image_name + "_" + class_type + "_" + class_val).checked) {
                     new_state[class_type] = class_val;
 
                     if (this.useClassOverlays(class_type, class_val)) {
@@ -170,11 +170,11 @@ class MultiClassGridImage extends Component {
                                             <input
                                                 type="radio"
                                                 name={this.image_name + "_" + class_type}
-                                                id={this.image_name + "_" + class_val}
+                                                id={this.image_name + "_" + class_type + "_" + class_val}
                                                 onChange={this.changeClass}
                                                 checked={this.state[class_type] === class_val}
                                             ></input>
-                                            <label htmlFor={this.image_name + "_" + class_val}>{class_val}</label>
+                                            <label htmlFor={this.image_name + "_" + class_type + "_" + class_val}>{class_val}</label>
                                         </div>
                                     ))}
                                 </div>
@@ -189,11 +189,11 @@ class MultiClassGridImage extends Component {
                                             <input
                                                 type="checkbox"
                                                 name={this.image_name + "_" + class_type}
-                                                id={this.image_name + "_" + class_val}
+                                                id={this.image_name + "_" + class_type + "_" + class_val}
                                                 onChange={this.changeClass}
                                                 checked={this.state[class_type] === class_val}
                                             ></input>
-                                            <label htmlFor={this.image_name + "_" + class_val}>{class_val}</label>
+                                            <label htmlFor={this.image_name + "_" + class_type + "_" + class_val}>{class_val}</label>
                                         </div>
                                     ))}
                                 </div>
