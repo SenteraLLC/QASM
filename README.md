@@ -26,6 +26,10 @@ To create a Windows executable of the current configuration, run
 
 Which will deposit the executable in ``react-frontend/dist``. Note that this will only work on Windows machines.
 
+To run using a specific configuration file, use
+
+        >> npm run qasm -- --config_path <path/to/config.json>
+
 ### Configuration
 
 ``react-frontend/config.json`` expects the following fields:

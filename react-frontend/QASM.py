@@ -23,7 +23,7 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--config", default=None, help="Stringified config json.")
     parser.add_argument("--mode", default="dev", help="Production environment.")
-    parser.add_argument("--config_path", default=DEFAULT_CONFIG_PATH, help="Path to config json.")
+    parser.add_argument("--config_path", default=None, help="Path to config json.")
     args = parser.parse_args()
    
     # Parse configuration
@@ -35,11 +35,12 @@ def main():
         # Load from path to json file
         else:
             # When no config path is provided, use (1) the existing config.json if it exists, or (2) the default config
-            if args.config_path == DEFAULT_CONFIG_PATH: 
+            if args.config_path is None: 
                 if os.path.isfile(CONFIG_DEST_PATH):
                     args.config_path = CONFIG_DEST_PATH
                     print(f"Using existing config {CONFIG_DEST_PATH}")
                 else:
+                    args.config_path = DEFAULT_CONFIG_PATH
                     print(f"No config path provided, using default config {DEFAULT_CONFIG_PATH}")
             with open(args.config_path, "r") as f:
                 config = json.load(f)

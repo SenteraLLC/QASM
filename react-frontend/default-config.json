@@ -21,6 +21,49 @@
             ]
         },
         {
+            "component": "multiclassgrid",
+            "display_name": "Multi-Class Grid",
+            "grid_width": 1,
+            "classes": { 
+                "car_type": { 
+                    "selector_type": "radio",
+                    "class_values": [ 
+                        "None",
+                        "Honda",
+                        "Toyota",
+                        "Ford"
+                    ],
+                    "default": "None",
+                    "class_overlays": false
+                },
+                "car_color": {
+                    "selector_type": "radio",
+                    "class_values": [
+                        "None",
+                        "Red",
+                        "Blue",
+                        "White",
+                        "Black"
+                    ],
+                    "default": "None",
+                    "class_colors": {
+                        "Red": "red",
+                        "Blue": "blue",
+                        "White": "white",
+                        "Black": "black"
+                    },
+                    "class_overlays": true
+                }
+            },
+            "label_savenames": {
+                "Cars": "multi_class_cars.json"
+            },
+            "label_loadnames": [
+                "multi_class_cars.json"
+            ],
+            "autoload_labels_on_dir_select": false
+        },
+        {
             "component": "imagelabeler",
             "display_name": "Image Labeler",
             "image_dir": "grid-data/demo-1/images/",
