@@ -2,6 +2,7 @@ import json
 import argparse
 import subprocess
 import shutil
+import os
 import bs4
 
 ENV_KEY = "REACT_APP_QASM_MODE"
@@ -27,13 +28,19 @@ def main():
    
     # Parse configuration
     try: 
+        # Load from json string
         if args.config is not None:
-            # Load from string
             config = json.loads(args.config)
+        
+        # Load from path to json file
         else:
-            # Load from path
-            if args.config_path == DEFAULT_CONFIG_PATH:
-                print(f"No config path provided, using default config {DEFAULT_CONFIG_PATH}")
+            # When no config path is provided, use (1) the existing config.json if it exists, or (2) the default config
+            if args.config_path == DEFAULT_CONFIG_PATH: 
+                if os.path.isfile(CONFIG_DEST_PATH):
+                    args.config_path = CONFIG_DEST_PATH
+                    print(f"Using existing config {CONFIG_DEST_PATH}")
+                else:
+                    print(f"No config path provided, using default config {DEFAULT_CONFIG_PATH}")
             with open(args.config_path, "r") as f:
                 config = json.load(f)
         
