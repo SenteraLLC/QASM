@@ -1,17 +1,30 @@
 # Getting Started with QASM
 
 Welcome to the Quality Assurance State Machine (QASM)! QASM is a single-serve web application that runs
-using React, with the ability to run customizable QA jobs locally or via a statically hosted S3 website.  
+using React and Electron, with the ability to run customizable QA jobs locally or via a statically hosted S3 website.  
 
 ### Installation 
 
-1) Navigate to the frontend, install necessary packages, and run
+1) Navigate to the frontend and install necessary packages
 
         >> cd react-frontend
-        >> npm install 
-        >> npm run QASM
+        >> npm install
 
-This will build an app based on the specifications found in ``react-frontend/config.json``.
+2) The main app entrypoint is the python script ``react-frontend/QASM.py``. This script will launch the Electron app and serve the React app. It does require some python dependencies, which can be installed using:
+
+        >> pip install -r requirements.txt
+        
+3) The app can be run locally using
+
+         >> npm run qasm
+
+This will launch an app based on the specifications found in ``react-frontend/config.json``. Note that for any backend functionality that requires AWS, you will need to have your AWS credentials set up on your machine. See [here](https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-files.html) for more information. Additionally, you will need to deploy the backend to AWS using [Terraform](#terraform).
+
+To create a Windows executable of the current configuration, run
+
+        >> npm run qasm-build
+
+Which will deposit the executable in ``react-frontend/dist``. Note that this will only work on Windows machines.
 
 ### Configuration
 
