@@ -1,6 +1,6 @@
 {
-  "name": "multi-class-app-spring-2023",
-  "version": "0.16.1",
+  "name": "qasm-demo",
+  "version": "0.16.2",
   "private": true,
   "proxy": "http://localhost:3000",
   "homepage": "./",
@@ -61,7 +61,7 @@
     ]
   },
   "build": {
-    "productName": "Multi-Class App Spring 2023",
+    "productName": "QASM Demo",
     "win": {
       "target": "NSIS",
       "icon": "public/icon.png"

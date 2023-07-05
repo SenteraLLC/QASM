@@ -1,7 +1,7 @@
 {
-    "name": "Image Labeler",
+    "name": "QASM Image Labler",
     "app": "s3",
-    "bucket": "stand-qa-data",
+    "bucket": "qasm-demo",
     "components": [
         {
             "component": "home"
@@ -9,25 +9,25 @@
         {
             "component": "imagelabeler",
             "display_name": "Image Labeler",
-            "image_dir": "mfstand/2022/1051-Thonbontle/AckermannJWSP1A/100722T140321/RGB/",
-            "anno_dir": "mfstand/2022/1051-Thonbontle/AckermannJWSP1A/100722T140321/row_annotations/",
+            "image_dir": "grid-data/demo-1/images/",
+            "anno_dir": "grid-data/demo-1/annotations/",
             "subtasks": {
-                "row_classification": {
-                    "display_name": "Row Classification",
+                "car_parts": {
+                    "display_name": "Car Parts",
                     "classes": [
                         {
-                            "name": "Male",
+                            "name": "Tire",
                             "color": "blue",
-                            "id": 10
+                            "id": 0
                         },
                         {
-                            "name": "Female",
+                            "name": "Logo",
                             "color": "white",
-                            "id": 11
+                            "id": 1
                         }
                     ],
-                    "allowed_modes": ["polyline"],
-                    "resume_from": "row_annotations"
+                    "allowed_modes": ["polygon"],
+                    "resume_from": null
                 }
             }
         }

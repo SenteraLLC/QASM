@@ -16,22 +16,30 @@ using React and Electron, with the ability to run customizable QA jobs locally o
         
 3) The app can be run locally using
 
-         >> npm run qasm
+        >> npm run qasm
 
-This will launch an app based on the specifications found in ``react-frontend/config.json``. Note that for any backend functionality that requires AWS, you will need to have your AWS credentials set up on your machine. See [here](https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-files.html) for more information. Additionally, you will need to deploy the backend to AWS using [Terraform](#terraform).
+    This will launch an app based on the specifications found in ``react-frontend/config.json`` if present, else it will copy ``react-frontend/default-config.json``, load it, and save it to ``react-frontend/config.json``. 
 
-To create a Windows executable of the current configuration, run
+    Note that for any backend functionality that requires AWS (ie running in `"s3"` mode), you will need to have AWS credentials set up on your machine. See [here](https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-files.html) for more information. 
+
+    Once your AWS credentials are set, you will need to deploy the backend to AWS using [Terraform](#terraform).
+
+4) To create a Windows executable of the current configuration, run
 
         >> npm run qasm-build
 
-Which will deposit the executable in ``react-frontend/dist``. Note that this will only work on Windows machines.
+    Which will deposit the executable in ``react-frontend/dist``. Note that this will only work on Windows machines.
+
+5) To run using a specific configuration file, use
+
+        >> npm run qasm -- --config_path <path/to/config.json>
 
 ### Configuration
 
 ``react-frontend/config.json`` expects the following fields:
 
 - ``"app": <string>``
-    - ``"s3"`` for an app that pulls files from the specified s3 bucket (see below)
+    - ``"s3"`` for an app that runs using AWS Cloud resources managed by [Terraform](#terraform).
     - ``"local"`` for an app that runs using local files
 
 - ``"bucket": <string>``
@@ -42,7 +50,11 @@ Which will deposit the executable in ``react-frontend/dist``. Note that this wil
 
 - ``"components": <Array>`` Array of component config objects. Order of the components is the order they appear in the toolbar
     - Required for all components:
-        - ``"component": <string>`` Currently only "home", "grid", "imagelabeler", or "binaryeditor" are valid
+        - ``"component": <string>`` One of the following component names:
+            - ``"grid"`` for a grid of images, and the ability to label each image as a single class type
+            - ``"multiclassgrid"`` for a grid of images that supports multiple class types per image
+            - ``"imagelabeler"`` for a [ULabel](https://github.com/SenteraLLC/ulabel) image labeling tool
+            - ``"binaryeditor"`` for a binary image editor, where simple dilation and erosion operations can be performed
 
     - Optional for all components:
         - ``"display_name": <string>`` Change the navbar display name
@@ -104,8 +116,6 @@ Which will deposit the executable in ``react-frontend/dist``. Note that this wil
                 
 
     - ``"imagelabeler"`` Configuration ``<Object>``:
-         - ``"image_dir": <string>`` (Optional) Path to directory of images
-         - ``"anno_dir": <string>`` (Optional) Path to directory of labels/annotations
         - ``"subtasks": <Object>`` ULabel [subtasks](https://github.com/SenteraLLC/ulabel/blob/044c24072fe00a30b89e0f370fb8d4ddad28b59d/api_spec.md#subtasks) definition(s) 
             - ``<string>: <Object>`` Custom subtask name, followed by the subtask definition object
                 - ``"display_name": <string>`` Displayed subtask name
@@ -125,6 +135,8 @@ Which will deposit the executable in ``react-frontend/dist``. Note that this wil
                     - ``"global":`` A label to be applied to the entire series of frames
                     - ``"point":`` A keypoint within a single frame 
                 - ``"resume_from": <string>`` (Optional) Key used in annotation jsons. Used to load in annotations from the annotation directory (*Use `null` for no anno loading`*)
+        - ``"image_dir": <string>`` (Optional) Path to directory of images
+        - ``"anno_dir": <string>`` (Optional) Path to directory of labels or annotations
 
 
     - ``"binaryeditor"`` Configuration ``<Object>``:
@@ -137,12 +149,14 @@ Terraform automatically takes our lambda code and deploys it to all the necessar
 
 Install Terraform (https://learn.hashicorp.com/tutorials/terraform/install-cli)
 
-Connect to an existing Terraform project
+Start a new project or connect to an existing Terraform project
 
         >> cd terraform-backend
         >> terraform init
 
-To prevent developer testing from interfering with active users, we utilize terraform 'workspaces' to keep development and production environments seperate.
+Note: Since S3 buckets are globally scoped (no two buckets can share the same name), you may need to change the bucket name in the terraform code. To do this, open the file ``terraform-backend/main.tf`` and change references to the bucket name ``qasm-lambdas`` to something unique.
+
+To prevent developer testing from interfering with active users, we can utilize terraform 'workspaces' to keep development and production environments seperate.
 
 To work in the development workspace, use
 

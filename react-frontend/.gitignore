@@ -18,6 +18,12 @@
 # production
 /build
 
+# Active config
+config.json
+
+# Active index.html
+public/index.html
+
 # misc
 .DS_Store
 **/.env.*

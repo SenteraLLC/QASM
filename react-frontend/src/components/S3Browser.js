@@ -848,7 +848,7 @@ class S3Browser extends Component {
                             <input
                                 id="new-filename"
                                 type="text"
-                                value={this.default_savename}
+                                defaultValue={this.default_savename}
                                 onKeyDown={(e) => this.handleKeyPress(e.key)}
                             />
                         </div>
