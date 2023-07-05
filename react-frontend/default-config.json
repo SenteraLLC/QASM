@@ -1,10 +1,24 @@
 {
-    "name": "QASM Multi-Class Grid App",
+    "name": "QASM Demo",
     "app": "s3",
     "bucket": "qasm-demo",
     "components": [
         {
             "component": "home"
+        },
+        {
+            "component": "grid",
+            "grid_width": 2,
+            "classes": [
+                {
+                    "class_name": "car", 
+                    "svg_overlay": null
+                }, 
+                {
+                    "class_name": "truck", 
+                    "svg_overlay": "x_overlay"
+                }
+            ]
         },
         {
             "component": "multiclassgrid",
@@ -48,6 +62,37 @@
                 "multi_class_cars.json"
             ],
             "autoload_labels_on_dir_select": false
+        },
+        {
+            "component": "imagelabeler",
+            "display_name": "Image Labeler",
+            "image_dir": "grid-data/demo-1/images/",
+            "anno_dir": "grid-data/demo-1/annotations/",
+            "subtasks": {
+                "car_parts": {
+                    "display_name": "Car Parts",
+                    "classes": [
+                        {
+                            "name": "Tire",
+                            "color": "blue",
+                            "id": 0
+                        },
+                        {
+                            "name": "Logo",
+                            "color": "white",
+                            "id": 1
+                        }
+                    ],
+                    "allowed_modes": ["polygon"],
+                    "resume_from": null
+                }
+            }
+        },
+        {
+            "component": "binaryeditor",
+            "display_name": "Binary Editor",
+            "mode": "s3directory",
+            "dilate_keybind": "w"
         }
     ]
 }
