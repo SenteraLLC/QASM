@@ -16,7 +16,7 @@ using React and Electron, with the ability to run customizable QA jobs locally o
         
 3) The app can be run locally using
 
-         >> npm run qasm
+        >> npm run qasm
 
 This will launch an app based on the specifications found in ``react-frontend/config.json``. Note that for any backend functionality that requires AWS, you will need to have your AWS credentials set up on your machine. See [here](https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-files.html) for more information. Additionally, you will need to deploy the backend to AWS using [Terraform](#terraform).
 
