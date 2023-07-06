@@ -34,7 +34,7 @@ class MultiClassGrid extends Component {
             if (this.labels[image_name] === undefined) { this.labels[image_name] = {}; }
             Object.keys(this.classes).map(class_type => (
                 this.classes[class_type].class_values.map(class_val => {
-                    if (document.getElementById(image_name + "_" + class_val).checked) {
+                    if (document.getElementById(image_name + "_" + class_type + "_" + class_val).checked) {
 
                         this.labels[image_name][class_type] = class_val;
                     }
