@@ -332,7 +332,7 @@ export async function loadNextDir(window, component) {
         folders = component.next_dir_cache[root_dir]
     } else {
         // Else get all folders in root_dir and add to cache
-        let response = await component.QASM.call_backend(window, function_names.OPEN_FOLDER, root_dir);
+        let response = await component.QASM.call_backend(window, function_names.GET_FOLDER_CONTENTS, root_dir);
         folders = response.folders.sort();
         component.next_dir_cache[root_dir] = folders;
     }

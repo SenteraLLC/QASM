@@ -47,7 +47,7 @@ export class QASM_s3 extends QASM {
      */
     async init() {
         // Preload first level of s3 bucket
-        let response = await this.call_backend(window, function_names.OPEN_FOLDER, null);
+        let response = await this.call_backend(window, function_names.GET_FOLDER_CONTENTS, null);
         this.folders = response.folders;
         this.files = response.files;
         return this;

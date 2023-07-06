@@ -8,17 +8,16 @@ const path = require('path');
 // Connect function names with their function handlers
 exports.function_handlers = {
     // [function_names.SAVE_BINARY_DIRECTORY]:      saveBinaryDirectory,
-    [function_names.LOAD_LABELS_DIALOG]:         handleLoadLabels,
-    // [function_names.LOAD_IMAGE_DIALOG]:          handleLoadImage,
-    [function_names.LOAD_IMAGES_DIALOG]:         handleLoadImages,
-    [function_names.OPEN_DIR_DIALOG]:            handleOpenDir,
-    // [function_names.OPEN_IMG_DIR_DIALOG]:        handleOpenImgDir,
-    // [function_names.OPEN_IMG_DIALOG]:            handleLoadImage,
-    // [function_names.SAVE_IMAGE_DIALOG]:          handleSaveImage,
+    [function_names.LOAD_LABELS_DIALOG]:         handleLoadLabelsDialog,
+    [function_names.LOAD_IMAGES_DIALOG]:         handleLoadImagesDialog,
+    [function_names.OPEN_DIR_DIALOG]:            handleOpenDirDialog,
+    // [function_names.OPEN_IMG_DIR_DIALOG]:        handleOpenImgDirDialog,
+    // [function_names.LOAD_IMAGE_DIALOG]:          handleLoadImageDialog,
+    // [function_names.SAVE_IMAGE_DIALOG]:          handleSaveImageDialog,
     [function_names.LOAD_JSON]:                  handleLoadJson,
-    [function_names.SAVE_JSON_DIALOG]:           handleSaveJSON,
-    [function_names.SAVE_JSON]:                  handleSaveJSONtoPath,
-    // [function_names.OPEN_FOLDER]:                handleOpenS3Folder,
+    [function_names.SAVE_JSON_DIALOG]:           handleSaveJsonDialog,
+    [function_names.SAVE_JSON]:                  handleSaveJson,
+    // [function_names.GET_FOLDER_CONTENTS]:        handleGetFolderContents,
     // [function_names.GET_CASCADING_DIR_CHILDREN]: getS3FolderChildren,
 }
 
@@ -86,7 +85,7 @@ async function handleOpenFile(event, data) {
  * @param {object} data {labels: <Object>, path: <string>}
  * @returns file path on sucess, nothing on cancel
  */
- async function handleSaveJSON(event, data) {
+ async function handleSaveJsonDialog(event, data) {
     const dialogOptions = {
         title: "Select Where to Save Labels",
         filters: [
@@ -113,7 +112,7 @@ async function handleOpenFile(event, data) {
  * @param {object} data {labels: <Object>, path: <string>}
  * @returns file path on sucess, nothing on cancel
  */
- async function handleSaveJSONtoPath(event, data) {
+ async function handleSaveJson(event, data) {
     try {
         fs.writeFileSync(data.path, JSON.stringify(data.labels));
         return "Saved labels at " + data.path;
@@ -130,7 +129,7 @@ async function handleOpenFile(event, data) {
  * @param {Object} data data
  * @returns dir path on sucess, nothing on cancel
  */
- async function handleOpenDir(event, data) {
+ async function handleOpenDirDialog(event, data) {
     const dialogOptions = {
         title: "Select Image Directory",
         properties: ["openDirectory"]
@@ -152,7 +151,7 @@ async function handleOpenFile(event, data) {
  * @param {Object} data data
  * @returns {Object} labels
  */
-async function handleLoadLabels(event, data) {
+async function handleLoadLabelsDialog(event, data) {
     try {
         let file_path = await handleOpenFile(event, data);
         let labels = JSON.parse(fs.readFileSync(file_path));
@@ -170,7 +169,7 @@ async function handleLoadLabels(event, data) {
  * @param {string} data file path
  * @returns {Object} image base64 strings indexed by image name
  */
- async function handleLoadImages(event, data) {
+ async function handleLoadImagesDialog(event, data) {
     try {
         let file_path = data;
         let files = fs.readdirSync(file_path);
