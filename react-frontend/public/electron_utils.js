@@ -8,19 +8,22 @@ const path = require('path');
 // Connect function names with their function handlers
 exports.function_handlers = {
     // ##### DIRECTORY #####
-    [function_names.OPEN_DIR_DIALOG]:            handleOpenDirDialog,
-    [function_names.OPEN_IMAGE_DIR_DIALOG]:      handleOpenImageDirDialog,
-    [function_names.SAVE_BINARY_DIRECTORY]:      saveBinaryDirectory,
+    [function_names.OPEN_DIR_DIALOG]:       handleOpenDirDialog,
+    [function_names.OPEN_IMAGE_DIR_DIALOG]: handleOpenImageDirDialog,
+    [function_names.SAVE_BINARY_DIRECTORY]: saveBinaryDirectory,
     // ##### IMAGE #####
-    [function_names.LOAD_IMAGE_DIALOG]:          handleLoadImageDialog,
-    [function_names.LOAD_IMAGES_DIALOG]:         handleLoadImagesDialog,
-    [function_names.SAVE_IMAGE_DIALOG]:          handleSaveImageDialog,
+    [function_names.LOAD_IMAGE_DIALOG]:     handleLoadImageDialog,
+    [function_names.LOAD_IMAGES_DIALOG]:    handleLoadImagesDialog,
+    [function_names.SAVE_IMAGE_DIALOG]:     handleSaveImageDialog,
     // ##### JSON #####
-    [function_names.LOAD_JSON_DIALOG]:           handleLoadJsonDialog,
-    [function_names.LOAD_JSON]:                  handleLoadJson,
-    [function_names.SAVE_JSON_DIALOG]:           handleSaveJsonDialog,
-    [function_names.SAVE_JSON]:                  handleSaveJson,
+    [function_names.LOAD_JSON_DIALOG]:      handleLoadJsonDialog,
+    [function_names.LOAD_JSON]:             handleLoadJson,
+    [function_names.SAVE_JSON_DIALOG]:      handleSaveJsonDialog,
+    [function_names.SAVE_JSON]:             handleSaveJson,
 }
+
+
+// ##### UTILS #####
 
 
 /**
@@ -36,6 +39,49 @@ exports.init_ipc_handlers = () => {
         ipcMain.handle(key, (event, data) => {
             return this.function_handlers[key](event, data);
         });
+    }
+}
+
+
+/**
+ * Open a file selection dialog
+ * 
+ * @param event event
+ * @param {object} data {path: <string>, loadnames: Array<string>}
+ * @returns file path on sucess, nothing on cancel
+ */
+async function handleOpenFile(event, data) {
+    const dialogOptions = {
+        title: "Select File",
+        filters: [
+            { name: "json (required)", extensions: ["json"] },
+            { name: "Any type", extensions: ["*"]},
+        ],
+    }
+    if ("path" in data && "loadnames" in data) {
+        // check if any of the loadnames exist in the path
+        let loadnames = data["loadnames"];
+        let path = data["path"];
+
+        // Ensure loadnames is an array
+        if (Array.isArray(loadnames)) {
+            let files = fs.readdirSync(path);
+            for (let loadname of loadnames) {
+                if (files.includes(loadname)) {
+                    path += "\\" + loadname;
+                    dialogOptions["defaultPath"] = path;
+                    break;
+                }
+            }
+        } else {
+            console.warn("loadnames is not an array, ignoring.");
+        }
+    }
+    const { canceled, filePaths } = await dialog.showOpenDialog(dialogOptions);
+    if (canceled) {
+        return;
+    } else {
+        return filePaths[0];
     }
 }
 
@@ -216,46 +262,6 @@ async function handleSaveJsonDialog(event, data) {
         return "Saved labels at " + data.path;
     } catch (e) {
         return "Error when saving labels.";
-    }
-}
-
-
-// ##### UTILS #####
-
-
-/**
- * Open a file selection dialog
- * 
- * @param event event
- * @param {object} data {path: <string>, loadnames: Array<string>}
- * @returns file path on sucess, nothing on cancel
- */
-async function handleOpenFile(event, data) {
-    const dialogOptions = {
-        title: "Select File",
-        filters: [
-            { name: "json (required)", extensions: ["json"] },
-            { name: "Any type", extensions: ["*"]},
-        ],
-    }
-    if ("path" in data && "loadnames" in data) {
-        // check if any of the loadnames exist in the path
-        let loadnames = data["loadnames"];
-        let path = data["path"];
-        let files = fs.readdirSync(path);
-        for (let loadname of loadnames) {
-            if (files.includes(loadname)) {
-                path += "\\" + loadname;
-                break;
-            }
-        }
-        dialogOptions["defaultPath"] = path;
-    }
-    const { canceled, filePaths } = await dialog.showOpenDialog(dialogOptions);
-    if (canceled) {
-        return;
-    } else {
-        return filePaths[0];
     }
 }
 

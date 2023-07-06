@@ -58,9 +58,10 @@ class Grid extends Component {
         initEventListeners(window, document, this);
 
         // Bind functions
-        this.updateLocalLabels   = this.updateLocalLabels.bind(this);
-        this.initOverlays        = this.initOverlays.bind(this);
-        this.changeGridFilter    = this.changeGridFilter.bind(this);
+        this.updateLocalLabels     = this.updateLocalLabels.bind(this);
+        this.initOverlays          = this.initOverlays.bind(this);
+        this.changeGridFilter      = this.changeGridFilter.bind(this);
+        this.getClassFromImageName = this.getClassFromImageName.bind(this);
     }
 
 
@@ -130,6 +131,27 @@ class Grid extends Component {
                 "class": class_name
             }
         }
+    }
+
+
+    /**
+     * Get the class name from the image name
+     * 
+     * @param {string} image_name
+     * @returns {string} class name
+     */
+    getClassFromImageName(image_name) {
+        // Default to the first class
+        let _class = this.classes[0].class_name;
+        if (image_name in this.labels) {
+            _class = this.labels[image_name]["class"]
+            // If class name is not in the classes list, clear the labels
+            if (!this.classes.find(x => x.class_name === _class)) {
+                alert("Class name '" + _class + "' not found in classes list, clearing loaded labels.");
+                this.labels = {};
+            }
+        }
+        return _class
     }
 
 
@@ -291,9 +313,7 @@ class Grid extends Component {
                                 image_name={image_name} 
                                 classes={this.classes}
                                 default_class={
-                                    image_name in this.labels 
-                                        ? this.labels[image_name]["class"] 
-                                        : this.classes[0].class_name
+                                    this.getClassFromImageName(image_name)
                                 }
                                 image_stack={
                                     getImageStackByName(this, image_name)
