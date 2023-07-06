@@ -146,8 +146,6 @@ export function getOneFolderUp(og_file_path) {
         ret = forwardslash_to_backslash(ret)[0]
     }
 
-    console.log("og_file_path: " + og_file_path)
-    console.log("getOneFolderUp: " + ret)
     return ret
 }
 

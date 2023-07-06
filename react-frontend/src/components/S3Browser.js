@@ -333,7 +333,7 @@ class S3Browser extends Component {
         else {
             try {
                 // Call the backend to get the folder's children folders and files
-                let response = await this.QASM.call_backend(window, function_names.OPEN_S3_FOLDER, folder);
+                let response = await this.QASM.call_backend(window, function_names.OPEN_FOLDER, folder);
 
                 // Update the browser's folders, files, and path
                 this.folders = response.folders;
@@ -541,7 +541,7 @@ class S3Browser extends Component {
                 cascaded_path += path_segments[idx].innerText + "/";
             }
 
-            const response = await this.QASM.call_backend(window, function_names.OPEN_S3_FOLDER, cascaded_path);
+            const response = await this.QASM.call_backend(window, function_names.OPEN_FOLDER, cascaded_path);
             const folders = response.folders;
             const files = response.files;
 

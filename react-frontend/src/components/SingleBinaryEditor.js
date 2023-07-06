@@ -37,7 +37,7 @@ class SingleBinaryEditor extends Component {
      * If it loads, set the original binary src to the binary.
      */
     async loadBinary() {
-        let directory_path = await this.QASM.call_backend(window, function_names.OPEN_IMG);
+        let directory_path = await this.QASM.call_backend(window, function_names.OPEN_IMG_DIALOG);
 
         if (directory_path !== undefined) {
             this.original_binary_src = directory_path
@@ -89,7 +89,7 @@ class SingleBinaryEditor extends Component {
 
         let blob = await this.blobToBase64(await this.getBlob(output_binary.src));
 
-        console.log(await this.QASM.call_backend(window, function_names.SAVE_IMAGE, blob))
+        console.log(await this.QASM.call_backend(window, function_names.SAVE_IMAGE_DIALOG, blob))
     }
 
 

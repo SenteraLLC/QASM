@@ -7,18 +7,19 @@ const path = require('path');
 
 // Connect function names with their function handlers
 exports.function_handlers = {
-    // [function_names.SAVE_BINARY_DIRECTORY]:   saveBinaryDirectory,
-    [function_names.LOAD_LABELS]:             handleLoadLabels,
-    // [function_names.LOAD_IMAGE]:              handleLoadImage,
-    [function_names.LOAD_IMAGES]:             handleLoadImages,
-    [function_names.OPEN_DIR]:                handleOpenDir,
-    // [function_names.OPEN_IMG_DIR]:            handleOpenImgDir,
-    // [function_names.OPEN_IMG]:                handleLoadImage,
-    // [function_names.SAVE_IMAGE]:              handleSaveImage,
-    [function_names.LOAD_JSON]:               handleLoadJson,
-    [function_names.SAVE_JSON_FILE]:          handleSaveJSON,
-    [function_names.SAVE_JSON_TO_PATH]:       handleSaveJSONtoPath,
-    // [function_names.OPEN_S3_FOLDER]:          handleOpenS3Folder,
+    // [function_names.SAVE_BINARY_DIRECTORY]:      saveBinaryDirectory,
+    [function_names.LOAD_LABELS_DIALOG]:         handleLoadLabels,
+    // [function_names.LOAD_IMAGE_DIALOG]:          handleLoadImage,
+    [function_names.LOAD_IMAGES_DIALOG]:         handleLoadImages,
+    [function_names.OPEN_DIR_DIALOG]:            handleOpenDir,
+    // [function_names.OPEN_IMG_DIR_DIALOG]:        handleOpenImgDir,
+    // [function_names.OPEN_IMG_DIALOG]:            handleLoadImage,
+    // [function_names.SAVE_IMAGE_DIALOG]:          handleSaveImage,
+    [function_names.LOAD_JSON]:                  handleLoadJson,
+    [function_names.SAVE_JSON_DIALOG]:           handleSaveJSON,
+    [function_names.SAVE_JSON]:                  handleSaveJSONtoPath,
+    // [function_names.OPEN_FOLDER]:                handleOpenS3Folder,
+    // [function_names.GET_CASCADING_DIR_CHILDREN]: getS3FolderChildren,
 }
 
 

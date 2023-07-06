@@ -61,7 +61,7 @@ class Ulabel extends Component {
 
     async startULabel() {
         if (this.image == null) {
-            // this.image = await this.QASM.call_backend(window, function_names.LOAD_IMAGE);
+            // this.image = await this.QASM.call_backend(window, function_names.LOAD_IMAGE_DIALOG);
             alert("No image provided, canceling ulabel job...");
             return;
         }

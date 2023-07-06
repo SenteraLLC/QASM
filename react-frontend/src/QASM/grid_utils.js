@@ -265,7 +265,7 @@ export function changeImage(document, hover_image_id) {
  * @param {*} component component that called this function: pass in `this`
  */
 export async function loadImages(window, component) {
-    component.images = await component.QASM.call_backend(window, function_names.LOAD_IMAGES, component.src);
+    component.images = await component.QASM.call_backend(window, function_names.LOAD_IMAGES_DIALOG, component.src);
     component.image_names = Object.keys(component.images).sort();
     clearAllLabels(component);
     // Set the images shown to true now that the images are shown
@@ -276,7 +276,7 @@ export async function loadImages(window, component) {
 /**
  * Load images from the current source directory,
  * and try and autoload labels and image layers.
- * Autoload requires autoload_labels_on_dir_select, component.label_loadnames,
+ * Autoload requires autoLOAD_LABELS_DIALOG_on_dir_select, component.label_loadnames,
  * and component.image_layer_loadnames to be defined.
  * 
  * @param {*} window window object
@@ -303,7 +303,7 @@ export async function loadImageDir(window, component) {
  * @param {*} component component that called this function: pass in `this`
  */
 export async function selectImageDir(window, component) {
-    let dir_path = await component.QASM.call_backend(window, function_names.OPEN_DIR, component.src);
+    let dir_path = await component.QASM.call_backend(window, function_names.OPEN_DIR_DIALOG, component.src);
     if (dir_path !== undefined) {
         component.src = dir_path;
         await loadImageDir(window, component);
@@ -332,7 +332,7 @@ export async function loadNextDir(window, component) {
         folders = component.next_dir_cache[root_dir]
     } else {
         // Else get all folders in root_dir and add to cache
-        let response = await component.QASM.call_backend(window, function_names.OPEN_S3_FOLDER, root_dir);
+        let response = await component.QASM.call_backend(window, function_names.OPEN_FOLDER, root_dir);
         folders = response.folders.sort();
         component.next_dir_cache[root_dir] = folders;
     }
@@ -400,7 +400,7 @@ export async function loadLabels(window, component, loadnames = undefined) {
     }
 
     // Open browser and load labels
-    let labels = await component.QASM.call_backend(window, function_names.LOAD_LABELS, params);
+    let labels = await component.QASM.call_backend(window, function_names.LOAD_LABELS_DIALOG, params);
     component.labels = initLabels(component, labels);
     console.log(component.labels);
 
@@ -456,7 +456,7 @@ export async function saveLabels(window, component, savename = "") {
         savename: savename,
     }
 
-    await component.QASM.call_backend(window, function_names.SAVE_JSON_FILE, params);
+    await component.QASM.call_backend(window, function_names.SAVE_JSON_DIALOG, params);
 }
 
 
@@ -481,11 +481,11 @@ export function clearAllLabels(component) {
  */
 export async function addImageLayer(window, component) {
     // Prompt user to select directory
-    let dir_path = await component.QASM.call_backend(window, function_names.OPEN_DIR, component.src);
+    let dir_path = await component.QASM.call_backend(window, function_names.OPEN_DIR_DIALOG, component.src);
     console.log(dir_path);
 
     // Load images and add them to the image stack
-    let image_layer = await component.QASM.call_backend(window, function_names.LOAD_IMAGES, dir_path);
+    let image_layer = await component.QASM.call_backend(window, function_names.LOAD_IMAGES_DIALOG, dir_path);
     if (Object.keys(image_layer).length === 0) {
         console.log("Prevent adding empty layer.");
     } else {
@@ -534,7 +534,7 @@ export async function autoLoadImageLayers(window, component) {
                     n_layers--; // We need one fewer layer
                 } else {
                     // Load images and add them to the image stack
-                    let image_layer = await component.QASM.call_backend(window, function_names.LOAD_IMAGES, root_dir + folder_name + "/");
+                    let image_layer = await component.QASM.call_backend(window, function_names.LOAD_IMAGES_DIALOG, root_dir + folder_name + "/");
                     if (Object.keys(image_layer).length === 0) {
                         console.log("Prevent adding empty layer, skipping to next folder group.");
                         component.image_stack = []; // Clear image stack to allow next group to try and load

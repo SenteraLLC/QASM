@@ -60,7 +60,7 @@ class ImageLabeler extends Component {
 
             // Create a dictionary for every image in the directory where the image name is
             // the key and the path is the value
-            this.images = await this.QASM.call_backend(window, function_names.LOAD_IMAGES, this.image_dir);
+            this.images = await this.QASM.call_backend(window, function_names.LOAD_IMAGES_DIALOG, this.image_dir);
 
             // Create a list of keys
             this.images_keys = Object.keys(this.images).sort();
@@ -78,7 +78,7 @@ class ImageLabeler extends Component {
     }
 
     async selectImageDir() {
-        let res = await this.QASM.call_backend(window, function_names.OPEN_DIR, this.image_dir); // prompt selection
+        let res = await this.QASM.call_backend(window, function_names.OPEN_DIR_DIALOG, this.image_dir); // prompt selection
         if (res !== null) {
             this.image_dir = res;
             this.loadImageDir();
@@ -86,7 +86,7 @@ class ImageLabeler extends Component {
     }
 
     async selectAnnoDir() {
-        let res = await this.QASM.call_backend(window, function_names.OPEN_DIR, this.anno_dir); // prompt selection
+        let res = await this.QASM.call_backend(window, function_names.OPEN_DIR_DIALOG, this.anno_dir); // prompt selection
         if (res !== null) {
             this.anno_dir = res;
             await this.loadAnnotations();
@@ -141,7 +141,7 @@ class ImageLabeler extends Component {
             }           
 
             try {
-                await this.QASM.call_backend(window, function_names.SAVE_JSON_TO_PATH, params);
+                await this.QASM.call_backend(window, function_names.SAVE_JSON, params);
                 console.log("Annotations saved."); 
             } catch(e) {
                 console.log(e);
