@@ -5,9 +5,9 @@
 exports.function_names = {
     SAVE_BINARY_DIRECTORY: "saveBinaryDirectory",
     OPEN_DIR_DIALOG: "openDirDialog",
-    OPEN_IMG_DIR_DIALOG: "openImgDirDialog",
+    OPEN_IMAGE_DIR_DIALOG: "openImageDirDialog",
     LOAD_IMAGE_DIALOG: "loadImageDialog",
-    LOAD_LABELS_DIALOG: "loadLabelsDialog",
+    LOAD_JSON_DIALOG: "loadJsonDialog",
     LOAD_IMAGES_DIALOG: "loadImagesDialog",
     SAVE_JSON_DIALOG: "saveJsonDialog",
     SAVE_JSON: "saveJson",

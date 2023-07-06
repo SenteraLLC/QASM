@@ -400,7 +400,7 @@ export async function loadLabels(window, component, loadnames = undefined) {
     }
 
     // Open browser and load labels
-    let labels = await component.QASM.call_backend(window, function_names.LOAD_LABELS_DIALOG, params);
+    let labels = await component.QASM.call_backend(window, function_names.LOAD_JSON_DIALOG, params);
     component.labels = initLabels(component, labels);
     console.log(component.labels);
 
