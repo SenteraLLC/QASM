@@ -95,16 +95,60 @@ export function get_new_window_url(window, new_path) {
 }
 
 
+/**
+ * Replace all backslashes with forward slashes and add a trailing slash if there isn't one.
+ * 
+ * @param {string} file_path file path
+ * @returns [string file_path, boolean did_change]
+ */
+export function backslash_to_forwardslash(file_path) {
+    // Replace all backslashes with forward slashes
+    let ret = file_path.replaceAll("\\", "/")
+    let did_change = ret !== file_path
+    // Add a trailing slash if there isn't one
+    ret += ret.endsWith("/") ? "" : "/"
+    return [ret, did_change]
+}
+
+
+/**
+ * Replace all forward slashes with backslashes and remove a trailing slash if there is one.
+ * 
+ * @param {string} file_path file path 
+ * @returns [string file_path, boolean did_change]
+ */
+export function forwardslash_to_backslash(file_path) {
+    // Replace all forward slashes with backslashes
+    let ret = file_path.replaceAll("/", "\\")
+    let did_change = ret !== file_path
+    // Remove a trailing slash if there is one
+    ret = ret.endsWith("\\") ? ret.slice(0, -1) : ret
+    return [ret, did_change]
+}
+    
+
   /**
    * Get the file path one folder up.
    * 
    * @param {string} file_path file path with trailing slash
    * @returns file path one folder up
    */
-export function getOneFolderUp(file_path) {
+export function getOneFolderUp(og_file_path) {
+    // Handle backslashes in the file path
+    let [file_path, did_change] = backslash_to_forwardslash(og_file_path)
+    
     // Returns everything before the second to last "/". Then add an additional "/" to make it a path
     // the regex returns an array, and what we want is the first capture group
-    return /((?:.|\s)*)(?:\/[^\/]*){2}$/gm.exec(file_path)[1] + "/"
+    let ret = /((?:.|\s)*)(?:\/[^\/]*){2}$/gm.exec(file_path)[1] + "/"
+    
+    // If the file path had backslashes, then convert the forward slashes back to backslashes
+    if (did_change) {
+        ret = forwardslash_to_backslash(ret)[0]
+    }
+
+    console.log("og_file_path: " + og_file_path)
+    console.log("getOneFolderUp: " + ret)
+    return ret
 }
 
 
@@ -114,6 +158,17 @@ export function getOneFolderUp(file_path) {
  * @param {string} file_path file path with trailing slash 
  * @returns current folder name
  */
-export function getCurrentFolder(file_path) {
-    return file_path.split("/").slice(-2)[0]
+export function getCurrentFolder(og_file_path) {
+    // Handle backslashes in the file path
+    let [file_path, did_change] = backslash_to_forwardslash(og_file_path)
+
+    // Get the current folder name
+    let ret = file_path.split("/").slice(-2)[0]
+
+    // If the file path had backslashes, then convert the forward slashes back to backslashes
+    if (did_change) {
+        ret = forwardslash_to_backslash(ret)[0]
+    }
+
+    return ret
 }
