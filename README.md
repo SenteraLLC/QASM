@@ -34,6 +34,15 @@ using React and Electron, with the ability to run customizable QA jobs locally o
 
         >> npm run qasm -- --config_path <path/to/config.json>
 
+If encountering the error: `POST http://localhost:3000/undefinedopen_dir 431 (Request Header Fields Too Large)` when launching, ensure that the `react-frontend/.env.development` and `react-frontend/.env.production` files have been generated locally by running:
+    
+        >> terraform workspace select dev
+        >> terraform apply
+        >> terraform workspace select prod
+        >> terraform apply
+
+Note that this will also apply any changes made to the terraform code, so be sure to double check that you are not accidentily destroying any resources.
+
 ### Configuration
 
 ``react-frontend/config.json`` expects the following fields:
