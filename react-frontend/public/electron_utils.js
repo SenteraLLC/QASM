@@ -44,6 +44,8 @@ exports.init_ipc_handlers = () => {
 /**
  * Open a file selection dialog
  * 
+ * @param event event
+ * @param {object} data {path: <string>, loadnames: Array<string>}
  * @returns file path on sucess, nothing on cancel
  */
 async function handleOpenFile(event, data) {
@@ -53,6 +55,19 @@ async function handleOpenFile(event, data) {
             { name: "json (required)", extensions: ["json"] },
             { name: "Any type", extensions: ["*"]},
         ],
+    }
+    if ("path" in data && "loadnames" in data) {
+        // check if any of the loadnames exist in the path
+        let loadnames = data["loadnames"];
+        let path = data["path"];
+        let files = fs.readdirSync(path);
+        for (let loadname of loadnames) {
+            if (files.includes(loadname)) {
+                path += "\\" + loadname;
+                break;
+            }
+        }
+        dialogOptions["defaultPath"] = path;
     }
     const { canceled, filePaths } = await dialog.showOpenDialog(dialogOptions);
     if (canceled) {
@@ -67,7 +82,7 @@ async function handleOpenFile(event, data) {
  * Open a save file dialog
  * 
  * @param event event
- * @param {object} data {labels: {}, path: ""}
+ * @param {object} data {labels: <Object>, path: <string>}
  * @returns file path on sucess, nothing on cancel
  */
  async function handleSaveJSON(event, data) {
@@ -94,7 +109,7 @@ async function handleOpenFile(event, data) {
  * Save a json to a path
  * 
  * @param event event
- * @param {object} data {labels: {}, path: ""}
+ * @param {object} data {labels: <Object>, path: <string>}
  * @returns file path on sucess, nothing on cancel
  */
  async function handleSaveJSONtoPath(event, data) {
@@ -138,7 +153,7 @@ async function handleOpenFile(event, data) {
  */
 async function handleLoadLabels(event, data) {
     try {
-        let file_path = await handleOpenFile();
+        let file_path = await handleOpenFile(event, data);
         let labels = JSON.parse(fs.readFileSync(file_path));
         return labels;
     } catch {
