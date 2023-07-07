@@ -1,6 +1,7 @@
 import { Component } from 'react';
 import Ulabel from './Ulabel.js';
 import "../css/ImageLabeler.css";
+const { getChildPath } = require("../QASM/utils.js");
 const { function_names } = require("../../public/electron_constants.js");
 
 class ImageLabeler extends Component {
@@ -98,7 +99,7 @@ class ImageLabeler extends Component {
         if (this.anno_dir !== null) {
 
             // anno filename should be image_name.json
-            this.anno_filename = this.anno_dir + this.cur_image_name + ".json";
+            this.anno_filename = getChildPath(this.anno_dir, this.cur_image_name + ".json");
             try {
                 this.annotations = await this.QASM.call_backend(window, function_names.LOAD_JSON, this.anno_filename);
             } catch (e) {

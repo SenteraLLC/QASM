@@ -23,21 +23,21 @@
             "component": "imagelabeler",
             "display_name": "Image Labeler",
             "subtasks": {
-                "row_classification": {
-                    "display_name": "Row Classification",
+                "car_parts": {
+                    "display_name": "Car Parts",
                     "classes": [
                         {
-                            "name": "Blue",
+                            "name": "Tire",
                             "color": "blue",
-                            "id": 10
+                            "id": 0
                         },
                         {
-                            "name": "White",
+                            "name": "Logo",
                             "color": "white",
-                            "id": 11
+                            "id": 1
                         }
                     ],
-                    "allowed_modes": ["polyline"],
+                    "allowed_modes": ["polygon"],
                     "resume_from": null
                 }
             }
