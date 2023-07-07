@@ -259,7 +259,7 @@ async function handleLoadJsonDialog(event, data) {
  * Open a save file dialog
  * 
  * @param event event
- * @param {object} data {labels: <Object>, path: <string>}
+ * @param {object} data {labels: <Object>, path: <string>, savename: <string>}
  * @returns file path on sucess, nothing on cancel
  */
 async function handleSaveJsonDialog(event, data) {
@@ -268,6 +268,13 @@ async function handleSaveJsonDialog(event, data) {
         filters: [
             { name: "json (required)", extensions: ["json"] },
         ],
+    }
+    // Populate the default path
+    if ("path" in data && "savename" in data) {
+        // Ensure savename is a non-empty string
+        if (typeof data["savename"] === "string" && data["savename"] !== "") {
+            dialogOptions["defaultPath"] = path.join(data["path"], data["savename"]);
+        }
     }
     const { canceled, filePath } = await dialog.showSaveDialog(dialogOptions);
     if (canceled) {
