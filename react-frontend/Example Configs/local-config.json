@@ -10,11 +10,11 @@
             "grid_width": 2,
             "classes": [
                 {
-                    "class_name": "normal", 
+                    "class_name": "car", 
                     "svg_overlay": null
                 }, 
                 {
-                    "class_name": "other", 
+                    "class_name": "truck", 
                     "svg_overlay": "x_overlay"
                 }
             ]

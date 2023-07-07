@@ -177,7 +177,7 @@ export function getChildPath(og_file_path, child_name) {
     let [file_path, did_change] = backslash_to_forwardslash(og_file_path)
 
     // Get the current folder name
-    let ret = file_path + child_name + "/"
+    let ret = file_path + child_name
 
     // If the file path had backslashes, then convert the forward slashes back to backslashes
     if (did_change) {

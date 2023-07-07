@@ -63,15 +63,13 @@ async function handleOpenFile(event, data) {
         // check if any of the loadnames exist in the path
         let loadnames = data["loadnames"];
         let path = data["path"];
-
         // Ensure loadnames is an array
         if (Array.isArray(loadnames)) {
             let files = fs.readdirSync(path);
             for (let loadname of loadnames) {
                 if (files.includes(loadname)) {
                     path += "\\" + loadname;
-                    dialogOptions["defaultPath"] = path;
-                    break;
+                    return path;
                 }
             }
         } else {
