@@ -231,7 +231,6 @@ export function changeImage(document, hover_image_id) {
     // childNodes of image holder div = image layers
 
     let layers = document.getElementById(hover_image_id).firstChild.childNodes;
-    console.log(layers);
     // layers[0] is the image, layers[n] is image_stack[n-1], layers[layers.length-1] is the class-overlay
     for (let idx = 0; idx < layers.length; idx++) {
         let layer = layers[idx];
@@ -492,6 +491,7 @@ export async function addImageLayer(window, component) {
         component.image_stack.push(image_layer);
         console.log(component.image_stack);
     }
+    component.updateLocalLabels();
     updateState(component);
 }
 

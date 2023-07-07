@@ -330,7 +330,7 @@ class Grid extends Component {
         // Ensure update runs once the page is fully loaded
         setInterval(() => {
             if (!this.update_success) {
-                this.update_success = update_all_overlays();
+                this.update_success = update_all_overlays(this);
                 // Update filters (hidden class) on images
                 this.changeGridFilter(this.filtered_class_name);
             }
@@ -339,7 +339,7 @@ class Grid extends Component {
 
     componentDidUpdate() {
         // Update overlays
-        this.update_success = update_all_overlays();
+        this.update_success = update_all_overlays(this);
         // Update filters (hidden class) on images
         this.changeGridFilter(this.filtered_class_name);
     }

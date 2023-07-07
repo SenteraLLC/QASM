@@ -17,28 +17,21 @@ export function string_to_vaild_css_selector(input_string) {
 
 /**
  * Updates all of the overlays to be the same size as their image.
+ * Assumes that the component has an image_names property, and that
+ * each image has an overlay with the id of image_name + "-overlay".
+ * 
+ * @param {Component} component component that called this function: pass in `this` 
+ * @returns {boolean} true if successful, false if not
  */
-export function update_all_overlays() {
-    let all_overlays = document.getElementsByClassName("overlay")
-    // Just in case this runs before the overlays are added to the dom
-    if (all_overlays.length === 0) {
-        return true
-    }
-
-    // Loop through every overlay and resize them to fit on their image
-    for (let current_overlay of all_overlays) {
-        
-        // Grab the current overlay's sibling image until image loads
-        let image = current_overlay.previousElementSibling;
-        
-        if (image.clientHeight === 0) {
-            return false
+export function update_all_overlays(component) {
+    try {
+        for (let image_name of component.image_names) {
+            update_overlay_by_id(image_name + "-overlay");
         }
-        // Set the overlay's width and height to the image's displayed width and height
-        current_overlay.width  = image.clientWidth;
-        current_overlay.height = image.clientHeight;
+        return true;
+    } catch {
+        return false;
     }
-    return true;
 }
 
 /**

@@ -305,7 +305,7 @@ class MultiClassGrid extends Component {
         // Ensure update runs once the page is fully loaded
         setInterval(() => {
             if (!this.update_success) {
-                this.update_success = update_all_overlays();
+                this.update_success = update_all_overlays(this);
                 // Update filters (hidden class) on images
                 this.filterImages();
             }
@@ -314,7 +314,7 @@ class MultiClassGrid extends Component {
 
     componentDidUpdate() {
         // Update overlays
-        this.update_success = update_all_overlays();
+        this.update_success = update_all_overlays(this);
         // Update filters (hidden class) on images
         this.filterImages();
     }
