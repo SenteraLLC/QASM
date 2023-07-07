@@ -1,6 +1,6 @@
 // ####GRID UTILS####
 import $ from "jquery";
-const { update_all_overlays, getOneFolderUp, getCurrentFolder } = require("./utils.js");
+const { update_all_overlays, getOneFolderUp, getCurrentFolder, getChildPath } = require("./utils.js");
 const { function_names } = require("../../public/electron_constants.js");
 
 export const FILTER_MODES = {
@@ -264,7 +264,7 @@ export function changeImage(document, hover_image_id) {
  * @param {*} component component that called this function: pass in `this`
  */
 export async function loadImages(window, component) {
-    component.images = await component.QASM.call_backend(window, function_names.LOAD_IMAGES_DIALOG, component.src);
+    component.images = await component.QASM.call_backend(window, function_names.LOAD_IMAGES, component.src);
     component.image_names = Object.keys(component.images).sort();
     clearAllLabels(component);
     // Set the images shown to true now that the images are shown
@@ -275,7 +275,7 @@ export async function loadImages(window, component) {
 /**
  * Load images from the current source directory,
  * and try and autoload labels and image layers.
- * Autoload requires autoLOAD_LABELS_DIALOG_on_dir_select, component.label_loadnames,
+ * Autoload requires autoload_labels_on_dir_select, component.label_loadnames,
  * and component.image_layer_loadnames to be defined.
  * 
  * @param {*} window window object
@@ -344,7 +344,7 @@ export async function loadNextDir(window, component) {
         return;
     } else {
         // Start at the next dir in root_dir, with the same current image folder name
-        component.src = folders[current_folder_idx + 1] + current_folder + "/";
+        component.src = getChildPath(folders[current_folder_idx + 1], current_folder)
         await loadImageDir(window, component);
     }
 }
@@ -484,7 +484,7 @@ export async function addImageLayer(window, component) {
     console.log(dir_path);
 
     // Load images and add them to the image stack
-    let image_layer = await component.QASM.call_backend(window, function_names.LOAD_IMAGES_DIALOG, dir_path);
+    let image_layer = await component.QASM.call_backend(window, function_names.LOAD_IMAGES, dir_path);
     if (Object.keys(image_layer).length === 0) {
         console.log("Prevent adding empty layer.");
     } else {
@@ -534,7 +534,7 @@ export async function autoLoadImageLayers(window, component) {
                     n_layers--; // We need one fewer layer
                 } else {
                     // Load images and add them to the image stack
-                    let image_layer = await component.QASM.call_backend(window, function_names.LOAD_IMAGES_DIALOG, root_dir + folder_name + "/");
+                    let image_layer = await component.QASM.call_backend(window, function_names.LOAD_IMAGES, root_dir + folder_name + "/");
                     if (Object.keys(image_layer).length === 0) {
                         console.log("Prevent adding empty layer, skipping to next folder group.");
                         component.image_stack = []; // Clear image stack to allow next group to try and load

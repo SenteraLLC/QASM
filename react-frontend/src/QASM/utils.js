@@ -163,3 +163,26 @@ export function getCurrentFolder(og_file_path) {
 
     return ret
 }
+
+
+/**
+ * Get the child path from a file path.
+ * 
+ * @param {string} og_file_path file path with trailing slash
+ * @param {string} child_name child name
+ * @returns {string} child path
+ */
+export function getChildPath(og_file_path, child_name) {
+    // Handle backslashes in the file path
+    let [file_path, did_change] = backslash_to_forwardslash(og_file_path)
+
+    // Get the current folder name
+    let ret = file_path + child_name + "/"
+
+    // If the file path had backslashes, then convert the forward slashes back to backslashes
+    if (did_change) {
+        ret = forwardslash_to_backslash(ret)[0]
+    }
+
+    return ret
+}

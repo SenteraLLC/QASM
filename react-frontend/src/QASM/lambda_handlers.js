@@ -9,9 +9,10 @@ const function_handlers = {
     [function_names.OPEN_DIR_DIALOG]:            handleOpenDirDialog,
     [function_names.OPEN_IMAGE_DIR_DIALOG]:      handleOpenImageDirDialog,
     [function_names.SAVE_BINARY_DIRECTORY]:      saveBinaryDirectory,
+    [function_names.GET_FOLDER_CONTENTS]:        handleGetFolderContents,
     // ##### IMAGE #####
     [function_names.LOAD_IMAGE_DIALOG]:          handleLoadImageDialog,
-    [function_names.LOAD_IMAGES_DIALOG]:         handleLoadImagesDialog,
+    [function_names.LOAD_IMAGES]:                handleLoadImages,
     [function_names.SAVE_IMAGE_DIALOG]:          handleSaveImageDialog,
     // ##### JSON #####
     [function_names.LOAD_JSON_DIALOG]:           handleLoadJsonDialog,
@@ -19,7 +20,6 @@ const function_handlers = {
     [function_names.SAVE_JSON_DIALOG]:           handleSaveJsonDialog,
     [function_names.SAVE_JSON]:                  handleSaveJson,
     // ##### S3 BROWSER #####
-    [function_names.GET_FOLDER_CONTENTS]:        handleGetFolderContents,
     [function_names.GET_CASCADING_DIR_CHILDREN]: getS3FolderChildren,
 }
 export { function_handlers }
@@ -99,6 +99,23 @@ async function saveBinaryDirectory(QASM, data, window) {
 }
 
 
+/**
+ * Get file and folder names from an s3 folder path
+ * 
+ * @param {Object} QASM QASM object
+ * @param {string} data s3 prefix
+ * @param {*} window window 
+ * @returns {Object} { folders: [], files: [] }
+ */
+async function handleGetFolderContents(QASM, data, window) {
+    let params = {
+        "bucket": QASM.s3_bucket,
+        "prefix": data
+    }
+    return await api_consolidator_error_handler(params, "open_dir");
+}
+
+
 // ##### IMAGE #####
 
 
@@ -139,7 +156,7 @@ async function handleLoadImageDialog(QASM, data, window) {
  * @param {*} window window
  * @returns {Object} { image_name: signed_url } 
  */
-async function handleLoadImagesDialog(QASM, data, window) {
+async function handleLoadImages(QASM, data, window) {
     let params = {
         "bucket_name": QASM.s3_bucket,
         "folder_name": data
@@ -290,23 +307,6 @@ async function handleSaveJsonDialog(QASM, data, window) {
 
 
 // ##### S3 BROWSER #####
-
-
-/**
- * Get file and folder names from an s3 folder path
- * 
- * @param {Object} QASM QASM object
- * @param {string} data s3 prefix
- * @param {*} window window 
- * @returns {Object} { folders: [], files: [] }
- */
-async function handleGetFolderContents(QASM, data, window) {
-    let params = {
-        "bucket": QASM.s3_bucket,
-        "prefix": data
-    }
-    return await api_consolidator_error_handler(params, "open_dir");
-}
 
 
 /**

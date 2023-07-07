@@ -11,9 +11,10 @@ exports.function_handlers = {
     [function_names.OPEN_DIR_DIALOG]:       handleOpenDirDialog,
     [function_names.OPEN_IMAGE_DIR_DIALOG]: handleOpenImageDirDialog,
     [function_names.SAVE_BINARY_DIRECTORY]: saveBinaryDirectory,
+    [function_names.GET_FOLDER_CONTENTS]:   handleGetFolderContents,
     // ##### IMAGE #####
     [function_names.LOAD_IMAGE_DIALOG]:     handleLoadImageDialog,
-    [function_names.LOAD_IMAGES_DIALOG]:    handleLoadImagesDialog,
+    [function_names.LOAD_IMAGES]:           handleLoadImages,
     [function_names.SAVE_IMAGE_DIALOG]:     handleSaveImageDialog,
     // ##### JSON #####
     [function_names.LOAD_JSON_DIALOG]:      handleLoadJsonDialog,
@@ -93,13 +94,17 @@ async function handleOpenFile(event, data) {
  * Open a directory selection dialog
  * 
  * @param {*} event event
- * @param {Object} data data
+ * @param {Object} data starting folder
  * @returns dir path on sucess, nothing on cancel
  */
 async function handleOpenDirDialog(event, data) {
     const dialogOptions = {
-        title: "Select Image Directory",
+        title: "Select Directory",
         properties: ["openDirectory"]
+    }
+    // Start at data if it exists
+    if (data !== "" && data !== undefined) {
+        dialogOptions["defaultPath"] = data;
     }
     const { canceled, filePaths } = await dialog.showOpenDialog(dialogOptions);
     if (canceled) {
@@ -135,6 +140,35 @@ async function saveBinaryDirectory(event, data) {
 }
 
 
+/**
+ * Get the contents of a folder
+ * 
+ * @param {*} event event
+ * @param {string} data folder path
+ * @returns {Object} { folders: [], files: [] }
+ */
+async function handleGetFolderContents(event, data) {
+    try {
+        let file_path = data;
+        let contents = fs.readdirSync(file_path);
+        let files = [];
+        let folders = [];
+        contents.forEach(content => {
+            // Check if file is a folder, if so add to folders and remove from files
+            content = path.join(file_path, content)
+            if (fs.lstatSync(content).isDirectory()) {
+                folders.push(content);
+            } else {
+                files.push(content);
+            }
+        })
+        return { folders: folders, files: files };
+    } catch {
+        return { folders: [], files: [] };
+    }
+}
+
+
 // ##### IMAGE #####
 
 
@@ -156,7 +190,7 @@ async function handleLoadImageDialog(event, data) {
  * @param {string} data file path
  * @returns {Object} image base64 strings indexed by image name
  */
-async function handleLoadImagesDialog(event, data) {
+async function handleLoadImages(event, data) {
     try {
         let file_path = data;
         let files = fs.readdirSync(file_path);
