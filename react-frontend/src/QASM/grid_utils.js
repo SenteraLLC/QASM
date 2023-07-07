@@ -534,7 +534,7 @@ export async function autoLoadImageLayers(window, component) {
                     n_layers--; // We need one fewer layer
                 } else {
                     // Load images and add them to the image stack
-                    let image_layer = await component.QASM.call_backend(window, function_names.LOAD_IMAGES, root_dir + folder_name + "/");
+                    let image_layer = await component.QASM.call_backend(window, function_names.LOAD_IMAGES, getChildPath(root_dir, folder_name));
                     if (Object.keys(image_layer).length === 0) {
                         console.log("Prevent adding empty layer, skipping to next folder group.");
                         component.image_stack = []; // Clear image stack to allow next group to try and load
