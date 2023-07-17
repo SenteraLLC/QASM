@@ -94,7 +94,6 @@ async function saveBinaryDirectory(QASM, data, window) {
     for (let [key, value] of Object.entries(data)) {
         params[key] = value;
     }
-    console.log("params", params);
     return await api_consolidator_error_handler(params, "ecs_binary_directory")
 }
 
@@ -127,7 +126,6 @@ async function handleGetFolderContents(QASM, data, window) {
  * @returns {*} image url
  */
 async function handleLoadImageDialog(QASM, data, window) {
-    console.log("Handle open image");
     let url = get_new_window_url(window, "s3Browser");
     let popup = window.open(url, "S3 Browser");
     popup.S3_BROWSER_MODE = s3_browser_modes.SELECT_IMAGE;
