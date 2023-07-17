@@ -191,3 +191,35 @@ Once changes have been tested in development and are ready to be applied to the 
 
         >> terraform workspace select prod
         >> terraform apply
+
+
+### Development
+The core Electron logic is found in ``react-frontend/public/electron.js``. This file will launch the Electron app and load the React app. In order to initialize the local backend, the functions found in ``react-frontend/public/electron_utils.js`` are automatically exposed to the Electron runtime via the logic found in ``react-frontend/public/preload.js``. 
+
+The main React entrypoint is ``react-frontend/src/index.js``. This file will load the config file and use it to initialize the React app in the configured mode (ie `local` or `s3`). The two different modes are setup in ``react-frontend/src/QASM/QASM.js``. The `local` mode will load the React app using the local backend (the functions defined in ``react-frontend/public/electron_utils.js``), while the `s3` mode will load the React app using the AWS backend (the functions found in ``react-frontend/src/QASM/lambda_handlers.js``). As long as any new functions are added to the list of ``function_handlers`` within ``lambda_handlers.js``, they will be automatically be exposed to the React app.
+
+When adding any backend functionality, in order for it to be compatible with both modes, the function must be defined in both ``electron_utils.js`` and ``lambda_handlers.js``. The decision of which backend to use is made in ``QASM.js`` based on the config file, and so within the React components, both backends are accessed via ``this.QASM.call_backend(window, <function_name_here>, <function_args_here>)``. This function will automatically call the correct backend based on the configured mode.
+
+## Local Backend
+As long as any new functions are added to the list of ``exports.function_handlers`` within ``electron_utils.js``, they will be automatically be exposed to the Electron runtime in local mode. By addition the function logic to ``electron_utils.js``, the function will be available within any React component via ``this.QASM.call_backend(window, <function_name_here>, <function_args_here>)``. Since the backend is running locally, the function will be called directly, and there is access to the local Windows file system via the ``fs`` module.
+
+## AWS Backend
+In order to add a new function to the AWS backend, the function must be added to the list of ``exports.function_handlers`` within ``lambda_handlers.js``. This will automatically expose the function to the React app in s3 mode. Since the backend is running on AWS, the function will be called via an API call to AWS API Gateway. The function will access the AWS S3 bucket that is configured in the ``config.json`` file instead of the local file system. 
+
+Adding s3 compatibility is comprised of two steps: (1) adding the function to ``lambda_handlers.js`` and (2) adding the function to the AWS API Gateway via Terraform.
+
+1) The functions in ``lambda_handlers.js`` ultimately are just intermediate steps that call some AWS API Gateway endpoint that points to a AWS Lambda function defined in ``terraform-backend/lambdas/``. Common operations involved opening the S3 Browser component to allow the user to make some selection, and/or parsing the input arguments and passing them to the AWS Lambda function. The AWS Lambda function will then perform the desired operation and return the result.
+
+2) The AWS Lambda function is defined in ``terraform-backend/lambdas/``. The function is defined in one of the python files (for example, ``s3_browser.py``) as a single python function ``function_name_here(event, context)``. The arguments that are passed in from the ``lambda_handlers.js`` function are available in the ``event`` variable. See some of the functions in ``s3_browser.py`` for examples of how to read from the event, handle the AWS logic, and return the result.
+
+The python logic is then passed into the AWS Lambda function via Terraform. When adding a new function, add a handler block to the list of ``lambda_defs`` in ``terraform-backend/lambdas.tf``. The handler block should look like:
+    ```
+        { 
+            base_name = "function-name-here"
+            handler = "python_filename_here.function_name_here"
+        },
+    ```
+This file will automatically take the python code and deploy it to the AWS Lambda function.
+
+## React Components
+The React components are found in ``react-frontend/src/Components/``. Each component is defined in a file ``<component_name>.js``. The component is then imported into ``react-frontend/src/App.js`` and added to the list of components. To enable a component to be added to the ``config.json``, the component must be added (1) to the list of ``COMPONENT_KEYS`` in ``react-frontend/src/App.js`` as well as (2) the list of ``QASM_COMPONENTS`` in ``QASM.py``.
