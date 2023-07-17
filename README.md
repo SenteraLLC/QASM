@@ -148,7 +148,7 @@ Note that this will also apply any changes made to the terraform code, so be sur
         - ``"anno_dir": <string>`` (Optional) Path to directory of labels or annotations
 
 
-    - ``"binaryeditor"`` Configuration ``<Object>``:
+    - ``"binaryeditor"`` Configuration ``<Object>`` (s3 mode only):
         - ``"dilate_keybind": <string>`` Change the dilation keybind. Defaults to "="
         - ``"erode_keybind": <string>`` Change the erosion keybind. Defaults to "-"
 
