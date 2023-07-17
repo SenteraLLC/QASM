@@ -89,6 +89,14 @@ export function initProps(component, props) {
  * @param {*} component component that called this function: pass in `this`
  */
 export function initEventListeners(window, document, component) {
+    if (localStorage.getItem("grid_event_listeners_initialized") === "true") {
+        // Event listeners already initialized, don't do it again
+        console.log("Grid event listeners already initialized.");
+        return;
+    }
+
+    console.log("Initializing grid event listeners...");
+
     // Update the overlays whenever the page size is changed
     window.addEventListener("resize", update_all_overlays);
 
@@ -128,6 +136,8 @@ export function initEventListeners(window, document, component) {
             autoScroll(component, component.hover_image_id, e.key);
         }
     });
+
+    localStorage.setItem("grid_event_listeners_initialized", "true");
 }
 
 
