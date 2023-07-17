@@ -101,7 +101,7 @@ async function handleOpenDirDialog(event, data) {
         properties: ["openDirectory"]
     }
     // Start at data if it exists and is a non-empty string
-    if (data && typeof data === "string" && data !== "") {
+    if (data && typeof data === "string") {
         dialogOptions["defaultPath"] = data;
     }
     const { canceled, filePaths } = await dialog.showOpenDialog(dialogOptions);
