@@ -2,13 +2,26 @@
 import $ from "jquery";
 const { update_all_overlays, getOneFolderUp, getCurrentFolder, getChildPath } = require("./utils.js");
 const { function_names } = require("../../public/electron_constants.js");
+const { get_keybind_in_keypress_event } = require("./keybind_utils.js");
+
+const GRID_KEYBIND_NAMES = {
+    SAVE_LABELS: "save_labels_keybind",
+    TOGGLE_IMAGE_LAYER: "toggle_image_layer_keybind",
+    NEXT_ROW: "next_row_keybind",
+    PREV_ROW: "prev_row_keybind",
+}
+const DEFAULT_KEYBINDS = {
+    [GRID_KEYBIND_NAMES.SAVE_LABELS]: ["ctrlKey", "s"],
+    [GRID_KEYBIND_NAMES.TOGGLE_IMAGE_LAYER]: "b",
+    [GRID_KEYBIND_NAMES.NEXT_ROW]: "n",
+    [GRID_KEYBIND_NAMES.PREV_ROW]: "h",
+}
 
 export const FILTER_MODES = {
     "no_filter": "no filter",
     // "group_by_class": "group by class", // TODO: implement
 }
 
-// TODO: keyboard shortcuts in config and loaded somewhere
 
 /**
  * Update the state variables and force
@@ -122,18 +135,22 @@ export function initEventListeners(window, document, component) {
 
     // Keybinds
     window.addEventListener("keydown", (e) => {
-        if (e.ctrlKey && e.key === "s") {
-            e.preventDefault();
-            saveLabels(window, component);
-        }
-
-        if (component.hover_image_id !== null && e.key === "b") {
-            changeImage(document, component.hover_image_id);
-        }
-
-        if (component.hover_image_id !== null) {
-            // n for next, h for previous
-            autoScroll(component, component.hover_image_id, e.key);
+        switch (get_keybind_in_keypress_event(DEFAULT_KEYBINDS, e)) {
+            case GRID_KEYBIND_NAMES.SAVE_LABELS:
+                e.preventDefault();
+                saveLabels(window, component);
+                break;
+            case GRID_KEYBIND_NAMES.TOGGLE_IMAGE_LAYER:
+                changeImage(document, component.hover_image_id);
+                break;
+            case GRID_KEYBIND_NAMES.NEXT_ROW:
+                autoScroll(component, component.hover_image_id, GRID_KEYBIND_NAMES.NEXT_ROW);
+                break;
+            case GRID_KEYBIND_NAMES.PREV_ROW:
+                autoScroll(component, component.hover_image_id, GRID_KEYBIND_NAMES.PREV_ROW);
+                break;
+            default:
+                break;
         }
     });
 
@@ -146,42 +163,37 @@ export function initEventListeners(window, document, component) {
  * 
  * @param {*} component component that called this function: pass in `this`
  * @param {string} hover_image_id id of the current row
- * @param {string} key current keypress
+ * @param {string} keybind_name keybind name
  */
-export function autoScroll(component, hover_image_id, key) {
+export function autoScroll(component, hover_image_id, keybind_name) {
     let row_not_found = true;
-    switch (key) {
-        case "n": // Next row
-        case "h": // Previous row
-            let jquery_next_image = $("#" + hover_image_id); // Start at current row
-            let current_top = jquery_next_image.offset().top; // Top of current row
-            let next_image;
-            while (row_not_found) {
-                // Try the next (or previous) image
-                jquery_next_image = key === "n" ? jquery_next_image.next() : jquery_next_image.prev();
-                next_image = document.getElementById(jquery_next_image.attr("id"))
-                
-                // If the next_image has a different 'top' as the current image, it's in a different row
-                // This protects against scrolling to an image in the same row
-                if (jquery_next_image.offset().top !== current_top) {
-                    // Ensure that the next image isn't hidden
-                    if (!next_image.classList.contains("hidden")) {
-                        // We found a row to scroll to
-                        row_not_found = false;
-                        break;
-                    }
+    if (hover_image_id !== null) {
+        let jquery_next_image = $("#" + hover_image_id); // Start at current row
+        let current_top = jquery_next_image.offset().top; // Top of current row
+        let next_image;
+        while (row_not_found) {
+            // Try the next (or previous) image
+            jquery_next_image = keybind_name === GRID_KEYBIND_NAMES.NEXT_ROW ? jquery_next_image.next() : jquery_next_image.prev();
+            next_image = document.getElementById(jquery_next_image.attr("id"))
+            
+            // If the next_image has a different 'top' as the current image, it's in a different row
+            // This protects against scrolling to an image in the same row
+            if (jquery_next_image.offset().top !== current_top) {
+                // Ensure that the next image isn't hidden
+                if (!next_image.classList.contains("hidden")) {
+                    // We found a row to scroll to
+                    row_not_found = false;
+                    break;
                 }
             }
+        }
 
-            // Scroll to next row
-            $(document).scrollTop(jquery_next_image.offset().top);
-            // Set next image as hovered for consecutive navigation
-            component.hover_image_id = jquery_next_image.attr("id");
-            // Override scroll protection
-            component.allow_next_scroll = true; 
-            break;
-        default:
-            break;
+        // Scroll to next row
+        $(document).scrollTop(jquery_next_image.offset().top);
+        // Set next image as hovered for consecutive navigation
+        component.hover_image_id = jquery_next_image.attr("id");
+        // Override scroll protection
+        component.allow_next_scroll = true; 
     }
 }
 
@@ -237,6 +249,9 @@ export function toggleImageHidden(document, image_name, hidden = undefined) {
  * @param {string} hover_image_id id of the current image
  */
 export function changeImage(document, hover_image_id) {
+    if (hover_image_id === null) {
+        return;
+    }
     // firstChild = image holder div
     // childNodes of image holder div = image layers
 
