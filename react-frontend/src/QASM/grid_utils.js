@@ -2,7 +2,7 @@
 import $ from "jquery";
 const { update_all_overlays, getOneFolderUp, getCurrentFolder, getChildPath } = require("./utils.js");
 const { function_names } = require("../../public/electron_constants.js");
-const { get_keybind_in_keypress_event } = require("./keybind_utils.js");
+const { init_keybinds, get_keybind_in_keypress_event } = require("./keybind_utils.js");
 
 const GRID_KEYBIND_NAMES = {
     SAVE_LABELS: "save_labels_keybind",
@@ -71,6 +71,9 @@ export function initProps(component, props) {
     component.autoload_labels_on_dir_select = props.autoload_labels_on_dir_select || false;
     component.image_layer_folder_names = props.image_layer_folder_names || undefined; // [Array[<string>], ...]
     component.labels = initLabels(component);
+    
+    // Initialize keybinds
+    init_keybinds(props, DEFAULT_KEYBINDS);
 
     // Initialize class_names (normal grid)
     try {
@@ -137,11 +140,10 @@ export function initEventListeners(window, document, component) {
     window.addEventListener("keydown", (e) => {
         switch (get_keybind_in_keypress_event(DEFAULT_KEYBINDS, e)) {
             case GRID_KEYBIND_NAMES.SAVE_LABELS:
-                e.preventDefault();
                 saveLabels(window, component);
                 break;
             case GRID_KEYBIND_NAMES.TOGGLE_IMAGE_LAYER:
-                changeImage(document, component.hover_image_id);
+               changeImage(document, component.hover_image_id);
                 break;
             case GRID_KEYBIND_NAMES.NEXT_ROW:
                 autoScroll(component, component.hover_image_id, GRID_KEYBIND_NAMES.NEXT_ROW);

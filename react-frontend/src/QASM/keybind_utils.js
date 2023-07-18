@@ -42,6 +42,7 @@ export function init_keybinds(user_keybinds, default_keybinds) {
 /**
  * Return a keybind name when the keybind is pressed.
  * For use in a switch statement to handle keybinds.
+ * When a valid keybind is pressed, any default event is prevented.
  * 
  * @param {object} keybinds {<string keybind_name>: <string keybind> or Array[<string keybind1>, <string keybind2>], ...}
  * @param {object} event Keydown event
@@ -50,6 +51,7 @@ export function init_keybinds(user_keybinds, default_keybinds) {
 export function get_keybind_in_keypress_event(keybinds, event) {
     for (let [keybind_name, keybind] of Object.entries(keybinds)) {
         if (keybind_in_keypress_event_helper(keybind, event)) {
+            event.preventDefault();
             return keybind_name;
         }
     }
