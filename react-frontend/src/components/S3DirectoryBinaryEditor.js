@@ -27,7 +27,7 @@ class S3DirectoryBinaryEditor extends Component {
      * name is the key and the image url is the value. Finally loads in the first image to be viewed.
      */
     async loadDirectory() {
-        this.directory_path = await this.QASM.call_backend(window, function_names.OPEN_DIR);
+        this.directory_path = await this.QASM.call_backend(window, function_names.OPEN_DIR_DIALOG);
 
         if (this.directory_path !== undefined) {
 

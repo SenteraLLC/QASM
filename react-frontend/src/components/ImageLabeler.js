@@ -1,6 +1,7 @@
 import { Component } from 'react';
 import Ulabel from './Ulabel.js';
 import "../css/ImageLabeler.css";
+const { getChildPath } = require("../QASM/utils.js");
 const { function_names } = require("../../public/electron_constants.js");
 
 class ImageLabeler extends Component {
@@ -78,7 +79,7 @@ class ImageLabeler extends Component {
     }
 
     async selectImageDir() {
-        let res = await this.QASM.call_backend(window, function_names.OPEN_DIR, this.image_dir); // prompt selection
+        let res = await this.QASM.call_backend(window, function_names.OPEN_DIR_DIALOG, this.image_dir); // prompt selection
         if (res !== null) {
             this.image_dir = res;
             this.loadImageDir();
@@ -86,7 +87,7 @@ class ImageLabeler extends Component {
     }
 
     async selectAnnoDir() {
-        let res = await this.QASM.call_backend(window, function_names.OPEN_DIR, this.anno_dir); // prompt selection
+        let res = await this.QASM.call_backend(window, function_names.OPEN_DIR_DIALOG, this.anno_dir); // prompt selection
         if (res !== null) {
             this.anno_dir = res;
             await this.loadAnnotations();
@@ -98,7 +99,7 @@ class ImageLabeler extends Component {
         if (this.anno_dir !== null) {
 
             // anno filename should be image_name.json
-            this.anno_filename = this.anno_dir + this.cur_image_name + ".json";
+            this.anno_filename = getChildPath(this.anno_dir, this.cur_image_name + ".json");
             try {
                 this.annotations = await this.QASM.call_backend(window, function_names.LOAD_JSON, this.anno_filename);
             } catch (e) {
@@ -141,7 +142,7 @@ class ImageLabeler extends Component {
             }           
 
             try {
-                await this.QASM.call_backend(window, function_names.SAVE_JSON_TO_PATH, params);
+                await this.QASM.call_backend(window, function_names.SAVE_JSON, params);
                 console.log("Annotations saved."); 
             } catch(e) {
                 console.log(e);

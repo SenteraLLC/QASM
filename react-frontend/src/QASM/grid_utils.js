@@ -1,6 +1,6 @@
 // ####GRID UTILS####
 import $ from "jquery";
-const { update_all_overlays, getOneFolderUp, getCurrentFolder } = require("./utils.js");
+const { update_all_overlays, getOneFolderUp, getCurrentFolder, getChildPath } = require("./utils.js");
 const { function_names } = require("../../public/electron_constants.js");
 
 export const FILTER_MODES = {
@@ -89,6 +89,14 @@ export function initProps(component, props) {
  * @param {*} component component that called this function: pass in `this`
  */
 export function initEventListeners(window, document, component) {
+    if (localStorage.getItem("grid_event_listeners_initialized") === "true") {
+        // Event listeners already initialized, don't do it again
+        console.log("Grid event listeners already initialized.");
+        return;
+    }
+
+    console.log("Initializing grid event listeners...");
+
     // Update the overlays whenever the page size is changed
     window.addEventListener("resize", update_all_overlays);
 
@@ -128,6 +136,8 @@ export function initEventListeners(window, document, component) {
             autoScroll(component, component.hover_image_id, e.key);
         }
     });
+
+    localStorage.setItem("grid_event_listeners_initialized", "true");
 }
 
 
@@ -231,7 +241,6 @@ export function changeImage(document, hover_image_id) {
     // childNodes of image holder div = image layers
 
     let layers = document.getElementById(hover_image_id).firstChild.childNodes;
-    console.log(layers);
     // layers[0] is the image, layers[n] is image_stack[n-1], layers[layers.length-1] is the class-overlay
     for (let idx = 0; idx < layers.length; idx++) {
         let layer = layers[idx];
@@ -303,7 +312,7 @@ export async function loadImageDir(window, component) {
  * @param {*} component component that called this function: pass in `this`
  */
 export async function selectImageDir(window, component) {
-    let dir_path = await component.QASM.call_backend(window, function_names.OPEN_DIR, component.src);
+    let dir_path = await component.QASM.call_backend(window, function_names.OPEN_DIR_DIALOG, component.src);
     if (dir_path !== undefined) {
         component.src = dir_path;
         await loadImageDir(window, component);
@@ -332,7 +341,7 @@ export async function loadNextDir(window, component) {
         folders = component.next_dir_cache[root_dir]
     } else {
         // Else get all folders in root_dir and add to cache
-        let response = await component.QASM.call_backend(window, function_names.OPEN_S3_FOLDER, root_dir);
+        let response = await component.QASM.call_backend(window, function_names.GET_FOLDER_CONTENTS, root_dir);
         folders = response.folders.sort();
         component.next_dir_cache[root_dir] = folders;
     }
@@ -345,7 +354,7 @@ export async function loadNextDir(window, component) {
         return;
     } else {
         // Start at the next dir in root_dir, with the same current image folder name
-        component.src = folders[current_folder_idx + 1] + current_folder + "/";
+        component.src = getChildPath(folders[current_folder_idx + 1], current_folder)
         await loadImageDir(window, component);
     }
 }
@@ -400,7 +409,7 @@ export async function loadLabels(window, component, loadnames = undefined) {
     }
 
     // Open browser and load labels
-    let labels = await component.QASM.call_backend(window, function_names.LOAD_LABELS, params);
+    let labels = await component.QASM.call_backend(window, function_names.LOAD_JSON_DIALOG, params);
     component.labels = initLabels(component, labels);
     console.log(component.labels);
 
@@ -456,7 +465,7 @@ export async function saveLabels(window, component, savename = "") {
         savename: savename,
     }
 
-    await component.QASM.call_backend(window, function_names.SAVE_JSON_FILE, params);
+    await component.QASM.call_backend(window, function_names.SAVE_JSON_DIALOG, params);
 }
 
 
@@ -481,7 +490,7 @@ export function clearAllLabels(component) {
  */
 export async function addImageLayer(window, component) {
     // Prompt user to select directory
-    let dir_path = await component.QASM.call_backend(window, function_names.OPEN_DIR, component.src);
+    let dir_path = await component.QASM.call_backend(window, function_names.OPEN_DIR_DIALOG, component.src);
     console.log(dir_path);
 
     // Load images and add them to the image stack
@@ -492,6 +501,7 @@ export async function addImageLayer(window, component) {
         component.image_stack.push(image_layer);
         console.log(component.image_stack);
     }
+    component.updateLocalLabels();
     updateState(component);
 }
 
@@ -534,7 +544,7 @@ export async function autoLoadImageLayers(window, component) {
                     n_layers--; // We need one fewer layer
                 } else {
                     // Load images and add them to the image stack
-                    let image_layer = await component.QASM.call_backend(window, function_names.LOAD_IMAGES, root_dir + folder_name + "/");
+                    let image_layer = await component.QASM.call_backend(window, function_names.LOAD_IMAGES, getChildPath(root_dir, folder_name));
                     if (Object.keys(image_layer).length === 0) {
                         console.log("Prevent adding empty layer, skipping to next folder group.");
                         component.image_stack = []; // Clear image stack to allow next group to try and load

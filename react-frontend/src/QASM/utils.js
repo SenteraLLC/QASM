@@ -17,28 +17,21 @@ export function string_to_vaild_css_selector(input_string) {
 
 /**
  * Updates all of the overlays to be the same size as their image.
+ * Assumes that the component has an image_names property, and that
+ * each image has an overlay with the id of image_name + "-overlay".
+ * 
+ * @param {Component} component component that called this function: pass in `this` 
+ * @returns {boolean} true if successful, false if not
  */
-export function update_all_overlays() {
-    let all_overlays = document.getElementsByClassName("overlay")
-    // Just in case this runs before the overlays are added to the dom
-    if (all_overlays.length === 0) {
-        return true
-    }
-
-    // Loop through every overlay and resize them to fit on their image
-    for (let current_overlay of all_overlays) {
-        
-        // Grab the current overlay's sibling image until image loads
-        let image = current_overlay.previousElementSibling;
-        
-        if (image.clientHeight === 0) {
-            return false
+export function update_all_overlays(component) {
+    try {
+        for (let image_name of component.image_names) {
+            update_overlay_by_id(image_name + "-overlay");
         }
-        // Set the overlay's width and height to the image's displayed width and height
-        current_overlay.width  = image.clientWidth;
-        current_overlay.height = image.clientHeight;
+        return true;
+    } catch {
+        return false;
     }
-    return true;
 }
 
 /**
@@ -95,16 +88,58 @@ export function get_new_window_url(window, new_path) {
 }
 
 
+/**
+ * Replace all backslashes with forward slashes and add a trailing slash if there isn't one.
+ * 
+ * @param {string} file_path file path
+ * @returns [string file_path, boolean did_change]
+ */
+export function backslash_to_forwardslash(file_path) {
+    // Replace all backslashes with forward slashes
+    let ret = file_path.replaceAll("\\", "/")
+    let did_change = ret !== file_path
+    // Add a trailing slash if there isn't one
+    ret += ret.endsWith("/") ? "" : "/"
+    return [ret, did_change]
+}
+
+
+/**
+ * Replace all forward slashes with backslashes and remove a trailing slash if there is one.
+ * 
+ * @param {string} file_path file path 
+ * @returns [string file_path, boolean did_change]
+ */
+export function forwardslash_to_backslash(file_path) {
+    // Replace all forward slashes with backslashes
+    let ret = file_path.replaceAll("/", "\\")
+    let did_change = ret !== file_path
+    // Remove a trailing slash if there is one
+    ret = ret.endsWith("\\") ? ret.slice(0, -1) : ret
+    return [ret, did_change]
+}
+    
+
   /**
    * Get the file path one folder up.
    * 
    * @param {string} file_path file path with trailing slash
    * @returns file path one folder up
    */
-export function getOneFolderUp(file_path) {
+export function getOneFolderUp(og_file_path) {
+    // Handle backslashes in the file path
+    let [file_path, did_change] = backslash_to_forwardslash(og_file_path)
+    
     // Returns everything before the second to last "/". Then add an additional "/" to make it a path
     // the regex returns an array, and what we want is the first capture group
-    return /((?:.|\s)*)(?:\/[^\/]*){2}$/gm.exec(file_path)[1] + "/"
+    let ret = /((?:.|\s)*)(?:\/[^\/]*){2}$/gm.exec(file_path)[1] + "/"
+    
+    // If the file path had backslashes, then convert the forward slashes back to backslashes
+    if (did_change) {
+        ret = forwardslash_to_backslash(ret)[0]
+    }
+
+    return ret
 }
 
 
@@ -114,6 +149,40 @@ export function getOneFolderUp(file_path) {
  * @param {string} file_path file path with trailing slash 
  * @returns current folder name
  */
-export function getCurrentFolder(file_path) {
-    return file_path.split("/").slice(-2)[0]
+export function getCurrentFolder(og_file_path) {
+    // Handle backslashes in the file path
+    let [file_path, did_change] = backslash_to_forwardslash(og_file_path)
+
+    // Get the current folder name
+    let ret = file_path.split("/").slice(-2)[0]
+
+    // If the file path had backslashes, then convert the forward slashes back to backslashes
+    if (did_change) {
+        ret = forwardslash_to_backslash(ret)[0]
+    }
+
+    return ret
+}
+
+
+/**
+ * Get the child path from a file path.
+ * 
+ * @param {string} og_file_path file path with trailing slash
+ * @param {string} child_name child name
+ * @returns {string} child path
+ */
+export function getChildPath(og_file_path, child_name) {
+    // Handle backslashes in the file path
+    let [file_path, did_change] = backslash_to_forwardslash(og_file_path)
+
+    // Get the current folder name
+    let ret = file_path + child_name
+
+    // If the file path had backslashes, then convert the forward slashes back to backslashes
+    if (did_change) {
+        ret = forwardslash_to_backslash(ret)[0]
+    }
+
+    return ret
 }

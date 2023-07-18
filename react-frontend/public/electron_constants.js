@@ -4,17 +4,16 @@
 // List of valid function name keys
 exports.function_names = {
     SAVE_BINARY_DIRECTORY: "saveBinaryDirectory",
-    OPEN_DIR: "openDir",
-    OPEN_IMG_DIR: "openImgDir",
-    OPEN_IMG: "openImg",
-    LOAD_LABELS: "loadLabels",
-    LOAD_IMAGE: "loadImage",
+    OPEN_DIR_DIALOG: "openDirDialog",
+    OPEN_IMAGE_DIR_DIALOG: "openImageDirDialog",
+    LOAD_IMAGE_DIALOG: "loadImageDialog",
+    LOAD_JSON_DIALOG: "loadJsonDialog",
     LOAD_IMAGES: "loadImages",
-    SAVE_JSON_FILE: "saveJsonFile",
-    SAVE_JSON_TO_PATH: "saveJsonToPath",
-    SAVE_IMAGE: "saveImage",
+    SAVE_JSON_DIALOG: "saveJsonDialog",
+    SAVE_JSON: "saveJson",
+    SAVE_IMAGE_DIALOG: "saveImageDialog",
     GET_CASCADING_DIR_CHILDREN: "getCascadingChildren",
-    OPEN_S3_FOLDER: "openS3Folder",
+    GET_FOLDER_CONTENTS: "getFolderContents",
     LOAD_JSON: "loadJson",
 }
 
