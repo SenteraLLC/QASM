@@ -44,11 +44,12 @@ class Ulabel extends Component {
 
     initProps(props) {
         // Initialize props
-        this.QASM        = props.QASM;
-        this.image       = props.image       || null;
-        this.username    = props.username    || "QASM_User";
-        this.on_submit   = props.on_submit   || this.defaultOnSubmit;
-        this.annotations = props.annotations || null;
+        this.QASM               = props.QASM;
+        this.image              = props.image              || null;
+        this.username           = props.username           || "QASM_User";
+        this.on_submit          = props.on_submit          || this.defaultOnSubmit;
+        this.annotations        = props.annotations        || null;
+        this.other_ulabel_props = props.other_ulabel_props || {};
         
         // Deep copy 
         this.subtasks    = JSON.parse(JSON.stringify(props.subtasks)) || this.ex_subtasks;
@@ -72,13 +73,15 @@ class Ulabel extends Component {
         await setTimeout(() => {}, 1); // idk why but unless we wait ulabel can't load the image
 
         // Initial ULabel configuration
-        this.ulabel = new ULabel(
-            "container",        // container_id
-            this.image,         // image_data
-            this.username,      // username
-            this.on_submit,     // on_submit
-            this.subtasks,      // subtasks
-        );
+        // https://github.com/SenteraLLC/ulabel/blob/main/api_spec.md
+        this.ulabel = new ULabel({
+            "container_id": "container",      
+            "image_data": this.image,
+            "username": this.username,
+            "on_submit": this.on_submit, 
+            "subtasks": this.subtasks,
+            ...this.other_ulabel_props, // Spread operator to add any other props      
+        });
 
         // Wait for ULabel instance to finish initialization
         this.ulabel.init(function () {

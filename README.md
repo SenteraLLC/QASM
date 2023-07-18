@@ -125,6 +125,7 @@ Note that this will also apply any changes made to the terraform code, so be sur
                 
 
     - ``"imagelabeler"`` Configuration ``<Object>``:
+        ULabel is the core of this component. Find the most recent ULabel API spec [here](https://github.com/SenteraLLC/ulabel/blob/main/api_spec.md). Of the required fields in the ULabel constructor object, `container_id`, `image_data`, and `on_submit` are handled internally by this component. The `subtasks` field is also handled internally, but can be configured via the `subtasks` field in the config file. The remaining fields can be included in the config and will be passed directly to the ULabel constructor, so see the API Spec for details. The following fields are also supported:
         - ``"subtasks": <Object>`` ULabel [subtasks](https://github.com/SenteraLLC/ulabel/blob/044c24072fe00a30b89e0f370fb8d4ddad28b59d/api_spec.md#subtasks) definition(s) 
             - ``<string>: <Object>`` Custom subtask name, followed by the subtask definition object
                 - ``"display_name": <string>`` Displayed subtask name
