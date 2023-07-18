@@ -126,6 +126,10 @@ Note that this will also apply any changes made to the terraform code, so be sur
         - ``"label_loadnames": <Array[string]>`` (Optional) An ordered list of label filenames to automatically try and load. Will search one folder above the current directory.
         - ``"autoload_labels_on_dir_select": <boolean>`` (Optional) Whether to try and autoload labels after each new directory selection. Default is false. Can also be changed in app via the checkbox "Autoload Labels on Directory Select". Default is false.
         - ``"image_layer_folder_names": Array[Array[<string>], ...]``: (Optional) Ordered list of folder names of image layers to automatically try and load when a directory is selected. See ``"grid"`` for more details.
+        - ``"save_labels_keybind": <string> or <Array[<string>]>`` (Optional) Keybind to save the current labels. Defaults to ["ctrlKey", "s"].
+        - ``"toggle_image_layer_keybind": <string> or <Array[<string>]>`` (Optional) Keybind to toggle between image layers when hovering over an image. Defaults to "b".
+        - ``"next_row_keybind": <string> or <Array[<string>]>`` (Optional) Keybind to advance to the next row when hovering over an image. Defaults to "n".
+        - ``"prev_row_keybind": <string> or <Array[<string>]>`` (Optional) Keybind to advance to the previous row when hovering over an image. Defaults to "h".
                 
 
     - ``"imagelabeler"`` Configuration ``<Object>``:
@@ -154,8 +158,26 @@ Note that this will also apply any changes made to the terraform code, so be sur
 
 
     - ``"binaryeditor"`` Configuration ``<Object>`` (s3 mode only):
-        - ``"dilate_keybind": <string>`` Change the dilation keybind. Defaults to "="
-        - ``"erode_keybind": <string>`` Change the erosion keybind. Defaults to "-"
+        - ``"dilate_keybind": <string> or <Array[<string>]>`` Keybind to dilate the binary. Defaults to "="
+        - ``"erode_keybind": <string>`` Keybind to erode the binary. Defaults to "-"
+
+## Keybinds
+Certain components support user-defined keybinds for set operations. Keybinds are stored in the following format:
+`{<string keybind_name>: <string keybind> or Array[<string keybind1>, <string keybind2>], ...}`
+
+Example:
+```
+{   
+    ...,
+    "save_labels_keybind": ["ctrlKey", "s"],
+    "toggle_image_layer_keybind": "b",
+    "next_row_keybind": ["ctrlKey", "ArrowDown"],
+    "prev_row_keybind": ["ctrlKey", "ArrowUp"],
+}
+```
+The "control", "shift", and "alt" keys are represented by "ctrlKey", "shiftKey", and "altKey", 
+since that is how they are represented in the keydown event. See [here](https://developer.mozilla.org/en-US/docs/Web/API/KeyboardEvent/key/Key_Values) for more details. Providing an array of keybinds requires all keys to be pressed simultaneously, an thus is only supported for the "control", "shift", and "alt" keys and any single other key, eg ["ctrlKey", "shiftKey", "s"].
+
 
 
 ### Terraform

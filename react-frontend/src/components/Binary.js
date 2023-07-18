@@ -1,8 +1,18 @@
 import { Component } from "react";
 import { string_to_vaild_css_selector } from "../QASM/utils";
 import "../css/Binary.css";
-
+const { init_keybinds, get_keybind_in_keypress_event } = require("../QASM/keybind_utils.js");
 const { Image } = require("image-js");
+
+const BINARY_KEYBIND_NAMES = {
+    DILATE: "dilate_keybind",
+    ERODE: "erode_keybind",
+}
+
+const BINARY_DEFAULT_KEYBINDS = {
+    [BINARY_KEYBIND_NAMES.DILATE]: "=",
+    [BINARY_KEYBIND_NAMES.ERODE]: "-",
+}
 
 class Binary extends Component {
     component_updater = 0;
@@ -15,8 +25,7 @@ class Binary extends Component {
         this.original_binary_src = props.original_binary;
 
         // If custom keybinds are passed in use those, otherwise use default
-        this.dilate_keybind = props.dilate_keybind || "=";
-        this.erode_keybind = props.erode_keybind || "-";
+        init_keybinds(props, BINARY_DEFAULT_KEYBINDS);
 
         // The output binary is the same as the input binary until its modified
         this.output_binary_src = props.original_binary;
@@ -68,11 +77,11 @@ class Binary extends Component {
         // Ignore all keypresses if the output binary is not being hovered
         if (!this.currently_hovered) return;
 
-        switch(event.key) {
-            case this.dilate_keybind:
+        switch(get_keybind_in_keypress_event(BINARY_DEFAULT_KEYBINDS, event)) {
+            case BINARY_KEYBIND_NAMES.DILATE:
                 this.dilate();
                 break;
-            case this.erode_keybind:
+            case BINARY_KEYBIND_NAMES.ERODE:
                 this.erode();
                 break;
             default:

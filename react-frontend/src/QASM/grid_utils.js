@@ -10,7 +10,7 @@ const GRID_KEYBIND_NAMES = {
     NEXT_ROW: "next_row_keybind",
     PREV_ROW: "prev_row_keybind",
 }
-const DEFAULT_KEYBINDS = {
+const GRID_DEFAULT_KEYBINDS = {
     [GRID_KEYBIND_NAMES.SAVE_LABELS]: ["ctrlKey", "s"],
     [GRID_KEYBIND_NAMES.TOGGLE_IMAGE_LAYER]: "b",
     [GRID_KEYBIND_NAMES.NEXT_ROW]: "n",
@@ -73,7 +73,7 @@ export function initProps(component, props) {
     component.labels = initLabels(component);
     
     // Initialize keybinds
-    init_keybinds(props, DEFAULT_KEYBINDS);
+    init_keybinds(props, GRID_DEFAULT_KEYBINDS);
 
     // Initialize class_names (normal grid)
     try {
@@ -138,7 +138,7 @@ export function initEventListeners(window, document, component) {
 
     // Keybinds
     window.addEventListener("keydown", (e) => {
-        switch (get_keybind_in_keypress_event(DEFAULT_KEYBINDS, e)) {
+        switch (get_keybind_in_keypress_event(GRID_DEFAULT_KEYBINDS, e)) {
             case GRID_KEYBIND_NAMES.SAVE_LABELS:
                 saveLabels(window, component);
                 break;
