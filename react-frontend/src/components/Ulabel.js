@@ -78,7 +78,7 @@ class Ulabel extends Component {
             "container_id": "container",      
             "image_data": this.image,
             "username": this.username,
-            "on_submit": this.on_submit, 
+            "submit_buttons": this.on_submit,
             "subtasks": this.subtasks,
             ...this.other_ulabel_props, // Spread operator to add any other props      
         });
