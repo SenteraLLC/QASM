@@ -324,7 +324,6 @@ class Grid extends Component {
     }
 
     componentDidMount() {
-        console.log("Grid mounted");
         // Add event listeners
         addAllEventListeners();
 
@@ -339,7 +338,6 @@ class Grid extends Component {
     }
 
     componentWillUnmount() {
-        console.log("Grid unmounted");
         // Remove event listeners
         removeAllEventListeners();
     }

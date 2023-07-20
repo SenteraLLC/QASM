@@ -299,7 +299,6 @@ class MultiClassGrid extends Component {
     }
 
     componentDidMount() {
-        console.log("MultiClassGrid mounted")
         // Attach event listeners
         addAllEventListeners();
 
@@ -314,7 +313,6 @@ class MultiClassGrid extends Component {
     }
 
     componentWillUnmount() {
-        console.log("MultiClassGrid unmounted")
         // Remove event listeners
         removeAllEventListeners();
     }

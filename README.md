@@ -105,6 +105,7 @@ Note that this will also apply any changes made to the terraform code, so be sur
             ```
         - ``"save_labels_keybind": <string> or <Array[<string>]>`` (Optional) Keybind to save the current labels. Defaults to ["ctrlKey", "s"].
         - ``"toggle_image_layer_keybind": <string> or <Array[<string>]>`` (Optional) Keybind to toggle between image layers when hovering over an image. Defaults to "b".
+        - ``"toggle_all_image_layers_keybind": <string> or <Array[<string>]>`` (Optional) Keybind to toggle the image layer of all images. Defaults to "B".
         - ``"next_row_keybind": <string> or <Array[<string>]>`` (Optional) Keybind to advance to the next row when hovering over an image. Defaults to "n".
         - ``"prev_row_keybind": <string> or <Array[<string>]>`` (Optional) Keybind to advance to the previous row when hovering over an image. Defaults to "h".
 

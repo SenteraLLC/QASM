@@ -7,12 +7,14 @@ const { init_keybinds, get_keybind_in_keypress_event } = require("./keybind_util
 const GRID_KEYBIND_NAMES = {
     SAVE_LABELS: "save_labels_keybind",
     TOGGLE_IMAGE_LAYER: "toggle_image_layer_keybind",
+    TOGGLE_ALL_IMAGE_LAYERS: "toggle_all_image_layers_keybind",
     NEXT_ROW: "next_row_keybind",
     PREV_ROW: "prev_row_keybind",
 }
 const GRID_DEFAULT_KEYBINDS = {
     [GRID_KEYBIND_NAMES.SAVE_LABELS]: ["ctrlKey", "s"],
     [GRID_KEYBIND_NAMES.TOGGLE_IMAGE_LAYER]: "b",
+    [GRID_KEYBIND_NAMES.TOGGLE_ALL_IMAGE_LAYERS]: "B",
     [GRID_KEYBIND_NAMES.NEXT_ROW]: "n",
     [GRID_KEYBIND_NAMES.PREV_ROW]: "h",
 }
@@ -74,6 +76,8 @@ export function initProps(window, document, component, props) {
     component.filtered_class_checkbox_values = []; // checkbox values for the current filtered class values
     // Store the folder names in all the directories we've loaded
     component.next_dir_cache = {}; // [<string root_folder_name>: Array[<string foldernames>]]
+    // Store the current image layer index
+    component.current_image_layer_idx = 0; // og image
 
     // Read props
     component.QASM = props.QASM;
@@ -191,6 +195,9 @@ export function keydownEventHandler(e) {
         case GRID_KEYBIND_NAMES.TOGGLE_IMAGE_LAYER:
             changeImage(DOCUMENT, COMPONENT.hover_image_id);
             break;
+        case GRID_KEYBIND_NAMES.TOGGLE_ALL_IMAGE_LAYERS:
+            changeAllImages(DOCUMENT, COMPONENT);
+            break;
         case GRID_KEYBIND_NAMES.NEXT_ROW:
             autoScroll(COMPONENT, COMPONENT.hover_image_id, GRID_KEYBIND_NAMES.NEXT_ROW);
             break;
@@ -293,7 +300,7 @@ export function toggleImageHidden(document, image_name, hidden = undefined) {
  * @param {*} document document object
  * @param {string} hover_image_id id of the current image
  */
-export function changeImage(document, hover_image_id) {
+export function changeImage(document, hover_image_id, new_image_layer_idx = null) {
     if (hover_image_id === null) {
         return;
     }
@@ -312,18 +319,40 @@ export function changeImage(document, hover_image_id) {
         // Change currently shown image to hidden
         layer.classList.add("hidden");
 
-        // Change next hidden image to shown
-        if (idx + 1 === layers.length - 1) {
-            // Last index is the class-overlay
-            // If we're at the last layer, turn on the og image
-            layers[0].classList.remove("hidden");
-        } else {
-            // Un-hide next image
-            layers[idx + 1].classList.remove("hidden");
+        if (new_image_layer_idx === null) {
+            if (idx + 1 === layers.length - 1) {
+                // Last index is the class-overlay
+                // If we're at the last layer, turn on the og image
+                new_image_layer_idx = 0;
+            } else {
+                // Un-hide next image
+                new_image_layer_idx = idx + 1;
+            }
         }
-        // Done
         break;
     }
+
+    // Show the new_image_layer_idx
+    layers[new_image_layer_idx].classList.remove("hidden");
+}
+
+export function changeAllImages(document, component) {
+    // Layer to show is the next layer after component.current_image_layer_idx
+    // if the next index is the last index, show the original image
+    // image_stack doesn't include the original image, so if there are n layers,
+    // so when the current layer idx is n, the new layer idx should return to 0
+    let new_image_layer_idx = component.current_image_layer_idx + 1;
+    if (component.current_image_layer_idx === component.image_stack.length) {
+        new_image_layer_idx = 0;
+    }
+
+    // Change the image for all images
+    for (let image_name of component.image_names) {
+        changeImage(document, image_name, new_image_layer_idx);
+    }
+
+    // Update the current image layer index
+    component.current_image_layer_idx = new_image_layer_idx;
 }
 
 
