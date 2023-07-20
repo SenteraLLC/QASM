@@ -9,8 +9,6 @@
 //     "move_down": "s",
 //     "move_left": "a",
 //     "move_right": "d",
-//     "zoom_in": ["=", "+"],
-//     "zoom_out": ["-", "_"],
 //     "save": ["ctrlKey", "s"],
 // }
 // The "control", "shift", and "alt" keys are represented by "ctrlKey", "shiftKey", and "altKey", 
