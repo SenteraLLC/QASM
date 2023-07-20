@@ -178,7 +178,7 @@ Example:
 }
 ```
 The "control", "shift", and "alt" keys are represented by "ctrlKey", "shiftKey", and "altKey", 
-since that is how they are represented in the keydown event. See [here](https://developer.mozilla.org/en-US/docs/Web/API/KeyboardEvent/key/Key_Values) for more details. Providing an array of keybinds requires all keys to be pressed simultaneously, an thus is only supported for the "control", "shift", and "alt" keys and any single other key, eg ["ctrlKey", "shiftKey", "s"].
+since that is how they are represented in the keydown event. See [here](https://developer.mozilla.org/en-US/docs/Web/API/KeyboardEvent/key/Key_Values) for more details. Providing an array of keybinds requires all keys to be pressed simultaneously, and thus is only supported for the "control", "shift", and "alt" keys and any single other key, eg ["ctrlKey", "shiftKey", "s"].
 
 
 
