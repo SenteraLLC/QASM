@@ -61,7 +61,7 @@
     ]
   },
   "build": {
-    "productName": "QASM Local App",
+    "productName": "QASM Demo",
     "win": {
       "target": "NSIS",
       "icon": "public/icon.png"
