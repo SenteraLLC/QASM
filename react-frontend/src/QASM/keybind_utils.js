@@ -26,14 +26,17 @@ const BOOLEAN_KEYBINDS = [
  * Initialize the keybinds with the default keybinds 
  * or the user defined keybinds.
  * 
- * @param {object} user_keybinds {<string keybind_name>: <string keybind> or Array[<string keybind1>, <string keybind2>], ...}
- * @param {object} default_keybinds {<string keybind_name>: <string keybind> or Array[<string keybind1>, <string keybind2>], ...}
+ * @param {object} user_keybinds user keybind preferences {<string keybind_name>: <string keybind> or Array[<string keybind1>, <string keybind2>], ...}
+ * @param {object} default_keybinds keybind defaults {<string keybind_name>: <string keybind> or Array[<string keybind1>, <string keybind2>], ...}
+ * @param {object} keybinds keybinds to initialize {<string keybind_name>: <string keybind> or Array[<string keybind1>, <string keybind2>], ...}
  */
-export function init_keybinds(user_keybinds, default_keybinds) {
-    for (let [keybind_name, keybind] of Object.entries(user_keybinds)) {
+export function init_keybinds(user_keybinds, default_keybinds, keybinds) {
+    for (let [keybind_name, default_keybind] of Object.entries(default_keybinds)) {
         // If the user defined a keybind, use it instead of the default
-        if (keybind_name in default_keybinds) {
-            default_keybinds[keybind_name] = keybind;
+        if (keybind_name in user_keybinds) {
+            keybinds[keybind_name] = user_keybinds[keybind_name];
+        } else {
+            keybinds[keybind_name] = default_keybind;
         }
     }
 }

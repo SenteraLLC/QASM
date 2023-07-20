@@ -17,8 +17,4 @@ root.render(
   </>
 );
 
-// Clear local storage so that we can accurately 
-// track event listener status and other local storage data
-localStorage.clear();
-
 reportWebVitals();

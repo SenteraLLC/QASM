@@ -17,11 +17,17 @@ const GRID_DEFAULT_KEYBINDS = {
     [GRID_KEYBIND_NAMES.PREV_ROW]: "h",
 }
 
+// Deep copy of GRID_DEFAULT_KEYBINDS
+const GRID_KEYBINDS = JSON.parse(JSON.stringify(GRID_DEFAULT_KEYBINDS));
+
 export const FILTER_MODES = {
     "no_filter": "no filter",
     // "group_by_class": "group by class", // TODO: implement
 }
 
+export let WINDOW = undefined;
+export let DOCUMENT = undefined;
+export let COMPONENT = undefined;
 
 /**
  * Update the state variables and force
@@ -43,10 +49,17 @@ export function updateState(component) {
 /**
  * Initialize the component props and state
  * 
+ * @param {*} window window object
+ * @param {*} document document object
  * @param {*} component component that called this function: pass in `this`
  * @param {*} props component props
  */
-export function initProps(component, props) {
+export function initProps(window, document, component, props) {
+    // Set global values used in event handlers
+    WINDOW = window;
+    DOCUMENT = document;
+    COMPONENT = component;
+
     component.images = {};
     component.image_names = [];
     component.class_types = [];
@@ -73,7 +86,7 @@ export function initProps(component, props) {
     component.labels = initLabels(component);
     
     // Initialize keybinds
-    init_keybinds(props, GRID_DEFAULT_KEYBINDS);
+    init_keybinds(props, GRID_DEFAULT_KEYBINDS, GRID_KEYBINDS);
 
     // Initialize class_names (normal grid)
     try {
@@ -98,65 +111,95 @@ export function initProps(component, props) {
 
 
 /**
- * Attach event listeners to the page.
+ * Add all event listeners to the document.
  * 
- * @param {*} window window object
- * @param {*} document document object
- * @param {*} component component that called this function: pass in `this`
  */
-export function initEventListeners(window, document, component) {
-    if (localStorage.getItem("grid_event_listeners_initialized") === "true") {
-        // Event listeners already initialized, don't do it again
-        console.log("Grid event listeners already initialized.");
-        return;
-    }
+export function addAllEventListeners() {
+    // Add event listeners. The only way I could get them to remove
+    // properly was to pass them as functions with no arguments.
+    DOCUMENT.addEventListener("mousemove", mousemoveEventHandler);
+    DOCUMENT.addEventListener("resize", resizeEventHandler);
+    DOCUMENT.addEventListener("scroll", scrollEventHandler);
+    DOCUMENT.addEventListener("keydown", keydownEventHandler);
+}
 
-    console.log("Initializing grid event listeners...");
 
-    // Update the overlays whenever the page size is changed
-    window.addEventListener("resize", update_all_overlays);
+/**
+ * Remove all event listeners from the document.
+ * 
+ */
+export function removeAllEventListeners() {
+    // Remove event listeners
+    DOCUMENT.removeEventListener("mousemove", mousemoveEventHandler);
+    DOCUMENT.removeEventListener("resize", resizeEventHandler);
+    DOCUMENT.removeEventListener("scroll", scrollEventHandler);
+    DOCUMENT.removeEventListener("keydown", keydownEventHandler);
+}
 
+
+/**
+ * Handler for mousemove event listeners.
+ * 
+ * @param {object} e mousemove event
+ */
+export function mousemoveEventHandler(e) {
     // Update which image is currently being hovered
-    document.addEventListener("mousemove", (e) => {
-        if (e.target.className.includes("hover-target")) {
-            // Every single hover-target will be inside of a div that's 
-            // inside of a div, that has the id that we're trying to select.
-            component.hover_image_id = e.target.parentNode.parentNode.id;
-        } else {
-            component.hover_image_id = null;
-        }
-    });
+    if (e.target.className.includes("hover-target")) {
+        // Every single hover-target will be inside of a div that's 
+        // inside of a div, that has the id that we're trying to select.
+        COMPONENT.hover_image_id = e.target.parentNode.parentNode.id;
+    } else {
+        COMPONENT.hover_image_id = null;
+    }
+}
 
-    // Prevent weird behavior when scrolling
-    window.addEventListener("scroll", () => {
-        if (component.allow_next_scroll) {
-            component.allow_next_scroll = false;
-        } else {
-            component.hover_image_id = null;
-        }
-    });
 
+/**
+ * Handler for resize event listeners.
+ * 
+ */
+export function resizeEventHandler() {
+    // Update the overlays whenever the page size is changed
+    update_all_overlays();
+}
+
+
+/**
+ * Handler for scroll event listeners.
+ * 
+ */
+export function scrollEventHandler() {
+    if (COMPONENT.allow_next_scroll) {
+        COMPONENT.allow_next_scroll = false;
+    } else {
+        COMPONENT.hover_image_id = null;
+    }
+}
+
+
+/**
+ * Handler for keydown event listeners.
+ * 
+ * @param {object} e keydown event
+ */
+export function keydownEventHandler(e) {
     // Keybinds
-    window.addEventListener("keydown", (e) => {
-        switch (get_keybind_in_keypress_event(GRID_DEFAULT_KEYBINDS, e)) {
-            case GRID_KEYBIND_NAMES.SAVE_LABELS:
-                saveLabels(window, component);
-                break;
-            case GRID_KEYBIND_NAMES.TOGGLE_IMAGE_LAYER:
-               changeImage(document, component.hover_image_id);
-                break;
-            case GRID_KEYBIND_NAMES.NEXT_ROW:
-                autoScroll(component, component.hover_image_id, GRID_KEYBIND_NAMES.NEXT_ROW);
-                break;
-            case GRID_KEYBIND_NAMES.PREV_ROW:
-                autoScroll(component, component.hover_image_id, GRID_KEYBIND_NAMES.PREV_ROW);
-                break;
-            default:
-                break;
-        }
-    });
-
-    localStorage.setItem("grid_event_listeners_initialized", "true");
+    switch (get_keybind_in_keypress_event(GRID_KEYBINDS, e)) {
+        case GRID_KEYBIND_NAMES.SAVE_LABELS:
+            saveLabels(WINDOW, COMPONENT);
+            break;
+        case GRID_KEYBIND_NAMES.TOGGLE_IMAGE_LAYER:
+            changeImage(DOCUMENT, COMPONENT.hover_image_id);
+            break;
+        case GRID_KEYBIND_NAMES.NEXT_ROW:
+            autoScroll(COMPONENT, COMPONENT.hover_image_id, GRID_KEYBIND_NAMES.NEXT_ROW);
+            break;
+        case GRID_KEYBIND_NAMES.PREV_ROW:
+            autoScroll(COMPONENT, COMPONENT.hover_image_id, GRID_KEYBIND_NAMES.PREV_ROW);
+            break;
+        default:
+            break;
+    }
 }
 
 

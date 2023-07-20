@@ -12,7 +12,7 @@ import sparse from "../icons/sparse.svg";
 import field_edge from "../icons/field_edge.svg";
 import "../css/Grid.css";
 const { update_all_overlays } =  require("../QASM/utils.js");
-const { FILTER_MODES, initProps, initEventListeners, changeGridWidth, toggleImageHidden, initLabels, loadLabels, changeAutoLoadOnDirSelect, saveLabels, clearAllLabels, addImageLayer, getImageStackByName, selectImageDir} =  require("../QASM/grid_utils.js");
+const { FILTER_MODES, initProps, addAllEventListeners, removeAllEventListeners, changeGridWidth, toggleImageHidden, initLabels, loadLabels, changeAutoLoadOnDirSelect, saveLabels, clearAllLabels, addImageLayer, getImageStackByName, selectImageDir} =  require("../QASM/grid_utils.js");
 
 const COLORS = {
     "default": "default",
@@ -49,13 +49,10 @@ class Grid extends Component {
         super(props);
         
         // Initialize props
-        initProps(this, props);
+        initProps(window, document, this, props);
         
         // Get overlay info
         this.initOverlays();
-
-        // Attach event listeners
-        initEventListeners(window, document, this);
 
         // Bind functions
         this.updateLocalLabels     = this.updateLocalLabels.bind(this);
@@ -327,6 +324,10 @@ class Grid extends Component {
     }
 
     componentDidMount() {
+        console.log("Grid mounted");
+        // Add event listeners
+        addAllEventListeners();
+
         // Ensure update runs once the page is fully loaded
         setInterval(() => {
             if (!this.update_success) {
@@ -335,6 +336,12 @@ class Grid extends Component {
                 this.changeGridFilter(this.filtered_class_name);
             }
         }, 1000)
+    }
+
+    componentWillUnmount() {
+        console.log("Grid unmounted");
+        // Remove event listeners
+        removeAllEventListeners();
     }
 
     componentDidUpdate() {
