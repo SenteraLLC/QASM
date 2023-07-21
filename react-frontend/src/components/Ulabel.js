@@ -52,7 +52,7 @@ class Ulabel extends Component {
         this.other_ulabel_props = props.other_ulabel_props || {};
         
         // Deep copy 
-        this.subtasks    = JSON.parse(JSON.stringify(props.subtasks)) || this.ex_subtasks;
+        this.subtasks = JSON.parse(JSON.stringify(props.subtasks)) || this.ex_subtasks;
     }
 
     defaultOnSubmit(annotations) {
