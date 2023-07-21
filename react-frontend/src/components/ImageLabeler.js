@@ -7,7 +7,7 @@ const { function_names } = require("../../public/electron_constants.js");
 // https://github.com/SenteraLLC/ulabel/blob/main/api_spec.md
 const ULABEL_PROPS = ["container_id", "image_data", "username", "submit_button", "subtasks", "task_meta", "annotation_meta", "px_per_px", "init_crop", "initial_line_size", "instructions_url", "config_data", "toolbox_order"]
 // Reserved props are props that are used by this component, so the user should not use them
-const RESERVED_PROPS = ["container_id", "image_data", "submit_button"];
+const RESERVED_PROPS = ["container_id", "image_data", "submit_buttons"];
 const SHADOWED_PROPS = ["subtasks"]; // These props are shadowed by this component, so the user will use them but we won't pass them as-is to ulabel
 
 class ImageLabeler extends Component {
