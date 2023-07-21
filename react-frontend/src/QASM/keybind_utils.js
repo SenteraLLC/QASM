@@ -77,6 +77,7 @@ function keybind_in_keypress_event_helper(keybind, event) {
         return true;
     } else {
         // Check if the keybind is a boolean keybind (ctrl, shift, alt)
+        // if so, event[keybind] will be `true` if the key is pressed
         if (BOOLEAN_KEYBINDS.includes(keybind)) {
             return event[keybind];   
         } else {
