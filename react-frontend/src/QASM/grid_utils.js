@@ -20,16 +20,18 @@ const GRID_DEFAULT_KEYBINDS = {
 }
 
 // Deep copy of GRID_DEFAULT_KEYBINDS
-const GRID_KEYBINDS = JSON.parse(JSON.stringify(GRID_DEFAULT_KEYBINDS));
+export let GRID_KEYBINDS = JSON.parse(JSON.stringify(GRID_DEFAULT_KEYBINDS));
+
+// Other global variables for use in event listener handlers
+export let WINDOW = undefined;
+export let DOCUMENT = undefined;
+export let COMPONENT = undefined;
 
 export const FILTER_MODES = {
     "no_filter": "no filter",
     // "group_by_class": "group by class", // TODO: implement
 }
 
-export let WINDOW = undefined;
-export let DOCUMENT = undefined;
-export let COMPONENT = undefined;
 
 /**
  * Update the state variables and force
