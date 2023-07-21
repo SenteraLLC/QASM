@@ -21,6 +21,9 @@
 # Active config
 config.json
 
+# User configs
+/configs/*
+
 # Active index.html
 public/index.html
 

@@ -4,6 +4,12 @@ import "../css/ImageLabeler.css";
 const { getChildPath } = require("../QASM/utils.js");
 const { function_names } = require("../../public/electron_constants.js");
 
+// https://github.com/SenteraLLC/ulabel/blob/main/api_spec.md
+const ULABEL_PROPS = ["container_id", "image_data", "username", "submit_button", "subtasks", "task_meta", "annotation_meta", "px_per_px", "init_crop", "initial_line_size", "instructions_url", "config_data", "toolbox_order"]
+// Reserved props are props that are used by this component, so the user should not use them
+const RESERVED_PROPS = ["container_id", "image_data", "submit_buttons"];
+const SHADOWED_PROPS = ["subtasks"]; // These props are shadowed by this component, so the user will use them but we won't pass them as-is to ulabel
+
 class ImageLabeler extends Component {
     component_updater = 0;
     cur_image_name = null;
@@ -28,6 +34,25 @@ class ImageLabeler extends Component {
             subtasks: this.subtasks,
             annotations: this.annotations,
         };
+
+        // store the rest of the props as long as they are valid ulabel props
+        // and are also not reserved props
+        this.other_ulabel_props = {};
+        for (let prop in props) {
+            if (ULABEL_PROPS.includes(prop)) {
+                if (RESERVED_PROPS.includes(prop)) {
+                    // Warn the user that the prop will be overwritten
+                    console.log("Warning: " + prop + " is ULabel prop reserved by this component and will be overwritten.");
+                } else if (SHADOWED_PROPS.includes(prop)) {
+                    continue; // Don't add to other_ulabel_props
+                } else {
+                    // Use the prop
+                    this.other_ulabel_props[prop] = props[prop];
+                }
+            } 
+        }
+        console.log("props:", props);
+        console.log("other props:", this.other_ulabel_props);
 
         // Bind functions
         this.loadImageDir     = this.loadImageDir.bind(this);
@@ -172,12 +197,15 @@ class ImageLabeler extends Component {
                     </button>
                 </header>
                 {this.cur_image_name !== null &&
+                    // Any custom props we define here should be added to RESERVED_PROPS, else
+                    // if the user passes in a valid ulabel prop with the same name, it will collide
                     <Ulabel
                         QASM = {this.QASM}
                         image = {this.state.image} // Use state so changes trigger child "componentDidUpdate" hook
                         subtasks = {this.state.subtasks}
                         annotations = {this.state.annotations}
                         on_submit = {this.on_submit}
+                        other_ulabel_props = {this.other_ulabel_props}
                     />
                 }
             </div>

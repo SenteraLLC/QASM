@@ -4,22 +4,19 @@ import MultiClassGridImage from "./MultiClassGridImage.js";
 import Dropdown from './Dropdown.js';
 import "../css/Grid.css";
 const { update_all_overlays } = require("../QASM/utils.js");
-const { FILTER_MODES, updateState, initProps, initEventListeners, changeGridWidth, toggleImageHidden, initLabels, loadLabels, changeAutoLoadOnDirSelect, saveLabels, clearAllLabels, addImageLayer, getImageStackByName, selectImageDir, loadNextDir } = require("../QASM/grid_utils.js");
+const { FILTER_MODES, updateState, initProps, addAllEventListeners, removeAllEventListeners, changeGridWidth, toggleImageHidden, initLabels, loadLabels, changeAutoLoadOnDirSelect, saveLabels, clearAllLabels, addImageLayer, getImageStackByName, selectImageDir, loadNextDir } = require("../QASM/grid_utils.js");
 
 class MultiClassGrid extends Component {
     constructor(props) {
         super(props);
 
         // Initialize props
-        initProps(this, props);
-
-        // Attach event listeners
-        initEventListeners(window, document, this);
+        initProps(window, document, this, props);
 
         // Bind functions
         this.updateLocalLabels = this.updateLocalLabels.bind(this);
-        this.filterImages = this.filterImages.bind(this);
-        this.changeGridFilter = this.changeGridFilter.bind(this);
+        this.filterImages      = this.filterImages.bind(this);
+        this.changeGridFilter  = this.changeGridFilter.bind(this);
     }
 
 
@@ -302,6 +299,9 @@ class MultiClassGrid extends Component {
     }
 
     componentDidMount() {
+        // Attach event listeners
+        addAllEventListeners();
+
         // Ensure update runs once the page is fully loaded
         setInterval(() => {
             if (!this.update_success) {
@@ -310,6 +310,11 @@ class MultiClassGrid extends Component {
                 this.filterImages();
             }
         }, 1000)
+    }
+
+    componentWillUnmount() {
+        // Remove event listeners
+        removeAllEventListeners();
     }
 
     componentDidUpdate() {

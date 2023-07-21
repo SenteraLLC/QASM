@@ -2,13 +2,36 @@
 import $ from "jquery";
 const { update_all_overlays, getOneFolderUp, getCurrentFolder, getChildPath } = require("./utils.js");
 const { function_names } = require("../../public/electron_constants.js");
+const { init_keybinds, get_keybind_in_keypress_event } = require("./keybind_utils.js");
+
+const GRID_KEYBIND_NAMES = {
+    SAVE_LABELS: "save_labels_keybind",
+    TOGGLE_IMAGE_LAYER: "toggle_image_layer_keybind",
+    TOGGLE_ALL_IMAGE_LAYERS: "toggle_all_image_layers_keybind",
+    NEXT_ROW: "next_row_keybind",
+    PREV_ROW: "prev_row_keybind",
+}
+const GRID_DEFAULT_KEYBINDS = {
+    [GRID_KEYBIND_NAMES.SAVE_LABELS]: ["ctrlKey", "s"],
+    [GRID_KEYBIND_NAMES.TOGGLE_IMAGE_LAYER]: "b",
+    [GRID_KEYBIND_NAMES.TOGGLE_ALL_IMAGE_LAYERS]: "B",
+    [GRID_KEYBIND_NAMES.NEXT_ROW]: "n",
+    [GRID_KEYBIND_NAMES.PREV_ROW]: "h",
+}
+
+// Deep copy of GRID_DEFAULT_KEYBINDS
+export let GRID_KEYBINDS = JSON.parse(JSON.stringify(GRID_DEFAULT_KEYBINDS));
+
+// Other global variables for use in event listener handlers
+export let WINDOW = undefined;
+export let DOCUMENT = undefined;
+export let COMPONENT = undefined;
 
 export const FILTER_MODES = {
     "no_filter": "no filter",
     // "group_by_class": "group by class", // TODO: implement
 }
 
-// TODO: keyboard shortcuts in config and loaded somewhere
 
 /**
  * Update the state variables and force
@@ -30,10 +53,17 @@ export function updateState(component) {
 /**
  * Initialize the component props and state
  * 
+ * @param {*} window window object
+ * @param {*} document document object
  * @param {*} component component that called this function: pass in `this`
  * @param {*} props component props
  */
-export function initProps(component, props) {
+export function initProps(window, document, component, props) {
+    // Set global values used in event handlers
+    WINDOW = window;
+    DOCUMENT = document;
+    COMPONENT = component;
+
     component.images = {};
     component.image_names = [];
     component.class_types = [];
@@ -48,6 +78,8 @@ export function initProps(component, props) {
     component.filtered_class_checkbox_values = []; // checkbox values for the current filtered class values
     // Store the folder names in all the directories we've loaded
     component.next_dir_cache = {}; // [<string root_folder_name>: Array[<string foldernames>]]
+    // Store the current image layer index
+    component.current_image_layer_idx = 0; // og image
 
     // Read props
     component.QASM = props.QASM;
@@ -58,6 +90,9 @@ export function initProps(component, props) {
     component.autoload_labels_on_dir_select = props.autoload_labels_on_dir_select || false;
     component.image_layer_folder_names = props.image_layer_folder_names || undefined; // [Array[<string>], ...]
     component.labels = initLabels(component);
+    
+    // Initialize keybinds
+    init_keybinds(props, GRID_DEFAULT_KEYBINDS, GRID_KEYBINDS);
 
     // Initialize class_names (normal grid)
     try {
@@ -82,62 +117,98 @@ export function initProps(component, props) {
 
 
 /**
- * Attach event listeners to the page.
+ * Add all event listeners to the document.
  * 
- * @param {*} window window object
- * @param {*} document document object
- * @param {*} component component that called this function: pass in `this`
  */
-export function initEventListeners(window, document, component) {
-    if (localStorage.getItem("grid_event_listeners_initialized") === "true") {
-        // Event listeners already initialized, don't do it again
-        console.log("Grid event listeners already initialized.");
-        return;
-    }
+export function addAllEventListeners() {
+    // Add event listeners. The only way I could get them to remove
+    // properly was to pass them as functions with no arguments.
+    DOCUMENT.addEventListener("mousemove", mousemoveEventHandler);
+    DOCUMENT.addEventListener("resize", resizeEventHandler);
+    DOCUMENT.addEventListener("scroll", scrollEventHandler);
+    DOCUMENT.addEventListener("keydown", keydownEventHandler);
+}
 
-    console.log("Initializing grid event listeners...");
 
-    // Update the overlays whenever the page size is changed
-    window.addEventListener("resize", update_all_overlays);
+/**
+ * Remove all event listeners from the document.
+ * 
+ */
+export function removeAllEventListeners() {
+    // Remove event listeners
+    DOCUMENT.removeEventListener("mousemove", mousemoveEventHandler);
+    DOCUMENT.removeEventListener("resize", resizeEventHandler);
+    DOCUMENT.removeEventListener("scroll", scrollEventHandler);
+    DOCUMENT.removeEventListener("keydown", keydownEventHandler);
+}
 
+
+/**
+ * Handler for mousemove event listeners.
+ * 
+ * @param {object} e mousemove event
+ */
+export function mousemoveEventHandler(e) {
     // Update which image is currently being hovered
-    document.addEventListener("mousemove", (e) => {
-        if (e.target.className.includes("hover-target")) {
-            // Every single hover-target will be inside of a div that's 
-            // inside of a div, that has the id that we're trying to select.
-            component.hover_image_id = e.target.parentNode.parentNode.id;
-        } else {
-            component.hover_image_id = null;
-        }
-    });
+    if (e.target.className.includes("hover-target")) {
+        // Every single hover-target will be inside of a div that's 
+        // inside of a div, that has the id that we're trying to select.
+        COMPONENT.hover_image_id = e.target.parentNode.parentNode.id;
+    } else {
+        COMPONENT.hover_image_id = null;
+    }
+}
 
-    // Prevent weird behavior when scrolling
-    window.addEventListener("scroll", () => {
-        if (component.allow_next_scroll) {
-            component.allow_next_scroll = false;
-        } else {
-            component.hover_image_id = null;
-        }
-    });
 
+/**
+ * Handler for resize event listeners.
+ * 
+ */
+export function resizeEventHandler() {
+    // Update the overlays whenever the page size is changed
+    update_all_overlays();
+}
+
+
+/**
+ * Handler for scroll event listeners.
+ * 
+ */
+export function scrollEventHandler() {
+    if (COMPONENT.allow_next_scroll) {
+        COMPONENT.allow_next_scroll = false;
+    } else {
+        COMPONENT.hover_image_id = null;
+    }
+}
+
+
+/**
+ * Handler for keydown event listeners.
+ * 
+ * @param {object} e keydown event
+ */
+export function keydownEventHandler(e) {
     // Keybinds
-    window.addEventListener("keydown", (e) => {
-        if (e.ctrlKey && e.key === "s") {
-            e.preventDefault();
-            saveLabels(window, component);
-        }
-
-        if (component.hover_image_id !== null && e.key === "b") {
-            changeImage(document, component.hover_image_id);
-        }
-
-        if (component.hover_image_id !== null) {
-            // n for next, h for previous
-            autoScroll(component, component.hover_image_id, e.key);
-        }
-    });
-
-    localStorage.setItem("grid_event_listeners_initialized", "true");
+    switch (get_keybind_in_keypress_event(GRID_KEYBINDS, e)) {
+        case GRID_KEYBIND_NAMES.SAVE_LABELS:
+            saveLabels(WINDOW, COMPONENT);
+            break;
+        case GRID_KEYBIND_NAMES.TOGGLE_IMAGE_LAYER:
+            changeImage(DOCUMENT, COMPONENT.hover_image_id);
+            break;
+        case GRID_KEYBIND_NAMES.TOGGLE_ALL_IMAGE_LAYERS:
+            changeAllImages(DOCUMENT, COMPONENT);
+            break;
+        case GRID_KEYBIND_NAMES.NEXT_ROW:
+            autoScroll(COMPONENT, COMPONENT.hover_image_id, GRID_KEYBIND_NAMES.NEXT_ROW);
+            break;
+        case GRID_KEYBIND_NAMES.PREV_ROW:
+            autoScroll(COMPONENT, COMPONENT.hover_image_id, GRID_KEYBIND_NAMES.PREV_ROW);
+            break;
+        default:
+            break;
+    }
 }
 
 
@@ -146,42 +217,37 @@ export function initEventListeners(window, document, component) {
  * 
  * @param {*} component component that called this function: pass in `this`
  * @param {string} hover_image_id id of the current row
- * @param {string} key current keypress
+ * @param {string} keybind_name keybind name
  */
-export function autoScroll(component, hover_image_id, key) {
+export function autoScroll(component, hover_image_id, keybind_name) {
     let row_not_found = true;
-    switch (key) {
-        case "n": // Next row
-        case "h": // Previous row
-            let jquery_next_image = $("#" + hover_image_id); // Start at current row
-            let current_top = jquery_next_image.offset().top; // Top of current row
-            let next_image;
-            while (row_not_found) {
-                // Try the next (or previous) image
-                jquery_next_image = key === "n" ? jquery_next_image.next() : jquery_next_image.prev();
-                next_image = document.getElementById(jquery_next_image.attr("id"))
-                
-                // If the next_image has a different 'top' as the current image, it's in a different row
-                // This protects against scrolling to an image in the same row
-                if (jquery_next_image.offset().top !== current_top) {
-                    // Ensure that the next image isn't hidden
-                    if (!next_image.classList.contains("hidden")) {
-                        // We found a row to scroll to
-                        row_not_found = false;
-                        break;
-                    }
+    if (hover_image_id !== null) {
+        let jquery_next_image = $("#" + hover_image_id); // Start at current row
+        let current_top = jquery_next_image.offset().top; // Top of current row
+        let next_image;
+        while (row_not_found) {
+            // Try the next (or previous) image
+            jquery_next_image = keybind_name === GRID_KEYBIND_NAMES.NEXT_ROW ? jquery_next_image.next() : jquery_next_image.prev();
+            next_image = document.getElementById(jquery_next_image.attr("id"))
+            
+            // If the next_image has a different 'top' as the current image, it's in a different row
+            // This protects against scrolling to an image in the same row
+            if (jquery_next_image.offset().top !== current_top) {
+                // Ensure that the next image isn't hidden
+                if (!next_image.classList.contains("hidden")) {
+                    // We found a row to scroll to
+                    row_not_found = false;
+                    break;
                 }
             }
+        }
 
-            // Scroll to next row
-            $(document).scrollTop(jquery_next_image.offset().top);
-            // Set next image as hovered for consecutive navigation
-            component.hover_image_id = jquery_next_image.attr("id");
-            // Override scroll protection
-            component.allow_next_scroll = true; 
-            break;
-        default:
-            break;
+        // Scroll to next row
+        $(document).scrollTop(jquery_next_image.offset().top);
+        // Set next image as hovered for consecutive navigation
+        component.hover_image_id = jquery_next_image.attr("id");
+        // Override scroll protection
+        component.allow_next_scroll = true; 
     }
 }
 
@@ -236,7 +302,10 @@ export function toggleImageHidden(document, image_name, hidden = undefined) {
  * @param {*} document document object
  * @param {string} hover_image_id id of the current image
  */
-export function changeImage(document, hover_image_id) {
+export function changeImage(document, hover_image_id, new_image_layer_idx = null) {
+    if (hover_image_id === null) {
+        return;
+    }
     // firstChild = image holder div
     // childNodes of image holder div = image layers
 
@@ -252,18 +321,40 @@ export function changeImage(document, hover_image_id) {
         // Change currently shown image to hidden
         layer.classList.add("hidden");
 
-        // Change next hidden image to shown
-        if (idx + 1 === layers.length - 1) {
-            // Last index is the class-overlay
-            // If we're at the last layer, turn on the og image
-            layers[0].classList.remove("hidden");
-        } else {
-            // Un-hide next image
-            layers[idx + 1].classList.remove("hidden");
+        if (new_image_layer_idx === null) {
+            if (idx + 1 === layers.length - 1) {
+                // Last index is the class-overlay
+                // If we're at the last layer, turn on the og image
+                new_image_layer_idx = 0;
+            } else {
+                // Un-hide next image
+                new_image_layer_idx = idx + 1;
+            }
         }
-        // Done
         break;
     }
+
+    // Show the new_image_layer_idx
+    layers[new_image_layer_idx].classList.remove("hidden");
+}
+
+export function changeAllImages(document, component) {
+    // Layer to show is the next layer after component.current_image_layer_idx
+    // if the next index is the last index, show the original image
+    // image_stack doesn't include the original image, so if there are n layers,
+    // so when the current layer idx is n, the new layer idx should return to 0
+    let new_image_layer_idx = component.current_image_layer_idx + 1;
+    if (component.current_image_layer_idx === component.image_stack.length) {
+        new_image_layer_idx = 0;
+    }
+
+    // Change the image for all images
+    for (let image_name of component.image_names) {
+        changeImage(document, image_name, new_image_layer_idx);
+    }
+
+    // Update the current image layer index
+    component.current_image_layer_idx = new_image_layer_idx;
 }
 
 

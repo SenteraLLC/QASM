@@ -1,6 +1,6 @@
 {
   "name": "qasm-demo",
-  "version": "0.16.4",
+  "version": "0.17.0",
   "private": true,
   "proxy": "http://localhost:3000",
   "homepage": "./",
@@ -20,7 +20,7 @@
     "react-dom": "^18.2.0",
     "react-router-dom": "^6.3.0",
     "react-scripts": "5.0.1",
-    "ulabel": "^0.4.21",
+    "ulabel": "^0.6.12",
     "util": "^0.12.4",
     "wait-on": "^6.0.1",
     "web-vitals": "^2.1.4",
