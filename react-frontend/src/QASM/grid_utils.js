@@ -626,6 +626,7 @@ export async function autoLoadImageLayers(window, component) {
         let root_dir = getOneFolderUp(component.src);
         let current_folder = getCurrentFolder(component.src)
         let n_layers = component.image_layer_folder_names[0].length; // Number of layers to load
+        let new_image_stack = [];
         for (let folder_name_group of component.image_layer_folder_names) {
             // Try each group of folder names in order, skipping
             // any that result in empty layers
@@ -638,21 +639,23 @@ export async function autoLoadImageLayers(window, component) {
                     let image_layer = await component.QASM.call_backend(window, function_names.LOAD_IMAGES, getChildPath(root_dir, folder_name));
                     if (Object.keys(image_layer).length === 0) {
                         console.log("Prevent adding empty layer, skipping to next folder group.");
-                        component.image_stack = []; // Clear image stack to allow next group to try and load
+                        new_image_stack = []; // Clear image stack to allow next group to try and load
                         n_layers = component.image_layer_folder_names[0].length; // Reset n_layers
                         break;
                     } else {
-                        component.image_stack.push(image_layer);
+                        new_image_stack.push(image_layer);
                     }
-                    console.log(component.image_stack);
+                    console.log(new_image_stack);
                 }
             }
             // If we have the correct number of layers, we're done
-            if (component.image_stack.length === n_layers) {
+            if (new_image_stack.length === n_layers) {
                 break;
             }
         }
-
+        // Set the new image stack
+        component.image_stack = new_image_stack;
+        console.log("final stack:", component.image_stack);
         updateState(component);
     }
 }
