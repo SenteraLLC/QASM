@@ -8,9 +8,11 @@ import bs4
 ENV_KEY = "REACT_APP_QASM_MODE"
 REQUIRED_QASM_KEYS = ["app", "components"]
 REQUIRED_S3_KEYS = ["bucket"]
+REQUIRED_PUSH_KEYS = ["static_site_bucket"]
+PUSH_NPM_ARG = "REACT_APP_STATIC_SITE_BUCKET"
 QASM_COMPONENTS = ["home", "grid", "multiclassgrid", "binaryeditor", "imagelabeler"]
 QASM_MODES = ["local", "s3"]
-RUN_MODES = ["dev", "build-exe"]
+RUN_MODES = ["dev", "build-exe", "push"]
 APP_NAME_KEY = "name"
 PACKAGE_JSON_PATH = "./package.json"
 DEFAULT_INDEX_PATH = "./public/default-index.html"
@@ -54,18 +56,20 @@ def main():
         return
 
     if args.mode not in RUN_MODES:
-        print(f"Enter a valid run mode: {RUN_MODES}")
-        return
+        raise ValueError(f"Enter a valid run mode: {RUN_MODES}")
+    
+    if args.mode == "push" and any(key not in config for key in REQUIRED_PUSH_KEYS):
+        raise ValueError(f"Missing required key(s) for push: {REQUIRED_PUSH_KEYS}")
 
     if any(key not in config for key in REQUIRED_QASM_KEYS): # If missing a required key
-        print(f"Missing one or more required keys in config: {REQUIRED_QASM_KEYS}")
-        return
+        raise ValueError(f"Missing required key(s) in config: {REQUIRED_QASM_KEYS}")
 
     # Check if any component is unrecognized
     will_break = False
     for component in config["components"]:
-        if component["component"] not in QASM_COMPONENTS:
-            print("{} is an unrecognized component. Use only the following: {}".format(component["component"], QASM_COMPONENTS))
+        component_name = component["component"]
+        if component_name not in QASM_COMPONENTS:
+            print(f"{component_name} is an unrecognized component. Use only the following: {QASM_COMPONENTS}")
             will_break = True
     if will_break:
         return
@@ -95,14 +99,17 @@ def main():
     app = config["app"]
     if (app in QASM_MODES):
         if (app == "s3" and any(key not in config for key in REQUIRED_S3_KEYS)):
-            print(f"Missing one or more required keys for {app} app: {REQUIRED_S3_KEYS}")
-            return
+            raise ValueError(f"Missing required key(s) for {app} app: {REQUIRED_S3_KEYS}")
             
         print(f"Setup successful, starting {app} app in {args.mode} mode...")
-        subprocess.run(f"npm run {args.mode}", shell=True)
+        if args.mode == "push":
+            # Pass npm arg to subprocess
+            # subprocess.run(f"{PUSH_NPM_ARG}={config['static_site_bucket']} npm run {args.mode}", shell=True)
+            subprocess.run(f"npm run {args.mode} --bucket={config['static_site_bucket']}", shell=True)
+        else:
+            subprocess.run(f"npm run {args.mode}", shell=True)
     else:
-        print(f"{app} runtime not yet implemented. Use: {QASM_MODES}")
-        raise NotImplementedError
+        raise NotImplementedError(f"{app} runtime not yet implemented. Use: {QASM_MODES}")
 
 if __name__ == "__main__":
     main()

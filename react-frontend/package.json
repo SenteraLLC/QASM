@@ -36,6 +36,8 @@
     "QASM": "python QASM.py",
     "qams": "python QASM.py",
     "qasm-build": "python QASM.py --mode build-exe",
+    "qasm-push": "python QASM.py --mode push",
+    "push": "npm run build && aws s3 sync ./build s3://%npm_config_bucket%",
     "start": "react-app-rewired start",
     "build": "react-app-rewired build",
     "dev": "concurrently -k \"cross-env BROWSER=none npm start\" \"npm:electron\"",

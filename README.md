@@ -1,9 +1,12 @@
 # Getting Started with QASM
 
 Welcome to the Quality Assurance State Machine (QASM)! QASM is a single-serve web application that runs
-using React and Electron, with the ability to run customizable QA jobs locally or via a statically hosted S3 website.  
+using React and Electron, with the ability to run customizable QA jobs from a local host, a packaged windows .exe, or a statically hosted S3 website.
 
-### Installation 
+## Demo
+A demo of the app can be found [here](http://qasm-demo-frontend.s3-website-us-east-1.amazonaws.com/). The configuration used to generate the demo is found in `react-frontend/default-config.json`.
+
+## Installation 
 
 1) Navigate to the frontend and install necessary packages
 
@@ -43,7 +46,31 @@ If encountering the error: `POST http://localhost:3000/undefinedopen_dir 431 (Re
 
 Note that this will also apply any changes made to the terraform code, so be sure to double check that you are not accidentily destroying any resources.
 
-### Configuration
+
+## Usage
+QASM is a single-serve web application that can be run locally, as a packaged windows .exe, or as a statically hosted S3 website. The difference between these options is as follows:
+
+### Deployment Options
+#### Local
+Running locally will launch the Electron app and serve the React app from the local machine. This is useful for development and testing, but is not recommended for production use. Not that running *locally* is different then running in *local mode*. Running locally will launch the Electron app and serve the React app from the local machine, but the React app will still be configured to run in either `s3` or `local` mode, which refers to which backend framework will be used in the app. See [Configuration](#configuration) for more details.
+
+#### Windows .exe
+After building a Windows .exe following the instructions in [Installation](#installation), the app can be run by simply double clicking the .exe file. This will preform a one-time installation and run QASM as a Windows application, after which it can be run by double clicking the application shortcut or however you prefer to run Windows applications. Note that the `"name"` field in the configuration file will be used as the name of the application, so configurations with the exact same name with overwrite each other, which is intended behavior to enable versioning without creating spurious applications. If different installations are needed, simply change the `"name"` field in the configuration file.
+
+#### S3 Static Website
+See the AWS [docs](https://docs.aws.amazon.com/AmazonS3/latest/userguide/HostingWebsiteOnS3Setup.html) for a more detailed explanation of how to host a static website on S3. This is a quick and easy way to setup a public website and url from which anyone can access a QASM job. Follow the steps in the link provided above to setup an S3 bucket and configure it to host a static website. Once the bucket is configured, put the name of the bucket in the config field `"static_site_bucket"` and run `npm run qasm-push`. This will build the app and upload the contents of the ``react-frontend/build`` folder to the bucket. This can also be done manually via the AWS console, or via the AWS CLI using
+
+        >> aws s3 sync react-frontend/build s3://<bucket_name_here>
+Note that this deployment method currently only supports `"app": "s3"` mode.
+
+### Backend Options
+#### Local
+An app configured with `"app": "local"` will run using files on the local machine. QASM jobs that require images or other inputs will prompt the user to select files using the Windows File Explorer. Note that this option is currently not supported for S3 static websites.
+
+#### S3
+An app configured with `"app": "s3"` will run using files on S3. QASM jobs that require images or other inputs will prompt the user to select files using the S3 Browser component. The S3 Browser component will allow the user to select files from any S3 bucket that they have access to. The S3 Browser component will also allow the user to upload files to the selected bucket. Note that the S3 Browser component will only allow the user to select files from a single bucket at a time, which is specified in the config file under the `"bucket"` field.
+
+## Configuration
 
 ``react-frontend/config.json`` expects the following fields:
 
@@ -53,6 +80,9 @@ Note that this will also apply any changes made to the terraform code, so be sur
 
 - ``"bucket": <string>``
     - Name of the s3 bucket from which to pull data (only required for ``"app": "s3"``)
+
+- ``"static_site_bucket": <string>``
+    - (Optional) Name of the s3 bucket to which to upload the static website (only required to run ``npm run qasm-push``)
 
 - ``"name": <string>``
     - (Optional) Display name of the app
@@ -182,7 +212,7 @@ since that is how they are represented in the keydown event. See [here](https://
 
 
 
-### Terraform
+## Terraform
 Terraform automatically takes our lambda code and deploys it to all the necessary AWS services (Lambda, API Gateway, IAM, etc) to allow our serverless applications to run.
 
 Install Terraform (https://learn.hashicorp.com/tutorials/terraform/install-cli)
@@ -222,17 +252,17 @@ Once changes have been tested in development and are ready to be applied to the 
         >> terraform apply
 
 
-### Development
+## Development
 The core Electron logic is found in ``react-frontend/public/electron.js``. This file will launch the Electron app and load the React app. In order to initialize the local backend, the functions found in ``react-frontend/public/electron_utils.js`` are automatically exposed to the Electron runtime via the logic found in ``react-frontend/public/preload.js``. 
 
 The main React entrypoint is ``react-frontend/src/index.js``. This file will load the config file and use it to initialize the React app in the configured mode (ie `local` or `s3`). The two different modes are setup in ``react-frontend/src/QASM/QASM.js``. The `local` mode will load the React app using the local backend (the functions defined in ``react-frontend/public/electron_utils.js``), while the `s3` mode will load the React app using the AWS backend (the functions found in ``react-frontend/src/QASM/lambda_handlers.js``). As long as any new functions are added to the list of ``function_handlers`` within ``lambda_handlers.js``, they will be automatically be exposed to the React app.
 
 When adding any backend functionality, in order for it to be compatible with both modes, the function must be defined in both ``electron_utils.js`` and ``lambda_handlers.js``. The decision of which backend to use is made in ``QASM.js`` based on the config file, and so within the React components, both backends are accessed via ``this.QASM.call_backend(window, <function_name_here>, <function_args_here>)``. This function will automatically call the correct backend based on the configured mode.
 
-## Local Backend
+### Local Backend
 As long as any new functions are added to the list of ``exports.function_handlers`` within ``electron_utils.js``, they will be automatically be exposed to the Electron runtime in local mode. By addition the function logic to ``electron_utils.js``, the function will be available within any React component via ``this.QASM.call_backend(window, <function_name_here>, <function_args_here>)``. Since the backend is running locally, the function will be called directly, and there is access to the local Windows file system via the ``fs`` module.
 
-## AWS Backend
+### AWS Backend
 In order to add a new function to the AWS backend, the function must be added to the list of ``exports.function_handlers`` within ``lambda_handlers.js``. This will automatically expose the function to the React app in s3 mode. Since the backend is running on AWS, the function will be called via an API call to AWS API Gateway. The function will access the AWS S3 bucket that is configured in the ``config.json`` file instead of the local file system. 
 
 Adding s3 compatibility is comprised of two steps: (1) adding the function to ``lambda_handlers.js`` and (2) adding the function to the AWS API Gateway via Terraform.
@@ -250,5 +280,5 @@ The python logic is then passed into the AWS Lambda function via Terraform. When
     ```
 This file will automatically take the python code and deploy it to the AWS Lambda function.
 
-## React Components
+### React Components
 The React components are found in ``react-frontend/src/Components/``. Each component is defined in a file ``<component_name>.js``. The component is then imported into ``react-frontend/src/App.js`` and added to the list of components. To enable a component to be added to the ``config.json``, the component must be added (1) to the list of ``COMPONENT_KEYS`` in ``react-frontend/src/App.js`` as well as (2) the list of ``QASM_COMPONENTS`` in ``QASM.py``.
