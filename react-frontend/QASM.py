@@ -4,12 +4,12 @@ import subprocess
 import shutil
 import os
 import bs4
+import boto3
 
 ENV_KEY = "REACT_APP_QASM_MODE"
 REQUIRED_QASM_KEYS = ["app", "components"]
 REQUIRED_S3_KEYS = ["bucket"]
 REQUIRED_PUSH_KEYS = ["static_site_bucket"]
-PUSH_NPM_ARG = "REACT_APP_STATIC_SITE_BUCKET"
 QASM_COMPONENTS = ["home", "grid", "multiclassgrid", "binaryeditor", "imagelabeler"]
 QASM_MODES = ["local", "s3"]
 RUN_MODES = ["dev", "build-exe", "push"]
@@ -103,13 +103,72 @@ def main():
             
         print(f"Setup successful, starting {app} app in {args.mode} mode...")
         if args.mode == "push":
-            # Pass npm arg to subprocess
-            # subprocess.run(f"{PUSH_NPM_ARG}={config['static_site_bucket']} npm run {args.mode}", shell=True)
-            subprocess.run(f"npm run {args.mode} --bucket={config['static_site_bucket']}", shell=True)
+            # Setup static site bucket
+            bucket_url = setup_static_site_bucket(bucket_name=config["static_site_bucket"])
+            if bucket_url is None:
+                return
+            # Pass npm arg. On Windows, the value of `--bucket` is accessed in the npm script as %npm_config_bucket%
+            subprocess.run(f"npm run {args.mode} --bucket={config['static_site_bucket']} --bucket_url={bucket_url}", shell=True)
         else:
             subprocess.run(f"npm run {args.mode}", shell=True)
     else:
         raise NotImplementedError(f"{app} runtime not yet implemented. Use: {QASM_MODES}")
+
+
+def setup_static_site_bucket(bucket_name: str) -> str:
+    """Create/setup S3 bucket for static site hosting and returns the url."""
+    # Create bucket if it doesn't exist
+    confirm = input(f"\n\nPROMPT: Will attempt to create/setup a public S3 bucket '{bucket_name}' for static site hosting, do you want to continue? (y/n): ")
+    if confirm.lower() not in ["y", "yes"]:
+        print("Static site bucket setup aborted by user.")
+        return None
+
+    s3_client = boto3.client('s3')
+    try:
+        s3_client.create_bucket(Bucket=bucket_name)
+        print(f"Successfully created bucket {bucket_name}...")
+    except Exception as e:
+        print(e)
+        print(f"Bucket {bucket_name} already exists, skipping creation...")
+
+    # Set public access block
+    s3_client.put_public_access_block(
+        Bucket=bucket_name,
+        PublicAccessBlockConfiguration={
+            'BlockPublicAcls': False,
+            'IgnorePublicAcls': False,
+            'BlockPublicPolicy': False,
+            'RestrictPublicBuckets': False
+        },
+    )
+    
+    # Create and attach bucket policy
+    bucket_policy = json.dumps({
+        'Version': '2012-10-17',
+        'Statement': [{
+            'Sid': 'AddPerm',
+            'Effect': 'Allow',
+            'Principal': '*',
+            'Action': ['s3:GetObject'],
+            'Resource': f"arn:aws:s3:::{bucket_name}/*" 
+        }]
+    })
+    s3_client.put_bucket_policy(Bucket=bucket_name, Policy=bucket_policy)
+
+    # Enable static website hosting
+    s3_client.put_bucket_website(
+        Bucket=bucket_name,
+        WebsiteConfiguration={
+            'ErrorDocument': {'Key': 'index.html'},
+            'IndexDocument': {'Suffix': 'index.html'},
+        }
+    )
+
+    # If region is None, it's us-east-1
+    region = s3_client.get_bucket_location(Bucket=bucket_name)["LocationConstraint"]
+    # Get bucket url, e.g. http://my-bucket.s3-website-us-east-1.amazonaws.com
+    bucket_url = f"http://{bucket_name}.s3-website-{region if region else 'us-east-1'}.amazonaws.com"
+    return bucket_url
 
 if __name__ == "__main__":
     main()
