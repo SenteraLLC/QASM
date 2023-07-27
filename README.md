@@ -58,10 +58,12 @@ Running locally will launch the Electron app and serve the React app from the lo
 After building a Windows .exe following the instructions in [Installation](#installation), the app can be run by simply double clicking the .exe file. This will preform a one-time installation and run QASM as a Windows application, after which it can be run by double clicking the application shortcut or however you prefer to run Windows applications. Note that the `"name"` field in the configuration file will be used as the name of the application, so configurations with the exact same name with overwrite each other, which is intended behavior to enable versioning without creating spurious applications. If different installations are needed, simply change the `"name"` field in the configuration file.
 
 #### S3 Static Website
-See the AWS [docs](https://docs.aws.amazon.com/AmazonS3/latest/userguide/HostingWebsiteOnS3Setup.html) for a more detailed explanation of how to host a static website on S3. This is a quick and easy way to setup a public website and url from which anyone can access a QASM job. Follow the steps in the link provided above to setup an S3 bucket and configure it to host a static website. Once the bucket is configured, put the name of the bucket in the config field `"static_site_bucket"` and run `npm run qasm-push`. This will build the app and upload the contents of the ``react-frontend/build`` folder to the bucket. This can also be done manually via the AWS console, or via the AWS CLI using
+The S3 Static Website deployment option is an easy way to setup a public website and url from which anyone can access a QASM job. In the config field `"static_site_bucket"`, put the desired name of an s3 bucket that will host the QASM app. Run `npm run qasm-push`, which will create and setup an S3 bucket with the name you specified, build the app, and upload the contents of the ``react-frontend/build`` folder to the bucket. Note that the bucket created by this process will be public, so anyone with the url will be able to access the app. The website URL will be printed to the console if the process is successful.
+
+Alternatively, see the AWS [docs](https://docs.aws.amazon.com/AmazonS3/latest/userguide/HostingWebsiteOnS3Setup.html) for a more detailed explanation of how to manually setup a static website on S3. Follow the steps in the link provided above to setup an S3 bucket and configure it to host a static website. Once the bucket is configured, you can build the app by running `npm run qasm-build`. Then upload the build files manually via the AWS console (just upload the contents of `react-frontend/build` to the bucket), or via the AWS CLI using
 
         >> aws s3 sync react-frontend/build s3://<bucket_name_here>
-Note that this deployment method currently only supports `"app": "s3"` mode.
+***Note that this deployment method currently only supports `"app": "s3"` mode.
 
 ### Backend Options
 #### Local
