@@ -33,7 +33,6 @@ class App extends Component {
     this.QASM           = props.QASM; // QASM object
     this.config         = props.config;
     this.components     = this.config.components;
-    this.location       = window.location.href.split("/").slice(-1)[0] // Just page name
 
     // Create object to keep track of number of different components
     let component_counter = {};
@@ -83,7 +82,7 @@ class App extends Component {
     return (
       <MemoryRouter>
       <div className="App">
-        <div className={this.location === "s3Browser" ? "hidden" : "menu"}> 
+        <div className={window.S3_BROWSER_MODE === undefined ? "menu": "hidden"}> 
           {/* Disable navbar when in the s3Browser */}
           <a href='/' id="menu-logo">
             <img src={icon} alt="Logo" />
