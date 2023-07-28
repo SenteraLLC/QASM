@@ -121,6 +121,7 @@ def load_image(event, context):
     url = get_signed_url(bucket_name, folder_path, image_name, s3_client=None)
     return get_return_block_with_cors({"url": url})
 
+
 def save_labels(event, context):
     """Save json data to s3 path."""
     body = json.loads(event["body"])
