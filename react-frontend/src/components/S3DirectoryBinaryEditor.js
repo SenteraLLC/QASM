@@ -33,7 +33,9 @@ class S3DirectoryBinaryEditor extends Component {
 
             // Create a dictionary for every image in the directory where the image name is
             // the key and the path is the value
-            this.images = await this.QASM.call_backend(window, function_names.LOAD_IMAGES, this.directory_path);
+            // this.images = await this.QASM.call_backend(window, function_names.LOAD_IMAGES, this.directory_path);
+            this.images = await this.QASM.call_backend(window, function_names.LOAD_BASE64_IMAGES, this.directory_path);
+            console.log(this.images);
 
             // Create a list of keys
             this.images_keys = Object.keys(this.images).sort();

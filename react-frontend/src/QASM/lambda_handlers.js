@@ -13,6 +13,7 @@ const function_handlers = {
     // ##### IMAGE #####
     [function_names.LOAD_IMAGE_DIALOG]:          handleLoadImageDialog,
     [function_names.LOAD_IMAGES]:                handleLoadImages,
+    [function_names.LOAD_BASE64_IMAGES]:         handleLoadBase64Images,
     [function_names.SAVE_IMAGE_DIALOG]:          handleSaveImageDialog,
     // ##### JSON #####
     [function_names.LOAD_JSON_DIALOG]:           handleLoadJsonDialog,
@@ -161,6 +162,24 @@ async function handleLoadImages(QASM, data, window) {
     }
     let res = await api_consolidator_error_handler(params, "get_signed_urls_in_folder");
     return res.urls;
+}
+
+
+/**
+ * Get all images in Base64 format from an s3 folder
+ * 
+ * @param {Object} QASM QASM object
+ * @param {string} data full s3 path
+ * @param {*} window window
+ * @returns {Object} { image_name: base64 } 
+ */
+async function handleLoadBase64Images(QASM, data, window) {
+    let params = {
+        "bucket_name": QASM.s3_bucket,
+        "folder_name": data
+    }
+    let res = await api_consolidator_error_handler(params, "get_base64_images_in_folder");
+    return res.images;
 }
 
 

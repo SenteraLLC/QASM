@@ -127,6 +127,9 @@ class Binary extends Component {
 
         // Load the binary image we'll be working on.
         let binary_image = await Image.load(this.output_binary_src);
+        // var binary_image = new Image();
+        // binary_image.src = 'data:image/png;base64,iVBORw0K...';
+
 
         // Convert it to a true binary
         binary_image = binary_image.grey().mask();

@@ -6,17 +6,18 @@ from botocore.client import Config
 client = boto3.client("s3")
 
 def get_all_subfolder_keys(bucket, subfolder_path):
-    """Get a list of all keys in an S3 subfolder."""
+    """Get a list of all keys in an S3 subfolder, excluding the subfolder itself."""
+    if not subfolder_path.endswith("/"):
+        subfolder_path += "/"
     result = client.list_objects(Bucket=bucket, Prefix=subfolder_path, Delimiter="/")
     print(result)
-    keys = [
-        os.path.basename(os.path.normpath(o.get("Prefix")))
-        for o in result.get("CommonPrefixes")
-    ]
-    print(keys)
-
-    return keys
-
+    if result.get("Contents"):
+        return [o.get("Key") for o in result.get("Contents") if str(o.get("Key")) != subfolder_path]
+    else:
+        print(f"No contents found in {subfolder_path}.")
+        return []
+    
+    
 def get_signed_url(bucket_name, folder_path, image_name, s3_client=None):
     """Get a signed url for an image in an S3 subfolder."""
     if s3_client is None:

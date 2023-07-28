@@ -15,6 +15,7 @@ exports.function_handlers = {
     // ##### IMAGE #####
     [function_names.LOAD_IMAGE_DIALOG]:     handleLoadImageDialog,
     [function_names.LOAD_IMAGES]:           handleLoadImages,
+    [function_names.LOAD_BASE64_IMAGES]:    handleLoadBase64Images,
     [function_names.SAVE_IMAGE_DIALOG]:     handleSaveImageDialog,
     // ##### JSON #####
     [function_names.LOAD_JSON_DIALOG]:      handleLoadJsonDialog,
@@ -204,6 +205,19 @@ async function handleLoadImages(event, data) {
     } catch {
         return {};
     }
+}
+
+
+/**
+ * Get all images in Base64 format from a folder
+ * 
+ * @param {Object} QASM QASM object
+ * @param {string} data folder path
+ * @param {*} window window
+ * @returns {Object} { image_name: base64 } 
+ */
+async function handleLoadBase64Images(event, data) {
+    console.error("handleLoadBase64Images not implemented.");
 }
 
 
