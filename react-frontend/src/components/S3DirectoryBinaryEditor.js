@@ -70,9 +70,8 @@ class S3DirectoryBinaryEditor extends Component {
         // Increment the current image
         this.current_image++;
 
-        // Check if the current image is outside the list of images
-        if (this.images.length >= this.current_image) {
-            // If the current image is outside the list of images, then reset it back to 0
+        // If the current image is greater than the number of images, reset it to 0
+        if (this.current_image >= this.images_keys.length) {
             this.current_image = 0;
         }
 
