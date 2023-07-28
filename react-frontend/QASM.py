@@ -129,7 +129,7 @@ def setup_static_site_bucket(bucket_name: str) -> str:
         print(f"Successfully created bucket {bucket_name}...")
     except Exception as e:
         print(e)
-        print(f"Bucket {bucket_name} already exists, skipping creation...")
+        print(f"Bucket {bucket_name} creation failed, skipping creation...")
 
     # Set public access block
     s3_client.put_public_access_block(
