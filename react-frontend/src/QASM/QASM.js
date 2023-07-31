@@ -23,6 +23,7 @@ export class QASM_s3 extends QASM {
         super(config);
         this.mode = "s3";
         this.config = config;
+        this.og_config = JSON.parse(JSON.stringify(config));
         this.s3_bucket = this.config.bucket;
         this.folders = [];
         this.files = [];
@@ -58,6 +59,7 @@ export class QASM_Local extends QASM {
     constructor(config) {
         super(config);
         this.mode = "local";
+        this.og_config = JSON.parse(JSON.stringify(config));
         this.config = config;
     }
 
