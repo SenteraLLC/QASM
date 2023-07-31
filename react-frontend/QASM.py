@@ -132,13 +132,14 @@ def setup_static_site_bucket(bucket_name: str) -> str:
         print(f"Bucket {bucket_name} creation failed, skipping creation...")
 
     # Set public access block
+    # Temporarily disable public access block to allow bucket policy to be set
     s3_client.put_public_access_block(
         Bucket=bucket_name,
         PublicAccessBlockConfiguration={
-            'BlockPublicAcls': False,
-            'IgnorePublicAcls': False,
+            'BlockPublicAcls': True,
+            'IgnorePublicAcls': True,
             'BlockPublicPolicy': False,
-            'RestrictPublicBuckets': False
+            'RestrictPublicBuckets': False,
         },
     )
     
@@ -154,6 +155,18 @@ def setup_static_site_bucket(bucket_name: str) -> str:
         }]
     })
     s3_client.put_bucket_policy(Bucket=bucket_name, Policy=bucket_policy)
+
+    # Set public access block
+    # Now that we've attached our bucket policy, we can enable public access block
+    s3_client.put_public_access_block(
+        Bucket=bucket_name,
+        PublicAccessBlockConfiguration={
+            'BlockPublicAcls': True,
+            'IgnorePublicAcls': True,
+            'BlockPublicPolicy': True,
+            'RestrictPublicBuckets': False, # Keep this false to allow public access to bucket contents
+        },
+    )
 
     # Enable static website hosting
     s3_client.put_bucket_website(
