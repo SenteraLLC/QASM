@@ -34,6 +34,9 @@ class App extends Component {
     this.config         = props.config;
     this.components     = this.config.components;
 
+    // Bind functions
+    this.logoOnClick = this.logoOnClick.bind(this);
+
     // Create object to keep track of number of different components
     let component_counter = {};
     
@@ -77,20 +80,24 @@ class App extends Component {
     }
   }
 
+  logoOnClick() {
+    // Click on the home button to go to the home page
+    let link = document.getElementById("home-link");
+    link.click();
+  }
+
   
   render() {
     return (
       <MemoryRouter>
       <div className="App">
         <div className={window.S3_BROWSER_MODE === undefined ? "menu": "hidden"}> 
-          {/* Disable navbar when in the s3Browser */}
-          <a href='/' id="menu-logo">
-            <img src={icon} alt="Logo" />
-          </a>
+          <img id="menu-logo" src={icon} alt="Logo" onClick={this.logoOnClick}/>
           <div className="link-holder" >
             {this.components.map(component => (
               <Link 
                 className="Link"
+                id={component.component + "-link"}
                 to={component.path}
                 key={component.path}> 
                 <h2>

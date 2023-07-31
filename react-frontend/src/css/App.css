@@ -21,10 +21,7 @@ div.menu {
 div.menu #menu-logo {
   max-height: 50px;
   margin: 0 1em;
-}
-
-div.menu #menu-logo img {
-  max-height: 50px;
+  cursor: pointer;
 }
 
 div.menu div.link-holder {
