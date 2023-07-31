@@ -92,6 +92,7 @@ An app configured with `"app": "s3"` will run using files on S3. QASM jobs that 
 - ``"components": <Array>`` Array of component config objects. Order of the components is the order they appear in the toolbar
     - Required for all components:
         - ``"component": <string>`` One of the following component names:
+            - ``"home"`` for a home screen, which shows the QASM Logo and a button to show the active config JSON
             - ``"grid"`` for a grid of images, and the ability to label each image as a single class type
             - ``"multiclassgrid"`` for a grid of images that supports multiple class types per image
             - ``"imagelabeler"`` for a [ULabel](https://github.com/SenteraLLC/ulabel) image labeling tool
@@ -99,8 +100,7 @@ An app configured with `"app": "s3"` will run using files on S3. QASM jobs that 
 
     - Optional for all components:
         - ``"display_name": <string>`` Change the navbar display name
-
-
+ 
     - ``"grid"`` Configuration ``<Object>``:
         - ``"grid_width": <Number>`` Default number of images to show per row
         - ``"classes": <Array>``
