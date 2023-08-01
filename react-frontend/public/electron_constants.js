@@ -9,6 +9,7 @@ exports.function_names = {
     LOAD_IMAGE_DIALOG: "loadImageDialog",
     LOAD_JSON_DIALOG: "loadJsonDialog",
     LOAD_IMAGES: "loadImages",
+    LOAD_BASE64_IMAGES: "loadBase64Images",
     SAVE_JSON_DIALOG: "saveJsonDialog",
     SAVE_JSON: "saveJson",
     SAVE_IMAGE_DIALOG: "saveImageDialog",

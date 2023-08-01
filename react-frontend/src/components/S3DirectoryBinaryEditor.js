@@ -33,7 +33,7 @@ class S3DirectoryBinaryEditor extends Component {
 
             // Create a dictionary for every image in the directory where the image name is
             // the key and the path is the value
-            this.images = await this.QASM.call_backend(window, function_names.LOAD_IMAGES, this.directory_path);
+            this.images = await this.QASM.call_backend(window, function_names.LOAD_BASE64_IMAGES, this.directory_path);
 
             // Create a list of keys
             this.images_keys = Object.keys(this.images).sort();
@@ -70,9 +70,8 @@ class S3DirectoryBinaryEditor extends Component {
         // Increment the current image
         this.current_image++;
 
-        // Check if the current image is outside the list of images
-        if (this.images.length >= this.current_image) {
-            // If the current image is outside the list of images, then reset it back to 0
+        // If the current image is greater than the number of images, reset it to 0
+        if (this.current_image >= this.images_keys.length) {
             this.current_image = 0;
         }
 

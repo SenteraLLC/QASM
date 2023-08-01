@@ -2,8 +2,9 @@ import boto3
 import json
 import os
 import base64
+from pathlib import Path
 from utils.lambda_utils import get_return_block_with_cors
-from utils.s3_utils import get_all_signed_urls_in_folder, get_signed_url
+from utils.s3_utils import get_all_signed_urls_in_folder, get_signed_url, get_all_subfolder_keys
 
 def open_dir(event, context):
     """Get info to construct a custom s3 browser."""
@@ -94,6 +95,22 @@ def get_signed_urls_in_folder(event, context):
     urls = get_all_signed_urls_in_folder(bucket_name, folder_name)
     return get_return_block_with_cors({"urls": urls})
 
+
+def get_base64_images_in_folder(event, context):
+    """Get all base64 images in a folder."""
+    body = json.loads(event["body"])
+    bucket_name = body["bucket_name"]
+    folder_name = body["folder_name"]
+    keys = get_all_subfolder_keys(bucket_name, folder_name)
+    s3 = boto3.client("s3")
+    images = {}
+    for key in keys:
+        image_name = str(Path(key.split("/")[-1]).with_suffix(""))
+        response = s3.get_object(Bucket=bucket_name, Key=key)
+        image = base64.b64encode(response["Body"].read()).decode("utf-8")
+        images[image_name] = "data:image/png;base64," + image
+    return get_return_block_with_cors({"images": images})
+
     
 def load_image(event, context):
     """Get a single signed url."""
@@ -103,6 +120,7 @@ def load_image(event, context):
     folder_path, image_name = os.path.split(file_name)
     url = get_signed_url(bucket_name, folder_path, image_name, s3_client=None)
     return get_return_block_with_cors({"url": url})
+
 
 def save_labels(event, context):
     """Save json data to s3 path."""

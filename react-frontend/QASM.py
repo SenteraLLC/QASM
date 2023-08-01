@@ -4,13 +4,15 @@ import subprocess
 import shutil
 import os
 import bs4
+import boto3
 
 ENV_KEY = "REACT_APP_QASM_MODE"
 REQUIRED_QASM_KEYS = ["app", "components"]
 REQUIRED_S3_KEYS = ["bucket"]
+REQUIRED_PUSH_KEYS = ["static_site_bucket"]
 QASM_COMPONENTS = ["home", "grid", "multiclassgrid", "binaryeditor", "imagelabeler"]
 QASM_MODES = ["local", "s3"]
-RUN_MODES = ["dev", "build-exe"]
+RUN_MODES = ["dev", "build-exe", "push"]
 APP_NAME_KEY = "name"
 PACKAGE_JSON_PATH = "./package.json"
 DEFAULT_INDEX_PATH = "./public/default-index.html"
@@ -54,18 +56,20 @@ def main():
         return
 
     if args.mode not in RUN_MODES:
-        print(f"Enter a valid run mode: {RUN_MODES}")
-        return
+        raise ValueError(f"Enter a valid run mode: {RUN_MODES}")
+    
+    if args.mode == "push" and any(key not in config for key in REQUIRED_PUSH_KEYS):
+        raise ValueError(f"Missing required key(s) for push: {REQUIRED_PUSH_KEYS}")
 
     if any(key not in config for key in REQUIRED_QASM_KEYS): # If missing a required key
-        print(f"Missing one or more required keys in config: {REQUIRED_QASM_KEYS}")
-        return
+        raise ValueError(f"Missing required key(s) in config: {REQUIRED_QASM_KEYS}")
 
     # Check if any component is unrecognized
     will_break = False
     for component in config["components"]:
-        if component["component"] not in QASM_COMPONENTS:
-            print("{} is an unrecognized component. Use only the following: {}".format(component["component"], QASM_COMPONENTS))
+        component_name = component["component"]
+        if component_name not in QASM_COMPONENTS:
+            print(f"{component_name} is an unrecognized component. Use only the following: {QASM_COMPONENTS}")
             will_break = True
     if will_break:
         return
@@ -95,14 +99,89 @@ def main():
     app = config["app"]
     if (app in QASM_MODES):
         if (app == "s3" and any(key not in config for key in REQUIRED_S3_KEYS)):
-            print(f"Missing one or more required keys for {app} app: {REQUIRED_S3_KEYS}")
-            return
+            raise ValueError(f"Missing required key(s) for {app} app: {REQUIRED_S3_KEYS}")
             
         print(f"Setup successful, starting {app} app in {args.mode} mode...")
-        subprocess.run(f"npm run {args.mode}", shell=True)
+        if args.mode == "push":
+            # Setup static site bucket
+            bucket_url = setup_static_site_bucket(bucket_name=config["static_site_bucket"])
+            if bucket_url is None:
+                return
+            # Pass npm arg. On Windows, the value of `--bucket` is accessed in the npm script as %npm_config_bucket%
+            subprocess.run(f"npm run {args.mode} --bucket={config['static_site_bucket']} --bucket_url={bucket_url}", shell=True)
+        else:
+            subprocess.run(f"npm run {args.mode}", shell=True)
     else:
-        print(f"{app} runtime not yet implemented. Use: {QASM_MODES}")
-        raise NotImplementedError
+        raise NotImplementedError(f"{app} runtime not yet implemented. Use: {QASM_MODES}")
+
+
+def setup_static_site_bucket(bucket_name: str) -> str:
+    """Create/setup S3 bucket for static site hosting and returns the url."""
+    # Create bucket if it doesn't exist
+    confirm = input(f"\n\nPROMPT: Will attempt to create/setup a public S3 bucket '{bucket_name}' for static site hosting, do you want to continue? (y/n): ")
+    if confirm.lower() not in ["y", "yes"]:
+        print("Static site bucket setup aborted by user.")
+        return None
+
+    s3_client = boto3.client('s3')
+    try:
+        s3_client.create_bucket(Bucket=bucket_name)
+        print(f"Successfully created bucket {bucket_name}...")
+    except Exception as e:
+        print(e)
+        print(f"Bucket {bucket_name} creation failed, skipping creation...")
+
+    # Set public access block
+    # Temporarily disable public access block to allow bucket policy to be set
+    s3_client.put_public_access_block(
+        Bucket=bucket_name,
+        PublicAccessBlockConfiguration={
+            'BlockPublicAcls': True,
+            'IgnorePublicAcls': True,
+            'BlockPublicPolicy': False,
+            'RestrictPublicBuckets': False,
+        },
+    )
+    
+    # Create and attach bucket policy
+    bucket_policy = json.dumps({
+        'Version': '2012-10-17',
+        'Statement': [{
+            'Sid': 'AddPerm',
+            'Effect': 'Allow',
+            'Principal': '*',
+            'Action': ['s3:GetObject'],
+            'Resource': f"arn:aws:s3:::{bucket_name}/*" 
+        }]
+    })
+    s3_client.put_bucket_policy(Bucket=bucket_name, Policy=bucket_policy)
+
+    # Set public access block
+    # Now that we've attached our bucket policy, we can enable public access block
+    s3_client.put_public_access_block(
+        Bucket=bucket_name,
+        PublicAccessBlockConfiguration={
+            'BlockPublicAcls': True,
+            'IgnorePublicAcls': True,
+            'BlockPublicPolicy': True,
+            'RestrictPublicBuckets': False, # Keep this false to allow public access to bucket contents
+        },
+    )
+
+    # Enable static website hosting
+    s3_client.put_bucket_website(
+        Bucket=bucket_name,
+        WebsiteConfiguration={
+            'ErrorDocument': {'Key': 'index.html'},
+            'IndexDocument': {'Suffix': 'index.html'},
+        }
+    )
+
+    # If region is None, it's us-east-1
+    region = s3_client.get_bucket_location(Bucket=bucket_name)["LocationConstraint"]
+    # Get bucket url, e.g. http://my-bucket.s3-website-us-east-1.amazonaws.com
+    bucket_url = f"http://{bucket_name}.s3-website-{region if region else 'us-east-1'}.amazonaws.com"
+    return bucket_url
 
 if __name__ == "__main__":
     main()

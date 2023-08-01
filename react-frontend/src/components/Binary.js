@@ -14,6 +14,8 @@ const BINARY_DEFAULT_KEYBINDS = {
     [BINARY_KEYBIND_NAMES.ERODE]: "-",
 }
 
+let BINARY_KEYBINDS = JSON.parse(JSON.stringify(BINARY_DEFAULT_KEYBINDS));
+
 class Binary extends Component {
     component_updater = 0;
     currently_hovered = false;
@@ -25,7 +27,7 @@ class Binary extends Component {
         this.original_binary_src = props.original_binary;
 
         // If custom keybinds are passed in use those, otherwise use default
-        init_keybinds(props, BINARY_DEFAULT_KEYBINDS);
+        init_keybinds(props, BINARY_DEFAULT_KEYBINDS, BINARY_KEYBINDS);
 
         // The output binary is the same as the input binary until its modified
         this.output_binary_src = props.original_binary;
@@ -77,7 +79,7 @@ class Binary extends Component {
         // Ignore all keypresses if the output binary is not being hovered
         if (!this.currently_hovered) return;
 
-        switch(get_keybind_in_keypress_event(BINARY_DEFAULT_KEYBINDS, event)) {
+        switch(get_keybind_in_keypress_event(BINARY_KEYBINDS, event)) {
             case BINARY_KEYBIND_NAMES.DILATE:
                 this.dilate();
                 break;
