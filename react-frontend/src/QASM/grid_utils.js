@@ -352,7 +352,6 @@ export function changeAllImages(document, component) {
     for (let image_name of component.image_names) {
         changeImage(document, image_name, new_image_layer_idx);
     }
-
     // Update the current image layer index
     component.current_image_layer_idx = new_image_layer_idx;
 }
@@ -628,34 +627,64 @@ export async function autoLoadImageLayers(window, component) {
         let n_layers = component.image_layer_folder_names[0].length; // Number of layers to load
         let new_image_stack = [];
         for (let folder_name_group of component.image_layer_folder_names) {
-            // Try each group of folder names in order, skipping
-            // any that result in empty layers
-            for (let folder_name of folder_name_group) {
-                // Don't add current folder as a layer
-                if (folder_name === current_folder) {
-                    n_layers--; // We need one fewer layer
-                } else {
-                    // Load images and add them to the image stack
-                    let image_layer = await component.QASM.call_backend(window, function_names.LOAD_IMAGES, getChildPath(root_dir, folder_name));
-                    if (Object.keys(image_layer).length === 0) {
-                        console.log("Prevent adding empty layer, skipping to next folder group.");
-                        new_image_stack = []; // Clear image stack to allow next group to try and load
-                        n_layers = component.image_layer_folder_names[0].length; // Reset n_layers
-                        break;
-                    } else {
-                        new_image_stack.push(image_layer);
-                    }
-                    console.log(new_image_stack);
-                }
-            }
-            // If we have the correct number of layers, we're done
-            if (new_image_stack.length === n_layers) {
-                break;
+            // See if the current folder is in any of the groups, and if so, use that group
+            if (folder_name_group.includes(current_folder)) {
+                new_image_stack = await getImageStack(component, root_dir, current_folder, folder_name_group);
             }
         }
+
+        // If we didn't find the current folder in any of the groups, try all groups
+        if (new_image_stack.length === 0) {
+            for (let folder_name_group of component.image_layer_folder_names) {
+                new_image_stack = await getImageStack(component, root_dir, current_folder, folder_name_group);
+                // Once we have all the layers, stop
+                if (new_image_stack.length === n_layers) {
+                    break;
+                }
+            }
+        }
+
         // Set the new image stack
         component.image_stack = new_image_stack;
         console.log("final stack:", component.image_stack);
         updateState(component);
     }
+}
+
+
+/**
+ * Helper function for autoLoadImageLayers. Try and load image
+ * layers from a group of folder names.
+ * 
+ * @param {object} component component that called the function
+ * @param {string} root_dir src directory of the current component
+ * @param {Array[string]} folder_name_group Array of folder names to try and load
+ * @returns {Array} image stack; array of image layers
+ */
+async function getImageStack(
+    component,
+    root_dir,
+    current_folder,
+    folder_name_group, 
+) {
+    let new_image_stack = [];
+    // Try each group of folder names in order, skipping
+    // any that result in empty layers
+    for (let folder_name of folder_name_group) {
+        // Skip the current folder
+        if (folder_name === current_folder) {
+            continue;
+        }
+        // Load images and add them to the image stack
+        let image_layer = await component.QASM.call_backend(window, function_names.LOAD_IMAGES, getChildPath(root_dir, folder_name));
+        if (Object.keys(image_layer).length === 0) {
+            console.log("Prevent adding empty layer, skipping to next folder group.");
+            new_image_stack = []; // Clear image stack to allow next group to try and load
+            return new_image_stack;
+        } else {
+            new_image_stack.push(image_layer);
+        }
+        console.log(new_image_stack);
+    }
+    return new_image_stack;
 }
