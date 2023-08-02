@@ -4,6 +4,10 @@ import { function_names } from "../../public/electron_constants.js";
 const { function_handlers } = require("./lambda_handlers.js");
 
 export class QASM {
+    constructor(config) {
+        this.config = config;
+        this.og_config = JSON.parse(JSON.stringify(config));
+    }
     /**
      * Create a QASM object based on the
      * app mode in the config
@@ -22,8 +26,6 @@ export class QASM_s3 extends QASM {
     constructor(config) {
         super(config);
         this.mode = "s3";
-        this.config = config;
-        this.og_config = JSON.parse(JSON.stringify(config));
         this.s3_bucket = this.config.bucket;
         this.folders = [];
         this.files = [];
@@ -59,8 +61,6 @@ export class QASM_Local extends QASM {
     constructor(config) {
         super(config);
         this.mode = "local";
-        this.og_config = JSON.parse(JSON.stringify(config));
-        this.config = config;
     }
 
     /**
