@@ -92,6 +92,7 @@ An app configured with `"app": "s3"` will run using files on S3. QASM jobs that 
 - ``"components": <Array>`` Array of component config objects. Order of the components is the order they appear in the toolbar
     - Required for all components:
         - ``"component": <string>`` One of the following component names:
+            - ``"home"`` for a home screen, which shows the QASM Logo and a button to show the active config JSON. If not included, the home screen will not be shown in the navbar, but can still be accessed by pressing the QASM logo in the top left corner.
             - ``"grid"`` for a grid of images, and the ability to label each image as a single class type
             - ``"multiclassgrid"`` for a grid of images that supports multiple class types per image
             - ``"imagelabeler"`` for a [ULabel](https://github.com/SenteraLLC/ulabel) image labeling tool
@@ -99,8 +100,7 @@ An app configured with `"app": "s3"` will run using files on S3. QASM jobs that 
 
     - Optional for all components:
         - ``"display_name": <string>`` Change the navbar display name
-
-
+ 
     - ``"grid"`` Configuration ``<Object>``:
         - ``"grid_width": <Number>`` Default number of images to show per row
         - ``"classes": <Array>``
@@ -120,7 +120,7 @@ An app configured with `"app": "s3"` will run using files on S3. QASM jobs that 
                     - ``"green"`` green
         - ``"label_loadnames": <Array[string]>`` (Optional) An ordered list of label filenames to automatically try and load. Will search one folder above the current directory.
         - ``"autoload_labels_on_dir_select": <boolean>`` (Optional) Whether to try and autoload labels after each new directory selection. Default is false. Can also be changed in app via the checkbox "Autoload Labels on Directory Select". Default is false.
-        - ``"image_layer_folder_names": Array[Array[<string>], ...]``: (Optional) Ordered list of folder names of image layers to automatically try and load when a directory is selected. Supports having multiple anticipated folder names. Eg, for an input shown below, the first set of `_thumbnails` layers will try and load, and if any of them are not present, it will instead load the next Array of folders.
+        - ``"image_layer_folder_names": Array[Array[<string>], ...]``: (Optional) Ordered list of folder names of image layers to automatically try and load when a directory is selected. Supports having multiple anticipated folder names. Eg, for an input shown below, the first set of `_thumbnails` layers will try and load, and if any of them are not present, it will instead load the next Array of folders. Preference is given to the folders in any Array that contains the name of the currently selected folder, eg if the currently selected folder is `nadir`, then ``bottom` and `oblique` would be loaded.
             ```js
             "image_layer_folder_names": [
                 [

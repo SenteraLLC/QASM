@@ -24,7 +24,7 @@ const COMPONENT_KEYS = {
 class App extends Component {
   src = "";
   componentList = [];
-
+  home_component_present = false;
   constructor(props) {
     super(props);
 
@@ -33,6 +33,9 @@ class App extends Component {
     this.QASM           = props.QASM; // QASM object
     this.config         = props.config;
     this.components     = this.config.components;
+
+    // Bind functions
+    this.logoOnClick = this.logoOnClick.bind(this);
 
     // Create object to keep track of number of different components
     let component_counter = {};
@@ -43,7 +46,8 @@ class App extends Component {
 
       // If the component is home the path will always be /
       if (component.component === "home") {
-        component.path = "/"
+        component.path = "/";
+        this.home_component_present = true;
       }
       // If its the first instance of a component the component_counter will be undefined for that components
       else if (component_counter[component.component] === undefined) {
@@ -77,20 +81,24 @@ class App extends Component {
     }
   }
 
+  logoOnClick() {
+    // Click on the home button to go to the home page
+    let link = document.getElementById("home-link");
+    link.click();
+  }
+
   
   render() {
     return (
       <MemoryRouter>
       <div className="App">
         <div className={window.S3_BROWSER_MODE === undefined ? "menu": "hidden"}> 
-          {/* Disable navbar when in the s3Browser */}
-          <a href='/' id="menu-logo">
-            <img src={icon} alt="Logo" />
-          </a>
+          <img id="menu-logo" src={icon} alt="Logo" onClick={this.logoOnClick}/>
           <div className="link-holder" >
             {this.components.map(component => (
               <Link 
                 className="Link"
+                id={component.component + "-link"}
                 to={component.path}
                 key={component.path}> 
                 <h2>
@@ -100,6 +108,15 @@ class App extends Component {
                 </h2>
               </Link>
             ))}
+            {/* When the home component is not specified by the user, 
+            still create the link so that the icon can be pressed to reach it.*/}
+            {!this.home_component_present &&
+              <Link 
+                id="home-link"
+                className=" Link hidden"
+                to="/"
+                key="home"/>
+            }
             <Link 
                 id="s3browser-link"
                 className=" Link hidden"
@@ -114,6 +131,14 @@ class App extends Component {
               element={component}
               key={idx}/>
           ))}
+          {/* When the home component is not specified by the user, 
+          still create the route so that the S3 Browser works */}
+          {!this.home_component_present &&
+            <Route
+              path="/"
+              element={COMPONENT_KEYS["home"]({QASM: this.QASM})}
+              key="home"/>
+          }
           <Route 
             path="S3Browser" 
             element={COMPONENT_KEYS["S3Browser"](this.s3props)}

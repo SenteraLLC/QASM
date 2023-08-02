@@ -8,8 +8,21 @@ class Home extends Component {
         // Initialize props
         this.QASM = props.QASM;
 
+        // Init state
+        this.state = {
+            show_config: false,
+        };
+
         // Bind functions
         this.forwardToS3Browser = this.forwardToS3Browser.bind(this);
+        this.toggleConfig = this.toggleConfig.bind(this);
+    }
+
+    toggleConfig() {
+        // Toggle config json
+        this.setState({
+            show_config: !this.state.show_config,
+        });
     }
 
     forwardToS3Browser() {
@@ -32,7 +45,22 @@ class Home extends Component {
             <div className="Home">
                 <h2>QASM Home</h2>
                 <img src={icon} alt="icon"/>
+
+                <div className="config">
+                    <button
+                        onClick={this.toggleConfig}
+                        className="button">
+                        { this.state.show_config ? "Hide Config" : "Show Config"}
+                    </button>
+                    <div className={this.state.show_config ? "config-json" : "hidden" }>
+                        <p>Config JSON:</p>
+                        <code style={{textAlign: "left"}}>
+                            <pre>{JSON.stringify(this.QASM.og_config, null, 4)}</pre>
+                        </code>
+                    </div>
+                </div>
             </div>
+            
         )
     }
 }
