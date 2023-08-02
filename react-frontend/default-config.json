@@ -2,6 +2,7 @@
     "name": "QASM Demo",
     "app": "s3",
     "bucket": "qasm-demo",
+    "static_site_bucket": "qasm-demo-frontend",
     "components": [
         {
             "component": "home"
