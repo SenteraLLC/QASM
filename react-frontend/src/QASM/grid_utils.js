@@ -10,6 +10,7 @@ const GRID_KEYBIND_NAMES = {
     TOGGLE_ALL_IMAGE_LAYERS: "toggle_all_image_layers_keybind",
     NEXT_ROW: "next_row_keybind",
     PREV_ROW: "prev_row_keybind",
+    NEXT_DIRECTORY: "next_dir_keybind",
 }
 const GRID_DEFAULT_KEYBINDS = {
     [GRID_KEYBIND_NAMES.SAVE_LABELS]: ["ctrlKey", "s"],
@@ -17,6 +18,7 @@ const GRID_DEFAULT_KEYBINDS = {
     [GRID_KEYBIND_NAMES.TOGGLE_ALL_IMAGE_LAYERS]: "B",
     [GRID_KEYBIND_NAMES.NEXT_ROW]: "n",
     [GRID_KEYBIND_NAMES.PREV_ROW]: "h",
+    [GRID_KEYBIND_NAMES.NEXT_DIRECTORY]: "Enter",
 }
 
 // Deep copy of GRID_DEFAULT_KEYBINDS
@@ -205,6 +207,9 @@ export function keydownEventHandler(e) {
             break;
         case GRID_KEYBIND_NAMES.PREV_ROW:
             autoScroll(COMPONENT, COMPONENT.hover_image_id, GRID_KEYBIND_NAMES.PREV_ROW);
+            break;
+        case GRID_KEYBIND_NAMES.NEXT_DIRECTORY:
+            loadNextDir(WINDOW, COMPONENT);
             break;
         default:
             break;
