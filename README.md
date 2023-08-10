@@ -140,6 +140,7 @@ An app configured with `"app": "s3"` will run using files on S3. QASM jobs that 
         - ``"toggle_all_image_layers_keybind": <string> or <Array[<string>]>`` (Optional) Keybind to toggle the image layer of all images. Defaults to "B".
         - ``"next_row_keybind": <string> or <Array[<string>]>`` (Optional) Keybind to advance to the next row when hovering over an image. Defaults to "n".
         - ``"prev_row_keybind": <string> or <Array[<string>]>`` (Optional) Keybind to advance to the previous row when hovering over an image. Defaults to "h".
+        - ``"next_dir_keybind": <string> or <Array[<string>]>`` (Optional) Keybind to advance to the next directory. Defaults to "Enter".
 
     - ``"multiclassgrid"`` Configuration ``<Object>``:
         - ``"grid_width": <Number>`` Default number of images to show per row
@@ -164,6 +165,7 @@ An app configured with `"app": "s3"` will run using files on S3. QASM jobs that 
         - ``"toggle_all_image_layers_keybind": <string> or <Array[<string>]>`` (Optional) Keybind to toggle the image layer of all images. Defaults to "B".
         - ``"next_row_keybind": <string> or <Array[<string>]>`` (Optional) Keybind to advance to the next row when hovering over an image. Defaults to "n".
         - ``"prev_row_keybind": <string> or <Array[<string>]>`` (Optional) Keybind to advance to the previous row when hovering over an image. Defaults to "h".
+        - ``"next_dir_keybind": <string> or <Array[<string>]>`` (Optional) Keybind to advance to the next directory. Defaults to "Enter".
                 
 
     - ``"imagelabeler"`` Configuration ``<Object>``:
