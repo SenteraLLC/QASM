@@ -83,6 +83,9 @@ An app configured with `"app": "s3"` will run using files on S3. QASM jobs that 
 - ``"bucket": <string>``
     - Name of the s3 bucket from which to pull data (only required for ``"app": "s3"``)
 
+- ``"intercept_s3_protocol": <boolean>``
+    - (Optional) Whether to intercept s3:// protocol links and open them in the S3 Browser component. Will only work if ``true`` and if the app is running in ``"app": "s3"`` mode.
+
 - ``"static_site_bucket": <string>``
     - (Optional) Name of the s3 bucket to which to upload the static website (only required to run ``npm run qasm-push``)
 
