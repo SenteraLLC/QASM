@@ -17,17 +17,31 @@ if (process.defaultApp) {
 const gotTheLock = app.requestSingleInstanceLock()
 let mainWindow
 
+function openDeepLink(mainWindow, deep_link) {
+  // remove s3 and the '://'
+  let s3_path = deep_link.slice(s3_protocol.length + "://".length); 
+  // get the first part of the path, which is the bucket name
+  let bucket_name = s3_path.split("/")[0];
+  // get the rest of the path, which is the folder name
+  let start_folder = s3_path.slice(bucket_name.length + 1);
+
+  // open an s3 browser window
+  mainWindow.webContents.executeJavaScript(`let popup = window.open(window.location.href, "S3 Browser"); popup.window.S3_BROWSER_MODE = "select_directory"; popup.window.START_FOLDER = decodeURI("${start_folder}"); popup.window.BUCKET_NAME = decodeURI("${bucket_name}");`)
+}
+
 if (!gotTheLock) {
   app.quit()
 } else {
-  app.on('second-instance', (event, commandLine, workingDirectory) => {
+  app.on('second-instance', (event, commandLine) => {
     // Someone tried to run a second instance, we should focus our window.
     if (mainWindow) {
       if (mainWindow.isMinimized()) mainWindow.restore()
       mainWindow.focus()
+
+      // open the deep link in a new window using s3 browser
+      let deep_link = commandLine.pop().slice(0, -1); // full url with s3:// prefix
+      openDeepLink(mainWindow, deep_link);
     }
-    
-    dialog.showErrorBox('Welcome Back', `You arrived from: ${commandLine.pop().slice(0, -1)}`)
   })
 }
 
