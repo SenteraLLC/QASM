@@ -15,4 +15,5 @@ exports.s3_browser_modes = {
     SAVE_JSON: "save_json",
     SELECT_IMAGE: "select_image",
     SAVE_IMAGE: "save_image",
+    DEEP_LINK: "deep_link",
 }

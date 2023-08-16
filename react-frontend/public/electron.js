@@ -1,6 +1,7 @@
 // Electron desktop application
 const path = require("path");
 const electron_utils = require("./electron_utils.js");
+const { s3_browser_modes } = require("../src/QASM/constants.js");
 const { app, BrowserWindow, dialog } = require("electron");
 const isDev = require("electron-is-dev");
 const s3_protocol = "s3" // followed by '://', e.g. 's3://'
@@ -26,7 +27,7 @@ function openDeepLink(mainWindow, deep_link) {
   let start_folder = s3_path.slice(bucket_name.length + 1);
 
   // open an s3 browser window
-  mainWindow.webContents.executeJavaScript(`let popup = window.open(window.location.href, "S3 Browser"); popup.window.S3_BROWSER_MODE = "select_directory"; popup.window.START_FOLDER = decodeURI("${start_folder}"); popup.window.BUCKET_NAME = decodeURI("${bucket_name}");`)
+  mainWindow.webContents.executeJavaScript(`try{let popup}catch{}; popup = window.open(window.location.href, "S3 Browser"); popup.window.S3_BROWSER_MODE = "${s3_browser_modes.DEEP_LINK}"; popup.window.START_FOLDER = decodeURI("${start_folder}"); popup.window.BUCKET_NAME = decodeURI("${bucket_name}");`)
 }
 
 if (!gotTheLock) {

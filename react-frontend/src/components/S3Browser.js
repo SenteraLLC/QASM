@@ -18,10 +18,24 @@ class S3Browser extends Component {
         this.QASM    = props.QASM;
         this.mode    = window.S3_BROWSER_MODE; // Set by window opener
         this.path    = window.START_FOLDER;
+        this.bucket  = window.BUCKET_NAME;
         this.default_savename = window.DEFAULT_SAVENAME;
         this.loadnames = window.LOADNAMES;
         this.parents = props.parents || []; // Stack of parent folders
-        this.addToCache(BASE_PATH, this.QASM.folders, this.QASM.files); // Always populate bucket in cache
+
+        if (this.bucket !== undefined && this.bucket !== this.QASM.s3_bucket) {
+            // Prompt user to switch buckets
+            if (window.confirm("Proceed and switch from bucket " + this.QASM.s3_bucket + " to bucket: " + this.bucket + "?")) {
+                this.QASM.s3_bucket = this.bucket;
+                this.QASM.files = [];
+                this.QASM.folders = [];
+            } else {
+                window.close();
+            }
+        } else if (this.bucket === undefined) {
+            // Populate current bucket in cache
+            this.addToCache(BASE_PATH, this.QASM.folders, this.QASM.files); 
+        }
 
         if (this.path == null) { // Starting at bucket level
             this.path = BASE_PATH
