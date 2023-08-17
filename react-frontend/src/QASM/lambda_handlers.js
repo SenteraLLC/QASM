@@ -1,7 +1,6 @@
 const { api_consolidator_error_handler } = require("./api_utils.js");
 const { get_new_window_url } = require("./utils.js");
-const { function_names } = require("../../public/electron_constants.js");
-const { s3_browser_modes } = require("./constants.js");
+const { function_names, s3_browser_modes } = require("../../public/electron_constants.js");
 
 // Export like this so static site works idk why
 const function_handlers = {

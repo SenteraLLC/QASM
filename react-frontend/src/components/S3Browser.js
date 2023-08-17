@@ -3,8 +3,7 @@ import Dropdown from "./Dropdown.js";
 import S3Folder from "./S3Folder.js";
 import S3File from "./S3File.js";
 import "../css/S3Browser.css";
-const { image_types, function_names } = require("../../public/electron_constants.js");
-const { s3_browser_modes } = require("../QASM/constants.js");
+const { image_types, function_names, s3_browser_modes } = require("../../public/electron_constants.js");
 const BASE_PATH = "" // Key used to represent the root folder of the bucket
 
 class S3Browser extends Component {

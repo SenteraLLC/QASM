@@ -25,3 +25,14 @@ exports.image_types = {
     jpg: "jpg",
     png: "png",
 }
+
+// S3 Browser modes
+exports.s3_browser_modes = {
+    SELECT_DIRECTORY: "select_directory",
+    SELECT_IMG_DIRECTORY: "select_img_directory",
+    SELECT_JSON: "select_json",
+    SAVE_JSON: "save_json",
+    SELECT_IMAGE: "select_image",
+    SAVE_IMAGE: "save_image",
+    DEEP_LINK: "deep_link",
+}
