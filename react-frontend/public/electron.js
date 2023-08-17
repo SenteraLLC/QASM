@@ -3,7 +3,7 @@ const fs = require('fs')
 const path = require("path");
 const electron_utils = require("./electron_utils.js");
 const { s3_browser_modes } = require("./electron_constants.js");
-const { app, BrowserWindow, dialog } = require("electron");
+const { app, BrowserWindow } = require("electron");
 const isDev = require("electron-is-dev");
 const s3_protocol = "s3" // followed by '://', e.g. 's3://'
 
@@ -20,7 +20,7 @@ function openDeepLink(mainWindow, deep_link) {
 }
 
 // Only intercept s3 protocol if specified in config
-let config = JSON.parse(fs.readFileSync(path.resolve(__dirname,"../config.json"), "utf-8"));
+let config = JSON.parse(fs.readFileSync(path.resolve(__dirname,"./config-dup.json"), "utf-8"));
 if ("intercept_s3_protocol" in config && config.intercept_s3_protocol) {
   // https://www.electronjs.org/docs/latest/tutorial/launch-app-from-url-in-another-app
   if (process.defaultApp) {
@@ -53,38 +53,11 @@ if (!gotTheLock) {
       if (mainWindow.isMinimized()) mainWindow.restore()
       mainWindow.focus()
 
-      // open the deep link in a new window using s3 browser
+      // This handles opening a deep link when the app is already running
       let deep_link = commandLine.pop(); // full url with s3:// prefix
-      dialog.showMessageBox(mainWindow, {type: "info", message: `Opening ${deep_link} in a new window.`});
       openDeepLink(mainWindow, deep_link);
     }
   })
-  // app.on("open-url", (event, url) => {
-  //   event.preventDefault();
-  //   let mainWindow = BrowserWindow.getAllWindows()[0];
-  //   if (mainWindow) {
-  //     mainWindow.focus();
-  //   } else {
-  //     createWindow();
-  //     mainWindow = BrowserWindow.getAllWindows()[0];
-  //   }
-  //   // open the deep link in a new window using s3 browser
-  //   let deep_link = url.pop(); // full url with s3:// prefix
-  //   dialog.showMessageBox(mainWindow, {type: "info", message: `Opening ${url} in a new window.`});
-  //   openDeepLink(mainWindow, deep_link);
-  // });
-
-  // placed after open-url handler just in case and use another ready event handler
-  // app.on("ready", () => {
-  //   electron_utils.init_ipc_handlers();
-  //   createWindow();
-  // });
-
-  // Start app once electron has initialized
-  // app.whenReady().then(() => {
-  //   electron_utils.init_ipc_handlers();
-  //   createWindow();    
-  // });
 }
 
 function createWindow() {
@@ -111,6 +84,17 @@ function createWindow() {
   // Open the DevTools.
   if (isDev) {
     mainWindow.webContents.openDevTools({ mode: "detach" });
+  }
+  
+  if (process.platform === 'win32') {
+    // This handles opening a deep link when the app wasn't already running
+    let deep_link;
+    // process.argv will be a string or an array
+    typeof(process.argv) === "string" ? deep_link = process.argv : deep_link = process.argv.pop();
+    // ensure link starts with s3://
+    if (typeof(deep_link) === "string" && deep_link.startsWith(s3_protocol)) {
+      openDeepLink(mainWindow, deep_link);
+    }
   }
 }
 
