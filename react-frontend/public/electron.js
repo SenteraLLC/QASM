@@ -2,11 +2,22 @@
 const fs = require('fs')
 const path = require("path");
 const electron_utils = require("./electron_utils.js");
-const { s3_browser_modes } = require("../src/QASM/constants.js");
-const { app, BrowserWindow } = require("electron");
+const { s3_browser_modes } = require("./electron_constants.js");
+const { app, BrowserWindow, dialog } = require("electron");
 const isDev = require("electron-is-dev");
 const s3_protocol = "s3" // followed by '://', e.g. 's3://'
-let mainWindow
+
+function openDeepLink(mainWindow, deep_link) {
+  // remove s3 and the '://'
+  let s3_path = deep_link.slice(s3_protocol.length + "://".length); 
+  // get the first part of the path, which is the bucket name
+  let bucket_name = s3_path.split("/")[0];
+  // get the rest of the path, which is the folder name
+  let start_folder = s3_path.slice(bucket_name.length + 1);
+
+  // open an s3 browser window
+  mainWindow.webContents.executeJavaScript(`try{let popup}catch{}; popup = window.open(window.location.href, "S3 Browser"); popup.window.S3_BROWSER_MODE = "${s3_browser_modes.DEEP_LINK}"; popup.window.START_FOLDER = decodeURI("${start_folder}"); popup.window.BUCKET_NAME = decodeURI("${bucket_name}");`)
+}
 
 // Only intercept s3 protocol if specified in config
 let config = JSON.parse(fs.readFileSync(path.resolve(__dirname,"../config.json"), "utf-8"));
@@ -19,35 +30,6 @@ if ("intercept_s3_protocol" in config && config.intercept_s3_protocol) {
   } else {
     app.setAsDefaultProtocolClient(s3_protocol)
   }
-  const gotTheLock = app.requestSingleInstanceLock()
-
-  function openDeepLink(mainWindow, deep_link) {
-    // remove s3 and the '://'
-    let s3_path = deep_link.slice(s3_protocol.length + "://".length); 
-    // get the first part of the path, which is the bucket name
-    let bucket_name = s3_path.split("/")[0];
-    // get the rest of the path, which is the folder name
-    let start_folder = s3_path.slice(bucket_name.length + 1);
-
-    // open an s3 browser window
-    mainWindow.webContents.executeJavaScript(`try{let popup}catch{}; popup = window.open(window.location.href, "S3 Browser"); popup.window.S3_BROWSER_MODE = "${s3_browser_modes.DEEP_LINK}"; popup.window.START_FOLDER = decodeURI("${start_folder}"); popup.window.BUCKET_NAME = decodeURI("${bucket_name}");`)
-  }
-
-  if (!gotTheLock) {
-    app.quit()
-  } else {
-    app.on('second-instance', (event, commandLine) => {
-      // Someone tried to run a second instance, we should focus our window.
-      if (mainWindow) {
-        if (mainWindow.isMinimized()) mainWindow.restore()
-        mainWindow.focus()
-
-        // open the deep link in a new window using s3 browser
-        let deep_link = commandLine.pop().slice(0, -1); // full url with s3:// prefix
-        openDeepLink(mainWindow, deep_link);
-      }
-    })
-  }
 } else {
   // remove as default protocol client
   if (process.defaultApp) {
@@ -58,10 +40,56 @@ if ("intercept_s3_protocol" in config && config.intercept_s3_protocol) {
     app.removeAsDefaultProtocolClient(s3_protocol)
   }
 }
+  
+const gotTheLock = app.requestSingleInstanceLock()
+
+if (!gotTheLock) {
+  app.quit()
+} else {
+  app.on('second-instance', (event, commandLine) => {
+    // Someone tried to run a second instance, we should focus our window.
+    let mainWindow = BrowserWindow.getAllWindows()[0];
+    if (mainWindow) {
+      if (mainWindow.isMinimized()) mainWindow.restore()
+      mainWindow.focus()
+
+      // open the deep link in a new window using s3 browser
+      let deep_link = commandLine.pop(); // full url with s3:// prefix
+      dialog.showMessageBox(mainWindow, {type: "info", message: `Opening ${deep_link} in a new window.`});
+      openDeepLink(mainWindow, deep_link);
+    }
+  })
+  // app.on("open-url", (event, url) => {
+  //   event.preventDefault();
+  //   let mainWindow = BrowserWindow.getAllWindows()[0];
+  //   if (mainWindow) {
+  //     mainWindow.focus();
+  //   } else {
+  //     createWindow();
+  //     mainWindow = BrowserWindow.getAllWindows()[0];
+  //   }
+  //   // open the deep link in a new window using s3 browser
+  //   let deep_link = url.pop(); // full url with s3:// prefix
+  //   dialog.showMessageBox(mainWindow, {type: "info", message: `Opening ${url} in a new window.`});
+  //   openDeepLink(mainWindow, deep_link);
+  // });
+
+  // placed after open-url handler just in case and use another ready event handler
+  // app.on("ready", () => {
+  //   electron_utils.init_ipc_handlers();
+  //   createWindow();
+  // });
+
+  // Start app once electron has initialized
+  // app.whenReady().then(() => {
+  //   electron_utils.init_ipc_handlers();
+  //   createWindow();    
+  // });
+}
 
 function createWindow() {
   // Create the browser window.
-  mainWindow = new BrowserWindow({
+  let mainWindow = new BrowserWindow({
     width: 800,
     height: 600,
     icon: path.join(__dirname, "icon.ico"),
