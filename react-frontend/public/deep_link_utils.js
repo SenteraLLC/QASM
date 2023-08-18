@@ -16,9 +16,19 @@ exports.openDeepLink = async (config, mainWindow, deep_link)  => {
     // get the rest of the path, which is the folder name
     let start_folder = s3_path.slice(bucket_name.length + 1);
 
-    // open an s3 browser window
-    let active_component = await mainWindow.webContents.executeJavaScript("window.COMPONENT.props.component");
-    mainWindow.webContents.executeJavaScript(`console.log("${active_component}");`)
+    // get the active component
+    let awaiting_response = true
+    let active_component;
+    while (awaiting_response) {
+        try {
+            active_component = await mainWindow.webContents.executeJavaScript("window.COMPONENT.props.component");
+            mainWindow.webContents.executeJavaScript(`console.log("${active_component}");`)
+            awaiting_response = false
+        } catch (error) {
+            // wait 1 second
+            await new Promise(resolve => setTimeout(resolve, 1000));
+        }
+    }
 
     // If the active component is not in the user-specified list,
     // then default to the first component in the list
