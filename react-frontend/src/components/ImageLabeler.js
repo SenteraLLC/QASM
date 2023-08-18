@@ -19,6 +19,8 @@ class ImageLabeler extends Component {
 
     constructor(props) {
         super(props);
+        // Expose component in window
+        window.COMPONENT = this;
 
         // Initialize props
         this.QASM      = props.QASM;

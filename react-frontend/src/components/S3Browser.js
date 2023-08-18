@@ -13,6 +13,8 @@ class S3Browser extends Component {
     cache = {};
     constructor(props) {
         super(props);
+        // Expose component in window
+        window.COMPONENT = this;
         
         this.QASM    = props.QASM;
         this.mode    = window.S3_BROWSER_MODE; // Set by window opener

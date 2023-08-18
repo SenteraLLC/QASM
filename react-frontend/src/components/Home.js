@@ -4,6 +4,8 @@ import icon from "../../public/icon.png";
 class Home extends Component {
     constructor(props) {
         super(props);
+        // Expose component in window
+        window.COMPONENT = this;
 
         // Initialize props
         this.QASM = props.QASM;

@@ -2,26 +2,14 @@
 const fs = require('fs')
 const path = require("path");
 const electron_utils = require("./electron_utils.js");
-const { s3_browser_modes } = require("./electron_constants.js");
+const { s3_protocol } = require("./electron_constants.js");
+const { openDeepLink } = require("./deep_link_utils.js");
 const { app, BrowserWindow } = require("electron");
 const isDev = require("electron-is-dev");
-const s3_protocol = "s3" // followed by '://', e.g. 's3://'
-
-function openDeepLink(mainWindow, deep_link) {
-  // remove s3 and the '://'
-  let s3_path = deep_link.slice(s3_protocol.length + "://".length); 
-  // get the first part of the path, which is the bucket name
-  let bucket_name = s3_path.split("/")[0];
-  // get the rest of the path, which is the folder name
-  let start_folder = s3_path.slice(bucket_name.length + 1);
-
-  // open an s3 browser window
-  mainWindow.webContents.executeJavaScript(`try{let popup}catch{}; popup = window.open(window.location.href, "S3 Browser"); popup.window.S3_BROWSER_MODE = "${s3_browser_modes.DEEP_LINK}"; popup.window.START_FOLDER = decodeURI("${start_folder}"); popup.window.BUCKET_NAME = decodeURI("${bucket_name}");`)
-}
 
 // Only intercept s3 protocol if specified in config
 let config = JSON.parse(fs.readFileSync(path.resolve(__dirname,"./config-dup.json"), "utf-8"));
-if ("intercept_s3_protocol" in config && config.intercept_s3_protocol) {
+if ("intercept_s3_protocol" in config) {
   // https://www.electronjs.org/docs/latest/tutorial/launch-app-from-url-in-another-app
   if (process.defaultApp) {
     if (process.argv.length >= 2) {
@@ -55,7 +43,7 @@ if (!gotTheLock) {
 
       // This handles opening a deep link when the app is already running
       let deep_link = commandLine.pop(); // full url with s3:// prefix
-      openDeepLink(mainWindow, deep_link);
+      openDeepLink(config, mainWindow, deep_link);
     }
   })
 }
@@ -93,7 +81,7 @@ function createWindow() {
     typeof(process.argv) === "string" ? deep_link = process.argv : deep_link = process.argv.pop();
     // ensure link starts with s3://
     if (typeof(deep_link) === "string" && deep_link.startsWith(s3_protocol)) {
-      openDeepLink(mainWindow, deep_link);
+      openDeepLink(config, mainWindow, deep_link);
     }
   }
 }

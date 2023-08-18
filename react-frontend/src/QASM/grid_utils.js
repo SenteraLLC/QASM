@@ -61,6 +61,9 @@ export function updateState(component) {
  * @param {*} props component props
  */
 export function initProps(window, document, component, props) {
+    // Set component name in window
+    window.COMPONENT = component;
+    
     // Set global values used in event handlers
     WINDOW = window;
     DOCUMENT = document;
@@ -92,6 +95,10 @@ export function initProps(window, document, component, props) {
     component.autoload_labels_on_dir_select = props.autoload_labels_on_dir_select || false;
     component.image_layer_folder_names = props.image_layer_folder_names || undefined; // [Array[<string>], ...]
     component.labels = initLabels(component);
+
+    // Bind functions for deep links
+    component.selectImageDir = selectImageDir.bind(component);
+    component.loadLabels = loadLabels.bind(component);
     
     // Initialize keybinds
     init_keybinds(props, GRID_DEFAULT_KEYBINDS, GRID_KEYBINDS);
@@ -495,10 +502,10 @@ export function initLabels(component, labels = null) {
  * @param {*} component component that called this function: pass in `this`
  * @param {Array[string]} loadnames Array of filenames to try and autoload
  */
-export async function loadLabels(window, component, loadnames = undefined) {
+export async function loadLabels(window, component, loadnames = undefined, start_folder = undefined) {
     let params = {
-        // Start one folder up from the current directory
-        path: getOneFolderUp(component.src),
+        // Start at start_folder, or one folder up from the current directory
+        path: start_folder !== undefined ? start_folder : getOneFolderUp(component.src),
         // Try and load a specific file if loadnames is defined
         loadnames: loadnames,
     }
