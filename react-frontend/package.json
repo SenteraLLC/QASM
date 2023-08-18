@@ -68,6 +68,12 @@
       "target": "NSIS",
       "icon": "public/icon.png"
     },
+    "nsis": {
+      "runAfterFinish": true,
+      "createDesktopShortcut": true,
+      "deleteAppDataOnUninstall": true,
+      "include": "uninstaller.nsh"
+    },
     "mac": {
       "target": "dmg",
       "icon": "public/icon.png"
