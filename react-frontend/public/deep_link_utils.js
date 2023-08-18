@@ -23,7 +23,11 @@ exports.openDeepLink = async (config, mainWindow, deep_link)  => {
     // If the active component is not in the user-specified list,
     // then default to the first component in the list
     if (!config.intercept_s3_protocol.includes(active_component)) {
-        active_component = config.intercept_s3_protocol[0]
+        active_component = config.intercept_s3_protocol[0];
+        // Click on router link to change to the component
+        mainWindow.webContents.executeJavaScript(`document.getElementById("${active_component}-link").click();`);
+        // Wait for the component to load
+        await mainWindow.webContents.executeJavaScript(`window.COMPONENT.props.component === "${active_component}"`);
     }
 
     switch (active_component) {

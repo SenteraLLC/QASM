@@ -1,5 +1,6 @@
 import { Component } from 'react';
 import icon from "../../public/icon.png";
+const { components } = require("../../public/electron_constants.js");
 
 class Home extends Component {
     constructor(props) {
@@ -30,7 +31,7 @@ class Home extends Component {
     forwardToS3Browser() {
         // Hack to get to s3 browser using memory router
         if (window.S3_BROWSER_MODE !== undefined) {
-            let link = document.getElementById("s3browser-link");
+            let link = document.getElementById(components.S3_BROWSER + "-link");
             link.click();
         }
     }
