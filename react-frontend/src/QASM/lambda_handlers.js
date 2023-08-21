@@ -46,6 +46,7 @@ async function handleOpenDirDialog(QASM, data, window) {
     return new Promise(resolve => window.onmessage = (e) => {
         try {
             if (e.data.success) {
+                QASM.s3_bucket = e.data.bucket_name;
                 resolve(e.data.path);
             }
         } catch {}
@@ -72,6 +73,7 @@ async function handleOpenDirDialog(QASM, data, window) {
     return new Promise(resolve => window.onmessage = (e) => {
         try {
             if (e.data.success) {
+                QASM.s3_bucket = e.data.bucket_name;
                 resolve(e.data.path);
             }
         } catch {}
@@ -137,6 +139,7 @@ async function handleLoadImageDialog(QASM, data, window) {
     return new Promise(resolve => window.onmessage = async (e) => {
         try {
             if (e.data.success) {
+                QASM.s3_bucket = e.data.bucket_name;
                 let params = {
                     bucket_name: data.bucket_name !== undefined ? data.bucket_name : QASM.s3_bucket,
                     file_name: e.data.path,
@@ -200,6 +203,7 @@ async function handleSaveImageDialog(QASM, data, window) {
     return new Promise(resolve => window.onmessage = async (e) => {
         try {
             if (e.data.success) {
+                QASM.s3_bucket = e.data.bucket_name;
                 let params = {
                     bucket_name: QASM.s3_bucket,
                     file_name: e.data.path,
@@ -237,6 +241,7 @@ async function handleLoadJsonDialog(QASM, data, window) {
     return new Promise(resolve => window.onmessage = async (e) => {
         try {
             if (e.data.success) {
+                QASM.s3_bucket = e.data.bucket_name;
                 let params = {
                     bucket_name: data.bucket_name !== undefined ? data.bucket_name : QASM.s3_bucket,
                     file_name: e.data.path,
@@ -290,6 +295,7 @@ async function handleSaveJsonDialog(QASM, data, window) {
     return new Promise(resolve => window.onmessage = async (e) => {
         try {
             if (e.data.success) {
+                QASM.s3_bucket = e.data.bucket_name;
                 let params = {
                     bucket_name: data.bucket_name !== undefined ? data.bucket_name : QASM.s3_bucket,
                     file_name: e.data.path,

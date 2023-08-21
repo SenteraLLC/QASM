@@ -413,8 +413,12 @@ export async function loadImageDir(window, component) {
  * @param {*} window window object
  * @param {*} component component that called this function: pass in `this`
  */
-export async function selectImageDir(window, component) {
-    let dir_path = await component.QASM.call_backend(window, function_names.OPEN_DIR_DIALOG, {"start_folder": component.src});
+export async function selectImageDir(window, component, start_folder = undefined, bucket_name = undefined) {
+    let params = {
+        "start_folder": start_folder !== undefined ? start_folder : component.src,
+        "bucket_name": bucket_name,
+    }
+    let dir_path = await component.QASM.call_backend(window, function_names.OPEN_DIR_DIALOG, params);
     if (dir_path !== undefined) {
         component.src = dir_path;
         await loadImageDir(window, component);

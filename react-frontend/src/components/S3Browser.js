@@ -155,6 +155,7 @@ class S3Browser extends Component {
         let data = {
             success: true,
             path: this.path,
+            bucket_name: this.bucket,
         }
         // Send data back to parent window
         window.opener.postMessage(data, '*');
@@ -224,6 +225,7 @@ class S3Browser extends Component {
             let data = {
                 success: true,
                 path: file,
+                bucket_name: this.bucket,
             }
             // Send data back to parent window
             window.opener.postMessage(data, '*');
