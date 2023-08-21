@@ -106,7 +106,7 @@ class ImageLabeler extends Component {
     }
 
     async selectImageDir() {
-        let res = await this.QASM.call_backend(window, function_names.OPEN_DIR_DIALOG, this.image_dir); // prompt selection
+        let res = await this.QASM.call_backend(window, function_names.OPEN_DIR_DIALOG, {"start_folder": this.image_dir}); // prompt selection
         if (res !== null) {
             this.image_dir = res;
             this.loadImageDir();
@@ -114,7 +114,7 @@ class ImageLabeler extends Component {
     }
 
     async selectAnnoDir() {
-        let res = await this.QASM.call_backend(window, function_names.OPEN_DIR_DIALOG, this.anno_dir); // prompt selection
+        let res = await this.QASM.call_backend(window, function_names.OPEN_DIR_DIALOG, {"start_folder": this.anno_dir}); // prompt selection
         if (res !== null) {
             this.anno_dir = res;
             await this.loadAnnotations();
@@ -155,7 +155,7 @@ class ImageLabeler extends Component {
         if (this.anno_filename !== null) {
             let params = {
                 labels: {},
-                path: this.anno_filename,
+                start_folder: this.anno_filename,
             }
             console.log(annotations);
             let resume_from_key

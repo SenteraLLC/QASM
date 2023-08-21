@@ -414,7 +414,7 @@ export async function loadImageDir(window, component) {
  * @param {*} component component that called this function: pass in `this`
  */
 export async function selectImageDir(window, component) {
-    let dir_path = await component.QASM.call_backend(window, function_names.OPEN_DIR_DIALOG, component.src);
+    let dir_path = await component.QASM.call_backend(window, function_names.OPEN_DIR_DIALOG, {"start_folder": component.src});
     if (dir_path !== undefined) {
         component.src = dir_path;
         await loadImageDir(window, component);
@@ -502,10 +502,11 @@ export function initLabels(component, labels = null) {
  * @param {*} component component that called this function: pass in `this`
  * @param {Array[string]} loadnames Array of filenames to try and autoload
  */
-export async function loadLabels(window, component, loadnames = undefined, start_folder = undefined) {
+export async function loadLabels(window, component, loadnames = undefined, start_folder = undefined, bucket_name = undefined) {
     let params = {
         // Start at start_folder, or one folder up from the current directory
-        path: start_folder !== undefined ? start_folder : getOneFolderUp(component.src),
+        start_folder: start_folder !== undefined ? start_folder : getOneFolderUp(component.src),
+        bucket_name: bucket_name,
         // Try and load a specific file if loadnames is defined
         loadnames: loadnames,
     }
@@ -556,14 +557,17 @@ export function changeAutoLoadOnDirSelect(component) {
  * @param {*} window window object
  * @param {*} component component that called this function: pass in `this`
  * @param {string} savename filename to save labels to
+ * @param {string} start_folder folder to start in; defaults to one folder up from the current directory
+ * @param {string} bucket_name bucket name
  */
-export async function saveLabels(window, component, savename = "") {
+export async function saveLabels(window, component, savename = "", start_folder = undefined, bucket_name = undefined) {
     // Use label format of the current page
     component.updateLocalLabels();
     let params = {
         labels: component.labels,
         // Start one folder up from the current directory
-        path: getOneFolderUp(component.src),
+        start_folder: start_folder !== undefined ? start_folder : getOneFolderUp(component.src),
+        bucket_name: bucket_name,
         savename: savename,
     }
 
@@ -592,7 +596,7 @@ export function clearAllLabels(component) {
  */
 export async function addImageLayer(window, component) {
     // Prompt user to select directory
-    let dir_path = await component.QASM.call_backend(window, function_names.OPEN_DIR_DIALOG, component.src);
+    let dir_path = await component.QASM.call_backend(window, function_names.OPEN_DIR_DIALOG, {"start_folder": component.src});
     console.log(dir_path);
 
     // Load images and add them to the image stack

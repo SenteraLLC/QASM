@@ -93,7 +93,7 @@ async function handleOpenFile(event, data) {
  * Open a directory selection dialog
  * 
  * @param {*} event event
- * @param {Object} data starting folder
+ * @param {Object} data {start_folder: <string>}
  * @returns dir path on sucess, nothing on cancel
  */
 async function handleOpenDirDialog(event, data) {
@@ -102,8 +102,8 @@ async function handleOpenDirDialog(event, data) {
         properties: ["openDirectory"]
     }
     // Start at data if it exists and is a non-empty string
-    if (data && typeof data === "string") {
-        dialogOptions["defaultPath"] = data;
+    if (data && "start_folder" in data) {
+        dialogOptions["defaultPath"] = data.start_folder;
     }
     const { canceled, filePaths } = await dialog.showOpenDialog(dialogOptions);
     if (canceled) {
@@ -119,7 +119,7 @@ async function handleOpenDirDialog(event, data) {
  * TODO: implement
  * 
  * @param {*} event event
- * @param {Object} data data
+ * @param {Object} data {start_folder: <string>}
  * @returns dir path on sucess, nothing on cancel
  */
 async function handleOpenImageDirDialog(event, data) {
@@ -175,7 +175,7 @@ async function handleGetFolderContents(event, data) {
  * TODO: implement
  * 
  * @param {*} event event
- * @param {Object} data data
+ * @param {Object} data {start_folder: <string>}
  */
 async function handleLoadImageDialog(event, data) {
     console.error("handleLoadImageDialog not implemented.");
@@ -240,7 +240,7 @@ async function handleSaveImageDialog(event, data) {
  * and then load and return the labels.
  * 
  * @param {*} event event
- * @param {Object} data data
+ * @param {Object} data {start_folder: <string>, loadnames: <Array[string]>]}
  * @returns {Object} labels
  */
 async function handleLoadJsonDialog(event, data) {
@@ -271,7 +271,7 @@ async function handleLoadJsonDialog(event, data) {
  * Open a save file dialog
  * 
  * @param event event
- * @param {object} data {labels: <Object>, path: <string>, savename: <string>}
+ * @param {object} data {labels: <Object>, start_folder: <string>, savename: <string>}
  * @returns file path on sucess, nothing on cancel
  */
 async function handleSaveJsonDialog(event, data) {
@@ -282,10 +282,10 @@ async function handleSaveJsonDialog(event, data) {
         ],
     }
     // Populate the default path
-    if ("path" in data && "savename" in data) {
+    if ("start_folder" in data && "savename" in data) {
         // Ensure savename is a non-empty string
         if (typeof data["savename"] === "string" && data["savename"] !== "") {
-            dialogOptions["defaultPath"] = path.join(data["path"], data["savename"]);
+            dialogOptions["defaultPath"] = path.join(data["start_folder"], data["savename"]);
         }
     }
     const { canceled, filePath } = await dialog.showSaveDialog(dialogOptions);
@@ -306,13 +306,13 @@ async function handleSaveJsonDialog(event, data) {
  * Save a json to a path
  * 
  * @param event event
- * @param {object} data {labels: <Object>, path: <string>}
+ * @param {object} data {labels: <Object>, start_folder: <string>}
  * @returns file path on sucess, nothing on cancel
  */
  async function handleSaveJson(event, data) {
     try {
-        fs.writeFileSync(data.path, JSON.stringify(data.labels));
-        return "Saved labels at " + data.path;
+        fs.writeFileSync(data.start_folder, JSON.stringify(data.labels));
+        return "Saved labels at " + data.start_folder;
     } catch (e) {
         return "Error when saving labels.";
     }
