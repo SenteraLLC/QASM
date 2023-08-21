@@ -83,9 +83,8 @@ class ImageLabeler extends Component {
         this.component_updater = 1; // only updates the first time the page renders
     }
 
-    async loadImageDir() {
+    async loadImageDir(start_image_name = undefined) {
         if (this.image_dir !== null) {
-
             // Create a dictionary for every image in the directory where the image name is
             // the key and the path is the value
             this.images = await this.QASM.call_backend(window, function_names.LOAD_IMAGES, this.image_dir);
@@ -94,14 +93,19 @@ class ImageLabeler extends Component {
             this.images_keys = Object.keys(this.images).sort();
             this.n_images = this.images_keys.length;
 
-            // Load the first image
-            this.cur_image_idx = 0;
-            this.cur_image_name = this.images_keys[this.cur_image_idx];
+            // Load the start_image if specified, else start at the first image
+            if (start_image_name !== undefined && this.images_keys.includes(start_image_name)) {
+                this.cur_image_idx = this.images_keys.indexOf(start_image_name);
+                this.cur_image_name = start_image_name;
+            } else {
+                this.cur_image_idx = 0;
+                this.cur_image_name = this.images_keys[this.cur_image_idx];
+            }
 
             // Load annotations
             await this.loadAnnotations();
 
-            this.updateState();
+
         }
     }
 
@@ -118,15 +122,16 @@ class ImageLabeler extends Component {
         if (res !== null) {
             this.anno_dir = res;
             await this.loadAnnotations();
-            this.updateState();
         }
     }
 
-    async loadAnnotations() {
+    async loadAnnotations(anno_filename = undefined) {
         if (this.anno_dir !== null) {
 
-            // anno filename should be image_name.json
-            this.anno_filename = getChildPath(this.anno_dir, this.cur_image_name + ".json");
+            this.anno_filename = getChildPath(
+                this.anno_dir, 
+                anno_filename !== undefined ? anno_filename : this.cur_image_name + ".json"
+            );
             try {
                 this.annotations = await this.QASM.call_backend(window, function_names.LOAD_JSON, this.anno_filename);
             } catch (e) {
@@ -136,6 +141,7 @@ class ImageLabeler extends Component {
                 this.annotations = {};
             }
         }
+        this.updateState();
     }
 
     async changeCurImage(idx_mod) {
@@ -147,7 +153,6 @@ class ImageLabeler extends Component {
         }
         this.cur_image_name = this.images_keys[this.cur_image_idx];
         await this.loadAnnotations();
-        this.updateState();
     }
 
     // Save annotations in the same way we loaded them

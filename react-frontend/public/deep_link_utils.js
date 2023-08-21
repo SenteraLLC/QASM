@@ -1,5 +1,6 @@
 // Utils for handling deep links
-const { s3_protocol, components } = require("./electron_constants.js");
+const { s3_protocol, components, image_types } = require("./electron_constants.js");
+const { getFileAndFolder } = require("./electron_utils.js");
 
 /**
  * Open a deep link.
@@ -40,6 +41,7 @@ exports.openDeepLink = async (config, mainWindow, deep_link)  => {
         await mainWindow.webContents.executeJavaScript(`window.COMPONENT.props.component === "${active_component}"`);
     }
 
+    let file_name;
     switch (active_component) {
         case components.GRID:
         case components.MULTI_CLASS_GRID:
@@ -47,14 +49,34 @@ exports.openDeepLink = async (config, mainWindow, deep_link)  => {
             // Otherwise, we open a directory select dialog
             if (isJsonFile(start_folder)) {
                 // separate file name and folder
-                let file_name = start_folder.split("/").slice(-1)[0];
-                start_folder = start_folder.replace(file_name, "");
+                let ret = getFileAndFolder(start_folder);
+                file_name = ret.file_name;
+                start_folder = ret.folder;
                 mainWindow.webContents.executeJavaScript(`console.log(decodeURI("${start_folder}")); window.COMPONENT.loadLabels(window, window.COMPONENT, ["${file_name}"], decodeURI("${start_folder}"));`);
             } else {
                 mainWindow.webContents.executeJavaScript(`window.COMPONENT.selectImageDir(window, window.COMPONENT, decodeURI("${start_folder}"), decodeURI("${bucket_name}"));`);
             }
             break;
         case components.IMAGE_LABELER:
+            // For image labeler, if the path is a json file, then load the labels
+            // If an image, then load the image
+            // Otherwise, we open a directory select dialog
+            if (isJsonFile(start_folder)) {
+                // separate file name and folder
+                let ret = getFileAndFolder(start_folder);
+                file_name = ret.file_name;
+                start_folder = ret.folder;
+                mainWindow.webContents.executeJavaScript(`window.COMPONENT.anno_dir = decodeURI("${start_folder}"); window.COMPONENT.QASM.s3_bucket = decodeURI("${bucket_name}"); window.COMPONENT.loadAnnotations("${file_name}");`);
+            } else if (isImageFile(start_folder)) {
+                let ret = getFileAndFolder(start_folder);
+                start_folder = ret.folder;
+                // remove extension from file name by removing the "." and everything after
+                file_name = ret.file_name.split(".")[0];
+                mainWindow.webContents.executeJavaScript(`window.COMPONENT.image_dir = decodeURI("${start_folder}"); window.COMPONENT.QASM.s3_bucket = decodeURI("${bucket_name}"); window.COMPONENT.loadImageDir("${file_name}");`);
+            } else {
+                // TODO: prompt user to select anno dir or image dir
+                break;
+            }
             break;
         default:
             break;
@@ -71,6 +93,17 @@ exports.openDeepLink = async (config, mainWindow, deep_link)  => {
  */
 function isJsonFile(path) {
     return path.slice(-5).toLowerCase() === ".json";
+}
+
+
+/**
+ * Check if a path is an image file.
+ * 
+ * @param {string} path path to check
+ * @returns {boolean} true if path is an image file, false otherwise
+ */
+function isImageFile(path) {
+    return path.slice(-3) in image_types;
 }
 
 

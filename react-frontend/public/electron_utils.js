@@ -86,6 +86,19 @@ async function handleOpenFile(event, data) {
 }
 
 
+/**
+ * get the file name and folder from a path
+ * 
+ * @param {string} path path to split
+ * @returns {Object} {file_name: <string>, folder: <string>}
+ */
+exports.getFileAndFolder = (path) =>  {
+    let file_name = path.split("/").slice(-1)[0];
+    let folder = path.replace(file_name, "");
+    return {file_name: file_name, folder: folder};
+}
+
+
 // ##### DIRECTORY #####
 
 
