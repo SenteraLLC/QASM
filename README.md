@@ -83,8 +83,18 @@ An app configured with `"app": "s3"` will run using files on S3. QASM jobs that 
 - ``"bucket": <string>``
     - Name of the s3 bucket from which to pull data (only required for ``"app": "s3"``)
 
-- ``"intercept_s3_protocol": <boolean>``
-    - (Optional) Whether to intercept s3:// protocol links and open them in the S3 Browser component. Will only work if ``true`` and if the app is running in ``"app": "s3"`` mode.
+- ``"intercept_s3_protocol": <Array>``
+    - (Optional) Only availible for ``"app": "s3"`` mode. When present, clicking/navigating to a link that starts with ``"s3://"`` will open a prompt to open the link in the app instead. The value in the config should be a list of component names, as shown in the example below. The first component in the list will be the default handler for s3 links, *except* when another component in the list is currently open. For example, if the ``"grid"`` screen is open, it will handle all s3 links, even though ``"imagelabeler"`` is listed first in the list. Example:
+    ```js
+    "intercept_s3_protocol": [
+        "imagelabeler",
+        "grid"
+    ]
+    ```
+    - Components that currently have special s3 protocol functionality are as follows:
+        - ``"imagelabeler"``: If the s3 link points to an image, the image will be loaded into the imagelabeler component. If the s3 link points to a json file, the file will be loaded as an annotation. If the s3 link points to a directory, the user will be prompted to select if it should be loaded as the image or annotation directory.
+        - ``"grid"``: If the s3 link points to an json file, the file will be loaded as a labels file. If the s3 link points to a directory, the directory will be used as the image directory and the images will be loaded.
+        - ``"multiclassgrid"``: Same as ``"grid"``
 
 - ``"static_site_bucket": <string>``
     - (Optional) Name of the s3 bucket to which to upload the static website (only required to run ``npm run qasm-push``)
