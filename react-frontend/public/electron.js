@@ -9,7 +9,7 @@ const isDev = require("electron-is-dev");
 
 // Only intercept s3 protocol if specified in config
 let config = JSON.parse(fs.readFileSync(path.resolve(__dirname,"./config-dup.json"), "utf-8"));
-if ("intercept_s3_protocol" in config) {
+if (config.app === "s3" && "intercept_s3_protocol" in config) {
   // https://www.electronjs.org/docs/latest/tutorial/launch-app-from-url-in-another-app
   if (process.defaultApp) {
     if (process.argv.length >= 2) {
