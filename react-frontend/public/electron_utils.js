@@ -199,12 +199,12 @@ async function handleLoadImageDialog(event, data) {
  * Load images from a folder as base64 strings
  * 
  * @param {*} event event
- * @param {string} data file path
+ * @param {string} data {start_folder: <string>}
  * @returns {Object} image base64 strings indexed by image name
  */
 async function handleLoadImages(event, data) {
     try {
-        let file_path = data;
+        let file_path = data.start_folder;
         let files = fs.readdirSync(file_path);
         let images = {};
         files.forEach(file => {

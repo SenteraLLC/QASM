@@ -156,14 +156,14 @@ async function handleLoadImageDialog(QASM, data, window) {
  * Get signed urls for all images in an s3 folder
  * 
  * @param {Object} QASM QASM object
- * @param {string} data full s3 path
+ * @param {string} data {start_folder: <string>, bucket_name: <string>}
  * @param {*} window window
  * @returns {Object} { image_name: signed_url } 
  */
 async function handleLoadImages(QASM, data, window) {
     let params = {
-        "bucket_name": QASM.s3_bucket,
-        "folder_name": data
+        "bucket_name": data.bucket_name !== undefined ? data.bucket_name : QASM.s3_bucket,
+        "folder_name": data.start_folder
     }
     let res = await api_consolidator_error_handler(params, "get_signed_urls_in_folder");
     return res.urls;

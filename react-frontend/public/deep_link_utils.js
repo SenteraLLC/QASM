@@ -54,7 +54,7 @@ exports.openDeepLink = async (config, mainWindow, deep_link)  => {
                 start_folder = ret.folder;
                 mainWindow.webContents.executeJavaScript(`console.log(decodeURI("${start_folder}")); window.COMPONENT.loadLabels(window, window.COMPONENT, ["${file_name}"], decodeURI("${start_folder}"));`);
             } else {
-                mainWindow.webContents.executeJavaScript(`window.COMPONENT.selectImageDir(window, window.COMPONENT, decodeURI("${start_folder}"), decodeURI("${bucket_name}"));`);
+                mainWindow.webContents.executeJavaScript(`window.COMPONENT.src = decodeURI("${start_folder}"); window.COMPONENT.loadImageDir(window, window.COMPONENT, decodeURI("${bucket_name}"));`);
             }
             break;
         case components.IMAGE_LABELER:

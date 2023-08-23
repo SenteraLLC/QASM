@@ -88,7 +88,7 @@ class ImageLabeler extends Component {
         if (this.image_dir !== null) {
             // Create a dictionary for every image in the directory where the image name is
             // the key and the path is the value
-            this.images = await this.QASM.call_backend(window, function_names.LOAD_IMAGES, this.image_dir);
+            this.images = await this.QASM.call_backend(window, function_names.LOAD_IMAGES, {"start_folder": this.image_dir});
 
             // Create a list of keys
             this.images_keys = Object.keys(this.images).sort();
@@ -126,6 +126,15 @@ class ImageLabeler extends Component {
         }
     }
 
+    /**
+     * Handler for when the user opens a deep link
+     * to a directory. The user will be prompted to
+     * select whether the directory contains images
+     * or annotations.
+     * 
+     * @param {string} start_folder folder to start in
+     * @param {string} bucket_name name of s3 bucket
+     */
     selectDirType(start_folder, bucket_name) {
         /* eslint-disable */
         // Prompt user to select image or annotation directory

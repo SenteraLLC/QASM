@@ -98,7 +98,8 @@ export function initProps(window, document, component, props) {
 
     // Bind functions for deep links
     component.selectImageDir = selectImageDir.bind(component);
-    component.loadLabels = loadLabels.bind(component);
+    component.loadImageDir   = loadImageDir.bind(component);
+    component.loadLabels     = loadLabels.bind(component);
     
     // Initialize keybinds
     init_keybinds(props, GRID_DEFAULT_KEYBINDS, GRID_KEYBINDS);
@@ -374,9 +375,14 @@ export function changeAllImages(document, component) {
  * 
  * @param {*} window window object
  * @param {*} component component that called this function: pass in `this`
+ * @param {string} bucket_name bucket name
  */
-export async function loadImages(window, component) {
-    component.images = await component.QASM.call_backend(window, function_names.LOAD_IMAGES, component.src);
+export async function loadImages(window, component, bucket_name = undefined) {
+    let params = {
+        "start_folder": component.src,
+        "bucket_name": bucket_name,
+    }
+    component.images = await component.QASM.call_backend(window, function_names.LOAD_IMAGES, params);
     component.image_names = Object.keys(component.images).sort();
     clearAllLabels(component);
     // Set the images shown to true now that the images are shown
@@ -392,15 +398,16 @@ export async function loadImages(window, component) {
  * 
  * @param {*} window window object
  * @param {*} component component that called this function: pass in `this`
+ * @param {string} bucket_name bucket name
  */
-export async function loadImageDir(window, component) {
+export async function loadImageDir(window, component, bucket_name = undefined) {
     if (component.src !== undefined) {
         component.image_stack = []; // Clear image stack on new directory load
         if (component.autoload_labels_on_dir_select !== undefined && component.autoload_labels_on_dir_select) {
-            autoLoadLabels(window, component); // Try and autoload labels
+            autoLoadLabels(window, component, bucket_name); // Try and autoload labels
         }
         autoLoadImageLayers(window, component); // Try and autoload image layers
-        await loadImages(window, component); // Load images
+        await loadImages(window, component, bucket_name); // Load images
         updateState(component);
     }
 }
@@ -533,12 +540,13 @@ export async function loadLabels(window, component, loadnames = undefined, start
  * 
  * @param {*} window window object
  * @param {*} component component that called this function: pass in `this`
+ * @param {string} bucket_name bucket name
  */
-export async function autoLoadLabels(window, component) {
+export async function autoLoadLabels(window, component, bucket_name = undefined) {
     if (component.label_loadnames !== undefined) {
         // Wait for previous window to close
         setTimeout(() => {
-            loadLabels(window, component, component.label_loadnames);
+            loadLabels(window, component, component.label_loadnames, undefined, bucket_name);
         }, 1000)
     }
 }
@@ -604,7 +612,7 @@ export async function addImageLayer(window, component) {
     console.log(dir_path);
 
     // Load images and add them to the image stack
-    let image_layer = await component.QASM.call_backend(window, function_names.LOAD_IMAGES, dir_path);
+    let image_layer = await component.QASM.call_backend(window, function_names.LOAD_IMAGES, {"start_folder": dir_path});
     if (Object.keys(image_layer).length === 0) {
         console.log("Prevent adding empty layer.");
     } else {
@@ -696,7 +704,7 @@ async function getImageStack(
             continue;
         }
         // Load images and add them to the image stack
-        let image_layer = await component.QASM.call_backend(window, function_names.LOAD_IMAGES, getChildPath(root_dir, folder_name));
+        let image_layer = await component.QASM.call_backend(window, function_names.LOAD_IMAGES, {"start_folder": getChildPath(root_dir, folder_name)});
         if (Object.keys(image_layer).length === 0) {
             console.log("Prevent adding empty layer, skipping to next folder group.");
             new_image_stack = []; // Clear image stack to allow next group to try and load
