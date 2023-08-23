@@ -1,5 +1,20 @@
 {
-  "name": "deep-links",
+  "name": "qasm-demo",
+  "author": {
+    "name": "Trevor Burgoyne",
+    "url": "https://github.com/TrevorBurgoyne"
+  },
+  "contributors": [
+    {
+      "name": "Carter Solberg",
+      "url": "https://github.com/csolbs24"
+    },
+    {
+      "name": "Josh Dean",
+      "url": "https://github.com/joshua-dean"
+    }
+  ],
+  "description": "A web application built on React and Electron, for running custom QA and labeling jobs from a local host, a packaged windows .exe, or a statically hosted S3 website.",
   "version": "0.19.0",
   "private": true,
   "proxy": "http://localhost:3000",
@@ -63,7 +78,7 @@
     ]
   },
   "build": {
-    "productName": "Deep Links",
+    "productName": "QASM Demo",
     "win": {
       "target": "NSIS",
       "icon": "public/icon.png"
@@ -77,12 +92,6 @@
     "mac": {
       "target": "dmg",
       "icon": "public/icon.png"
-    },
-    "protocols": {
-      "name": "S3 Protocol",
-      "schemes": [
-        "s3"
-      ]
     }
   }
 }
