@@ -74,8 +74,7 @@ exports.openDeepLink = async (config, mainWindow, deep_link)  => {
                 file_name = ret.file_name.split(".")[0];
                 mainWindow.webContents.executeJavaScript(`window.COMPONENT.image_dir = decodeURI("${start_folder}"); window.COMPONENT.QASM.s3_bucket = decodeURI("${bucket_name}"); window.COMPONENT.loadImageDir("${file_name}");`);
             } else {
-                // TODO: prompt user to select anno dir or image dir
-                break;
+                mainWindow.webContents.executeJavaScript(`window.COMPONENT.selectDirType(decodeURI("${start_folder}"), decodeURI("${bucket_name}"));`);
             }
             break;
         default:

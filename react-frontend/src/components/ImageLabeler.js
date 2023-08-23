@@ -60,6 +60,7 @@ class ImageLabeler extends Component {
         this.loadImageDir     = this.loadImageDir.bind(this);
         this.selectImageDir   = this.selectImageDir.bind(this);
         this.selectAnnoDir    = this.selectAnnoDir.bind(this);
+        this.selectDirType    = this.selectDirType.bind(this);
         this.loadAnnotations  = this.loadAnnotations.bind(this);
         this.changeCurImage   = this.changeCurImage.bind(this);
         this.on_submit        = this.on_submit.bind(this);
@@ -122,6 +123,38 @@ class ImageLabeler extends Component {
         if (res !== null) {
             this.anno_dir = res;
             await this.loadAnnotations();
+        }
+    }
+
+    selectDirType(start_folder, bucket_name) {
+        /* eslint-disable */
+        // Prompt user to select image or annotation directory
+        let load_image_dir = confirm("Load " + bucket_name + "/" + start_folder + " as image directory?");
+        let load_anno_dir = false;
+        if (!load_image_dir) {
+            load_anno_dir = confirm("Load " + bucket_name + "/" + start_folder + " as annotation directory?");
+        }
+
+        // If either is true, then load the directory
+        if (load_image_dir || load_anno_dir) {
+            // Confirm switching buckets if necessary
+            if (bucket_name !== undefined && bucket_name !== this.QASM.s3_bucket) {
+                if (confirm("Proceed and switch from bucket " + this.QASM.s3_bucket + " to bucket: " + bucket_name + "?")) {
+                    this.QASM.s3_bucket = bucket_name;
+                } else {
+                    console.log("Canceled directory selection.");
+                    return;
+                }
+            }
+
+            // Load the directory
+            if (load_image_dir) {
+                this.image_dir = start_folder;
+                this.loadImageDir();
+            } else {
+                this.anno_dir = start_folder;
+                this.loadAnnotations();
+            }
         }
     }
 
