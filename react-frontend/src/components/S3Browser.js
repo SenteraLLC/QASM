@@ -36,6 +36,8 @@ class S3Browser extends Component {
         } else if (this.bucket === undefined) {
             // Populate current bucket in cache
             this.addToCache(BASE_PATH, this.QASM.folders, this.QASM.files); 
+            // Set bucket name to current bucket
+            this.bucket = this.QASM.s3_bucket;
         }
 
         if (this.path == null) { // Starting at bucket level
