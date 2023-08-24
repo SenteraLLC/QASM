@@ -104,7 +104,3 @@ function isJsonFile(path) {
 function isImageFile(path) {
     return path.slice(-3) in image_types;
 }
-
-
-
-
