@@ -102,19 +102,24 @@ def main():
             f.write(str(soup))
             f.truncate()
 
+    app = config["app"]
     # Intercept s3 protocol
     if INTERCEPT_S3_PROTOCOL_KEY in config and config[INTERCEPT_S3_PROTOCOL_KEY]:
-        with open(PACKAGE_JSON_PATH, "r+") as f:
-            package_json = json.load(f)
-            package_json["build"]["protocols"] = {
-                "name": "S3 Protocol",
-                "schemes": ["s3"]
-            }
-            f.seek(0)
-            json.dump(package_json, f, indent=2)
-            f.truncate()
+        # Only valid for s3 mode
+        if app == "s3":
+            with open(PACKAGE_JSON_PATH, "r+") as f:
+                package_json = json.load(f)
+                package_json["build"]["protocols"] = {
+                    "name": "S3 Protocol",
+                    "schemes": ["s3"]
+                }
+                f.seek(0)
+                json.dump(package_json, f, indent=2)
+                f.truncate()
+        else:
+            print(f"WARNING: {INTERCEPT_S3_PROTOCOL_KEY} is only valid for 's3' app mode, ignoring...")
     
-    app = config["app"]
+    
     if (app in QASM_MODES):
         if (app == "s3" and any(key not in config for key in REQUIRED_S3_KEYS)):
             raise ValueError(f"Missing required key(s) for {app} app: {REQUIRED_S3_KEYS}")
