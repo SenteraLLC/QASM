@@ -19,6 +19,8 @@ class ImageLabeler extends Component {
 
     constructor(props) {
         super(props);
+        // Expose component in window
+        window.COMPONENT = this;
 
         // Initialize props
         this.QASM      = props.QASM;
@@ -58,6 +60,7 @@ class ImageLabeler extends Component {
         this.loadImageDir     = this.loadImageDir.bind(this);
         this.selectImageDir   = this.selectImageDir.bind(this);
         this.selectAnnoDir    = this.selectAnnoDir.bind(this);
+        this.selectDirType    = this.selectDirType.bind(this);
         this.loadAnnotations  = this.loadAnnotations.bind(this);
         this.changeCurImage   = this.changeCurImage.bind(this);
         this.on_submit        = this.on_submit.bind(this);
@@ -81,30 +84,34 @@ class ImageLabeler extends Component {
         this.component_updater = 1; // only updates the first time the page renders
     }
 
-    async loadImageDir() {
+    async loadImageDir(start_image_name = undefined) {
         if (this.image_dir !== null) {
-
             // Create a dictionary for every image in the directory where the image name is
             // the key and the path is the value
-            this.images = await this.QASM.call_backend(window, function_names.LOAD_IMAGES, this.image_dir);
+            this.images = await this.QASM.call_backend(window, function_names.LOAD_IMAGES, {"start_folder": this.image_dir});
 
             // Create a list of keys
             this.images_keys = Object.keys(this.images).sort();
             this.n_images = this.images_keys.length;
 
-            // Load the first image
-            this.cur_image_idx = 0;
-            this.cur_image_name = this.images_keys[this.cur_image_idx];
+            // Load the start_image if specified, else start at the first image
+            if (start_image_name !== undefined && this.images_keys.includes(start_image_name)) {
+                this.cur_image_idx = this.images_keys.indexOf(start_image_name);
+                this.cur_image_name = start_image_name;
+            } else {
+                this.cur_image_idx = 0;
+                this.cur_image_name = this.images_keys[this.cur_image_idx];
+            }
 
             // Load annotations
             await this.loadAnnotations();
 
-            this.updateState();
+
         }
     }
 
     async selectImageDir() {
-        let res = await this.QASM.call_backend(window, function_names.OPEN_DIR_DIALOG, this.image_dir); // prompt selection
+        let res = await this.QASM.call_backend(window, function_names.OPEN_DIR_DIALOG, {"start_folder": this.image_dir}); // prompt selection
         if (res !== null) {
             this.image_dir = res;
             this.loadImageDir();
@@ -112,19 +119,61 @@ class ImageLabeler extends Component {
     }
 
     async selectAnnoDir() {
-        let res = await this.QASM.call_backend(window, function_names.OPEN_DIR_DIALOG, this.anno_dir); // prompt selection
+        let res = await this.QASM.call_backend(window, function_names.OPEN_DIR_DIALOG, {"start_folder": this.anno_dir}); // prompt selection
         if (res !== null) {
             this.anno_dir = res;
             await this.loadAnnotations();
-            this.updateState();
         }
     }
 
-    async loadAnnotations() {
+    /**
+     * Handler for when the user opens a deep link
+     * to a directory. The user will be prompted to
+     * select whether the directory contains images
+     * or annotations.
+     * 
+     * @param {string} start_folder folder to start in
+     * @param {string} bucket_name name of s3 bucket
+     */
+    selectDirType(start_folder, bucket_name) {
+        /* eslint-disable */
+        // Prompt user to select image or annotation directory
+        let load_image_dir = confirm("Load " + bucket_name + "/" + start_folder + " as image directory?");
+        let load_anno_dir = false;
+        if (!load_image_dir) {
+            load_anno_dir = confirm("Load " + bucket_name + "/" + start_folder + " as annotation directory?");
+        }
+
+        // If either is true, then load the directory
+        if (load_image_dir || load_anno_dir) {
+            // Confirm switching buckets if necessary
+            if (bucket_name !== undefined && bucket_name !== this.QASM.s3_bucket) {
+                if (confirm("Proceed and switch from bucket " + this.QASM.s3_bucket + " to bucket: " + bucket_name + "?")) {
+                    this.QASM.s3_bucket = bucket_name;
+                } else {
+                    console.log("Canceled directory selection.");
+                    return;
+                }
+            }
+
+            // Load the directory
+            if (load_image_dir) {
+                this.image_dir = start_folder;
+                this.loadImageDir();
+            } else {
+                this.anno_dir = start_folder;
+                this.loadAnnotations();
+            }
+        }
+    }
+
+    async loadAnnotations(anno_filename = undefined) {
         if (this.anno_dir !== null) {
 
-            // anno filename should be image_name.json
-            this.anno_filename = getChildPath(this.anno_dir, this.cur_image_name + ".json");
+            this.anno_filename = getChildPath(
+                this.anno_dir, 
+                anno_filename !== undefined ? anno_filename : this.cur_image_name + ".json"
+            );
             try {
                 this.annotations = await this.QASM.call_backend(window, function_names.LOAD_JSON, this.anno_filename);
             } catch (e) {
@@ -134,6 +183,7 @@ class ImageLabeler extends Component {
                 this.annotations = {};
             }
         }
+        this.updateState();
     }
 
     async changeCurImage(idx_mod) {
@@ -145,7 +195,6 @@ class ImageLabeler extends Component {
         }
         this.cur_image_name = this.images_keys[this.cur_image_idx];
         await this.loadAnnotations();
-        this.updateState();
     }
 
     // Save annotations in the same way we loaded them
@@ -153,7 +202,7 @@ class ImageLabeler extends Component {
         if (this.anno_filename !== null) {
             let params = {
                 labels: {},
-                path: this.anno_filename,
+                start_folder: this.anno_filename,
             }
             console.log(annotations);
             let resume_from_key

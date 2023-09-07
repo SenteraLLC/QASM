@@ -11,14 +11,16 @@ import ImageLabeler from './components/ImageLabeler';
 import icon from "../public/icon.png";
 import {Link, MemoryRouter, Route, Routes} from "react-router-dom";
 
+const { components } = require("../public/electron_constants.js");
+
 // Link keys to components
 const COMPONENT_KEYS = {
-  "grid":           (props) => {return <Grid {...props}/>},
-  "multiclassgrid": (props) => {return <MultiClassGrid {...props}/>},
-  "home":           (props) => {return <Home {...props}/>},
-  "binaryeditor":   (props) => {return <BinaryEditors {...props}/>},
-  "S3Browser":      (props) => {return <S3Browser {...props}/>},
-  "imagelabeler":   (props) => {return <ImageLabeler {...props}/>},
+  [components.GRID]:             (props) => {return <Grid {...props}/>},
+  [components.MULTI_CLASS_GRID]: (props) => {return <MultiClassGrid {...props}/>},
+  [components.HOME]:             (props) => {return <Home {...props}/>},
+  [components.BINARY_EDITOR]:    (props) => {return <BinaryEditors {...props}/>},
+  [components.S3_BROWSER]:       (props) => {return <S3Browser {...props}/>},
+  [components.IMAGE_LABELER]:    (props) => {return <ImageLabeler {...props}/>},
 }
 
 class App extends Component {
@@ -45,7 +47,7 @@ class App extends Component {
       component.QASM = this.QASM;
 
       // If the component is home the path will always be /
-      if (component.component === "home") {
+      if (component.component === components.HOME) {
         component.path = "/";
         this.home_component_present = true;
       }
@@ -83,7 +85,7 @@ class App extends Component {
 
   logoOnClick() {
     // Click on the home button to go to the home page
-    let link = document.getElementById("home-link");
+    let link = document.getElementById(components.HOME + "-link");
     link.click();
   }
 
@@ -112,16 +114,16 @@ class App extends Component {
             still create the link so that the icon can be pressed to reach it.*/}
             {!this.home_component_present &&
               <Link 
-                id="home-link"
+                id={components.HOME + "-link"}
                 className=" Link hidden"
                 to="/"
-                key="home"/>
+                key={components.HOME}/>
             }
             <Link 
-                id="s3browser-link"
+                id={components.S3_BROWSER + "-link"}
                 className=" Link hidden"
-                to="S3Browser"
-                key="S3Browser"/>
+                to={components.S3_BROWSER}
+                key={components.S3_BROWSER}/>
           </div>
         </div>
         <Routes>
@@ -136,13 +138,13 @@ class App extends Component {
           {!this.home_component_present &&
             <Route
               path="/"
-              element={COMPONENT_KEYS["home"]({QASM: this.QASM})}
-              key="home"/>
+              element={COMPONENT_KEYS[components.HOME]({QASM: this.QASM})}
+              key={components.HOME}/>
           }
           <Route 
-            path="S3Browser" 
-            element={COMPONENT_KEYS["S3Browser"](this.s3props)}
-            key="S3Browser"/>
+            path={components.S3_BROWSER} 
+            element={COMPONENT_KEYS[components.S3_BROWSER](this.s3props)}
+            key={components.S3_BROWSER}/>
         </Routes>
       </div>
       </MemoryRouter>

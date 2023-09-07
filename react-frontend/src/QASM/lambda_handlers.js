@@ -1,7 +1,6 @@
 const { api_consolidator_error_handler } = require("./api_utils.js");
 const { get_new_window_url } = require("./utils.js");
-const { function_names } = require("../../public/electron_constants.js");
-const { s3_browser_modes } = require("./constants.js");
+const { function_names, s3_browser_modes } = require("../../public/electron_constants.js");
 
 // Export like this so static site works idk why
 const function_handlers = {
@@ -33,7 +32,7 @@ export { function_handlers }
  * Open a directory selection dialog
  *
  * @param {Object} QASM QASM object
- * @param {string} data starting folder
+ * @param {string} data {start_folder: <string>, bucket_name: <string>}
  * @param {*} window window
  * @returns s3 path on success, nothing on cancel
  */
@@ -41,11 +40,13 @@ async function handleOpenDirDialog(QASM, data, window) {
     let url = get_new_window_url(window, "s3Browser");
     let popup = window.open(url, "S3 Browser");
     popup.S3_BROWSER_MODE = s3_browser_modes.SELECT_DIRECTORY;
-    popup.START_FOLDER = data
+    popup.START_FOLDER = data.start_folder;
+    popup.BUCKET_NAME = data.bucket_name;
 
     return new Promise(resolve => window.onmessage = (e) => {
         try {
             if (e.data.success) {
+                QASM.s3_bucket = e.data.bucket_name;
                 resolve(e.data.path);
             }
         } catch {}
@@ -58,7 +59,7 @@ async function handleOpenDirDialog(QASM, data, window) {
  * only allows folders that contain images
  *
  * @param {Object} QASM QASM object
- * @param {string} data starting folder
+ * @param {string} data {start_folder: <string>, bucket_name: <string>}
  * @param {*} window window
  * @returns s3 path on success, nothing on cancel
  */
@@ -66,11 +67,13 @@ async function handleOpenDirDialog(QASM, data, window) {
     let url = get_new_window_url(window, "s3Browser");
     let popup = window.open(url, "S3 Browser");
     popup.S3_BROWSER_MODE = s3_browser_modes.SELECT_IMG_DIRECTORY;
-    popup.START_FOLDER = data
+    popup.START_FOLDER = data.start_folder;
+    popup.BUCKET_NAME = data.bucket_name;
 
     return new Promise(resolve => window.onmessage = (e) => {
         try {
             if (e.data.success) {
+                QASM.s3_bucket = e.data.bucket_name;
                 resolve(e.data.path);
             }
         } catch {}
@@ -122,7 +125,7 @@ async function handleGetFolderContents(QASM, data, window) {
 /**
  * Get url for a single image
  * @param {Object} QASM QASM object
- * @param {string} data starting folder
+ * @param {string} data {start_folder: <string>, bucket_name: <string>}
  * @param {*} window window
  * @returns {*} image url
  */
@@ -130,13 +133,15 @@ async function handleLoadImageDialog(QASM, data, window) {
     let url = get_new_window_url(window, "s3Browser");
     let popup = window.open(url, "S3 Browser");
     popup.S3_BROWSER_MODE = s3_browser_modes.SELECT_IMAGE;
-    popup.START_FOLDER = data
+    popup.START_FOLDER = data.start_folder;
+    popup.BUCKET_NAME = data.bucket_name;
 
     return new Promise(resolve => window.onmessage = async (e) => {
         try {
             if (e.data.success) {
+                QASM.s3_bucket = e.data.bucket_name;
                 let params = {
-                    bucket_name: QASM.s3_bucket,
+                    bucket_name: data.bucket_name !== undefined ? data.bucket_name : QASM.s3_bucket,
                     file_name: e.data.path,
                 }
                 let res = await api_consolidator_error_handler(params, "load_image");
@@ -151,14 +156,14 @@ async function handleLoadImageDialog(QASM, data, window) {
  * Get signed urls for all images in an s3 folder
  * 
  * @param {Object} QASM QASM object
- * @param {string} data full s3 path
+ * @param {string} data {start_folder: <string>, bucket_name: <string>}
  * @param {*} window window
  * @returns {Object} { image_name: signed_url } 
  */
 async function handleLoadImages(QASM, data, window) {
     let params = {
-        "bucket_name": QASM.s3_bucket,
-        "folder_name": data
+        "bucket_name": data.bucket_name !== undefined ? data.bucket_name : QASM.s3_bucket,
+        "folder_name": data.start_folder
     }
     let res = await api_consolidator_error_handler(params, "get_signed_urls_in_folder");
     return res.urls;
@@ -198,6 +203,7 @@ async function handleSaveImageDialog(QASM, data, window) {
     return new Promise(resolve => window.onmessage = async (e) => {
         try {
             if (e.data.success) {
+                QASM.s3_bucket = e.data.bucket_name;
                 let params = {
                     bucket_name: QASM.s3_bucket,
                     file_name: e.data.path,
@@ -220,23 +226,24 @@ async function handleSaveImageDialog(QASM, data, window) {
  * and then load and return the labels.
  * 
  * @param {Object} QASM QASM object
- * @param {string} data starting folder
+ * @param {string} data {start_folder: <string>, bucket_name: <string>, loadnames: <Array[string]>]}
  * @param {*} window window
  * @returns {Object} labels
  */
 async function handleLoadJsonDialog(QASM, data, window) {
     let url = get_new_window_url(window, "s3Browser");
     let popup = window.open(url, "S3 Browser");
-    // TODO: different mode for loading/saving?
     popup.S3_BROWSER_MODE = s3_browser_modes.SELECT_JSON; 
-    popup.START_FOLDER = data.path;
+    popup.START_FOLDER = data.start_folder;
+    popup.BUCKET_NAME = data.bucket_name;
     popup.LOADNAMES = data.loadnames;
 
     return new Promise(resolve => window.onmessage = async (e) => {
         try {
             if (e.data.success) {
+                QASM.s3_bucket = e.data.bucket_name;
                 let params = {
-                    bucket_name: QASM.s3_bucket,
+                    bucket_name: data.bucket_name !== undefined ? data.bucket_name : QASM.s3_bucket,
                     file_name: e.data.path,
                 }
                 let res = await api_consolidator_error_handler(params, "load_labels");
@@ -273,7 +280,7 @@ async function handleLoadJson(QASM, data, window) {
  * and then save the labels.
  * 
  * @param {Object} QASM QASM object
- * @param {Object} data {labels: {}, path: "", savename: ""}
+ * @param {Object} data {labels: <Object>, start_folder: <string>, bucket_name: <string>, savename: <string>}
  * @param {*} window window
  * @returns {string} result
  */
@@ -281,14 +288,16 @@ async function handleSaveJsonDialog(QASM, data, window) {
     let url = get_new_window_url(window, "s3Browser");
     let popup = window.open(url, "S3 Browser");
     popup.S3_BROWSER_MODE = s3_browser_modes.SAVE_JSON;
-    popup.START_FOLDER = data.path;
+    popup.START_FOLDER = data.start_folder;
+    popup.BUCKET_NAME = data.bucket_name;
     popup.DEFAULT_SAVENAME = data.savename;
 
     return new Promise(resolve => window.onmessage = async (e) => {
         try {
             if (e.data.success) {
+                QASM.s3_bucket = e.data.bucket_name;
                 let params = {
-                    bucket_name: QASM.s3_bucket,
+                    bucket_name: data.bucket_name !== undefined ? data.bucket_name : QASM.s3_bucket,
                     file_name: e.data.path,
                     labels: data.labels,
                 }
@@ -305,15 +314,15 @@ async function handleSaveJsonDialog(QASM, data, window) {
  * Save data to the specified path.
  * 
  * @param {Object} QASM QASM object
- * @param {Object} data {labels: {}, path: ""}
+ * @param {Object} data {labels: <Object>, start_folder: <string>, bucket_name: <string>}
  * @param {*} window window
  * @returns {string} result
  */
  async function handleSaveJson(QASM, data, window) {
     try { 
         let params = {
-            bucket_name: QASM.s3_bucket,
-            file_name: data.path,
+            bucket_name: data.bucket_name !== undefined ? data.bucket_name : QASM.s3_bucket,
+            file_name: data.start_folder,
             labels: data.labels,
         }
         await api_consolidator_error_handler(params, "save_labels");

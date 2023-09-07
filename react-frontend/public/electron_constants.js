@@ -1,6 +1,16 @@
 // Constants. Be careful not to include imports in this file 
 // so that it can be used by the react frontend without issue.
 
+// List of valid components
+exports.components = {
+    GRID: "grid",
+    MULTI_CLASS_GRID: "multiclassgrid",
+    HOME: "home",
+    BINARY_EDITOR: "binaryeditor",
+    S3_BROWSER: "S3Browser",
+    IMAGE_LABELER: "imagelabeler"
+}
+
 // List of valid function name keys
 exports.function_names = {
     SAVE_BINARY_DIRECTORY: "saveBinaryDirectory",
@@ -25,3 +35,16 @@ exports.image_types = {
     jpg: "jpg",
     png: "png",
 }
+
+// S3 Browser modes
+exports.s3_browser_modes = {
+    SELECT_DIRECTORY: "select_directory",
+    SELECT_IMG_DIRECTORY: "select_img_directory",
+    SELECT_JSON: "select_json",
+    SAVE_JSON: "save_json",
+    SELECT_IMAGE: "select_image",
+    SAVE_IMAGE: "save_image",
+    DEEP_LINK: "deep_link",
+}
+
+exports.s3_protocol = "s3" // followed by '://', e.g. 's3://'

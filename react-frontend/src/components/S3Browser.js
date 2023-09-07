@@ -3,8 +3,7 @@ import Dropdown from "./Dropdown.js";
 import S3Folder from "./S3Folder.js";
 import S3File from "./S3File.js";
 import "../css/S3Browser.css";
-const { image_types, function_names } = require("../../public/electron_constants.js");
-const { s3_browser_modes } = require("../QASM/constants.js");
+const { image_types, function_names, s3_browser_modes } = require("../../public/electron_constants.js");
 const BASE_PATH = "" // Key used to represent the root folder of the bucket
 
 class S3Browser extends Component {
@@ -14,14 +13,32 @@ class S3Browser extends Component {
     cache = {};
     constructor(props) {
         super(props);
+        // Expose component in window
+        window.COMPONENT = this;
         
         this.QASM    = props.QASM;
         this.mode    = window.S3_BROWSER_MODE; // Set by window opener
         this.path    = window.START_FOLDER;
+        this.bucket  = window.BUCKET_NAME;
         this.default_savename = window.DEFAULT_SAVENAME;
         this.loadnames = window.LOADNAMES;
         this.parents = props.parents || []; // Stack of parent folders
-        this.addToCache(BASE_PATH, this.QASM.folders, this.QASM.files); // Always populate bucket in cache
+
+        if (this.bucket !== undefined && this.bucket !== this.QASM.s3_bucket) {
+            // Prompt user to switch buckets
+            if (window.confirm("Proceed and switch from bucket " + this.QASM.s3_bucket + " to bucket: " + this.bucket + "?")) {
+                this.QASM.s3_bucket = this.bucket;
+                this.QASM.files = [];
+                this.QASM.folders = [];
+            } else {
+                window.close();
+            }
+        } else if (this.bucket === undefined) {
+            // Populate current bucket in cache
+            this.addToCache(BASE_PATH, this.QASM.folders, this.QASM.files); 
+            // Set bucket name to current bucket
+            this.bucket = this.QASM.s3_bucket;
+        }
 
         if (this.path == null) { // Starting at bucket level
             this.path = BASE_PATH
@@ -140,6 +157,7 @@ class S3Browser extends Component {
         let data = {
             success: true,
             path: this.path,
+            bucket_name: this.bucket,
         }
         // Send data back to parent window
         window.opener.postMessage(data, '*');
@@ -209,6 +227,7 @@ class S3Browser extends Component {
             let data = {
                 success: true,
                 path: file,
+                bucket_name: this.bucket,
             }
             // Send data back to parent window
             window.opener.postMessage(data, '*');

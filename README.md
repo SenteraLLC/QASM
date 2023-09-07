@@ -83,6 +83,20 @@ An app configured with `"app": "s3"` will run using files on S3. QASM jobs that 
 - ``"bucket": <string>``
     - Name of the s3 bucket from which to pull data (only required for ``"app": "s3"``)
 
+- ``"intercept_s3_protocol": <Array>``
+    - (Optional) When present, clicking/navigating to a link that starts with ``"s3://"`` will open a prompt to open the link in the app instead. The value in the config should be a list of component names, as shown in the example below. The first component in the list will be the default handler for s3 links, *except* when another component in the list is currently open. For example, if the ``"grid"`` screen is open, it will handle all s3 links, even though ``"imagelabeler"`` is listed first in the list. Only availible for ``"app": "s3"`` mode, and not supported for static website deployments. 
+    ```js
+    "intercept_s3_protocol": [
+        "imagelabeler",
+        "grid"
+    ]
+    ```
+    - Components that currently have special s3 protocol functionality are as follows:
+        - ``"imagelabeler"``: If the s3 link points to an image, the image will be loaded into the imagelabeler component. If the s3 link points to a json file, the file will be loaded as an annotation. If the s3 link points to a directory, the user will be prompted to select if it should be loaded as the image or annotation directory.
+        - ``"grid"``: If the s3 link points to an json file, the file will be loaded as a labels file. If the s3 link points to a directory, the directory will be used as the image directory and the images will be loaded.
+        - ``"multiclassgrid"``: Same as ``"grid"``
+    - For packaged (.exe) instances of the app, the protocol will be active upon install, and will open the app even if it is not currently running. If multiple apps are installed with the s3 protocol active, than only the first one installed will use the protocol. The protocol interception will be removed after uninstalling the app using the packaged uninstaller, after which a new installation will need to be performed to re-enable the protocol.
+
 - ``"static_site_bucket": <string>``
     - (Optional) Name of the s3 bucket to which to upload the static website (only required to run ``npm run qasm-push``)
 

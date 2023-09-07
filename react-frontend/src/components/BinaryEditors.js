@@ -9,6 +9,9 @@ import S3DirectoryBinaryEditor from "./S3DirectoryBinaryEditor";
 class BinaryEditors extends Component {
     constructor(props) {
         super(props);
+        // Expose component in window
+        window.COMPONENT = this;
+        
         this.props = props;
         this.mode = props.mode;
     }

@@ -14,10 +14,12 @@ QASM_COMPONENTS = ["home", "grid", "multiclassgrid", "binaryeditor", "imagelabel
 QASM_MODES = ["local", "s3"]
 RUN_MODES = ["dev", "build-exe", "push"]
 APP_NAME_KEY = "name"
+INTERCEPT_S3_PROTOCOL_KEY = "intercept_s3_protocol"
 PACKAGE_JSON_PATH = "./package.json"
 DEFAULT_INDEX_PATH = "./public/default-index.html"
 INDEX_PATH = "./public/index.html"
 CONFIG_DEST_PATH = "./config.json"
+CONFIG_DUP_PATH = "./public/config-dup.json"
 DEFAULT_CONFIG_PATH = "./default-config.json"
 
 def main():
@@ -47,9 +49,10 @@ def main():
             with open(args.config_path, "r") as f:
                 config = json.load(f)
         
-        # Save to the config path that the app will use
-        with open(CONFIG_DEST_PATH, "w") as f:
-            json.dump(config, f, indent=4)
+        # Save to the config paths that the app will use
+        for path in [CONFIG_DEST_PATH, CONFIG_DUP_PATH]:
+            with open(path, "w") as f:
+                json.dump(config, f, indent=4)
     except Exception as e:
         print(f"Error loading configuration json, aborting...")
         print(e)
@@ -82,6 +85,9 @@ def main():
             package_json = json.load(f)
             package_json["name"] = name.lower().replace(" ", "-") # Lowercase, no whitespace for package name
             package_json["build"]["productName"] = name # Windows application name
+            # Remove s3 protocol if it exists, we'll add it back later if needed
+            if "protocols" in package_json["build"]:
+                del package_json["build"]["protocols"]
             f.seek(0)
             json.dump(package_json, f, indent=2)
             f.truncate()
@@ -95,8 +101,25 @@ def main():
             f.seek(0)
             f.write(str(soup))
             f.truncate()
-    
+
     app = config["app"]
+    # Intercept s3 protocol
+    if INTERCEPT_S3_PROTOCOL_KEY in config and config[INTERCEPT_S3_PROTOCOL_KEY]:
+        # Only valid for s3 mode
+        if app == "s3":
+            with open(PACKAGE_JSON_PATH, "r+") as f:
+                package_json = json.load(f)
+                package_json["build"]["protocols"] = {
+                    "name": "S3 Protocol",
+                    "schemes": ["s3"]
+                }
+                f.seek(0)
+                json.dump(package_json, f, indent=2)
+                f.truncate()
+        else:
+            print(f"WARNING: {INTERCEPT_S3_PROTOCOL_KEY} is only valid for 's3' app mode, ignoring...")
+    
+    
     if (app in QASM_MODES):
         if (app == "s3" and any(key not in config for key in REQUIRED_S3_KEYS)):
             raise ValueError(f"Missing required key(s) for {app} app: {REQUIRED_S3_KEYS}")
