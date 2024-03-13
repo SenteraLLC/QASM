@@ -20,5 +20,5 @@ jobs:
         run: | 
           version=$(cat react-frontend/package.json | jq '.version' | tr -d '"')
           echo "version: $version"
-          git tag $version
+          git tag v$version
           git push -u origin $version
