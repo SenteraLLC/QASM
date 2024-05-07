@@ -141,15 +141,8 @@ class Ulabel extends Component {
     }
 
     componentWillUnmount() {
-        // This is a hack to force the page to reload
-        // when ulabel needs to be destroyed, such as 
-        // when navigating to a new page. Otherwise, 
-        // multiple layers of ulabel hooks build up in 
-        // the app which causes some wacky stuff to happen.
-
-        // TODO: With MemoryRouter this will always go back to homepage,
-        // when it should ideally reload the target component
-        window.location.reload(); 
+        // Remove ulabel's listeners
+        this.ulabel.remove_listeners();
     }
 }
 

@@ -1,5 +1,5 @@
 {
-  "name": "weeds-ulabel-demo",
+  "name": "qasm-demo",
   "author": {
     "name": "Trevor Burgoyne",
     "url": "https://github.com/TrevorBurgoyne"
@@ -15,7 +15,7 @@
     }
   ],
   "description": "A web application built on React and Electron, for running custom QA and labeling jobs from a local host, a packaged windows .exe, or a statically hosted S3 website.",
-  "version": "0.19.1",
+  "version": "0.19.2",
   "private": true,
   "proxy": "http://localhost:3000",
   "homepage": "./",
@@ -36,7 +36,7 @@
     "react-dom": "^18.2.0",
     "react-router-dom": "^6.3.0",
     "react-scripts": "5.0.1",
-    "ulabel": "^0.6.12",
+    "ulabel": "^0.10.8",
     "util": "^0.12.4",
     "wait-on": "^6.0.1",
     "web-vitals": "^2.1.4",
@@ -79,7 +79,7 @@
     ]
   },
   "build": {
-    "productName": "Weeds ULabel Demo",
+    "productName": "QASM Demo",
     "win": {
       "target": "NSIS",
       "icon": "public/icon.png"
