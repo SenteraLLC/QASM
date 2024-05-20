@@ -1,6 +1,6 @@
 import argparse
 
-def handle_module_import(line, modules_dict):
+def handle_import_line_module(line, modules_dict):
     # Extract the module name from the import statement
     module = line.split(" from ")[1].split("'")[1]
     
@@ -20,16 +20,37 @@ def handle_module_import(line, modules_dict):
         modules_dict[module] = modules_dict[module].append(words[1])
 
 
-def handle_local_component_import(line):
+def handle_import_line_local_component(line, import_info):
     pass
 
 
-def handle_svg_import(line, svg_dict):
+def handle_import_line_svg(line, svg_dict):
     # Extract the SVG name from the import statement
     svg_name = line.split(" ")[1]
     svg_path = line.split(" from ")
     svg_path = line.split(" from ")[1].replace(";", "").replace("'", "").replace('"', "").strip().split("/")[-1]
     svg_dict[svg_name] = svg_path
+    
+    
+def import_component(component_name, import_info):
+    # For easy access
+    component_dict = import_info["component_dict"]
+    module_dict = import_info["module_dict"]
+    svg_dict = import_info["svg_dict"]
+    
+    # Open the component file
+    with open(f"./src/components/{component_name}.js", "r") as file:
+        # Read the file line by line
+        for line in file:
+            if ("import " in line and " from " in line and ".svg" in line):
+                handle_import_line_svg(line, svg_dict)
+                
+            elif ("import " in line and " from " in line and ".js" in line):
+                handle_import_line_local_component(line, import_info)
+                
+            elif ("import " in line and " from " in line):
+                handle_import_line_module(line, module_dict)
+
     
 
 def write_svg_to_file(output_file, svg_filename):
@@ -43,7 +64,6 @@ def write_svg_to_file(output_file, svg_filename):
             output_file.write(line)
         
 
-
 def main():
     # Parse command line arguments
     parser = argparse.ArgumentParser()
@@ -54,40 +74,36 @@ def main():
         print("No component name provided.")
         return
     
-    modules_dict = {}
-    svg_dict = {}
+    
+    import_info = {
+        "module_dict": {},
+        "svg_dict": {},
+        "component_dict": {}
+    }
+    
+    print(type(import_info))
     
     
     with open("./extraction_output.js", "w") as output_file:
-        
         for component in args.component:
-            # Open the component file
-            with open(f"./src/components/{component}.js", "r") as file:
-                # Read the file line by line
-                for line in file:
-                    
-                    if ("import " in line and " from " in line and ".svg" in line):
-                        handle_svg_import(line, svg_dict)
-                    elif ("import " in line and " from " in line and ".js" in line):
-                        handle_local_component_import(line)
-                    elif ("import " in line and " from " in line):
-                        handle_module_import(line, modules_dict)
-                        
-                print(modules_dict)
+            import_component(component, import_info)
         
+        print("module_dict", import_info["module_dict"])
+        # module
         # Write the module requirements to the output file
-        for module in modules_dict.keys():
-            output_file.write(f"import {{ {', '.join(modules_dict[module])} }} from {module};\n")
+        for module in import_info["module_dict"].keys():
+            output_file.write(f"import {{ {', '.join(import_info['module_dict'][module])} }} from {module};\n")
         
+        # Keep each section separated by a newline
         output_file.write("\n")
         
         # Write the component imports to the output file
         # TODO: Implement this
         
         # Write the SVG imports to the output file
-        for svg_name in svg_dict.keys():
+        for svg_name in import_info["svg_dict"].keys():
             output_file.write(f"const {svg_name} = ")
-            write_svg_to_file(output_file, svg_dict[svg_name])
+            write_svg_to_file(output_file, import_info["svg_dict"][svg_name])
     
     
     
