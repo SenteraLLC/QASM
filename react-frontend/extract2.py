@@ -113,8 +113,15 @@ def main():
     # pprint(all_imports)
     
     with open("./extraction_output.js", "w") as output_file:
+        # Write the module imports to the output file
+        for module_name, module_imports in all_imports["modules"].items():
+            output_file.write(f"import {{ {', '.join(module_imports)} }} from {module_name};\n")
+            
+        # Separate each section with a newline
+        output_file.write("\n")
+        
+        # Write the svgs to the output file
         for svg_name, svg_filename in all_imports["svgs"].items():
-            print(svg_name, svg_filename)
             import_file__svg(output_file, svg_name, svg_filename)
             output_file.write("\n\n")
         
