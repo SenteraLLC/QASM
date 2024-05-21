@@ -1,129 +1,131 @@
 import argparse
+from pprint import pprint
 
-def handle_import_line_module(line, modules_dict):
-    # Extract the module name from the import statement
-    module = line.split(" from ")[1].split("'")[1]
-    
-    if (module not in modules_dict.keys()):
-        modules_dict[module] = []
-    
-    words = line.split(" ")
-    if (words[1] == "{"):
-        index = 2
-        while (words[index] != "}"):
-            # Append the module name to the requirements list while removing the comma
-            modules_dict[module].append(words[index].replace(",", ""))
 
-            index += 1
+def append_if_not_in_list(item, list):
+    """Helper function to append an item to a list if it is not already in the list."""
+    if (item not in list):
+        list.append(item)
+
+
+def handle_import_line__module(line, modules_dict):
+    """Extract the module name from the given line.
+    Use the module name as a key in the dictionary of modules,
+    to keep track of everything that needs to be imported from that module."""
+    
+    module_name = line.split(" from ")[1].replace(";", "").replace("'", "").replace('"', "").strip()
+    
+    if (module_name not in modules_dict):
+        modules_dict[module_name] = []
     else:
-        # Append the module name to the requirements list
-        modules_dict[module] = modules_dict[module].append(words[1])
-
-
-def handle_import_line_local_component(line, import_statements):
-    local_import_filename = line.split(" from ")[1].replace(";", "").replace("'", "").replace('"', "").strip().split("/")[-1]
-    local_component_name = line.split(" ")[1]
+        # DEBUG. TODO: Remove before pr
+        print(f"Duplicate module import: {module_name}")
     
-    print(local_component_name, local_import_filename)
+    line_pieces = line.split(" ")
     
-    if ("{" in line):
-        print(line)
+    # line_pieces[0] is always "import" so skip to 1
+    i = 1
+    while (line_pieces[i] != "from"):
+        import_name = line_pieces[i].replace("{", "").replace("}", "").replace(",", "")
+        
+        # import_name can be "" if there's a space between the import and the comma
+        if (import_name != ""):
+            append_if_not_in_list(line_pieces[i].replace(",", ""), modules_dict[module_name])
+        i += 1
+        
+
+def handle_import_line__svg(line, svgs_dict):
+    """Extract the SVG name and filename from the import statement.
+    Add the SVG name and filename to the dictionary of SVGs, 
+    so that the SVG can be imported after all components have been extracted."""
     
-    import_component(local_component_name, import_statements)
-
-
-def handle_import_line_svg(line, svg_dict):
-    # Extract the SVG name from the import statement
     svg_name = line.split(" ")[1]
-    svg_path = line.split(" from ")
-    svg_path = line.split(" from ")[1].replace(";", "").replace("'", "").replace('"', "").strip().split("/")[-1]
-    svg_dict[svg_name] = svg_path
+    svg_filename = line.split(" from ")[1].replace(";", "").replace("'", "").replace('"', "").strip().split("/")[-1]
     
+    if (svg_name in svgs_dict):
+        print(f"Duplicate SVG import: {svg_name}")
+        return
     
-def import_component(component_name, import_statements):
-    # For easy access
-    component_dict = import_statements["component_dict"]
-    module_dict = import_statements["module_dict"]
-    svg_dict = import_statements["svg_dict"]
+    svgs_dict[svg_name] = svg_filename
+            
+            
+def handle_import_line__local_component(line, all_imports):
+    pass
+
+
+def import_file__svg(output_file, svg_name, svg_filename):
+    output_file.write(f"const {svg_name} = ")
+    with open(f"./src/icons/{svg_filename}") as svg_file:
+        for line in svg_file:
+            if ("<?xml" in line):
+                continue
+            # TODO: Better handle ignoring comments
+            if ("<!--" in line or "-->" in line):
+                continue
+            output_file.write(" ".join(line.split()) + " ")
+
+
+def import_file__local_component(component_name, all_imports):
+    """Open a local component file and handle each line accordingly.
+    Import statements are handled differently depending on the type of import.
+    Non-import statements are appended to the component's string representation."""
     
-    component_dict[component_name] = ""
-    
-    # Open the component file
-    with open(f"./src/components/{component_name}.js", "r") as file:
-        # Read the file line by line
+    with open(f"./src/components/{component_name}.js") as file:
         for line in file:
             if ("import " in line and " from " in line and ".svg" in line):
-                handle_import_line_svg(line, svg_dict)
-               
+                handle_import_line__svg(line, all_imports["svgs"])
+                
             elif ("import " in line and " from " in line and ".js" in line and "require" in line):
                 print("require statement")
                 
             elif ("import " in line and " from " in line and ".js" in line):
-                handle_import_line_local_component(line, import_statements)
+                # handle_import_line__module(line, all_imports["components"])
+                pass
                 
             elif ("import " in line and " from " in line):
-                handle_import_line_module(line, module_dict)
+                handle_import_line__module(line, all_imports["modules"])
+                pass
                 
             else:
-                component_dict[component_name] += line
+                # components_dict[component_name] += line
+                pass
 
-    
-
-def write_svg_to_file(output_file, svg_filename):
-    print("svg_filename", svg_filename)
-    with open(f"./src/icons/{svg_filename}", "r") as svg_file:
-        for line in svg_file:
-            if ("<?xml" in line):
-                continue
-            if ("<!--" in line or "-->" in line):
-                continue
-            output_file.write(line)
-        
 
 def main():
     # Parse command line arguments
     parser = argparse.ArgumentParser()
     parser.add_argument("--component", nargs="+", help="Name of component to extract.")
     args = parser.parse_args()
-
+    
     if (args.component == None):
         print("No component name provided.")
         return
     
-    import_statements = {
-        "module_dict": {},
-        "component_dict": {},
-        "svg_dict": {}
+    all_imports = {
+        "modules": {},
+        "components": {},
+        "svgs": {}
     }
     
+    for component in args.component:
+        import_file__local_component(component, all_imports)
+        
+    # pprint(all_imports)
+    
     with open("./extraction_output.js", "w") as output_file:
-        for component in args.component:
-            import_component(component, import_statements)
-        
-        # Write the module requirements to the output file
-        for module in import_statements["module_dict"].keys():
-            output_file.write(f"import {{ {', '.join(import_statements['module_dict'][module])} }} from {module};\n")
-        
-        # Keep each section separated by a newline
+        # Write the module imports to the output file
+        for module_name, module_imports in all_imports["modules"].items():
+            output_file.write(f"import {{ {', '.join(module_imports)} }} from {module_name};\n")
+            
+        # Separate each section with a newline
         output_file.write("\n")
         
-        # Write the SVG imports to the output file
-        for svg_name in import_statements["svg_dict"].keys():
-            output_file.write(f"const {svg_name} = ")
-            write_svg_to_file(output_file, import_statements["svg_dict"][svg_name])
-            
-        # Write each component to the output file
-        # TODO: Implement this
-        for component in import_statements["component_dict"].keys():
-            output_file.write(import_statements["component_dict"][component])
-    
-    
-    
-    
-
-            
-            
+        # Write the svgs to the output file
+        for svg_name, svg_filename in all_imports["svgs"].items():
+            import_file__svg(output_file, svg_name, svg_filename)
+            output_file.write("\n\n")
         
     
+
 if __name__ == "__main__":
     main()
