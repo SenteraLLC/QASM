@@ -20,8 +20,16 @@ def handle_import_line_module(line, modules_dict):
         modules_dict[module] = modules_dict[module].append(words[1])
 
 
-def handle_import_line_local_component(line, import_info):
-    pass
+def handle_import_line_local_component(line, import_statements):
+    local_import_filename = line.split(" from ")[1].replace(";", "").replace("'", "").replace('"', "").strip().split("/")[-1]
+    local_component_name = line.split(" ")[1]
+    
+    print(local_component_name, local_import_filename)
+    
+    if ("{" in line):
+        print(line)
+    
+    import_component(local_component_name, import_statements)
 
 
 def handle_import_line_svg(line, svg_dict):
@@ -32,11 +40,13 @@ def handle_import_line_svg(line, svg_dict):
     svg_dict[svg_name] = svg_path
     
     
-def import_component(component_name, import_info):
+def import_component(component_name, import_statements):
     # For easy access
-    component_dict = import_info["component_dict"]
-    module_dict = import_info["module_dict"]
-    svg_dict = import_info["svg_dict"]
+    component_dict = import_statements["component_dict"]
+    module_dict = import_statements["module_dict"]
+    svg_dict = import_statements["svg_dict"]
+    
+    component_dict[component_name] = ""
     
     # Open the component file
     with open(f"./src/components/{component_name}.js", "r") as file:
@@ -44,12 +54,18 @@ def import_component(component_name, import_info):
         for line in file:
             if ("import " in line and " from " in line and ".svg" in line):
                 handle_import_line_svg(line, svg_dict)
+               
+            elif ("import " in line and " from " in line and ".js" in line and "require" in line):
+                print("require statement")
                 
             elif ("import " in line and " from " in line and ".js" in line):
-                handle_import_line_local_component(line, import_info)
+                handle_import_line_local_component(line, import_statements)
                 
             elif ("import " in line and " from " in line):
                 handle_import_line_module(line, module_dict)
+                
+            else:
+                component_dict[component_name] += line
 
     
 
@@ -74,36 +90,32 @@ def main():
         print("No component name provided.")
         return
     
-    
-    import_info = {
+    import_statements = {
         "module_dict": {},
-        "svg_dict": {},
-        "component_dict": {}
+        "component_dict": {},
+        "svg_dict": {}
     }
-    
-    print(type(import_info))
-    
     
     with open("./extraction_output.js", "w") as output_file:
         for component in args.component:
-            import_component(component, import_info)
+            import_component(component, import_statements)
         
-        print("module_dict", import_info["module_dict"])
-        # module
         # Write the module requirements to the output file
-        for module in import_info["module_dict"].keys():
-            output_file.write(f"import {{ {', '.join(import_info['module_dict'][module])} }} from {module};\n")
+        for module in import_statements["module_dict"].keys():
+            output_file.write(f"import {{ {', '.join(import_statements['module_dict'][module])} }} from {module};\n")
         
         # Keep each section separated by a newline
         output_file.write("\n")
         
-        # Write the component imports to the output file
-        # TODO: Implement this
-        
         # Write the SVG imports to the output file
-        for svg_name in import_info["svg_dict"].keys():
+        for svg_name in import_statements["svg_dict"].keys():
             output_file.write(f"const {svg_name} = ")
-            write_svg_to_file(output_file, import_info["svg_dict"][svg_name])
+            write_svg_to_file(output_file, import_statements["svg_dict"][svg_name])
+            
+        # Write each component to the output file
+        # TODO: Implement this
+        for component in import_statements["component_dict"].keys():
+            output_file.write(import_statements["component_dict"][component])
     
     
     
