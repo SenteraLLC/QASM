@@ -1,8 +1,18 @@
 import argparse
+import typing
 from pprint import pprint
+import os
+
+def make_path(original_path: str) -> str:
+    """Helper function to create a path relative to the QASM root directory.
+    It assumes that all original_paths are valid paths relative to the react-frontend/src/components directory."""
+    
+    script_root_dir = os.getcwd()
+    components_dir = os.path.abspath(os.path.join(script_root_dir, "src/components"))
+    return os.path.abspath(os.path.join(components_dir, original_path))
 
 
-def append_if_not_in_list(item, list):
+def append_if_not_in_list(item: any, list: list) -> None:
     """Helper function to append an item to a list if it is not already in the list."""
     if (item not in list):
         list.append(item)
@@ -32,7 +42,7 @@ def handle_import_line__module(line, modules_dict):
         if (import_name != ""):
             append_if_not_in_list(line_pieces[i].replace(",", ""), modules_dict[module_name])
         i += 1
-        
+
 
 def handle_import_line__svg(line, svgs_dict):
     """Extract the SVG name and filename from the import statement.
@@ -40,22 +50,32 @@ def handle_import_line__svg(line, svgs_dict):
     so that the SVG can be imported after all components have been extracted."""
     
     svg_name = line.split(" ")[1]
-    svg_filename = line.split(" from ")[1].replace(";", "").replace("'", "").replace('"', "").strip().split("/")[-1]
+    svg_relative_path = line.split(" from ")[1].replace(";", "").replace("'", "").replace('"', "").strip()
     
     if (svg_name in svgs_dict):
         print(f"Duplicate SVG import: {svg_name}")
         return
     
-    svgs_dict[svg_name] = svg_filename
-            
-            
-def handle_import_line__local_component(line, all_imports):
-    pass
+    svgs_dict[svg_name] = svg_relative_path
 
 
-def import_file__svg(output_file, svg_name, svg_filename):
+def handle_import_line__local_file(line, all_imports):
+    line_pieces = line.split(" ")
+    
+    if (line_pieces[0] == "import"):
+        print("import local file (import)")
+    elif (line_pieces[0] == "const"):
+        print("import local file (const)")
+    else:
+        print("Unknown import line format")
+
+
+def import_file__svg(output_file, svg_name, svg_relative_path):
+    """Open an SVG file and write its contents to the output file.
+    Ignores the <?xml> line and any comments."""
+    
     output_file.write(f"const {svg_name} = ")
-    with open(f"./src/icons/{svg_filename}") as svg_file:
+    with open(make_path(svg_relative_path)) as svg_file:
         for line in svg_file:
             if ("<?xml" in line):
                 continue
@@ -70,10 +90,15 @@ def import_file__local_component(component_name, all_imports):
     Import statements are handled differently depending on the type of import.
     Non-import statements are appended to the component's string representation."""
     
-    with open(f"./src/components/{component_name}.js") as file:
+    # For convienence
+    svgs = all_imports["svgs"]
+    modules = all_imports["modules"]
+    components = all_imports["components"]
+    
+    with open(make_path(f"./{component_name}.js")) as file:
         for line in file:
             if ("import " in line and " from " in line and ".svg" in line):
-                handle_import_line__svg(line, all_imports["svgs"])
+                handle_import_line__svg(line, svgs)
                 
             elif ("import " in line and " from " in line and ".js" in line and "require" in line):
                 print("require statement")
@@ -83,12 +108,19 @@ def import_file__local_component(component_name, all_imports):
                 pass
                 
             elif ("import " in line and " from " in line):
-                handle_import_line__module(line, all_imports["modules"])
+                handle_import_line__module(line, modules)
+                pass
+            
+            elif ("import " in line and ".css" in line):
+                pass
+            
+            elif ("const " in line and "require(" in line):
                 pass
                 
             else:
-                # components_dict[component_name] += line
-                pass
+                if (component_name not in components):
+                    components[component_name] = ""
+                components[component_name] += line
 
 
 def main():
@@ -123,7 +155,13 @@ def main():
         # Write the svgs to the output file
         for svg_name, svg_filename in all_imports["svgs"].items():
             import_file__svg(output_file, svg_name, svg_filename)
+            print(f"Svgfile:  {svg_filename}")
             output_file.write("\n\n")
+            
+        for _, component_content in all_imports["components"].items():
+            output_file.write(component_content)
+            output_file.write("\n\n")
+            
         
     
 
