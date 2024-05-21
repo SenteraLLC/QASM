@@ -62,19 +62,26 @@ def handle_import_line__svg(line, svgs_dict):
 def handle_import_line__local_file(line, all_imports):
     line_pieces = line.split(" ")
     
+    relative_path: str = ""
     if (line_pieces[0] == "import"):
-        print("import local file (import)")
+        relative_path = line_pieces[-1].replace(";", "").replace("'", "").replace('"', "").strip()
+        
     elif (line_pieces[0] == "const"):
-        print("import local file (const)")
+        relative_path = line_pieces[-1].replace(";", "").replace("'", "").replace('"', "").replace("require(", "").replace(")", "").strip()
+        
     else:
         print("Unknown import line format")
+        return
+    
+    filename = relative_path.split("/")[-1].split(".")[0]
+    import_file__local_component(filename, all_imports, make_path(relative_path))
 
 
 def import_file__svg(output_file, svg_name, svg_relative_path):
     """Open an SVG file and write its contents to the output file.
     Ignores the <?xml> line and any comments."""
     
-    output_file.write(f"const {svg_name} = ")
+    output_file.write(f"const {svg_name} =")
     with open(make_path(svg_relative_path)) as svg_file:
         for line in svg_file:
             if ("<?xml" in line):
@@ -85,17 +92,22 @@ def import_file__svg(output_file, svg_name, svg_relative_path):
             output_file.write(" ".join(line.split()) + " ")
 
 
-def import_file__local_component(component_name, all_imports):
+def import_file__local_component(component_name, all_imports, filepath=None):
     """Open a local component file and handle each line accordingly.
     Import statements are handled differently depending on the type of import.
-    Non-import statements are appended to the component's string representation."""
+    Non-import statements are appended to the component's string representation.
+    Assumes that the component file is in the components directory, 
+    with filename: {component_name}.js unless file_path is provided."""
     
     # For convienence
     svgs = all_imports["svgs"]
     modules = all_imports["modules"]
     components = all_imports["components"]
     
-    with open(make_path(f"./{component_name}.js")) as file:
+    if (filepath == None):
+        filepath = make_path(f"./{component_name}.js")
+    
+    with open(filepath) as file:
         for line in file:
             if ("import " in line and " from " in line and ".svg" in line):
                 handle_import_line__svg(line, svgs)
@@ -104,7 +116,7 @@ def import_file__local_component(component_name, all_imports):
                 print("require statement")
                 
             elif ("import " in line and " from " in line and ".js" in line):
-                # handle_import_line__module(line, all_imports["components"])
+                handle_import_line__local_file(line, all_imports)
                 pass
                 
             elif ("import " in line and " from " in line):
@@ -129,20 +141,22 @@ def main():
     parser.add_argument("--component", nargs="+", help="Name of component to extract.")
     args = parser.parse_args()
     
+    # No component, no point
     if (args.component == None):
         print("No component name provided.")
         return
     
+    # Dictionary to store all the imformation required to generate the output file
+    # Not strictly only imports, but I couldn't think of a better name
     all_imports = {
         "modules": {},
         "components": {},
         "svgs": {}
     }
     
+    # Import and save the contents of each component
     for component in args.component:
         import_file__local_component(component, all_imports)
-        
-    # pprint(all_imports)
     
     with open("./extraction_output.js", "w") as output_file:
         # Write the module imports to the output file
@@ -155,7 +169,6 @@ def main():
         # Write the svgs to the output file
         for svg_name, svg_filename in all_imports["svgs"].items():
             import_file__svg(output_file, svg_name, svg_filename)
-            print(f"Svgfile:  {svg_filename}")
             output_file.write("\n\n")
             
         for _, component_content in all_imports["components"].items():
