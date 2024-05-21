@@ -4,8 +4,8 @@ from pprint import pprint
 import os
 
 def make_path(original_path: str) -> str:
-    """Helper function to create a path relative to the QASM root directory.
-    It assumes that all original_paths are valid paths relative to the react-frontend/src/components directory."""
+    """Helper function to create an absolute path from a relative path.
+    The relative path is assumed to be relative to the components directory."""
     
     script_root_dir = os.getcwd()
     components_dir = os.path.abspath(os.path.join(script_root_dir, "src/components"))
