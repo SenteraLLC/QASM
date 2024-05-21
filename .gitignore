@@ -41,3 +41,5 @@ override.tf.json
 .terraformrc
 terraform.rc
 
+# Ignore the output of the extraction script
+react-frontend/extraction_output.js
