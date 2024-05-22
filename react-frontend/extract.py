@@ -1,5 +1,4 @@
 import argparse
-import typing
 from pprint import pprint
 import os
 
@@ -34,9 +33,6 @@ def handle_import_line__module(line, modules_dict):
     
     if (module_name not in modules_dict):
         modules_dict[module_name] = []
-    else:
-        # DEBUG. TODO: Remove before pr
-        print(f"Duplicate module import: {module_name}")
     
     line_pieces = line.split(" ")
     
@@ -142,7 +138,7 @@ def import_file__local_file(file_name, folder_path, all_imports):
                 handle_import_line__local_file(line, all_imports, folder_path)
             
             elif ("export default" in line):
-                # Remove export default lines, instead add export to the beginning of the component
+                # Remove "export default" lines, instead add export to the beginning of the component
                 continue
             
             elif ("class " in line and "extends" in line):
@@ -179,7 +175,10 @@ def main():
     for component in args.component:
         import_file__local_file(component + ".js", "./src/components", all_imports)
     
-    with open("./extraction_output.js", "w") as output_file:
+    if (not os.path.isdir("./extraction_output")):
+        os.mkdir("./extraction_output")
+        
+    with open("./extraction_output/QASM.js", "w") as output_file:
         # Write the module imports to the output file
         for module_name, module_imports in all_imports["modules"].items():
             output_file.write(f"import {{ {', '.join(module_imports)} }} from {module_name};\n")
