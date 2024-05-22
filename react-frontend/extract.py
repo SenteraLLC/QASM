@@ -84,9 +84,7 @@ def handle_import_line__css(line: str, all_imports, current_folder_path: str):
         print(f"Duplicate CSS import: {css_relative_path}")
         return
     
-    css_folder, css_filename = get_folder_and_file(current_folder_path, css_relative_path)
-    
-    css_dictonary[css_filename] = css_relative_path
+    css_folder, _ = get_folder_and_file(current_folder_path, css_relative_path)
     
     import_file__css(css_relative_path, css_folder, all_imports)
 
@@ -151,11 +149,13 @@ def import_file__css(file_name, folder_path, all_imports):
     """
     
     css = all_imports["css"]
+    print(file_name)
+    if (file_name not in css):
+        css[file_name] = ""
+    print(css[file_name])
     
     with open(folder_path + "/" + file_name) as file:
         for line in file:
-            if (file_name not in css):
-                css[file_name] = ""
             css[file_name] += line
 
 
@@ -258,11 +258,9 @@ def main():
             requirements_file.write(requirement + "\n")
             
     with open("./extraction_output/QASM.css", "w") as css_file:
-        for css_filename, css_relative_path in all_imports["css"].items():
-            print(css_relative_path)
-            for css_file_contents in all_imports["css"].values():
-                css_file.write(css_file_contents)
-            css_file.write("\n\n")
+        for css_file_contents in all_imports["css"].values():
+            css_file.write(css_file_contents)
+        css_file.write("\n\n")
 
 
 if __name__ == "__main__":
