@@ -2,6 +2,11 @@ import argparse
 from pprint import pprint
 import os
 
+def clean_line(line: str) -> str:
+    """Remove single quotes, double quotes, semi-colons, and leading and trailing whitespace from a line."""
+    return line.replace(";", "").replace("'", "").replace('"', "").strip()
+
+
 def get_folder_and_file(current_folder_path: str, relative_file_path: str) -> tuple[str, str]:
     """Return the absolute folder path and the file name from a file path relative to the current folder.
     
@@ -62,6 +67,28 @@ def handle_import_line__svg(line, svgs_dict):
         return
     
     svgs_dict[svg_name] = svg_relative_path
+
+
+def handle_import_line__css(line: str, all_imports, current_folder_path: str):
+    """Extract the CSS filename from the import statement.
+    
+    Add the CSS filename to the dictionary of CSS files, 
+    so that the CSS can be imported after all components have been extracted.
+    """
+    
+    css_dict = all_imports["css"]
+    
+    css_relative_path = line.split(" ")[1].replace(";", "").replace("'", "").replace('"', "").strip()
+    
+    if (css_relative_path in css_dict):
+        print(f"Duplicate CSS import: {css_relative_path}")
+        return
+    
+    css_folder, css_filename = get_folder_and_file(current_folder_path, css_relative_path)
+    
+    css_dict[css_filename] = css_relative_path
+    
+    import_file__local_file(css_relative_path, css_folder, all_imports)
 
 
 def handle_import_line__local_file(line, all_imports, current_folder_path: str):
@@ -132,7 +159,7 @@ def import_file__local_file(file_name, folder_path, all_imports):
                 handle_import_line__module(line, modules)
             
             elif ("import " in line and ".css" in line):
-                pass
+                handle_import_line__css(line, all_imports, folder_path)
             
             elif ("const " in line and "require(" in line):
                 handle_import_line__local_file(line, all_imports, folder_path)
@@ -168,7 +195,8 @@ def main():
     all_imports = {
         "modules": {},
         "components": {},
-        "svgs": {}
+        "svgs": {},
+        "css": {}
     }
     
     # Import and save the contents of each component
@@ -203,6 +231,14 @@ def main():
         for requirement in all_imports["modules"]:
             requirements_file.write(requirement + "\n")
             
-        
+    with open("./extraction_output/QASM.css", "w") as css_file:
+        for css_filename, css_relative_path in all_imports["css"].items():
+            folder_path, filename = get_folder_and_file("./src/components", css_relative_path)
+            with open(folder_path + "/" + filename) as css:
+                for line in css:
+                    css_file.write(line)
+            css_file.write("\n\n")
+
+
 if __name__ == "__main__":
     main()
