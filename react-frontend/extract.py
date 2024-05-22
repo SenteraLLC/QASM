@@ -40,7 +40,7 @@ def handle_import_line__module(line, modules_dict):
     
     line_pieces = line.split(" ")
     
-    # line_pieces[0] is always "import" so skip to 1
+    # Skip line_pieces[0]. It is always "import"
     i = 1
     while (line_pieces[i] != "from"):
         import_name = line_pieces[i].replace("{", "").replace("}", "").replace(",", "")
@@ -53,8 +53,10 @@ def handle_import_line__module(line, modules_dict):
 
 def handle_import_line__svg(line, svgs_dict):
     """Extract the SVG name and filename from the import statement.
+    
     Add the SVG name and filename to the dictionary of SVGs, 
-    so that the SVG can be imported after all components have been extracted."""
+    so that the SVG can be imported after all components have been extracted.
+    """
     
     svg_name = line.split(" ")[1]
     svg_relative_path = line.split(" from ")[1].replace(";", "").replace("'", "").replace('"', "").strip()
@@ -67,6 +69,11 @@ def handle_import_line__svg(line, svgs_dict):
 
 
 def handle_import_line__local_file(line, all_imports, current_folder_path: str):
+    """Handle a line that imports a local file.
+    
+    Finds the folder and file name of the imported file, and saves the imports and content of the file.
+    """
+    
     line_pieces = line.split(" ")
     
     relative_path: str = ""
@@ -82,18 +89,22 @@ def handle_import_line__local_file(line, all_imports, current_folder_path: str):
     
     new_folder, filename = get_folder_and_file(current_folder_path, relative_path)
     
-    import_file__local_file(filename, new_folder, all_imports)
+    # No need to import the file if it's already been imported
+    if (filename not in all_imports["components"]):
+        import_file__local_file(filename, new_folder, all_imports)
 
 
 def write_svg_to_output(output_file, svg_path):
-    """Open an SVG file and write its contents to the output file.
-    Ignores the <?xml> line and any comments."""
+    """Open an SVG file and write its contents to the output file. 
+    
+    Ignores the <?xml> line and any comments.
+    """
     
     with open(svg_path) as svg_file:
         for line in svg_file:
             if ("<?xml" in line):
                 continue
-            # TODO: Better handle ignoring comments
+            # TODO: Better handle ignoring comments (Probably doesn't matter)
             if ("<!--" in line or "-->" in line):
                 continue
             output_file.write(" ".join(line.split()) + " ")
@@ -118,9 +129,6 @@ def import_file__local_file(file_name, folder_path, all_imports):
             if ("import " in line and " from " in line and ".svg" in line):
                 handle_import_line__svg(line, svgs)
                 
-            elif ("import " in line and " from " in line and ".js" in line and "require" in line):
-                print("require statement... skipping")
-                
             elif ("import " in line and " from " in line and ".js" in line):
                 handle_import_line__local_file(line, all_imports, folder_path)
                 
@@ -134,6 +142,7 @@ def import_file__local_file(file_name, folder_path, all_imports):
                 handle_import_line__local_file(line, all_imports, folder_path)
             
             elif ("export default" in line):
+                # Remove export default lines, instead add export to the beginning of the component
                 continue
             
             elif ("class " in line and "extends" in line):
@@ -192,7 +201,5 @@ def main():
             output_file.write("\n\n")
             
         
-    
-
 if __name__ == "__main__":
     main()
