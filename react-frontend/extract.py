@@ -2,9 +2,9 @@ import argparse
 from pprint import pprint
 import os
 
-def clean_line(line: str) -> str:
+def clean_string(string: str) -> str:
     """Remove single quotes, double quotes, semi-colons, and leading and trailing whitespace from a line."""
-    return line.replace(";", "").replace("'", "").replace('"', "").strip()
+    return string.replace(";", "").replace("'", "").replace('"', "").replace("{", "").replace("}", "").strip()
 
 
 def get_folder_and_file(current_folder_path: str, relative_file_path: str) -> tuple[str, str]:
@@ -24,7 +24,7 @@ def get_folder_and_file(current_folder_path: str, relative_file_path: str) -> tu
 
 
 def append_if_not_in_list(item: any, list: list) -> None:
-    """Helper function to append an item to a list if it is not already in the list."""
+    """Append an item to a list if it is not already in the list."""
     if (item not in list):
         list.append(item)
 
@@ -34,7 +34,7 @@ def handle_import_line__module(line, modules_dict):
     Use the module name as a key in the dictionary of modules,
     to keep track of everything that needs to be imported from that module."""
     
-    module_name = line.split(" from ")[1].replace(";", "").replace("'", "").replace('"', "").strip()
+    module_name = clean_string(line.split(" from ")[1])
     
     if (module_name not in modules_dict):
         modules_dict[module_name] = []
@@ -44,7 +44,7 @@ def handle_import_line__module(line, modules_dict):
     # Skip line_pieces[0]. It is always "import"
     i = 1
     while (line_pieces[i] != "from"):
-        import_name = line_pieces[i].replace("{", "").replace("}", "").replace(",", "")
+        import_name = clean_string(line_pieces[i])
         
         # import_name can be "" if there's a space between the import and the comma
         if (import_name != ""):
@@ -60,7 +60,7 @@ def handle_import_line__svg(line, svgs_dict):
     """
     
     svg_name = line.split(" ")[1]
-    svg_relative_path = line.split(" from ")[1].replace(";", "").replace("'", "").replace('"', "").strip()
+    svg_relative_path = clean_string(line.split(" from ")[1])
     
     if (svg_name in svgs_dict):
         print(f"Duplicate SVG import: {svg_name}")
@@ -76,19 +76,19 @@ def handle_import_line__css(line: str, all_imports, current_folder_path: str):
     so that the CSS can be imported after all components have been extracted.
     """
     
-    css_dict = all_imports["css"]
+    css_dictonary = all_imports["css"]
     
-    css_relative_path = line.split(" ")[1].replace(";", "").replace("'", "").replace('"', "").strip()
+    css_relative_path = clean_string(line.split(" ")[1])
     
-    if (css_relative_path in css_dict):
+    if (css_relative_path in css_dictonary):
         print(f"Duplicate CSS import: {css_relative_path}")
         return
     
     css_folder, css_filename = get_folder_and_file(current_folder_path, css_relative_path)
     
-    css_dict[css_filename] = css_relative_path
+    css_dictonary[css_filename] = css_relative_path
     
-    import_file__local_file(css_relative_path, css_folder, all_imports)
+    import_file__css(css_relative_path, css_folder, all_imports)
 
 
 def handle_import_line__local_file(line, all_imports, current_folder_path: str):
@@ -101,10 +101,10 @@ def handle_import_line__local_file(line, all_imports, current_folder_path: str):
     
     relative_path: str = ""
     if (line_pieces[0] == "import"):
-        relative_path = line_pieces[-1].replace(";", "").replace("'", "").replace('"', "").strip()
+        relative_path = clean_string(line_pieces[-1])
         
     elif (line_pieces[0] == "const"):
-        relative_path = line_pieces[-1].replace(";", "").replace("'", "").replace('"', "").replace("require(", "").replace(")", "").strip()
+        relative_path = clean_string(line_pieces[-1]).replace("require(", "").replace(")", "").strip()
         
     else:
         print("Unknown import line format")
@@ -131,6 +131,32 @@ def write_svg_to_output(output_file, svg_path):
             if ("<!--" in line or "-->" in line):
                 continue
             output_file.write(" ".join(line.split()) + " ")
+
+
+def write_css_to_output(output_file, css_path):
+    """Open a CSS file and write its contents to the output file."""
+    
+    with open(css_path) as css_file:
+        for line in css_file:
+            output_file.write(" ".join(line.split()) + " ")
+
+
+def import_file__css(file_name, folder_path, all_imports):
+    """Extract the imports and content from a CSS file.
+    
+    Arguments:
+    component_name -- The name of the file to extract.
+    path -- Path to the file's folder relative to react-frontend 
+    all_imports -- A dictionary containing the imports and content of all files.
+    """
+    
+    css = all_imports["css"]
+    
+    with open(folder_path + "/" + file_name) as file:
+        for line in file:
+            if (file_name not in css):
+                css[file_name] = ""
+            css[file_name] += line
 
 
 def import_file__local_file(file_name, folder_path, all_imports):
@@ -233,10 +259,9 @@ def main():
             
     with open("./extraction_output/QASM.css", "w") as css_file:
         for css_filename, css_relative_path in all_imports["css"].items():
-            folder_path, filename = get_folder_and_file("./src/components", css_relative_path)
-            with open(folder_path + "/" + filename) as css:
-                for line in css:
-                    css_file.write(line)
+            print(css_relative_path)
+            for css_file_contents in all_imports["css"].values():
+                css_file.write(css_file_contents)
             css_file.write("\n\n")
 
 
