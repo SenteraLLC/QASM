@@ -199,6 +199,10 @@ def main():
             output_file.write(component_content)
             output_file.write("\n\n")
             
+    with open("./extraction_output/requirements.txt", "w") as requirements_file:
+        for requirement in all_imports["modules"]:
+            requirements_file.write(requirement + "\n")
+            
         
 if __name__ == "__main__":
     main()
