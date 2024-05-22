@@ -3,13 +3,20 @@ import typing
 from pprint import pprint
 import os
 
-def make_path(original_path: str) -> str:
-    """Helper function to create an absolute path from a relative path.
-    The relative path is assumed to be relative to the components directory."""
+def get_folder_and_file(current_folder_path: str, relative_file_path: str) -> tuple[str, str]:
+    """Return the absolute folder path and the file name from a file path relative to the current folder.
+    
+    Arguments:
+    current_folder_path -- The path to the current folder. Can be absolute or relative to the script root.
+    relative_file_path -- The path to the file relative to the current folder.
+    """
     
     script_root_dir = os.getcwd()
-    components_dir = os.path.abspath(os.path.join(script_root_dir, "src/components"))
-    return os.path.abspath(os.path.join(components_dir, original_path))
+    current_folder_absolute = os.path.abspath(os.path.join(script_root_dir, current_folder_path))
+    relative_folder_path, filename = relative_file_path.rsplit("/", 1)
+    new_folder_absolute = os.path.abspath(os.path.join(current_folder_absolute, relative_folder_path))
+
+    return new_folder_absolute, filename
 
 
 def append_if_not_in_list(item: any, list: list) -> None:
@@ -59,7 +66,7 @@ def handle_import_line__svg(line, svgs_dict):
     svgs_dict[svg_name] = svg_relative_path
 
 
-def handle_import_line__local_file(line, all_imports):
+def handle_import_line__local_file(line, all_imports, current_folder_path: str):
     line_pieces = line.split(" ")
     
     relative_path: str = ""
@@ -71,18 +78,18 @@ def handle_import_line__local_file(line, all_imports):
         
     else:
         print("Unknown import line format")
-        return
+        return 
     
-    filename = relative_path.split("/")[-1].split(".")[0]
-    import_file__local_component(filename, all_imports, make_path(relative_path))
+    new_folder, filename = get_folder_and_file(current_folder_path, relative_path)
+    
+    import_file__local_file(filename, new_folder, all_imports)
 
 
-def import_file__svg(output_file, svg_name, svg_relative_path):
+def write_svg_to_output(output_file, svg_path):
     """Open an SVG file and write its contents to the output file.
     Ignores the <?xml> line and any comments."""
     
-    output_file.write(f"const {svg_name} =")
-    with open(make_path(svg_relative_path)) as svg_file:
+    with open(svg_path) as svg_file:
         for line in svg_file:
             if ("<?xml" in line):
                 continue
@@ -92,47 +99,52 @@ def import_file__svg(output_file, svg_name, svg_relative_path):
             output_file.write(" ".join(line.split()) + " ")
 
 
-def import_file__local_component(component_name, all_imports, filepath=None):
-    """Open a local component file and handle each line accordingly.
-    Import statements are handled differently depending on the type of import.
-    Non-import statements are appended to the component's string representation.
-    Assumes that the component file is in the components directory, 
-    with filename: {component_name}.js unless file_path is provided."""
+def import_file__local_file(file_name, folder_path, all_imports):
+    """Extract the imports and content from a local file.
+    
+    Arguments:
+    component_name -- The name of the file to extract.
+    path -- Path to the file's folder relative to react-frontend 
+    all_imports -- A dictionary containing the imports and content of all files.
+    """
     
     # For convienence
     svgs = all_imports["svgs"]
     modules = all_imports["modules"]
     components = all_imports["components"]
     
-    if (filepath == None):
-        filepath = make_path(f"./{component_name}.js")
-    
-    with open(filepath) as file:
+    with open(folder_path + "/" + file_name) as file:
         for line in file:
             if ("import " in line and " from " in line and ".svg" in line):
                 handle_import_line__svg(line, svgs)
                 
             elif ("import " in line and " from " in line and ".js" in line and "require" in line):
-                print("require statement")
+                print("require statement... skipping")
                 
             elif ("import " in line and " from " in line and ".js" in line):
-                handle_import_line__local_file(line, all_imports)
-                pass
+                handle_import_line__local_file(line, all_imports, folder_path)
                 
             elif ("import " in line and " from " in line):
                 handle_import_line__module(line, modules)
-                pass
             
             elif ("import " in line and ".css" in line):
                 pass
             
             elif ("const " in line and "require(" in line):
-                pass
+                handle_import_line__local_file(line, all_imports, folder_path)
+            
+            elif ("export default" in line):
+                continue
+            
+            elif ("class " in line and "extends" in line):
+                if (file_name not in components):
+                    components[file_name] = ""
+                components[file_name] += "export " + line
                 
             else:
-                if (component_name not in components):
-                    components[component_name] = ""
-                components[component_name] += line
+                if (file_name not in components):
+                    components[file_name] = ""
+                components[file_name] += line
 
 
 def main():
@@ -156,7 +168,7 @@ def main():
     
     # Import and save the contents of each component
     for component in args.component:
-        import_file__local_component(component, all_imports)
+        import_file__local_file(component + ".js", "./src/components", all_imports)
     
     with open("./extraction_output.js", "w") as output_file:
         # Write the module imports to the output file
@@ -168,7 +180,11 @@ def main():
         
         # Write the svgs to the output file
         for svg_name, svg_filename in all_imports["svgs"].items():
-            import_file__svg(output_file, svg_name, svg_filename)
+            # All the svg_filenames are paths relative to the components folder
+            folder_path, filename = get_folder_and_file("./src/components", svg_filename)
+            
+            output_file.write(f"const {svg_name} =")
+            write_svg_to_output(output_file, folder_path + "/" + filename)
             output_file.write("\n\n")
             
         for _, component_content in all_imports["components"].items():
