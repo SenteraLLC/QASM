@@ -216,7 +216,7 @@ def main():
         print("No component name provided.")
         return
     
-    # Dictionary to store all the imformation required to generate the output file
+    # Dictionary to store all the information required to generate the output file
     # Not strictly only imports, but I couldn't think of a better name
     all_imports = {
         "modules": {},
