@@ -15,7 +15,7 @@
     }
   ],
   "description": "A web application built on React and Electron, for running custom QA and labeling jobs from a local host, a packaged windows .exe, or a statically hosted S3 website.",
-  "version": "0.19.2",
+  "version": "0.20.0",
   "private": true,
   "proxy": "http://localhost:3000",
   "homepage": "./",
