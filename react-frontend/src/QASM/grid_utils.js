@@ -98,6 +98,7 @@ export function initProps(window, document, component, props) {
     component.label_loadnames = props.label_loadnames || undefined; // [<string loadname1>, <string loadname2>, ...]
     component.autoload_labels_on_dir_select = props.autoload_labels_on_dir_select || false;
     component.image_layer_folder_names = props.image_layer_folder_names || undefined; // [Array[<string>], ...]
+    component.center_line_start_visible = props.center_line_start_visible || false;
     component.labels = initLabels(component);
 
     // Bind functions for deep links

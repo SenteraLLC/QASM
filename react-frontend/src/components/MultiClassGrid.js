@@ -290,6 +290,7 @@ class MultiClassGrid extends Component {
                                         ? this.labels[image_name] 
                                         : null
                                 }
+                                center_line_start_visible={this.center_line_start_visible}
                             />
                         </Fragment>
                     ))}

@@ -29,6 +29,7 @@ class MultiClassGridImage extends Component {
         this.classes = props.classes;
         this.image_stack = props.image_stack;
         this.default_classes = props.default_classes;
+        this.center_line_start_visible = props.center_line_start_visible
 
         // Use state to store current class
         // First class_value in each class_type
@@ -151,7 +152,10 @@ class MultiClassGridImage extends Component {
                     {/* TODO: support more than one class overlay at once */}
                     <div className="class-overlay" id={this.image_name + "-class-overlay"}></div>
                     {/* Vertical line, centered horizonally, that spans the entire height of the image */}
-                    <div className="center-line-overlay" id={this.image_name + "-center-line-overlay"}></div>
+                    <div 
+                        className={"center-line-overlay " + (this.center_line_start_visible ? "" : "hidden")} 
+                        id={this.image_name + "-center-line-overlay"}>
+                    </div>
                 </div>
                 <p className="image-name">{this.image_name}</p>
                 <div className="class-selector-holder">
