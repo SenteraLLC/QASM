@@ -150,6 +150,8 @@ class MultiClassGridImage extends Component {
                     ))}
                     {/* TODO: support more than one class overlay at once */}
                     <div className="class-overlay" id={this.image_name + "-class-overlay"}></div>
+                    {/* Vertical line, centered horizonally, that spans the entire height of the image */}
+                    <div className="center-line-overlay" id={this.image_name + "-center-line-overlay"}></div>
                 </div>
                 <p className="image-name">{this.image_name}</p>
                 <div className="class-selector-holder">

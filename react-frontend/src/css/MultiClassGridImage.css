@@ -45,8 +45,8 @@
 
 .MultiClassGridImage .class-overlay {
     bottom: 0;
-    width:40%;
-    height:40%;
+    width: 40%;
+    height: 40%;
     position: absolute;
     display: flex;
     flex-direction: column;
@@ -66,4 +66,15 @@
 }
 .MultiClassGridImage .class-overlay:after{
     transform:rotate(-45deg);
+}
+
+.MultiClassGridImage .center-line-overlay {
+    position: absolute;
+    left: 50%;
+    top: 0;
+    bottom: 0;
+    width: 4px; /* Adjust width as needed */
+    background-color: white;
+    filter: opacity(0.75);
+    transform: translateX(-50%);
 }
