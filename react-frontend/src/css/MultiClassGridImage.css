@@ -73,7 +73,7 @@
     left: 50%;
     top: 0;
     bottom: 0;
-    width: 4px; /* Adjust width as needed */
+    width: 4px;
     background-color: white;
     filter: opacity(0.75);
     transform: translateX(-50%);

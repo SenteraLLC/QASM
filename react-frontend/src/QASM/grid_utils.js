@@ -226,9 +226,9 @@ export function keydownEventHandler(e) {
         case GRID_KEYBIND_NAMES.TOGGLE_CENTER_LINE:
             toggleCenterLine(DOCUMENT, COMPONENT.hover_image_id);
             break;
-        // case GRID_KEYBIND_NAMES.TOGGLE_ALL_CENTER_LINES:
-        //     toggleAllCenterLines(DOCUMENT, COMPONENT);
-        //     break;
+        case GRID_KEYBIND_NAMES.TOGGLE_ALL_CENTER_LINES:
+            toggleAllCenterLines(DOCUMENT, COMPONENT);
+            break;
         default:
             break;
     }
@@ -740,4 +740,34 @@ export function toggleCenterLine(document, hover_image_id) {
     
     let center_line = document.getElementById(hover_image_id + "-center-line-overlay");
     center_line.classList.toggle("hidden");
+}
+
+/**
+ * Show or hide all center lines for all images
+ * 
+ * @param {*} document 
+ * @param {*} component 
+ */
+export function toggleAllCenterLines(document, component) {
+    // Add a component property to keep track of the center line state
+    if (component.center_lines_hidden === undefined) {
+        component.center_lines_hidden = false;
+    }
+
+    // Toggle the property
+    component.center_lines_hidden = !component.center_lines_hidden;
+
+    if (component.center_lines_hidden) {
+        // Show all center lines
+        for (let image_name of component.image_names) {
+            let center_line = document.getElementById(image_name + "-center-line-overlay");
+            center_line.classList.remove("hidden");
+        }
+    } else {
+        // Hide all center lines
+        for (let image_name of component.image_names) {
+            let center_line = document.getElementById(image_name + "-center-line-overlay");
+            center_line.classList.add("hidden");
+        }
+    }
 }

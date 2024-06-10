@@ -88,6 +88,8 @@ class GridImage extends Component {
                         alt={this.image_name + " overlay"}
                         id={this.image_name + "-overlay"}>
                     </img>
+                    {/* Vertical line, centered horizonally, that spans the entire height of the image */}
+                    <div className="center-line-overlay" id={this.image_name + "-center-line-overlay"}></div>
                 </div>
                 <p className="image-name">{this.image_name}</p>
             </div>        
