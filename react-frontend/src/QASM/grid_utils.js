@@ -751,25 +751,13 @@ export function toggleCenterLine(document, hover_image_id) {
  * @param {*} component 
  */
 export function toggleAllCenterLines(document, component) {
-    // Add a component property to keep track of the center line state
-    if (component.center_lines_hidden === undefined) {
-        component.center_lines_hidden = false;
-    }
-
-    // Toggle the property
-    component.center_lines_hidden = !component.center_lines_hidden;
-
-    if (component.center_lines_hidden) {
-        // Show all center lines
-        for (let image_name of component.image_names) {
-            let center_line = document.getElementById(image_name + "-center-line-overlay");
-            center_line.classList.remove("hidden");
-        }
-    } else {
-        // Hide all center lines
-        for (let image_name of component.image_names) {
-            let center_line = document.getElementById(image_name + "-center-line-overlay");
-            center_line.classList.add("hidden");
-        }
+    // Invert the center_lines_hidden state
+    // If it was undefined it will be set to true
+    component.center_lines_hidden = !Boolean(component.center_lines_hidden);
+    const is_hidden = component.center_lines_hidden; // To shorten the variable name
+    
+    for (let image_name of component.image_names) {
+        let center_line = document.getElementById(image_name + "-center-line-overlay");
+        is_hidden ? center_line.classList.add("hidden") : center_line.classList.remove("hidden");
     }
 }
