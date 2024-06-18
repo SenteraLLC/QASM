@@ -11,6 +11,8 @@ const GRID_KEYBIND_NAMES = {
     NEXT_ROW: "next_row_keybind",
     PREV_ROW: "prev_row_keybind",
     NEXT_DIRECTORY: "next_dir_keybind",
+    TOGGLE_CENTER_LINE: "toggle_center_line_keybind",
+    TOGGLE_ALL_CENTER_LINES: "toggle_all_center_lines_keybind",
 }
 const GRID_DEFAULT_KEYBINDS = {
     [GRID_KEYBIND_NAMES.SAVE_LABELS]: ["ctrlKey", "s"],
@@ -19,6 +21,8 @@ const GRID_DEFAULT_KEYBINDS = {
     [GRID_KEYBIND_NAMES.NEXT_ROW]: "n",
     [GRID_KEYBIND_NAMES.PREV_ROW]: "h",
     [GRID_KEYBIND_NAMES.NEXT_DIRECTORY]: "Enter",
+    [GRID_KEYBIND_NAMES.TOGGLE_CENTER_LINE]: "c",
+    [GRID_KEYBIND_NAMES.TOGGLE_ALL_CENTER_LINES]: "C",
 }
 
 // Deep copy of GRID_DEFAULT_KEYBINDS
@@ -94,6 +98,7 @@ export function initProps(window, document, component, props) {
     component.label_loadnames = props.label_loadnames || undefined; // [<string loadname1>, <string loadname2>, ...]
     component.autoload_labels_on_dir_select = props.autoload_labels_on_dir_select || false;
     component.image_layer_folder_names = props.image_layer_folder_names || undefined; // [Array[<string>], ...]
+    component.center_line_start_visible = props.center_line_start_visible || false;
     component.labels = initLabels(component);
 
     // Bind functions for deep links
@@ -219,6 +224,12 @@ export function keydownEventHandler(e) {
         case GRID_KEYBIND_NAMES.NEXT_DIRECTORY:
             loadNextDir(WINDOW, COMPONENT);
             break;
+        case GRID_KEYBIND_NAMES.TOGGLE_CENTER_LINE:
+            toggleCenterLine(DOCUMENT, COMPONENT.hover_image_id);
+            break;
+        case GRID_KEYBIND_NAMES.TOGGLE_ALL_CENTER_LINES:
+            toggleAllCenterLines(DOCUMENT, COMPONENT);
+            break;
         default:
             break;
     }
@@ -323,8 +334,10 @@ export function changeImage(document, hover_image_id, new_image_layer_idx = null
     // childNodes of image holder div = image layers
 
     let layers = document.getElementById(hover_image_id).firstChild.childNodes;
-    // layers[0] is the image, layers[n] is image_stack[n-1], layers[layers.length-1] is the class-overlay
-    for (let idx = 0; idx < layers.length; idx++) {
+    // layers[0] is the image, layers[n] is image_stack[n-1], layers[layers.length-1] is the class-overlay, layers[layers.length-2] is the center-line-overlay
+    // Find and hide the currently visible image, and then show the next image in the stack 
+    const n_layers = layers.length - 2; // Subtract 2 for the overlay and center line
+    for (let idx = 0; idx < n_layers; idx++) {
         let layer = layers[idx];
         // Skip overlays and hidden images
         if (layer.id.includes("overlay") || layer.classList.contains("hidden")) {
@@ -335,8 +348,7 @@ export function changeImage(document, hover_image_id, new_image_layer_idx = null
         layer.classList.add("hidden");
 
         if (new_image_layer_idx === null) {
-            if (idx + 1 === layers.length - 1) {
-                // Last index is the class-overlay
+            if (idx + 1 === n_layers) {
                 // If we're at the last layer, turn on the og image
                 new_image_layer_idx = 0;
             } else {
@@ -715,4 +727,37 @@ async function getImageStack(
         console.log(new_image_stack);
     }
     return new_image_stack;
+}
+
+/**
+ * Show or hide the center line for an image
+ * 
+ * @param {*} document document object
+ * @param {string} hover_image_id id of the current image
+ */
+export function toggleCenterLine(document, hover_image_id) {
+    if (hover_image_id === null) {
+        return;
+    }
+    
+    let center_line = document.getElementById(hover_image_id + "-center-line-overlay");
+    center_line.classList.toggle("hidden");
+}
+
+/**
+ * Show or hide all center lines for all images
+ * 
+ * @param {*} document 
+ * @param {*} component 
+ */
+export function toggleAllCenterLines(document, component) {
+    // Invert the center_lines_hidden state
+    // If it was undefined it will be set to true
+    component.center_lines_hidden = !Boolean(component.center_lines_hidden);
+    const is_hidden = component.center_lines_hidden; // To shorten the variable name
+    
+    for (let image_name of component.image_names) {
+        let center_line = document.getElementById(image_name + "-center-line-overlay");
+        is_hidden ? center_line.classList.add("hidden") : center_line.classList.remove("hidden");
+    }
 }

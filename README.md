@@ -149,12 +149,15 @@ An app configured with `"app": "s3"` will run using files on S3. QASM jobs that 
                 ]
             ]
             ```
+        - ``"center_line_start_visible": <boolean>`` (Optional) Whether the center line should be visible by default. Default is false.
         - ``"save_labels_keybind": <string> or <Array[<string>]>`` (Optional) Keybind to save the current labels. Defaults to ["ctrlKey", "s"].
         - ``"toggle_image_layer_keybind": <string> or <Array[<string>]>`` (Optional) Keybind to toggle between image layers when hovering over an image. Defaults to "b".
         - ``"toggle_all_image_layers_keybind": <string> or <Array[<string>]>`` (Optional) Keybind to toggle the image layer of all images. Defaults to "B".
         - ``"next_row_keybind": <string> or <Array[<string>]>`` (Optional) Keybind to advance to the next row when hovering over an image. Defaults to "n".
         - ``"prev_row_keybind": <string> or <Array[<string>]>`` (Optional) Keybind to advance to the previous row when hovering over an image. Defaults to "h".
         - ``"next_dir_keybind": <string> or <Array[<string>]>`` (Optional) Keybind to advance to the next directory. Defaults to "Enter".
+        - ``"toggle_center_line_keybind": <string> or <Array[<string>]>`` (Optional) Keybind to toggle a vertical line in the center of the image. Defaults to "c".
+        - ``"toggle_all_center_lines_keybind": <string> or <Array[<string>]>`` (Optional) Keybind to toggle a vertical line in the center of all images. Defaults to "C".
 
     - ``"multiclassgrid"`` Configuration ``<Object>``:
         - ``"grid_width": <Number>`` Default number of images to show per row
@@ -174,12 +177,15 @@ An app configured with `"app": "s3"` will run using files on S3. QASM jobs that 
         - ``"label_loadnames": <Array[string]>`` (Optional) An ordered list of label filenames to automatically try and load. Will search one folder above the current directory.
         - ``"autoload_labels_on_dir_select": <boolean>`` (Optional) Whether to try and autoload labels after each new directory selection. Default is false. Can also be changed in app via the checkbox "Autoload Labels on Directory Select". Default is false.
         - ``"image_layer_folder_names": Array[Array[<string>], ...]``: (Optional) Ordered list of folder names of image layers to automatically try and load when a directory is selected. See ``"grid"`` for more details.
+        - ``"center_line_start_visible": <boolean>`` (Optional) Whether the center line should be visible by default. Default is false.
         - ``"save_labels_keybind": <string> or <Array[<string>]>`` (Optional) Keybind to save the current labels. Defaults to ["ctrlKey", "s"].
         - ``"toggle_image_layer_keybind": <string> or <Array[<string>]>`` (Optional) Keybind to toggle between image layers when hovering over an image. Defaults to "b".
         - ``"toggle_all_image_layers_keybind": <string> or <Array[<string>]>`` (Optional) Keybind to toggle the image layer of all images. Defaults to "B".
         - ``"next_row_keybind": <string> or <Array[<string>]>`` (Optional) Keybind to advance to the next row when hovering over an image. Defaults to "n".
         - ``"prev_row_keybind": <string> or <Array[<string>]>`` (Optional) Keybind to advance to the previous row when hovering over an image. Defaults to "h".
         - ``"next_dir_keybind": <string> or <Array[<string>]>`` (Optional) Keybind to advance to the next directory. Defaults to "Enter".
+        - ``"toggle_center_line_keybind": <string> or <Array[<string>]>`` (Optional) Keybind to toggle a vertical line in the center of the image. Defaults to "c".
+        - ``"toggle_all_center_lines_keybind": <string> or <Array[<string>]>`` (Optional) Keybind to toggle a vertical line in the center of all images. Defaults to "C".
                 
 
     - ``"imagelabeler"`` Configuration ``<Object>``:

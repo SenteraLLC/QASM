@@ -315,6 +315,7 @@ class Grid extends Component {
                                 image_stack={
                                     getImageStackByName(this, image_name)
                                 }
+                                center_line_start_visible={this.center_line_start_visible}
                             />
                         </Fragment>
                     ))}
