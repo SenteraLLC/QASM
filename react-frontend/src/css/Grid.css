@@ -60,14 +60,3 @@ div.Grid div.label-filename-container > * {
     flex: 1;
     flex-basis: auto;
 }
-
-div.Grid .center-line-overlay {
-    position: absolute;
-    left: 50%;
-    top: 0;
-    bottom: 0;
-    width: 4px;
-    background-color: white;
-    filter: opacity(0.75);
-    transform: translateX(-50%);
-}

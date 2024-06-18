@@ -38,7 +38,7 @@
     display: none;
 }
 
-.MultiClassGridImage .image-holder {
+.MultiClassGridImage .image-and-overlay-container {
     position: relative;
     display: inline-block;
 }

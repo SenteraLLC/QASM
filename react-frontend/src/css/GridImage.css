@@ -3,6 +3,10 @@
     padding: 0.5em;
 }
 
+.GridImage .image-and-overlay-container {
+    position: relative;
+}
+
 img {
     max-width: 100%;
     max-height: 100%;
@@ -23,4 +27,15 @@ p.image-name {
 
 .hidden {
     display: none;
+}
+
+.GridImage .center-line-overlay {
+    position: absolute;
+    left: 50%;
+    top: 0;
+    bottom: 0;
+    width: 4px;
+    background-color: white;
+    filter: opacity(0.75);
+    transform: translateX(-50%);
 }

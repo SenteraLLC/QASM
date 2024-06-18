@@ -67,7 +67,7 @@ class GridImage extends Component {
                 onClick={this.changeClass}
                 id={this.image_name}
             >
-                <div>
+                <div className="image-and-overlay-container">
                     <img 
                         src={this.image} 
                         alt={this.image_name}

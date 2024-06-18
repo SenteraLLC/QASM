@@ -133,7 +133,7 @@ class MultiClassGridImage extends Component {
                 className={"MultiClassGridImage " + this.state.class + show_overlay}
                 id={this.image_name}
             >
-                <div className="image-holder">
+                <div className="image-and-overlay-container">
                     <img
                         src={this.image}
                         alt={this.image_name}
