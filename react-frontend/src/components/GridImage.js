@@ -12,10 +12,10 @@ class GridImage extends Component {
         super(props);
 
         // Initialize props
-        this.image        = props.image;
-        this.image_name   = props.image_name;
-        this.classes      = props.classes;
-        this.image_stack  = props.image_stack;
+        this.image                     = props.image;
+        this.image_name                = props.image_name;
+        this.classes                   = props.classes;
+        this.image_stack               = props.image_stack;
         this.center_line_start_visible = props.center_line_start_visible;
 
         // Use state to store current class

@@ -335,7 +335,9 @@ export function changeImage(document, hover_image_id, new_image_layer_idx = null
 
     let layers = document.getElementById(hover_image_id).firstChild.childNodes;
     // layers[0] is the image, layers[n] is image_stack[n-1], layers[layers.length-1] is the class-overlay, layers[layers.length-2] is the center-line-overlay
-    for (let idx = 0; idx < layers.length; idx++) {
+    // Find and hide the currently visible image, and then show the next image in the stack 
+    const n_layers = layers.length - 2; // Subtract 2 for the overlay and center line
+    for (let idx = 0; idx < n_layers; idx++) {
         let layer = layers[idx];
         // Skip overlays and hidden images
         if (layer.id.includes("overlay") || layer.classList.contains("hidden")) {
@@ -346,8 +348,7 @@ export function changeImage(document, hover_image_id, new_image_layer_idx = null
         layer.classList.add("hidden");
 
         if (new_image_layer_idx === null) {
-            if (idx + 1 === layers.length - 2) {
-                // Last index is the class-overlay
+            if (idx + 1 === n_layers) {
                 // If we're at the last layer, turn on the og image
                 new_image_layer_idx = 0;
             } else {
