@@ -21,7 +21,7 @@ class Input extends Component {
      * 
      * @param {object} e Event object 
      */
-    handleFormSubmit(e) {
+    async handleFormSubmit(e) {
         e.preventDefault();
         
         // Create an object containing the input names and values
@@ -36,7 +36,8 @@ class Input extends Component {
         // Call the on_submit function
         const on_submit_keys = Object.keys(this.on_submit);
         const required_aws_lambda_keys = ["function_arn", "role_arn"];
-        let data;
+        let data = {};
+        let success = false;
         switch (this.on_submit.type) {
             case "aws_lambda":
                 // Check if all required keys are present
@@ -53,11 +54,16 @@ class Input extends Component {
                     params: input_values
                 };
                 // Trigger the lambda
-                this.QASM.call_backend(
+                success = await this.QASM.call_backend(
                     window, 
                     function_names.TRIGGER_INPUT_LAMBDA, 
                     data
                 );
+                if (success) {
+                    alert(this.on_submit.alert_message || "Successfully saved input data.");
+                } else {
+                    alert("Failed to save input data. Please try again.");
+                }
                 break;
             default:
                 console.error("Invalid on_submit type: ", this.on_submit.type);

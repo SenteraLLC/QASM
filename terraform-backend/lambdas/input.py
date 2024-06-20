@@ -1,6 +1,6 @@
 import json
 
-from utils.lambda_utils import invoke_lambda_from_arn
+from utils.lambda_utils import get_return_block_with_cors, invoke_lambda_from_arn
 
 def trigger_input_lambda(event, context):
     """Trigger a lambda using an arn and role."""
@@ -13,17 +13,16 @@ def trigger_input_lambda(event, context):
     params = body.get("params", {})
 
     # Invoke the lambda
-    invoke_lambda_from_arn(
+    response = invoke_lambda_from_arn(
         function_arn=function_arn, 
         role_arn=role_arn, 
         params=params, 
-        run_async=True
+        run_async=False
     )
+    print(response)
+    return get_return_block_with_cors(response)
 
 
 def input_demo(event, context):
     """Do nothing."""
     print(event)
-    inputs: list[dict] = event
-    for input in inputs:
-        print(input)
