@@ -101,9 +101,12 @@
             "display_string": "Welcome to the Input component! Please enter your name below.",
             "inputs": [
                 {
-                    "name": "name",
-                    "type": "text",
-                    "default": "John Doe"
+                    "name": "Name",
+                    "type": "text"
+                },
+                {
+                    "name": "Age",
+                    "type": "number"
                 }
             ]
         }

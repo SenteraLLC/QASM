@@ -1,6 +1,25 @@
-div.Input {
+div.Input div.input-title {
   margin: 10px;
   padding: 10px;
   border: 1px solid #ccc;
   border-radius: 5px;
+}
+
+div.Input div.input-fields-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+div.Input div.input-field {
+    margin: 10px;
+    padding: 10px;
+    width: 20%;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+div.Input div.input-field > label {
+    margin-right: 10px;
 }
