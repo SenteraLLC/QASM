@@ -7,6 +7,7 @@ import Home from "./components/Home.js";
 import BinaryEditors from "./components/BinaryEditors.js";
 import S3Browser from "./components/S3Browser.js";
 import ImageLabeler from './components/ImageLabeler';
+import Input from './components/Input';
 
 import icon from "../public/icon.png";
 import {Link, MemoryRouter, Route, Routes} from "react-router-dom";
@@ -21,6 +22,7 @@ const COMPONENT_KEYS = {
   [components.BINARY_EDITOR]:    (props) => {return <BinaryEditors {...props}/>},
   [components.S3_BROWSER]:       (props) => {return <S3Browser {...props}/>},
   [components.IMAGE_LABELER]:    (props) => {return <ImageLabeler {...props}/>},
+  [components.INPUT]:            (props) => {return <Input {...props}/>},
 }
 
 class App extends Component {

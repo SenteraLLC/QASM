@@ -8,7 +8,8 @@ exports.components = {
     HOME: "home",
     BINARY_EDITOR: "binaryeditor",
     S3_BROWSER: "S3Browser",
-    IMAGE_LABELER: "imagelabeler"
+    IMAGE_LABELER: "imagelabeler",
+    INPUT: "input",
 }
 
 // List of valid function name keys

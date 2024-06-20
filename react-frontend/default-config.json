@@ -94,6 +94,18 @@
             "display_name": "Binary Editor",
             "mode": "s3directory",
             "dilate_keybind": "w"
+        },
+        {
+            "component": "input",
+            "display_name": "Input",
+            "display_string": "Welcome to the Input component! Please enter your name below.",
+            "inputs": [
+                {
+                    "name": "name",
+                    "type": "text",
+                    "default": "John Doe"
+                }
+            ]
         }
     ]
 }
