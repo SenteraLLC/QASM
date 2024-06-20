@@ -24,14 +24,12 @@ class Input extends Component {
     handleFormSubmit(e) {
         e.preventDefault();
         
-        // Create a list of objects containing the input names and values
-        let input_values = [];
+        // Create an object containing the input names and values
+        let input_values = {};
         let input_fields = e.target.getElementsByTagName("input");
         for (let i = 0; i < input_fields.length; i++) {
-            input_values.push({
-                name: input_fields[i].previousSibling.innerHTML,
-                value: input_fields[i].value
-            });
+            let input_name = input_fields[i].previousElementSibling.innerHTML;
+            input_values[input_name] = input_fields[i].value;
         }
         console.log(input_values);
 
@@ -80,7 +78,11 @@ class Input extends Component {
                             return (
                                 <div key={index} className="input-field">
                                     <label>{input.name}</label>
-                                    <input type={input.type} defaultValue={input.default || ""}></input>
+                                    <input 
+                                        type={input.type} 
+                                        defaultValue={input.default || ""}
+                                        title={input.title || ""}
+                                    ></input>
                                 </div>
                             )
                         })}

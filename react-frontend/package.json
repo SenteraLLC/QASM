@@ -1,5 +1,5 @@
 {
-  "name": "qasm-demo",
+  "name": "2024-rogue-labeling",
   "author": {
     "name": "Trevor Burgoyne",
     "url": "https://github.com/TrevorBurgoyne"
@@ -79,7 +79,7 @@
     ]
   },
   "build": {
-    "productName": "QASM Demo",
+    "productName": "2024 Rogue Labeling",
     "win": {
       "target": "NSIS",
       "icon": "public/icon.png"
@@ -93,6 +93,12 @@
     "mac": {
       "target": "dmg",
       "icon": "public/icon.png"
+    },
+    "protocols": {
+      "name": "S3 Protocol",
+      "schemes": [
+        "s3"
+      ]
     }
   }
 }
