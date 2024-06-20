@@ -94,6 +94,11 @@ resource "aws_iam_role_policy_attachment" "_3" {
     policy_arn = data.aws_iam_policy.ecs_task_execution_role.arn
 }
 
+resource "aws_iam_role_policy_attachment" "_4" {
+    role = aws_iam_role.qasm_lambda_exec_role.name 
+    policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaRole"
+}
+
 resource "aws_iam_role_policy_attachment" "function_logging_policy_attachment" {
   role = aws_iam_role.qasm_lambda_exec_role.id
   policy_arn = aws_iam_policy.function_logging_policy.arn

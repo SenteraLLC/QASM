@@ -27,6 +27,7 @@ exports.function_names = {
     GET_CASCADING_DIR_CHILDREN: "getCascadingChildren",
     GET_FOLDER_CONTENTS: "getFolderContents",
     LOAD_JSON: "loadJson",
+    TRIGGER_INPUT_LAMBDA: "triggerInputLambda",
 }
 
 // List of accepted image types

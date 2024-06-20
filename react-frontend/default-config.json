@@ -108,7 +108,12 @@
                     "name": "Age",
                     "type": "number"
                 }
-            ]
+            ],
+            "on_submit": {
+                "type": "aws_lambda",
+                "function_arn": "arn:aws:lambda:us-east-1:475283710372:function:qasm-dev-input-demo",
+                "role_arn": "arn:aws:iam::475283710372:role/qasm-dev-lambda-exec-role"            
+            }
         }
     ]
 }

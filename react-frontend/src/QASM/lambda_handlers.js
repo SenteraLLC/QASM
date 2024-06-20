@@ -21,6 +21,8 @@ const function_handlers = {
     [function_names.SAVE_JSON]:                  handleSaveJson,
     // ##### S3 BROWSER #####
     [function_names.GET_CASCADING_DIR_CHILDREN]: getS3FolderChildren,
+    // ##### INPUT #####
+    [function_names.TRIGGER_INPUT_LAMBDA]:       handleTriggerInputLambda,
 }
 export { function_handlers }
 
@@ -348,4 +350,25 @@ async function getS3FolderChildren(QASM, data, window) {
         "prefix": data
     }
     return await api_consolidator_error_handler(params, "get_cascading_dir_children");
+}
+
+
+// ##### INPUT #####
+
+
+/**
+ * Trigger an input lambda
+ * 
+ * @param {Object} QASM QASM object
+ * @param {Object} data {function_arn: <string>, role_arn: <string>, params: <Object>}
+ * @param {*} window window
+ * @returns {*} response 
+ */
+async function handleTriggerInputLambda(QASM, data, window) {
+    let params = {
+        "function_arn": data.function_arn,
+        "role_arn": data.role_arn,
+        "params": data.params,
+    }
+    return await api_consolidator_error_handler(params, "trigger_input_lambda");
 }

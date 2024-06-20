@@ -37,6 +37,14 @@ locals {
             base_name = "get-folder-content"
             handler = "s3_browser.get_folder_content"
         },
+        {
+            base_name = "trigger-input-lambda",
+            handler = "input.trigger_input_lambda"
+        },
+        {
+            base_name = "input-demo"
+            handler = "input.input_demo"
+        },
 
         # ECS Lambdas
         {
