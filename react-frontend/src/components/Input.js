@@ -94,7 +94,9 @@ class Input extends Component {
                         })}
                     </div>
                     <div className="input-submit">
-                        <button>Submit</button>
+                        <button
+                            title={this.on_submit.title || ""}
+                        >Submit</button>
                     </div>
                 </form>
             </div>
