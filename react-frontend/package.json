@@ -15,7 +15,7 @@
     }
   ],
   "description": "A web application built on React and Electron, for running custom QA and labeling jobs from a local host, a packaged windows .exe, or a statically hosted S3 website.",
-  "version": "0.20.0",
+  "version": "0.21.0",
   "private": true,
   "proxy": "http://localhost:3000",
   "homepage": "./",
@@ -93,12 +93,6 @@
     "mac": {
       "target": "dmg",
       "icon": "public/icon.png"
-    },
-    "protocols": {
-      "name": "S3 Protocol",
-      "schemes": [
-        "s3"
-      ]
     }
   }
 }
