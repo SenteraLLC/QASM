@@ -167,8 +167,8 @@ async function handleLoadImages(QASM, data, window) {
         "bucket_name": data.bucket_name !== undefined ? data.bucket_name : QASM.s3_bucket,
         "folder_name": data.start_folder
     }
-    let res = await api_consolidator_error_handler(params, "get_signed_urls_in_folder");
-    return res.urls;
+    let res = await api_consolidator_error_handler(params, "get_signed_urls_in_folder", "urls");
+    return res;
 }
 
 

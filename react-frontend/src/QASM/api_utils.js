@@ -8,10 +8,14 @@ import { local_env } from "./constants.js"
  * @param {*} params Params to pass to the API
  * @param {*} endpoint Endpoint to hit
  */
-export async function hit_terraform_api(params, endpoint) {
+export async function hit_terraform_api(params, endpoint, page = 1) {
     // Remove leading slash from endpoint
     if (endpoint[0] === "/") {
         endpoint = endpoint.slice(1);
+    }
+    // Add page param if page > 1
+    if (page > 1) {
+        params["page"] = page;
     }
 
     return await axios({
@@ -33,7 +37,20 @@ export async function hit_terraform_api(params, endpoint) {
     if (data_key == null) {
         return response.data
     } else {
-        return response.data[data_key];
+        let ret = response.data[data_key]
+        if (response.data.pages > 1) {
+            for (let page = 2; page <= response.data.pages; page++) {
+                let page_response = await hit_terraform_api(params, endpoint, page);
+                // if an array, concat
+                if (Array.isArray(ret)) {
+                    ret = ret.concat(page_response.data[data_key]);
+                } else {
+                    // if an object, merge
+                    ret = {...ret, ...page_response.data[data_key]};
+                }
+            }
+        }
+        return ret;
     }
 }
 

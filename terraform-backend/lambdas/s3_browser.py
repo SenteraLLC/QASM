@@ -92,8 +92,9 @@ def get_signed_urls_in_folder(event, context):
     body = json.loads(event["body"])
     bucket_name = body["bucket_name"]
     folder_name = body["folder_name"]
-    urls = get_all_signed_urls_in_folder(bucket_name, folder_name)
-    return get_return_block_with_cors({"urls": urls})
+    page_number = body["page"] if "page" in body else 1
+    urls, pages = get_all_signed_urls_in_folder(bucket_name, folder_name, page_number)
+    return get_return_block_with_cors({"urls": urls, "pages": pages})
 
 
 def get_base64_images_in_folder(event, context):
