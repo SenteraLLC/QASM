@@ -12,10 +12,11 @@ class GridImage extends Component {
         super(props);
 
         // Initialize props
-        this.image        = props.image;
-        this.image_name   = props.image_name;
-        this.classes      = props.classes;
-        this.image_stack  = props.image_stack;
+        this.image                     = props.image;
+        this.image_name                = props.image_name;
+        this.classes                   = props.classes;
+        this.image_stack               = props.image_stack;
+        this.center_line_start_visible = props.center_line_start_visible;
 
         // Use state to store current class
         let default_class = props.default_class || this.classes[0].class_name // Default to first class
@@ -66,7 +67,7 @@ class GridImage extends Component {
                 onClick={this.changeClass}
                 id={this.image_name}
             >
-                <div>
+                <div className="image-and-overlay-container">
                     <img 
                         src={this.image} 
                         alt={this.image_name}
@@ -88,6 +89,11 @@ class GridImage extends Component {
                         alt={this.image_name + " overlay"}
                         id={this.image_name + "-overlay"}>
                     </img>
+                    {/* Vertical line, centered horizonally, that spans the entire height of the image */}
+                    <div 
+                        className={"center-line-overlay " + (this.center_line_start_visible ? "" : "hidden")} 
+                        id={this.image_name + "-center-line-overlay"}>
+                    </div>
                 </div>
                 <p className="image-name">{this.image_name}</p>
             </div>        
