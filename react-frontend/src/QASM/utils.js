@@ -26,10 +26,11 @@ export function string_to_vaild_css_selector(input_string) {
 export function update_all_overlays(component) {
     try {
         for (let image_name of component.image_names) {
-            update_overlay_by_id(image_name + "-overlay");
+            update_overlay_by_id(image_name + "-class-overlay");
         }
         return true;
-    } catch {
+    } catch (error) {
+        console.error("Error updating overlays: ", error);
         return false;
     }
 }

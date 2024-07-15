@@ -92,6 +92,7 @@ class MultiClassGrid extends Component {
     filterImages() {
         // Toggle hidden class on images that don't match the filter
         for (let image_name of this.image_names) {
+            console.log(this.filtered_class_type)
             switch (this.filtered_class_type) {
                 case FILTER_MODES.no_filter:
                     // Show all images
